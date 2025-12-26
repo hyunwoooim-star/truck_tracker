@@ -1,0 +1,202 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:rxdart/rxdart.dart';
+
+import 'location_service.dart';
+
+/// Cached location service that throttles GPS updates to save battery
+class CachedLocationService {
+  CachedLocationService({required LocationService locationService})
+      : _locationService = locationService {
+    _setupLifecycleListener();
+  }
+
+  final LocationService _locationService;
+
+  Position? _cachedPosition;
+  DateTime? _cacheTimestamp;
+  static const Duration _cacheInterval = Duration(seconds: 30);
+
+  // 🔋 OPTIMIZATION: Track app lifecycle to pause GPS in background
+  AppLifecycleListener? _lifecycleListener;
+  bool _isAppInForeground = true;
+
+  // ═══════════════════════════════════════════════════════════
+  // APP LIFECYCLE MANAGEMENT
+  // ═══════════════════════════════════════════════════════════
+
+  /// Set up app lifecycle listener to pause GPS in background
+  void _setupLifecycleListener() {
+    _lifecycleListener = AppLifecycleListener(
+      onStateChange: (AppLifecycleState state) {
+        switch (state) {
+          case AppLifecycleState.resumed:
+          case AppLifecycleState.inactive:
+            // App is visible or partially visible
+            _isAppInForeground = true;
+            debugPrint('🔋 GPS RESUMED - App returned to foreground');
+            break;
+
+          case AppLifecycleState.paused:
+          case AppLifecycleState.detached:
+          case AppLifecycleState.hidden:
+            // App is in background or being terminated
+            _isAppInForeground = false;
+            debugPrint('🔋 GPS PAUSED - App moved to background (battery saving)');
+            break;
+        }
+      },
+    );
+  }
+
+  /// Dispose lifecycle listener (call when service is no longer needed)
+  void dispose() {
+    _lifecycleListener?.dispose();
+    _lifecycleListener = null;
+    debugPrint('🔋 CachedLocationService disposed');
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // CACHE MANAGEMENT
+  // ═══════════════════════════════════════════════════════════
+
+  /// Check if cached position is still valid
+  bool _isCacheValid() {
+    if (_cachedPosition == null || _cacheTimestamp == null) return false;
+    final age = DateTime.now().difference(_cacheTimestamp!);
+    return age < _cacheInterval;
+  }
+
+  /// Clear the cached position
+  void clearCache() {
+    _cachedPosition = null;
+    _cacheTimestamp = null;
+    debugPrint('📍 CachedLocationService: Cache cleared');
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // GET CACHED POSITION
+  // ═══════════════════════════════════════════════════════════
+
+  /// Get current position with caching (30s cache interval)
+  Future<Position?> getPosition() async {
+    if (_isCacheValid()) {
+      final age = DateTime.now().difference(_cacheTimestamp!).inSeconds;
+      debugPrint('📍 Using cached position (age: ${age}s)');
+      return _cachedPosition;
+    }
+
+    debugPrint('📍 Cache miss - fetching new position');
+    final position = await _locationService.getCurrentPosition();
+
+    if (position != null) {
+      _cachedPosition = position;
+      _cacheTimestamp = DateTime.now();
+      debugPrint('📍 Position cached successfully');
+    }
+
+    return position;
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // WATCH POSITION (THROTTLED STREAM)
+  // ═══════════════════════════════════════════════════════════
+
+  /// Watch position stream with 30s throttle and 50m distance filter
+  ///
+  /// This significantly reduces:
+  /// - GPS polling frequency (battery saving)
+  /// - Firestore write operations (cost saving)
+  /// - UI rebuild frequency (performance improvement)
+  ///
+  /// 🔋 OPTIMIZATION: Automatically pauses GPS when app is in background
+  Stream<Position> watchPositionCached() {
+    debugPrint('📡 CachedLocationService: Creating throttled position stream');
+    debugPrint('   Throttle interval: 30 seconds');
+    debugPrint('   Minimum distance: 50 meters');
+    debugPrint('   🔋 Background pause: ENABLED');
+
+    return _locationService
+        .watchPosition()
+        // 🔋 OPTIMIZATION: Skip GPS updates when app is in background
+        .where((_) {
+          if (!_isAppInForeground) {
+            debugPrint('🔋 Skipping GPS update - app in background');
+          }
+          return _isAppInForeground;
+        })
+        // Throttle to maximum one update every 30 seconds
+        .throttleTime(
+          const Duration(seconds: 30),
+          // Use trailing edge to get the most recent position
+          trailing: true,
+          leading: false,
+        )
+        // Filter out small movements (< 50m)
+        .distinct((prev, curr) {
+          final distance = _calculateDistance(prev, curr);
+          final shouldEmit = distance >= 50;
+
+          if (!shouldEmit) {
+            debugPrint(
+              '📍 Skipping update - distance too small: ${distance.toStringAsFixed(1)}m'
+            );
+          } else {
+            debugPrint(
+              '📍 Emitting update - distance: ${distance.toStringAsFixed(1)}m'
+            );
+          }
+
+          return shouldEmit;
+        });
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // DISTANCE CALCULATION
+  // ═══════════════════════════════════════════════════════════
+
+  /// Calculate distance between two positions using Haversine formula
+  double _calculateDistance(Position p1, Position p2) {
+    return _locationService.calculateDistance(
+      p1.latitude,
+      p1.longitude,
+      p2.latitude,
+      p2.longitude,
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // PASSTHROUGH METHODS
+  // ═══════════════════════════════════════════════════════════
+
+  /// Pass through to underlying location service
+  Future<bool> ensurePermission() => _locationService.ensurePermission();
+
+  /// Pass through to underlying location service
+  Future<Position?> getLastKnownPosition() =>
+      _locationService.getLastKnownPosition();
+
+  /// Pass through to underlying location service
+  String getDistanceText(
+    double startLatitude,
+    double startLongitude,
+    double endLatitude,
+    double endLongitude,
+  ) =>
+      _locationService.getDistanceText(
+        startLatitude,
+        startLongitude,
+        endLatitude,
+        endLongitude,
+      );
+
+  /// Pass through to underlying location service
+  double calculateDistance(
+    double lat1,
+    double lon1,
+    double lat2,
+    double lon2,
+  ) =>
+      _locationService.calculateDistance(lat1, lon1, lat2, lon2);
+}

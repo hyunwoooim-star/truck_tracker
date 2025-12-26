@@ -1,0 +1,252 @@
+{
+  "@@locale": "en",
+
+  "ownerCommandCenter": "Owner Command Center",
+  "inputCashSale": "Input Cash Sale",
+  "amount": "Amount (₩)",
+  "memoOptional": "Memo (optional)",
+  "submitSale": "Submit Sale",
+  "cashSaleRecordedSuccessfully": "Cash sale recorded successfully",
+  "truckQRCode": "Truck QR Code",
+  "showCustomersQRCode": "Show customers this QR code to check in",
+  "todaysStatistics": "Today''s Statistics",
+  "views": "Views",
+  "reviews": "Reviews",
+  "favorites": "Favorites",
+  "quickActions": "Quick Actions",
+  "viewFullAnalytics": "View Full Analytics",
+  "manageReviews": "Manage Reviews",
+  "editTruckInfo": "Edit Truck Info",
+  "updateLocation": "Update Location",
+  "loading": "Loading...",
+  "errorLoadingDashboard": "Error loading dashboard",
+
+  "selectDateRange": "Select Date Range",
+  "downloadCSV": "Download CSV",
+  "date": "Date",
+  "clicks": "Clicks",
+  "csvDownloadedSuccessfully": "CSV downloaded successfully",
+  "errorDownloadingCSV": "Error downloading CSV",
+
+  "scanQRCode": "Scan QR Code",
+  "checkinSuccess": "Check-in Success!",
+  "invalidQRCode": "Invalid QR Code",
+  "cameraPermissionRequired": "Camera Permission Required",
+  "enableCameraToScan": "Enable camera to scan QR codes",
+
+  "error": "Error",
+  "success": "Success",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "retry": "Retry",
+  "refresh": "Refresh",
+
+  "qrCheckInTooltip": "QR Check-In",
+  "scheduleTooltip": "Schedule",
+  "analyticsTooltip": "Analytics",
+  "uploadDataTooltip": "Upload Data",
+  "noTruckRegistered": "No truck registered",
+  "errorLoadingTruckData": "Error loading truck data",
+  "alreadyOpenForBusiness": "Already open for business!",
+  "couldNotGetGPSLocation": "Could not get GPS location",
+  "businessStartedNotification": "Business started! Followers will be notified 🔔",
+  "businessOpen": "BUSINESS OPEN",
+  "startBusiness": "START BUSINESS",
+  "todaysSpecialNotice": "Today''s Special Notice",
+  "noAnnouncementSet": "(No announcement set)",
+  "editAnnouncement": "Edit Announcement",
+  "announcementDisplayedMessage": "This will be displayed at the top of your truck detail page.",
+  "announcement": "Announcement",
+  "announcementHint": "e.g., \"Today''s special: 30% off chicken skewers!\"",
+  "announcementUpdated": "Announcement updated!",
+  "save": "Save",
+  "itemName": "Item Name",
+  "invalidAmount": "Invalid amount",
+  "cashSaleRecorded": "Cash sale recorded: ₩{amount}",
+  "@cashSaleRecorded": {
+    "placeholders": {
+      "amount": {
+        "type": "Object"
+      }
+    }
+  },
+  "regularsNearby": "Regulars Nearby",
+  "todaysRevenue": "Today''s Revenue",
+  "orderBoard": "Order Board",
+  "pending": "Pending",
+  "preparing": "Preparing",
+  "ready": "Ready",
+  "errorLoadingOrders": "Error loading orders",
+  "menuItems": "Menu Items",
+  "noMenuItems": "No menu items",
+  "errorLoadingMenu": "Error loading menu",
+  "customerConversations": "Customer Conversations",
+  "orderItemsTotal": "{count} items - ₩{total}",
+  "@orderItemsTotal": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+
+  "selectDateRangeTooltip": "Select Date Range",
+  "downloadCSVTooltip": "Download CSV",
+  "date": "Date",
+  "clickCount": "Click Count",
+  "reviewCount": "Review Count",
+  "favoriteCount": "Favorite Count",
+  "csvDownloadSuccess": "CSV downloaded successfully",
+  "csvDownloadError": "Error downloading CSV: {error}",
+  "@csvDownloadError": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "total": "TOTAL",
+  "average": "AVERAGE",
+
+  "checkInQRCode": "Check-In QR Code",
+  "checkInQR": "Check-In QR",
+  "bankTransfer": "Bank Transfer",
+  "showBankTransferQR": "Show this QR for bank transfer payments",
+  "customerscanQR": "Customers scan this QR code to check in",
+  "truckID": "Truck ID: {id}",
+  "@truckID": {
+    "placeholders": {
+      "id": {
+        "type": "Object"
+      }
+    }
+  },
+  "checkInBenefits": "Check-in Benefits",
+  "benefitsList": "• Earn 10 loyalty points per visit\n• Track favorite trucks\n• Get special promotions",
+  "pleaseEnterTruckID": "Please enter a truck ID",
+  "userNotLoggedIn": "User not logged in",
+  "truckNotFound": "Truck not found",
+  "alreadyCheckedInToday": "You have already checked in to this truck today!",
+  "checkInFailed": "Check-in failed: {error}",
+  "@checkInFailed": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "checkInSuccessful": "Check-in successful!",
+  "loyaltyPoints": "{truck} • +10 loyalty points",
+  "@loyaltyPoints": {
+    "placeholders": {
+      "truck": {
+        "type": "Object"
+      }
+    }
+  },
+  "checkIn": "Check-In",
+  "scanQRCodeToCheckIn": "Scan QR Code to Check In",
+  "earnLoyaltyPoints": "Earn loyalty points with every visit!",
+  "or": "OR",
+  "enterTruckID": "Enter Truck ID",
+  "enterTruckIDHint": "Enter truck ID (e.g., truck_001)",
+  "checkInButton": "CHECK IN",
+  "howItWorks": "How it works",
+  "howItWorksList": "1. Scan the QR code at the food truck\n2. Earn 10 loyalty points per visit\n3. Track your favorite trucks\n4. You can only check in once per day per truck",
+
+  "errorLoadingData": "Cannot load data",
+  "todaysSpecialAnnouncement": "Today''s Special Announcement",
+  "todayLocation": "Today: {location}",
+  "@todayLocation": {
+    "placeholders": {
+      "location": {
+        "type": "Object"
+      }
+    }
+  },
+  "menu": "Menu",
+  "errorLoadingReviews": "Cannot load reviews",
+  "reviewsTitle": "Reviews",
+  "noReviewsYet": "No reviews yet",
+  "talkWithOwner": "Talk with Owner",
+  "navigation": "Navigation",
+  "totalItems": "Total {count} items",
+  "@totalItems": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "placeOrder": "Place Order",
+  "writeReview": "Write Review",
+  "soldOut": "Sold Out",
+  "priceWon": "{price} won",
+  "@priceWon": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "addToCart": "Add",
+  "ownerReply": "Owner Reply",
+  "location": "Location",
+  "chooseNavigationApp": "Choose navigation app:",
+  "naverMap": "Naver Map",
+  "kakaoMap": "Kakao Map",
+  "googleMaps": "Google Maps",
+  "cannotOpenNaverMap": "Cannot open Naver Map",
+  "cannotOpenKakaoMap": "Cannot open Kakao Map",
+  "cannotOpenGoogleMaps": "Cannot open Google Maps",
+  "loginRequiredToOrder": "Login required to place order",
+  "confirmOrder": "Confirm Order",
+  "totalMenuItems": "Total {count} menu items",
+  "@totalMenuItems": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "wouldYouLikeToOrder": "Would you like to place order?",
+  "orderCompleted": "Order completed! (Order ID: {orderId})",
+  "@orderCompleted": {
+    "placeholders": {
+      "orderId": {
+        "type": "Object"
+      }
+    }
+  },
+  "orderFailed": "Order failed: {error}",
+  "@orderFailed": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "truckUncle": "Truck Uncle",
+
+  "loginRequired": "Login required",
+  "reviewSubmitted": "Review submitted",
+  "reviewSubmissionFailed": "Review submission failed: {error}",
+  "@reviewSubmissionFailed": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "starRating": "Star Rating",
+  "reviewContent": "Review Content",
+  "reviewPlaceholder": "Please write a review for this truck",
+  "pleaseEnterReviewContent": "Please enter review content",
+  "pleaseEnterAtLeast5Chars": "Please enter at least 5 characters",
+  "photosOptionalMax3": "Photos (optional, max 3)",
+  "addPhoto": "Add Photo",
+  "submit": "Submit"
+}

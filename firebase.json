@@ -1,0 +1,33 @@
+{
+  "hosting": {
+    "public": "build/web",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [{"source": "**", "destination": "/index.html"}]
+  },
+  "functions": {
+    "source": "functions"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "truck-tracker-fa0b0",
+          "appId": "1:662289034816:android:9dd087d36dafa4d46179a5",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "truck-tracker-fa0b0",
+          "configurations": {
+            "android": "1:662289034816:android:9dd087d36dafa4d46179a5",
+            "ios": "1:662289034816:ios:b3210b1687ba991a6179a5",
+            "macos": "1:662289034816:ios:b3210b1687ba991a6179a5",
+            "web": "1:662289034816:web:dc93d373841ee2186179a5",
+            "windows": "1:662289034816:web:0a28d630a92f4d6f6179a5"
+          }
+        }
+      }
+    }
+  }
+}

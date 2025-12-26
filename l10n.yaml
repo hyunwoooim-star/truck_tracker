@@ -1,0 +1,24 @@
+# l10n.yaml - Flutter localization configuration
+
+# ARB files directory
+arb-dir: lib/l10n
+
+# Generated file template
+template-arb-file: app_ko.arb
+
+# Output directory for generated files
+output-dir: lib/generated/l10n
+
+# Generated class name
+output-class: AppLocalizations
+
+# Supported locales
+preferred-supported-locales:
+  - ko
+  - en
+
+# Generate nullable getters
+nullable-getter: false
+
+# Use escaping for special characters
+use-escaping: true

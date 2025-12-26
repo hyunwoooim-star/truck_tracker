@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "662289034816",
+    "project_id": "truck-tracker-fa0b0",
+    "storage_bucket": "truck-tracker-fa0b0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662289034816:android:9dd087d36dafa4d46179a5",
+        "android_client_info": {
+          "package_name": "com.example.truck_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQTgC7MN69Q2Mp5ugD5t5DCYjNLK2Pqmg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

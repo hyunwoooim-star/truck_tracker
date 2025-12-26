@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="트럭아저씨 - 내 주변 푸드트럭 실시간 찾기. GPS 위치 기반으로 가까운 푸드트럭을 찾아 메뉴를 확인하고 주문하세요. 닭꼬치, 호떡, 붕어빵, 심야라멘 등 다양한 길거리 음식을 실시간으로!">
+  <meta name="keywords" content="푸드트럭, 내 주변 푸드트럭, 실시간 위치, GPS, 트럭, 음식, 주문, 배달, 위치추적, 맛집, 트럭아저씨, 닭꼬치, 호떡, 붕어빵, 심야라멘, 불막창, 어묵, 크레페, 옛날통닭, 길거리음식">
+  <meta name="author" content="트럭아저씨">
+  <meta name="robots" content="index, follow">
+  <meta name="geo.region" content="KR">
+  <meta name="geo.placename" content="대한민국">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://truck-tracker.web.app/">
+  <meta property="og:title" content="트럭아저씨 - 내 주변 푸드트럭 실시간 찾기">
+  <meta property="og:description" content="GPS 위치 기반으로 가까운 푸드트럭을 실시간으로 찾아 주문하세요. 닭꼬치, 호떡, 붕어빵 등 다양한 길거리 음식!">
+  <meta property="og:image" content="icons/Icon-512.png">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="트럭아저씨">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://truck-tracker.web.app/">
+  <meta property="twitter:title" content="트럭아저씨 - 내 주변 푸드트럭 실시간 찾기">
+  <meta property="twitter:description" content="GPS 위치 기반으로 가까운 푸드트럭을 실시간으로 찾아 주문하세요.">
+  <meta property="twitter:image" content="icons/Icon-512.png">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="트럭아저씨">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <!-- Google Fonts Preconnect for faster font loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&family=Noto+Sans:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+  <title>트럭아저씨 - 내 주변 푸드트럭 실시간 찾기</title>
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Google Sign-In -->
+  <!-- TODO: Replace with your actual Google OAuth Client ID from Firebase Console -->
+  <!-- Get it from: Firebase Console → Authentication → Sign-in method → Google → Web SDK configuration -->
+  <meta name="google-signin-client_id" content="YOUR_WEB_CLIENT_ID.apps.googleusercontent.com">
+
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#00D4FF">
+
+  <!-- Google Maps JavaScript API -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArKTrCQyRO-srk9hvdMevMRhOXuSF55G0"></script>
+  
+  <!-- Structured Data for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "트럭아저씨",
+    "description": "실시간 푸드트럭 위치 추적 및 주문 플랫폼",
+    "url": "https://truck-tracker.web.app/",
+    "applicationCategory": "FoodDelivery",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "KRW"
+    }
+  }
+  </script>
+</head>
+<body>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

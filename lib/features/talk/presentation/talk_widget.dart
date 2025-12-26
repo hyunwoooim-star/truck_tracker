@@ -1,0 +1,303 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+
+import '../../auth/presentation/auth_provider.dart';
+import '../data/talk_repository.dart';
+import '../domain/talk_message.dart';
+
+const Color _mustard = Color(0xFFFFC107);
+const Color _charcoal = Color(0xFF121212);
+
+/// Real-time one-line Talk widget for truck-customer communication
+class TalkWidget extends ConsumerStatefulWidget {
+  final String truckId;
+  final bool isOwner; // true if current user is the truck owner
+
+  const TalkWidget({
+    super.key,
+    required this.truckId,
+    required this.isOwner,
+  });
+
+  @override
+  ConsumerState<TalkWidget> createState() => _TalkWidgetState();
+}
+
+class _TalkWidgetState extends ConsumerState<TalkWidget> {
+  final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  Future<void> _sendMessage() async {
+    final messageText = _messageController.text.trim();
+    if (messageText.isEmpty) return;
+
+    final currentUser = ref.read(currentUserProvider);
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in to send messages')),
+      );
+      return;
+    }
+
+    final message = TalkMessage(
+      id: '', // Will be set by Firestore
+      truckId: widget.truckId,
+      userId: currentUser.uid,
+      userName: currentUser.displayName ?? currentUser.email ?? 'Anonymous',
+      message: messageText,
+      isOwner: widget.isOwner,
+      createdAt: DateTime.now(),
+    );
+
+    try {
+      final repository = ref.read(talkRepositoryProvider);
+      await repository.sendMessage(message);
+      _messageController.clear();
+
+      // Scroll to bottom after sending
+      Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error sending message: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final talkAsync = ref.watch(truckTalkProvider(widget.truckId));
+
+    return Container(
+      height: 400,
+      decoration: BoxDecoration(
+        color: _charcoal,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _mustard.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: _mustard.withOpacity(0.1),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.chat_bubble, color: _mustard),
+                const SizedBox(width: 8),
+                Text(
+                  widget.isOwner ? 'Talk with Customers' : 'Talk with Owner',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Messages List
+          Expanded(
+            child: talkAsync.when(
+              data: (messages) {
+                if (messages.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'No messages yet. Start the conversation!',
+                      style: TextStyle(color: Colors.white54),
+                    ),
+                  );
+                }
+
+                // Auto-scroll to bottom when new messages arrive
+                WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+
+                return ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(16),
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final message = messages[index];
+                    return _MessageBubble(
+                      message: message,
+                      isCurrentUserOwner: widget.isOwner,
+                    );
+                  },
+                );
+              },
+              loading: () => const Center(
+                child: CircularProgressIndicator(color: _mustard),
+              ),
+              error: (error, _) => Center(
+                child: Text(
+                  'Error loading messages',
+                  style: TextStyle(color: Colors.red[300]),
+                ),
+              ),
+            ),
+          ),
+
+          // Input Field
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey[900],
+              border: Border(
+                top: BorderSide(color: _mustard.withOpacity(0.3)),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      hintText: 'Type a message...',
+                      hintStyle: const TextStyle(color: Colors.white54),
+                      filled: true,
+                      fillColor: _charcoal,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    maxLines: 1,
+                    onSubmitted: (_) => _sendMessage(),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: _sendMessage,
+                  icon: const Icon(Icons.send, color: _mustard),
+                  style: IconButton.styleFrom(
+                    backgroundColor: _mustard.withOpacity(0.2),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MessageBubble extends StatelessWidget {
+  final TalkMessage message;
+  final bool isCurrentUserOwner;
+
+  const _MessageBubble({
+    required this.message,
+    required this.isCurrentUserOwner,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isOwnerMessage = message.isOwner;
+    final timeFormat = DateFormat('HH:mm');
+
+    // Owner messages: Mustard bubble with black text
+    // Customer messages: Dark gray bubble with white text
+    final bubbleColor = isOwnerMessage ? _mustard : Colors.grey[800]!;
+    final textColor = isOwnerMessage ? Colors.black : Colors.white;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Avatar
+          CircleAvatar(
+            backgroundColor: isOwnerMessage ? _mustard : Colors.grey[700],
+            radius: 16,
+            child: Icon(
+              isOwnerMessage ? Icons.store : Icons.person,
+              size: 16,
+              color: isOwnerMessage ? Colors.black : Colors.white,
+            ),
+          ),
+          const SizedBox(width: 8),
+
+          // Message Bubble
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: bubbleColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // User Name
+                  Text(
+                    message.userName,
+                    style: TextStyle(
+                      color: textColor.withOpacity(0.8),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+
+                  // Message Text
+                  Text(
+                    message.message,
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 14,
+                    ),
+                  ),
+
+                  // Timestamp
+                  const SizedBox(height: 4),
+                  Text(
+                    message.createdAt != null
+                        ? timeFormat.format(message.createdAt!)
+                        : '',
+                    style: TextStyle(
+                      color: textColor.withOpacity(0.6),
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

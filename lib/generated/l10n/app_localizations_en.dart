@@ -1,0 +1,477 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
+class AppLocalizationsEn extends AppLocalizations {
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
+
+  @override
+  String get ownerCommandCenter => 'Owner Command Center';
+
+  @override
+  String get inputCashSale => 'Input Cash Sale';
+
+  @override
+  String get amount => 'Amount (₩)';
+
+  @override
+  String get memoOptional => 'Memo (optional)';
+
+  @override
+  String get submitSale => 'Submit Sale';
+
+  @override
+  String get cashSaleRecordedSuccessfully => 'Cash sale recorded successfully';
+
+  @override
+  String get truckQRCode => 'Truck QR Code';
+
+  @override
+  String get showCustomersQRCode => 'Show customers this QR code to check in';
+
+  @override
+  String get todaysStatistics => 'Today\'s Statistics';
+
+  @override
+  String get views => 'Views';
+
+  @override
+  String get reviews => 'Reviews';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get quickActions => 'Quick Actions';
+
+  @override
+  String get viewFullAnalytics => 'View Full Analytics';
+
+  @override
+  String get manageReviews => 'Manage Reviews';
+
+  @override
+  String get editTruckInfo => 'Edit Truck Info';
+
+  @override
+  String get updateLocation => 'Update Location';
+
+  @override
+  String get loading => 'Loading...';
+
+  @override
+  String get errorLoadingDashboard => 'Error loading dashboard';
+
+  @override
+  String get selectDateRange => 'Select Date Range';
+
+  @override
+  String get downloadCSV => 'Download CSV';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get clicks => 'Clicks';
+
+  @override
+  String get csvDownloadedSuccessfully => 'CSV downloaded successfully';
+
+  @override
+  String get errorDownloadingCSV => 'Error downloading CSV';
+
+  @override
+  String get scanQRCode => 'Scan QR Code';
+
+  @override
+  String get checkinSuccess => 'Check-in Success!';
+
+  @override
+  String get invalidQRCode => 'Invalid QR Code';
+
+  @override
+  String get cameraPermissionRequired => 'Camera Permission Required';
+
+  @override
+  String get enableCameraToScan => 'Enable camera to scan QR codes';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get success => 'Success';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get qrCheckInTooltip => 'QR Check-In';
+
+  @override
+  String get scheduleTooltip => 'Schedule';
+
+  @override
+  String get analyticsTooltip => 'Analytics';
+
+  @override
+  String get uploadDataTooltip => 'Upload Data';
+
+  @override
+  String get noTruckRegistered => 'No truck registered';
+
+  @override
+  String get errorLoadingTruckData => 'Error loading truck data';
+
+  @override
+  String get alreadyOpenForBusiness => 'Already open for business!';
+
+  @override
+  String get couldNotGetGPSLocation => 'Could not get GPS location';
+
+  @override
+  String get businessStartedNotification =>
+      'Business started! Followers will be notified 🔔';
+
+  @override
+  String get businessOpen => 'BUSINESS OPEN';
+
+  @override
+  String get startBusiness => 'START BUSINESS';
+
+  @override
+  String get todaysSpecialNotice => 'Today\'s Special Notice';
+
+  @override
+  String get noAnnouncementSet => '(No announcement set)';
+
+  @override
+  String get editAnnouncement => 'Edit Announcement';
+
+  @override
+  String get announcementDisplayedMessage =>
+      'This will be displayed at the top of your truck detail page.';
+
+  @override
+  String get announcement => 'Announcement';
+
+  @override
+  String get announcementHint =>
+      'e.g., \"Today\'s special: 30% off chicken skewers!\"';
+
+  @override
+  String get announcementUpdated => 'Announcement updated!';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get itemName => 'Item Name';
+
+  @override
+  String get invalidAmount => 'Invalid amount';
+
+  @override
+  String cashSaleRecorded(Object amount) {
+    return 'Cash sale recorded: ₩$amount';
+  }
+
+  @override
+  String get regularsNearby => 'Regulars Nearby';
+
+  @override
+  String get todaysRevenue => 'Today\'s Revenue';
+
+  @override
+  String get orderBoard => 'Order Board';
+
+  @override
+  String get pending => 'Pending';
+
+  @override
+  String get preparing => 'Preparing';
+
+  @override
+  String get ready => 'Ready';
+
+  @override
+  String get errorLoadingOrders => 'Error loading orders';
+
+  @override
+  String get menuItems => 'Menu Items';
+
+  @override
+  String get noMenuItems => 'No menu items';
+
+  @override
+  String get errorLoadingMenu => 'Error loading menu';
+
+  @override
+  String get customerConversations => 'Customer Conversations';
+
+  @override
+  String orderItemsTotal(Object count, Object total) {
+    return '$count items - ₩$total';
+  }
+
+  @override
+  String get selectDateRangeTooltip => 'Select Date Range';
+
+  @override
+  String get downloadCSVTooltip => 'Download CSV';
+
+  @override
+  String get clickCount => 'Click Count';
+
+  @override
+  String get reviewCount => 'Review Count';
+
+  @override
+  String get favoriteCount => 'Favorite Count';
+
+  @override
+  String get csvDownloadSuccess => 'CSV downloaded successfully';
+
+  @override
+  String csvDownloadError(Object error) {
+    return 'Error downloading CSV: $error';
+  }
+
+  @override
+  String get total => 'TOTAL';
+
+  @override
+  String get average => 'AVERAGE';
+
+  @override
+  String get checkInQRCode => 'Check-In QR Code';
+
+  @override
+  String get checkInQR => 'Check-In QR';
+
+  @override
+  String get bankTransfer => 'Bank Transfer';
+
+  @override
+  String get showBankTransferQR => 'Show this QR for bank transfer payments';
+
+  @override
+  String get customerscanQR => 'Customers scan this QR code to check in';
+
+  @override
+  String truckID(Object id) {
+    return 'Truck ID: $id';
+  }
+
+  @override
+  String get checkInBenefits => 'Check-in Benefits';
+
+  @override
+  String get benefitsList =>
+      '• Earn 10 loyalty points per visit\n• Track favorite trucks\n• Get special promotions';
+
+  @override
+  String get pleaseEnterTruckID => 'Please enter a truck ID';
+
+  @override
+  String get userNotLoggedIn => 'User not logged in';
+
+  @override
+  String get truckNotFound => 'Truck not found';
+
+  @override
+  String get alreadyCheckedInToday =>
+      'You have already checked in to this truck today!';
+
+  @override
+  String checkInFailed(Object error) {
+    return 'Check-in failed: $error';
+  }
+
+  @override
+  String get checkInSuccessful => 'Check-in successful!';
+
+  @override
+  String loyaltyPoints(Object truck) {
+    return '$truck • +10 loyalty points';
+  }
+
+  @override
+  String get checkIn => 'Check-In';
+
+  @override
+  String get scanQRCodeToCheckIn => 'Scan QR Code to Check In';
+
+  @override
+  String get earnLoyaltyPoints => 'Earn loyalty points with every visit!';
+
+  @override
+  String get or => 'OR';
+
+  @override
+  String get enterTruckID => 'Enter Truck ID';
+
+  @override
+  String get enterTruckIDHint => 'Enter truck ID (e.g., truck_001)';
+
+  @override
+  String get checkInButton => 'CHECK IN';
+
+  @override
+  String get howItWorks => 'How it works';
+
+  @override
+  String get howItWorksList =>
+      '1. Scan the QR code at the food truck\n2. Earn 10 loyalty points per visit\n3. Track your favorite trucks\n4. You can only check in once per day per truck';
+
+  @override
+  String get errorLoadingData => 'Cannot load data';
+
+  @override
+  String get todaysSpecialAnnouncement => 'Today\'s Special Announcement';
+
+  @override
+  String todayLocation(Object location) {
+    return 'Today: $location';
+  }
+
+  @override
+  String get menu => 'Menu';
+
+  @override
+  String get errorLoadingReviews => 'Cannot load reviews';
+
+  @override
+  String get reviewsTitle => 'Reviews';
+
+  @override
+  String get noReviewsYet => 'No reviews yet';
+
+  @override
+  String get talkWithOwner => 'Talk with Owner';
+
+  @override
+  String get navigation => 'Navigation';
+
+  @override
+  String totalItems(Object count) {
+    return 'Total $count items';
+  }
+
+  @override
+  String get placeOrder => 'Place Order';
+
+  @override
+  String get writeReview => 'Write Review';
+
+  @override
+  String get soldOut => 'Sold Out';
+
+  @override
+  String priceWon(Object price) {
+    return '$price won';
+  }
+
+  @override
+  String get addToCart => 'Add';
+
+  @override
+  String get ownerReply => 'Owner Reply';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get chooseNavigationApp => 'Choose navigation app:';
+
+  @override
+  String get naverMap => 'Naver Map';
+
+  @override
+  String get kakaoMap => 'Kakao Map';
+
+  @override
+  String get googleMaps => 'Google Maps';
+
+  @override
+  String get cannotOpenNaverMap => 'Cannot open Naver Map';
+
+  @override
+  String get cannotOpenKakaoMap => 'Cannot open Kakao Map';
+
+  @override
+  String get cannotOpenGoogleMaps => 'Cannot open Google Maps';
+
+  @override
+  String get loginRequiredToOrder => 'Login required to place order';
+
+  @override
+  String get confirmOrder => 'Confirm Order';
+
+  @override
+  String totalMenuItems(Object count) {
+    return 'Total $count menu items';
+  }
+
+  @override
+  String get wouldYouLikeToOrder => 'Would you like to place order?';
+
+  @override
+  String orderCompleted(Object orderId) {
+    return 'Order completed! (Order ID: $orderId)';
+  }
+
+  @override
+  String orderFailed(Object error) {
+    return 'Order failed: $error';
+  }
+
+  @override
+  String get truckUncle => 'Truck Uncle';
+
+  @override
+  String get loginRequired => 'Login required';
+
+  @override
+  String get reviewSubmitted => 'Review submitted';
+
+  @override
+  String reviewSubmissionFailed(Object error) {
+    return 'Review submission failed: $error';
+  }
+
+  @override
+  String get starRating => 'Star Rating';
+
+  @override
+  String get reviewContent => 'Review Content';
+
+  @override
+  String get reviewPlaceholder => 'Please write a review for this truck';
+
+  @override
+  String get pleaseEnterReviewContent => 'Please enter review content';
+
+  @override
+  String get pleaseEnterAtLeast5Chars => 'Please enter at least 5 characters';
+
+  @override
+  String get photosOptionalMax3 => 'Photos (optional, max 3)';
+
+  @override
+  String get addPhoto => 'Add Photo';
+
+  @override
+  String get submit => 'Submit';
+}

@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(flutter clean:*)",
+      "Bash(flutter pub get:*)",
+      "Bash(flutter build:*)",
+      "Bash(flutter pub run:*)",
+      "Bash(firebase deploy:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(dart run build_runner:*)",
+      "Bash(flutter run:*)",
+      "Bash(npm install)",
+      "Bash(findstr:*)",
+      "Bash(firebase projects:list:*)",
+      "Bash(firebase functions:list:*)",
+      "Bash(firebase functions:config:get:*)",
+      "Bash(dart analyze:*)",
+      "Bash(powershell -Command \"Get-ChildItem -Path lib -Recurse -Include *.dart | Where-Object { $_Length -eq 0 } | Select-Object -ExpandProperty FullName\")",
+      "Bash(dir:*)",
+      "Bash(flutter doctor:*)",
+      "Bash(powershell -Command \"Get-Content ''lib\\\\features\\\\owner_dashboard\\\\presentation\\\\owner_dashboard_screen.dart'' | Measure-Object -Line\")",
+      "Bash(powershell -Command \"Get-Content ''lib\\\\features\\\\owner_dashboard\\\\presentation\\\\owner_dashboard_screen.dart'' | Select-Object -Last 30\")",
+      "Bash(wc:*)",
+      "Bash(find:*)",
+      "Bash(xargs -I {} sh -c 'echo \"\"=== {} ===\"\" && head -20 {}')",
+      "Bash(powershell -Command \"Remove-Item -Path ''lib\\\\features\\\\check_in'' -Recurse -Force\")",
+      "Bash(powershell -Command:*)",
+      "Bash(curl:*)"
+    ]
+  }
+}
