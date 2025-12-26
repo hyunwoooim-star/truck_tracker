@@ -242,11 +242,17 @@ class TruckOwnershipService {
       int available = 0;
       
       for (int i = 1; i <= 100; i++) {
-        final truckDoc = trucksSnapshot.docs.firstWhere(
-          (doc) => doc.id == '$i',
-          orElse: () => throw StateError('Not found'),
-        );
-        
+        // Use safe null-aware access instead of throwing
+        final truckDoc = trucksSnapshot.docs
+            .where((doc) => doc.id == '$i')
+            .firstOrNull;
+
+        if (truckDoc == null) {
+          // Truck document doesn't exist, consider it available
+          available++;
+          continue;
+        }
+
         try {
           final ownerId = truckDoc.data()['ownerId'] as String?;
           if (ownerId != null && ownerId.isNotEmpty) {

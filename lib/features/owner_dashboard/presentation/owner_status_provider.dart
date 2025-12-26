@@ -149,11 +149,16 @@ Stream<TruckStatus?> ownerTruckStatus(OwnerTruckStatusRef ref) async* {
   final allTrucksStream = repository.watchTrucks();
   
   await for (final trucks in allTrucksStream) {
-    final ownerTruck = trucks.firstWhere(
-      (truck) => truck.id == ownedTruckId,
-      orElse: () => trucks.first, // Fallback to first truck
-    );
-    
+    // Use safe null-aware access to find owner's truck
+    final ownerTruck = trucks
+        .where((truck) => truck.id == ownedTruckId)
+        .firstOrNull;
+
+    if (ownerTruck == null) {
+      // Owner's truck not found in list, skip this update
+      continue;
+    }
+
     yield ownerTruck.status;
   }
 }

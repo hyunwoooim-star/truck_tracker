@@ -315,10 +315,12 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
   LatLng? _initialLatLng(List trucks, String? targetId, LatLng? targetLatLng) {
     if (targetLatLng != null) return targetLatLng;
     if (targetId == null) return null;
-    final truck = trucks.cast<dynamic>().firstWhere(
-      (t) => t.id == targetId,
-      orElse: () => null,
-    );
+
+    // Use safe null-aware access instead of firstWhere with orElse
+    final truck = trucks.cast<dynamic>()
+        .where((t) => t.id == targetId)
+        .firstOrNull;
+
     if (truck == null) return null;
     return LatLng(truck.latitude, truck.longitude);
   }

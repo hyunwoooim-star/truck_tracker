@@ -1,11 +1,20 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'fcm_service.g.dart';
 
 /// FCM Service for push notifications
 class FcmService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Stream subscriptions for proper cleanup
+  StreamSubscription<String>? _tokenRefreshSubscription;
+  StreamSubscription<RemoteMessage>? _foregroundMessageSubscription;
 
   // ═══════════════════════════════════════════════════════════
   // INITIALIZATION
@@ -51,7 +60,8 @@ class FcmService {
     }
 
     // Handle foreground messages
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    _foregroundMessageSubscription?.cancel();
+    _foregroundMessageSubscription = FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (kDebugMode) {
         debugPrint('📨 Foreground message received: ${message.notification?.title}');
         debugPrint('   Body: ${message.notification?.body}');
@@ -184,13 +194,34 @@ class FcmService {
 
   /// Listen to token refresh
   void listenToTokenRefresh(String userId) {
-    _messaging.onTokenRefresh.listen((newToken) {
+    // Cancel existing subscription to prevent memory leaks
+    _tokenRefreshSubscription?.cancel();
+
+    // Start new subscription and store it for cleanup
+    _tokenRefreshSubscription = _messaging.onTokenRefresh.listen((newToken) {
       debugPrint('🔄 FCM Token refreshed: $newToken');
       _firestore.collection('users').doc(userId).update({
         'fcmToken': newToken,
         'fcmTokenUpdatedAt': FieldValue.serverTimestamp(),
       });
     });
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // CLEANUP
+  // ═══════════════════════════════════════════════════════════
+
+  /// Dispose of all stream subscriptions to prevent memory leaks
+  void dispose() {
+    _tokenRefreshSubscription?.cancel();
+    _tokenRefreshSubscription = null;
+
+    _foregroundMessageSubscription?.cancel();
+    _foregroundMessageSubscription = null;
+
+    if (kDebugMode) {
+      debugPrint('🧹 FcmService disposed - all subscriptions cancelled');
+    }
   }
 }
 
@@ -203,4 +234,21 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint('🌙 Background message received: ${message.notification?.title}');
   debugPrint('   Body: ${message.notification?.body}');
   debugPrint('   Data: ${message.data}');
+}
+
+// ═══════════════════════════════════════════════════════════
+// RIVERPOD PROVIDER
+// ═══════════════════════════════════════════════════════════
+
+/// Provider for FCM Service with proper lifecycle management
+@riverpod
+FcmService fcmService(FcmServiceRef ref) {
+  final service = FcmService();
+
+  // Ensure dispose is called when provider is disposed
+  ref.onDispose(() {
+    service.dispose();
+  });
+
+  return service;
 }
