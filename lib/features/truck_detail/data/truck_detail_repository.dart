@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
+
+import '../../../core/utils/app_logger.dart';
 import '../domain/truck_detail.dart';
 
 class TruckDetailRepository {
@@ -9,59 +10,59 @@ class TruckDetailRepository {
       _firestore.collection('truck_details');
 
   Stream<TruckDetail?> watchTruckDetail(String truckId) {
-    debugPrint('📡 TruckDetailRepository: Watching truck detail $truckId');
+    AppLogger.debug('Watching truck detail $truckId', tag: 'TruckDetailRepository');
 
     return _detailsCollection.doc(truckId).snapshots().map((doc) {
       if (!doc.exists) {
-        debugPrint('⚠️ Truck detail $truckId not found');
+        AppLogger.warning('Truck detail $truckId not found', tag: 'TruckDetailRepository');
         return null;
       }
 
       try {
         final detail = TruckDetail.fromFirestore(doc);
-        debugPrint('✅ Loaded truck detail: ${detail.menuItems.length} items');
+        AppLogger.debug('Loaded truck detail: ${detail.menuItems.length} items', tag: 'TruckDetailRepository');
         return detail;
-      } catch (e) {
-        debugPrint('❌ Error parsing truck detail: $e');
+      } catch (e, stackTrace) {
+        AppLogger.error('Error parsing truck detail', error: e, stackTrace: stackTrace, tag: 'TruckDetailRepository');
         return null;
       }
     });
   }
 
   Future<TruckDetail?> getTruckDetail(String truckId) async {
-    debugPrint('🛒 TruckDetailRepository: Fetching truck detail $truckId');
+    AppLogger.debug('Fetching truck detail $truckId', tag: 'TruckDetailRepository');
 
     try {
       final doc = await _detailsCollection.doc(truckId).get();
 
       if (!doc.exists) {
-        debugPrint('⚠️ Truck detail not found');
+        AppLogger.warning('Truck detail not found', tag: 'TruckDetailRepository');
         return null;
       }
 
       final detail = TruckDetail.fromFirestore(doc);
-      debugPrint('✅ Truck detail fetched');
+      AppLogger.success('Truck detail fetched', tag: 'TruckDetailRepository');
       return detail;
-    } catch (e) {
-      debugPrint('❌ Error fetching truck detail: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error fetching truck detail', error: e, stackTrace: stackTrace, tag: 'TruckDetailRepository');
       return null;
     }
   }
 
   Future<void> updateTruckDetail(String truckId, TruckDetail detail) async {
-    debugPrint('🛒 TruckDetailRepository: Updating truck detail $truckId');
+    AppLogger.debug('Updating truck detail $truckId', tag: 'TruckDetailRepository');
 
     try {
       await _detailsCollection.doc(truckId).set(detail.toFirestore());
-      debugPrint('✅ Truck detail updated');
-    } catch (e) {
-      debugPrint('❌ Error updating truck detail: $e');
+      AppLogger.success('Truck detail updated', tag: 'TruckDetailRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error updating truck detail', error: e, stackTrace: stackTrace, tag: 'TruckDetailRepository');
       rethrow;
     }
   }
 
   Future<void> toggleMenuItemSoldOut(String truckId, String menuItemId) async {
-    debugPrint('🛒 TruckDetailRepository: Toggling sold-out for $menuItemId');
+    AppLogger.debug('Toggling sold-out for $menuItemId', tag: 'TruckDetailRepository');
 
     try {
       final detail = await getTruckDetail(truckId);
@@ -80,9 +81,9 @@ class TruckDetailRepository {
       final updatedDetail = detail.copyWith(menuItems: updatedMenuItems);
       await updateTruckDetail(truckId, updatedDetail);
 
-      debugPrint('✅ Menu item sold-out status toggled');
-    } catch (e) {
-      debugPrint('❌ Error toggling sold-out: $e');
+      AppLogger.success('Menu item sold-out status toggled', tag: 'TruckDetailRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error toggling sold-out', error: e, stackTrace: stackTrace, tag: 'TruckDetailRepository');
       rethrow;
     }
   }
