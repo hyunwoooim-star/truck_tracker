@@ -422,11 +422,11 @@ class _StatusTag extends StatelessWidget {
   Color get _bgColor {
     switch (status) {
       case TruckStatus.onRoute:
-        return AppTheme.mustardYellow.withOpacity(0.15);
+        return AppTheme.mustardYellow15;
       case TruckStatus.resting:
-        return AppTheme.textTertiary.withOpacity(0.15);
+        return AppTheme.textTertiary15;
       case TruckStatus.maintenance:
-        return const Color(0xFFFF9800).withOpacity(0.15);
+        return AppTheme.orange15;
     }
   }
 

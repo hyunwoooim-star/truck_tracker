@@ -98,7 +98,7 @@ class AnalyticsScreen extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.electricBlue.withOpacity(0.1),
+        color: AppTheme.mustardYellow10,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: AppTheme.electricBlue,
@@ -302,7 +302,7 @@ class AnalyticsScreen extends ConsumerWidget {
             Icon(
               Icons.bar_chart_outlined,
               size: 64,
-              color: AppTheme.textSecondary.withOpacity(0.5),
+              color: AppTheme.textSecondary50,
             ),
             const SizedBox(height: 16),
             const Text(

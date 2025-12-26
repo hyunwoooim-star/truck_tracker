@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/themes/app_theme.dart';
 import '../../order/data/order_repository.dart';
 import '../../order/domain/order.dart';
 
-const Color _mustard = Color(0xFFFFC107);
-const Color _charcoal = Color(0xFF121212);
+const Color _mustard = AppTheme.mustardYellow;
+const Color _charcoal = AppTheme.midnightCharcoal;
 
 /// Weekly Revenue Chart using fl_chart
 class WeeklyRevenueChart extends ConsumerWidget {
@@ -27,7 +28,7 @@ class WeeklyRevenueChart extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.grey[900],
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _mustard.withOpacity(0.3)),
+        border: Border.all(color: AppTheme.mustardYellow30),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +112,7 @@ class WeeklyRevenueChart extends ConsumerWidget {
         barTouchData: BarTouchData(
           enabled: true,
           touchTooltipData: BarTouchTooltipData(
-            getTooltipColor: (_) => _mustard.withOpacity(0.9),
+            getTooltipColor: (_) => AppTheme.mustardYellow90,
             tooltipPadding: const EdgeInsets.all(8),
             tooltipMargin: 8,
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
@@ -198,7 +199,7 @@ class WeeklyRevenueChart extends ConsumerWidget {
             barRods: [
               BarChartRodData(
                 toY: revenue,
-                color: isToday ? _mustard : _mustard.withOpacity(0.7),
+                color: isToday ? _mustard : AppTheme.mustardYellow70,
                 width: 20,
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(4),

@@ -157,7 +157,7 @@ class TruckListScreen extends ConsumerWidget {
                                             borderRadius: BorderRadius.circular(8),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black.withOpacity(0.3),
+                                                color: AppTheme.black30,
                                                 blurRadius: 4,
                                                 offset: const Offset(0, 2),
                                               ),

@@ -29,30 +29,48 @@ class AppTheme {
 
   // ✅ OPTIMIZATION: Pre-computed opacity variants to avoid creating Color objects in build methods
   // Mustard Yellow opacity variants
+  static const Color mustardYellow05 = Color(0x0DFFC107);  // 5% opacity
   static const Color mustardYellow10 = Color(0x1AFFC107);  // 10% opacity
   static const Color mustardYellow15 = Color(0x26FFC107);  // 15% opacity
   static const Color mustardYellow20 = Color(0x33FFC107);  // 20% opacity
   static const Color mustardYellow30 = Color(0x4DFFC107);  // 30% opacity
   static const Color mustardYellow50 = Color(0x80FFC107);  // 50% opacity
+  static const Color mustardYellow70 = Color(0xB3FFC107);  // 70% opacity
+  static const Color mustardYellow90 = Color(0xE6FFC107);  // 90% opacity
 
   // Black opacity variants
-  static const Color black10 = Color(0x1A000000);
-  static const Color black20 = Color(0x33000000);
-  static const Color black30 = Color(0x4D000000);
-  static const Color black50 = Color(0x80000000);
+  static const Color black03 = Color(0x08000000);  // 3% opacity
+  static const Color black05 = Color(0x0D000000);  // 5% opacity
+  static const Color black10 = Color(0x1A000000);  // 10% opacity
+  static const Color black20 = Color(0x33000000);  // 20% opacity
+  static const Color black30 = Color(0x4D000000);  // 30% opacity
+  static const Color black50 = Color(0x80000000);  // 50% opacity
 
   // White opacity variants
   static const Color white10 = Color(0x1AFFFFFF);
   static const Color white20 = Color(0x33FFFFFF);
   static const Color white30 = Color(0x4DFFFFFF);
   static const Color white50 = Color(0x80FFFFFF);
+  static const Color white60 = Color(0x99FFFFFF);  // 60% opacity
+  static const Color white80 = Color(0xCCFFFFFF);  // 80% opacity
+
+  // Text color opacity variants
+  static const Color textTertiary15 = Color(0x2680808);  // textTertiary (0xFF808080) with 15% opacity
+  static const Color textSecondary50 = Color(0x80B0B0B0);  // textSecondary (0xFFB0B0B0) with 50% opacity
 
   // Grey opacity variants
   static const Color grey15 = Color(0x26808080);
   static const Color grey30 = Color(0x4D808080);
 
-  // Orange opacity variant
+  // Orange opacity variants
   static const Color orange15 = Color(0x26FF9800);
+  static const Color orange30 = Color(0x4DFF9800);  // 30% opacity
+
+  // Green opacity variant
+  static const Color green30 = Color(0x4D4CAF50);  // 30% opacity
+
+  // Red opacity variant
+  static const Color red50 = Color(0x80F44336);  // 50% opacity
 
   // 레거시 호환성 (기존 코드에서 사용 중)
   static const Color baeminMint = mustardYellow;
