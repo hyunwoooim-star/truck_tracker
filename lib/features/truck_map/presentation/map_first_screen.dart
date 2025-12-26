@@ -30,6 +30,10 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
 
   double _currentSheetSize = _halfSheetSize;
 
+  // ✅ OPTIMIZATION: Cache markers to prevent rebuilding on every frame
+  Set<Marker>? _cachedMarkers;
+  List<dynamic>? _lastTruckList;
+
   @override
   void initState() {
     super.initState();
@@ -116,26 +120,32 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                 );
               }
 
-              final markers = validTrucks.map((truck) {
-                return Marker(
-                  markerId: MarkerId(truck.id),
-                  position: LatLng(truck.latitude, truck.longitude),
-                  icon: BitmapDescriptor.defaultMarkerWithHue(
-                      _getMarkerHue(truck.foodType)),
-                  alpha: truck.status == TruckStatus.maintenance ? 0.3 : 1.0,
-                  infoWindow: InfoWindow(
-                    title: truck.foodType,
-                    snippet: truck.locationDescription,
-                  ),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => TruckDetailScreen(truck: truck),
-                      ),
-                    );
-                  },
-                );
-              }).toSet();
+              // ✅ OPTIMIZATION: Only rebuild markers if truck list changed
+              if (_lastTruckList != validTrucks) {
+                _cachedMarkers = validTrucks.map((truck) {
+                  return Marker(
+                    markerId: MarkerId(truck.id),
+                    position: LatLng(truck.latitude, truck.longitude),
+                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                        _getMarkerHue(truck.foodType)),
+                    alpha: truck.status == TruckStatus.maintenance ? 0.3 : 1.0,
+                    infoWindow: InfoWindow(
+                      title: truck.foodType,
+                      snippet: truck.locationDescription,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => TruckDetailScreen(truck: truck),
+                        ),
+                      );
+                    },
+                  );
+                }).toSet();
+                _lastTruckList = validTrucks;
+              }
+
+              final markers = _cachedMarkers!;
 
               final initialPosition = validTrucks.isNotEmpty
                   ? LatLng(validTrucks.first.latitude,
@@ -253,6 +263,7 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 12),
                             itemCount: trucks.length,
+                            itemExtent: 100.0, // ✅ OPTIMIZATION: Fixed height for better scroll performance
                             itemBuilder: (context, index) {
                               final truck = trucks[index];
                               return _TruckCard(truck: truck);

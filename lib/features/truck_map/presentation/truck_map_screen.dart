@@ -25,6 +25,10 @@ class TruckMapScreen extends ConsumerStatefulWidget {
 class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
   final Completer<GoogleMapController> _mapController = Completer();
 
+  // ✅ OPTIMIZATION: Cache markers to prevent rebuilding on every frame
+  Set<Marker>? _cachedMarkers;
+  List<dynamic>? _lastTruckList;
+
   // Enhanced color mapping helper based on food characteristics
   static double _getMarkerHue(String foodType) {
     // Categorize food types by color based on their characteristics:
@@ -207,35 +211,41 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
             );
           }
 
-          // Create markers for all valid trucks
-          final markers = validTrucks.map((truck) {
-            final position = LatLng(truck.latitude, truck.longitude);
-            
-            // Determine marker appearance based on status
-            final markerAlpha = truck.status == TruckStatus.maintenance ? 0.3 : 1.0;
-            
-            print('📍 Creating marker for ${truck.id} (${truck.foodType}) at ${truck.latitude}, ${truck.longitude}, status: ${truck.status}');
-            
-            return Marker(
-              markerId: MarkerId(truck.id),
-              position: position,
-              icon: BitmapDescriptor.defaultMarkerWithHue(_getMarkerHue(truck.foodType)),
-              alpha: markerAlpha, // Dim maintenance trucks
-              infoWindow: InfoWindow(
-                title: '${truck.foodType} ${truck.status == TruckStatus.maintenance ? '(정비중)' : ''}',
-                snippet: truck.locationDescription,
-              ),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => TruckDetailScreen(truck: truck),
-                  ),
-                );
-              },
-            );
-          }).toSet();
+          // ✅ OPTIMIZATION: Only rebuild markers if truck list changed
+          if (_lastTruckList != validTrucks) {
+            _cachedMarkers = validTrucks.map((truck) {
+              final position = LatLng(truck.latitude, truck.longitude);
 
-          print('🎯 Total markers created: ${markers.length}');
+              // Determine marker appearance based on status
+              final markerAlpha = truck.status == TruckStatus.maintenance ? 0.3 : 1.0;
+
+              print('📍 Creating marker for ${truck.id} (${truck.foodType}) at ${truck.latitude}, ${truck.longitude}, status: ${truck.status}');
+
+              return Marker(
+                markerId: MarkerId(truck.id),
+                position: position,
+                icon: BitmapDescriptor.defaultMarkerWithHue(_getMarkerHue(truck.foodType)),
+                alpha: markerAlpha, // Dim maintenance trucks
+                infoWindow: InfoWindow(
+                  title: '${truck.foodType} ${truck.status == TruckStatus.maintenance ? '(정비중)' : ''}',
+                  snippet: truck.locationDescription,
+                ),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => TruckDetailScreen(truck: truck),
+                    ),
+                  );
+                },
+              );
+            }).toSet();
+            _lastTruckList = validTrucks;
+            print('🎯 Markers rebuilt: ${_cachedMarkers!.length}');
+          } else {
+            print('♻️ Using cached markers: ${_cachedMarkers!.length}');
+          }
+
+          final markers = _cachedMarkers!;
 
           // Find first operating truck for initial camera position
           final operatingTrucks = validTrucks

@@ -211,22 +211,43 @@ class AnalyticsRepository {
 
       debugPrint('📊 Found ${snapshot.docs.length} analytics documents');
 
+      // ✅ OPTIMIZATION: Batch fetch all reviews for the date range (instead of N+1 queries)
+      final reviewsSnapshot = await _firestore
+          .collection('reviews')
+          .where('truckId', isEqualTo: truckId)
+          .where('createdAt',
+              isGreaterThanOrEqualTo: Timestamp.fromDate(dateRange.start))
+          .where('createdAt',
+              isLessThanOrEqualTo: Timestamp.fromDate(dateRange.end.add(const Duration(days: 1))))
+          .get();
+
+      debugPrint('📊 Found ${reviewsSnapshot.docs.length} reviews in date range');
+
+      // Group reviews by date (in-memory aggregation)
+      final reviewsByDate = <String, int>{};
+      for (final reviewDoc in reviewsSnapshot.docs) {
+        final createdAt = (reviewDoc.data()['createdAt'] as Timestamp?)?.toDate();
+        if (createdAt != null) {
+          final dateKey = _getDateKey(createdAt);
+          reviewsByDate[dateKey] = (reviewsByDate[dateKey] ?? 0) + 1;
+        }
+      }
+
+      // Build daily analytics with pre-grouped review counts
       for (final doc in snapshot.docs) {
         final data = doc.data();
         final date = (data['date'] as Timestamp?)?.toDate() ?? DateTime.now();
-
-        // Get review count for this specific date
-        final reviewCount = await _getReviewCountForDate(truckId, date);
+        final dateKey = _getDateKey(date);
 
         dailyData.add(DailyAnalyticsItem(
           date: date,
           clickCount: data['clickCount'] ?? 0,
-          reviewCount: reviewCount,
+          reviewCount: reviewsByDate[dateKey] ?? 0,
           favoriteCount: data['favoriteCount'] ?? 0,
         ));
       }
 
-      debugPrint('✅ Analytics range retrieved successfully');
+      debugPrint('✅ Analytics range retrieved (2 queries instead of N+1)');
       return TruckAnalyticsRange(
         dateRange: dateRange,
         dailyData: dailyData,

@@ -27,6 +27,33 @@ class AppTheme {
   static const Color textSecondary = Color(0xFFB0B0B0);
   static const Color textTertiary = Color(0xFF808080);
 
+  // ✅ OPTIMIZATION: Pre-computed opacity variants to avoid creating Color objects in build methods
+  // Mustard Yellow opacity variants
+  static const Color mustardYellow10 = Color(0x1AFFC107);  // 10% opacity
+  static const Color mustardYellow15 = Color(0x26FFC107);  // 15% opacity
+  static const Color mustardYellow20 = Color(0x33FFC107);  // 20% opacity
+  static const Color mustardYellow30 = Color(0x4DFFC107);  // 30% opacity
+  static const Color mustardYellow50 = Color(0x80FFC107);  // 50% opacity
+
+  // Black opacity variants
+  static const Color black10 = Color(0x1A000000);
+  static const Color black20 = Color(0x33000000);
+  static const Color black30 = Color(0x4D000000);
+  static const Color black50 = Color(0x80000000);
+
+  // White opacity variants
+  static const Color white10 = Color(0x1AFFFFFF);
+  static const Color white20 = Color(0x33FFFFFF);
+  static const Color white30 = Color(0x4DFFFFFF);
+  static const Color white50 = Color(0x80FFFFFF);
+
+  // Grey opacity variants
+  static const Color grey15 = Color(0x26808080);
+  static const Color grey30 = Color(0x4D808080);
+
+  // Orange opacity variant
+  static const Color orange15 = Color(0x26FF9800);
+
   // 레거시 호환성 (기존 코드에서 사용 중)
   static const Color baeminMint = mustardYellow;
   static const Color background = midnightCharcoal;
