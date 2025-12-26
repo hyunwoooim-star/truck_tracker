@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/utils/app_logger.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../data/favorite_repository.dart';
 
@@ -28,7 +28,7 @@ class FavoriteToggle extends AutoDisposeAsyncNotifier<bool> {
     final userId = ref.read(currentUserIdProvider);
 
     if (userId == null) {
-      debugPrint('❌ User not logged in');
+      AppLogger.warning('User not logged in', tag: 'FavoriteToggle');
       return;
     }
 
@@ -41,7 +41,7 @@ class FavoriteToggle extends AutoDisposeAsyncNotifier<bool> {
         truckId: truckId,
       );
 
-      debugPrint('⭐ Favorite toggled: $newStatus');
+      AppLogger.debug('Favorite toggled: $newStatus', tag: 'FavoriteToggle');
       return newStatus;
     });
   }
