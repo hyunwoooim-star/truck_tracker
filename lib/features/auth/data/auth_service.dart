@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../../../core/utils/app_logger.dart';
 
 /// Unified Authentication Service
 /// Supports Email, Google, and prepared for Kakao/Naver
@@ -27,9 +28,7 @@ class AuthService {
 
   /// Sign in with email and password
   Future<UserCredential> signInWithEmail(String email, String password) async {
-    if (kDebugMode) {
-      debugPrint('🔐 AuthService: Signing in with email: $email');
-    }
+    AppLogger.debug('Signing in with email: $email', tag: 'AuthService');
 
     try {
       final userCredential = await _auth.signInWithEmailAndPassword(
@@ -37,20 +36,16 @@ class AuthService {
         password: password,
       );
 
-      if (kDebugMode) {
-        debugPrint('✅ AuthService: Email sign in successful!');
-        debugPrint('   User ID: ${userCredential.user?.uid}');
-        debugPrint('   Email: ${userCredential.user?.email}');
-      }
+      AppLogger.success('Email sign in successful!', tag: 'AuthService');
+      AppLogger.debug('User ID: ${userCredential.user?.uid}', tag: 'AuthService');
+      AppLogger.debug('Email: ${userCredential.user?.email}', tag: 'AuthService');
 
       // Update user info in Firestore
       await _updateUserInfo(userCredential.user!, 'email');
 
       return userCredential;
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ AuthService: Email sign in failed: $e');
-      }
+    } catch (e, stackTrace) {
+      AppLogger.error('Email sign in failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
       rethrow;
     }
   }
@@ -61,9 +56,7 @@ class AuthService {
     String password, {
     String? displayName,
   }) async {
-    if (kDebugMode) {
-      debugPrint('🔐 AuthService: Signing up with email: $email');
-    }
+    AppLogger.debug('Signing up with email: $email', tag: 'AuthService');
 
     try {
       final userCredential = await _auth.createUserWithEmailAndPassword(
@@ -76,20 +69,16 @@ class AuthService {
         await userCredential.user?.updateDisplayName(displayName);
       }
 
-      if (kDebugMode) {
-        debugPrint('✅ AuthService: Email sign up successful!');
-        debugPrint('   User ID: ${userCredential.user?.uid}');
-        debugPrint('   Email: ${userCredential.user?.email}');
-      }
+      AppLogger.success('Email sign up successful!', tag: 'AuthService');
+      AppLogger.debug('User ID: ${userCredential.user?.uid}', tag: 'AuthService');
+      AppLogger.debug('Email: ${userCredential.user?.email}', tag: 'AuthService');
 
       // Create user document in Firestore
       await _createUserDocument(userCredential.user!, 'email');
 
       return userCredential;
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ AuthService: Email sign up failed: $e');
-      }
+    } catch (e, stackTrace) {
+      AppLogger.error('Email sign up failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
       rethrow;
     }
   }
@@ -100,10 +89,8 @@ class AuthService {
 
   /// Sign in with Google
   Future<UserCredential> signInWithGoogle() async {
-    if (kDebugMode) {
-      debugPrint('🔐 AuthService: Google sign in - DISABLED FOR BUILD');
-      debugPrint('⚠️ Google Sign-In implementation needs google_sign_in_web configuration');
-    }
+    AppLogger.debug('Google sign in - DISABLED FOR BUILD', tag: 'AuthService');
+    AppLogger.warning('Google Sign-In implementation needs google_sign_in_web configuration', tag: 'AuthService');
 
     throw UnimplementedError('Google Sign-In temporarily disabled - requires web platform configuration');
   }
@@ -114,10 +101,8 @@ class AuthService {
 
   /// Sign in with Kakao (requires kakao_flutter_sdk setup)
   Future<UserCredential?> signInWithKakao() async {
-    if (kDebugMode) {
-      debugPrint('🔐 AuthService: Kakao sign in - NOT AVAILABLE');
-      debugPrint('⚠️ Requires: kakao_flutter_sdk_user dependency');
-    }
+    AppLogger.debug('Kakao sign in - NOT AVAILABLE', tag: 'AuthService');
+    AppLogger.warning('Requires: kakao_flutter_sdk_user dependency', tag: 'AuthService');
 
     throw UnimplementedError('Kakao login requires kakao_flutter_sdk_user dependency');
   }
@@ -128,10 +113,8 @@ class AuthService {
 
   /// Sign in with Naver (requires flutter_naver_login setup)
   Future<UserCredential?> signInWithNaver() async {
-    if (kDebugMode) {
-      debugPrint('🔐 AuthService: Naver sign in - NOT AVAILABLE');
-      debugPrint('⚠️ Requires: flutter_naver_login dependency');
-    }
+    AppLogger.debug('Naver sign in - NOT AVAILABLE', tag: 'AuthService');
+    AppLogger.warning('Requires: flutter_naver_login dependency', tag: 'AuthService');
 
     throw UnimplementedError('Naver login requires flutter_naver_login dependency');
   }
@@ -158,10 +141,8 @@ class AuthService {
 
     await userDoc.set(userData, SetOptions(merge: true));
 
-    if (kDebugMode) {
-      debugPrint('✅ User document created in Firestore');
-      debugPrint('   Collection: users/${user.uid}');
-    }
+    AppLogger.success('User document created in Firestore', tag: 'AuthService');
+    AppLogger.debug('Collection: users/${user.uid}', tag: 'AuthService');
   }
 
   /// Update user info in Firestore
@@ -184,9 +165,7 @@ class AuthService {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      if (kDebugMode) {
-        debugPrint('✅ User document updated in Firestore');
-      }
+      AppLogger.success('User document updated in Firestore', tag: 'AuthService');
     }
   }
 
@@ -195,10 +174,8 @@ class AuthService {
     try {
       final userDoc = await _firestore.collection('users').doc(userId).get();
       return userDoc.data()?['role'] ?? 'customer';
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ Error getting user role: $e');
-      }
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting user role', error: e, stackTrace: stackTrace, tag: 'AuthService');
       return 'customer';
     }
   }
@@ -206,26 +183,20 @@ class AuthService {
   /// Get user's owned truck ID
   Future<int?> getOwnedTruckId(String userId) async {
     try {
-      if (kDebugMode) {
-        debugPrint('🔍 Checking owned truck ID for user: $userId');
-      }
+      AppLogger.debug('Checking owned truck ID for user: $userId', tag: 'AuthService');
 
       final userDoc = await _firestore.collection('users').doc(userId).get();
 
       if (!userDoc.exists) {
-        if (kDebugMode) {
-          debugPrint('❌ User document does not exist');
-        }
+        AppLogger.warning('User document does not exist', tag: 'AuthService');
         return null;
       }
 
       final data = userDoc.data();
       final ownedTruckId = data?['ownedTruckId'];
 
-      if (kDebugMode) {
-        debugPrint('📋 User data: $data');
-        debugPrint('🚚 Owned truck ID: $ownedTruckId (type: ${ownedTruckId.runtimeType})');
-      }
+      AppLogger.debug('User data: $data', tag: 'AuthService');
+      AppLogger.debug('Owned truck ID: $ownedTruckId (type: ${ownedTruckId.runtimeType})', tag: 'AuthService');
 
       // Handle different possible types from Firestore
       if (ownedTruckId == null) {
@@ -235,15 +206,11 @@ class AuthService {
       } else if (ownedTruckId is String) {
         return int.tryParse(ownedTruckId);
       } else {
-        if (kDebugMode) {
-          debugPrint('⚠️ Unexpected type for ownedTruckId: ${ownedTruckId.runtimeType}');
-        }
+        AppLogger.warning('Unexpected type for ownedTruckId: ${ownedTruckId.runtimeType}', tag: 'AuthService');
         return null;
       }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ Error getting owned truck ID: $e');
-      }
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting owned truck ID', error: e, stackTrace: stackTrace, tag: 'AuthService');
       return null;
     }
   }
@@ -254,40 +221,28 @@ class AuthService {
 
   /// Sign out from all providers
   Future<void> signOut() async {
-    if (kDebugMode) {
-      debugPrint('🔐 AuthService: Signing out');
-    }
+    AppLogger.debug('Signing out', tag: 'AuthService');
 
     try {
       // Sign out from Firebase
       await _auth.signOut();
 
-      if (kDebugMode) {
-        debugPrint('✅ AuthService: Sign out successful');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ AuthService: Sign out failed: $e');
-      }
+      AppLogger.success('Sign out successful', tag: 'AuthService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Sign out failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
       rethrow;
     }
   }
 
   /// Send password reset email
   Future<void> sendPasswordResetEmail(String email) async {
-    if (kDebugMode) {
-      debugPrint('🔐 AuthService: Sending password reset email to: $email');
-    }
+    AppLogger.debug('Sending password reset email to: $email', tag: 'AuthService');
 
     try {
       await _auth.sendPasswordResetEmail(email: email);
-      if (kDebugMode) {
-        debugPrint('✅ AuthService: Password reset email sent');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('❌ AuthService: Send password reset email failed: $e');
-      }
+      AppLogger.success('Password reset email sent', tag: 'AuthService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Send password reset email failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
       rethrow;
     }
   }
