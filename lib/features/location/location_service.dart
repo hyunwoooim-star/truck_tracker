@@ -1,6 +1,7 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
+
+import '../../core/utils/app_logger.dart';
 
 /// Service for handling user location and distance calculations
 class LocationService {
@@ -31,11 +32,11 @@ class LocationService {
 
   /// Request location permission
   Future<LocationPermission> requestPermission() async {
-    debugPrint('📍 LocationService: Requesting location permission');
-    
+    AppLogger.debug('Requesting location permission', tag: 'LocationService');
+
     final permission = await Geolocator.requestPermission();
-    
-    debugPrint('📍 Permission result: ${permission.name}');
+
+    AppLogger.debug('Permission result: ${permission.name}', tag: 'LocationService');
     return permission;
   }
 
@@ -44,27 +45,27 @@ class LocationService {
     // Check if location service is enabled
     bool serviceEnabled = await isLocationServiceEnabled();
     if (!serviceEnabled) {
-      debugPrint('❌ Location services are disabled');
+      AppLogger.error('Location services are disabled', tag: 'LocationService');
       return false;
     }
 
     // Check permission
     LocationPermission permission = await checkPermission();
-    
+
     if (permission == LocationPermission.denied) {
       permission = await requestPermission();
       if (permission == LocationPermission.denied) {
-        debugPrint('❌ Location permission denied');
+        AppLogger.error('Location permission denied', tag: 'LocationService');
         return false;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      debugPrint('❌ Location permission permanently denied');
+      AppLogger.error('Location permission permanently denied', tag: 'LocationService');
       return false;
     }
 
-    debugPrint('✅ Location permission granted');
+    AppLogger.success('Location permission granted', tag: 'LocationService');
     return true;
   }
 
@@ -74,13 +75,13 @@ class LocationService {
 
   /// Get current position (one-time)
   Future<Position?> getCurrentPosition() async {
-    debugPrint('📍 LocationService: Getting current position');
-    
+    AppLogger.debug('Getting current position', tag: 'LocationService');
+
     try {
       // Ensure permission first
       final hasPermission = await ensurePermission();
       if (!hasPermission) {
-        debugPrint('❌ Cannot get position: No permission');
+        AppLogger.error('Cannot get position: No permission', tag: 'LocationService');
         return null;
       }
 
@@ -89,14 +90,14 @@ class LocationService {
         timeLimit: const Duration(seconds: 10),
       );
 
-      debugPrint('✅ Position acquired:');
-      debugPrint('   Latitude: ${position.latitude}');
-      debugPrint('   Longitude: ${position.longitude}');
-      debugPrint('   Accuracy: ${position.accuracy}m');
+      AppLogger.success('Position acquired:', tag: 'LocationService');
+      AppLogger.debug('Latitude: ${position.latitude}', tag: 'LocationService');
+      AppLogger.debug('Longitude: ${position.longitude}', tag: 'LocationService');
+      AppLogger.debug('Accuracy: ${position.accuracy}m', tag: 'LocationService');
 
       return position;
-    } catch (e) {
-      debugPrint('❌ Error getting position: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting position', error: e, stackTrace: stackTrace, tag: 'LocationService');
       return null;
     }
   }
@@ -105,24 +106,24 @@ class LocationService {
   Future<Position?> getLastKnownPosition() async {
     try {
       final position = await Geolocator.getLastKnownPosition();
-      
+
       if (position != null) {
-        debugPrint('📍 Last known position:');
-        debugPrint('   Latitude: ${position.latitude}');
-        debugPrint('   Longitude: ${position.longitude}');
+        AppLogger.debug('Last known position:', tag: 'LocationService');
+        AppLogger.debug('Latitude: ${position.latitude}', tag: 'LocationService');
+        AppLogger.debug('Longitude: ${position.longitude}', tag: 'LocationService');
       }
-      
+
       return position;
-    } catch (e) {
-      debugPrint('❌ Error getting last known position: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting last known position', error: e, stackTrace: stackTrace, tag: 'LocationService');
       return null;
     }
   }
 
   /// Watch position changes (real-time stream)
   Stream<Position> watchPosition() {
-    debugPrint('📍 LocationService: Starting position stream');
-    
+    AppLogger.debug('Starting position stream', tag: 'LocationService');
+
     return Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
@@ -241,25 +242,25 @@ class LocationService {
 
     if (velocity == null) return;
 
-    debugPrint('🚛 Velocity: ${velocity.toStringAsFixed(1)} km/h');
+    AppLogger.debug('Velocity: ${velocity.toStringAsFixed(1)} km/h', tag: 'LocationService');
 
     if (velocity > velocityThreshold) {
       // High velocity detected
       _highVelocityStartTime ??= DateTime.now();
 
       final elapsed = DateTime.now().difference(_highVelocityStartTime!);
-      debugPrint('🚛 High velocity duration: ${elapsed.inSeconds}s / ${duration.inSeconds}s');
+      AppLogger.debug('High velocity duration: ${elapsed.inSeconds}s / ${duration.inSeconds}s', tag: 'LocationService');
 
       if (elapsed >= duration) {
         // Emit moving status
-        debugPrint('✅ Auto-switching to Moving status (velocity >20km/h for 5 min)');
+        AppLogger.success('Auto-switching to Moving status (velocity >20km/h for 5 min)', tag: 'LocationService');
         _movingStatusController?.add(true);
         _highVelocityStartTime = null; // Reset
       }
     } else {
       // Reset if velocity drops
       if (_highVelocityStartTime != null) {
-        debugPrint('🔄 Velocity dropped below threshold, resetting timer');
+        AppLogger.debug('Velocity dropped below threshold, resetting timer', tag: 'LocationService');
       }
       _highVelocityStartTime = null;
     }
@@ -267,7 +268,7 @@ class LocationService {
 
   /// Watch position with auto-status monitoring
   Stream<Position> watchPositionWithGeofencing() {
-    debugPrint('📍 LocationService: Starting position stream with geofencing');
+    AppLogger.debug('Starting position stream with geofencing', tag: 'LocationService');
 
     return watchPosition().map((position) {
       monitorMovingStatus(position);
@@ -332,13 +333,13 @@ class LocationService {
 
   /// Open location settings
   Future<bool> openLocationSettings() async {
-    debugPrint('📍 Opening location settings');
+    AppLogger.debug('Opening location settings', tag: 'LocationService');
     return await Geolocator.openLocationSettings();
   }
 
   /// Open app settings
   Future<bool> openAppSettings() async {
-    debugPrint('📍 Opening app settings');
+    AppLogger.debug('Opening app settings', tag: 'LocationService');
     return await Geolocator.openAppSettings();
   }
 }
