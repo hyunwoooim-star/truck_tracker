@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../../core/utils/app_logger.dart';
 import '../../truck_list/domain/truck.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
@@ -68,18 +69,15 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
   @override
   Widget build(BuildContext context) {
     final trucksAsync = ref.watch(filteredTruckListProvider);
-    
-    // 🔥 REAL-TIME DEBUG: Log every rebuild
-    print('═══════════════════════════════════════════════════════════');
-    print('🔄 TruckMapScreen REBUILD at ${DateTime.now()}');
-    print('📊 AsyncValue State: ${trucksAsync.runtimeType}');
-    
+
+    AppLogger.debug('TruckMapScreen REBUILD at ${DateTime.now()}', tag: 'TruckMapScreen');
+    AppLogger.debug('AsyncValue State: ${trucksAsync.runtimeType}', tag: 'TruckMapScreen');
+
     trucksAsync.when(
-      data: (trucks) => print('✅ Data received: ${trucks.length} trucks'),
-      loading: () => print('⏳ Loading...'),
-      error: (e, s) => print('❌ Error: $e'),
+      data: (trucks) => AppLogger.debug('Data received: ${trucks.length} trucks', tag: 'TruckMapScreen'),
+      loading: () => AppLogger.debug('Loading...', tag: 'TruckMapScreen'),
+      error: (e, s) => AppLogger.error('AsyncValue error', error: e, tag: 'TruckMapScreen'),
     );
-    print('═══════════════════════════════════════════════════════════');
 
     return Scaffold(
       appBar: AppBar(
@@ -90,16 +88,9 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
           child: CircularProgressIndicator(),
         ),
         error: (error, stack) {
-          // 🚨 EMERGENCY: Print detailed error
-          print('');
-          print('🚨🚨🚨 CRITICAL ERROR IN TRUCKMAP SCREEN 🚨🚨🚨');
-          print('Error Type: ${error.runtimeType}');
-          print('Error Message: $error');
-          print('Stack Trace:');
-          print(stack.toString().split('\n').take(10).join('\n'));
-          print('🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨');
-          print('');
-          
+          AppLogger.error('CRITICAL ERROR IN TRUCKMAP SCREEN', error: error, stackTrace: stack, tag: 'TruckMapScreen');
+          AppLogger.error('Error Type: ${error.runtimeType}', tag: 'TruckMapScreen');
+
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -131,18 +122,16 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
           );
         },
         data: (trucks) {
-          print('');
-          print('🗺️ TruckMapScreen: Received ${trucks.length} trucks from Firestore');
-          
-          // 🔥 DEBUG: Log all trucks and their status
+          AppLogger.debug('Received ${trucks.length} trucks from Firestore', tag: 'TruckMapScreen');
+
+          // Log all trucks and their status
           for (final truck in trucks) {
-            print('  🚚 Truck ${truck.id}: ${truck.foodType} - Status: ${truck.status.name} - Lat: ${truck.latitude}, Lng: ${truck.longitude}');
+            AppLogger.debug('Truck ${truck.id}: ${truck.foodType} - Status: ${truck.status.name} - Lat: ${truck.latitude}, Lng: ${truck.longitude}', tag: 'TruckMapScreen');
           }
-          print('');
-          
-          // 🛡️ SAFETY: Handle empty data
+
+          // Handle empty data
           if (trucks.isEmpty) {
-            print('⚠️ No trucks received from Firestore!');
+            AppLogger.warning('No trucks received from Firestore!', tag: 'TruckMapScreen');
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -171,22 +160,21 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
           final validTrucks = trucks.where((truck) {
             final isValid = truck.latitude != 0.0 && truck.longitude != 0.0;
             if (!isValid) {
-              print('⚠️ Truck ${truck.id} has invalid coordinates: ${truck.latitude}, ${truck.longitude}');
+              AppLogger.warning('Truck ${truck.id} has invalid coordinates: ${truck.latitude}, ${truck.longitude}', tag: 'TruckMapScreen');
             }
             return isValid;
           }).toList();
-          
-          print('✅ Valid trucks for map: ${validTrucks.length}');
-          
-          // 🔥 DEBUG: Show which trucks are valid for map
+
+          AppLogger.success('Valid trucks for map: ${validTrucks.length}', tag: 'TruckMapScreen');
+
+          // Show which trucks are valid for map
           for (final truck in validTrucks) {
-            print('  ✅ Valid for map: Truck ${truck.id} (${truck.foodType}) - ${truck.status.name}');
+            AppLogger.debug('Valid for map: Truck ${truck.id} (${truck.foodType}) - ${truck.status.name}', tag: 'TruckMapScreen');
           }
-          print('');
-          
-          // 🛡️ SAFETY: Check if all trucks were filtered out
+
+          // Check if all trucks were filtered out
           if (validTrucks.isEmpty) {
-            print('⚠️ All trucks have invalid coordinates!');
+            AppLogger.warning('All trucks have invalid coordinates!', tag: 'TruckMapScreen');
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -219,7 +207,7 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
               // Determine marker appearance based on status
               final markerAlpha = truck.status == TruckStatus.maintenance ? 0.3 : 1.0;
 
-              print('📍 Creating marker for ${truck.id} (${truck.foodType}) at ${truck.latitude}, ${truck.longitude}, status: ${truck.status}');
+              AppLogger.debug('Creating marker for ${truck.id} (${truck.foodType}) at ${truck.latitude}, ${truck.longitude}, status: ${truck.status}', tag: 'TruckMapScreen');
 
               return Marker(
                 markerId: MarkerId(truck.id),
@@ -240,9 +228,9 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
               );
             }).toSet();
             _lastTruckList = validTrucks;
-            print('🎯 Markers rebuilt: ${_cachedMarkers!.length}');
+            AppLogger.debug('Markers rebuilt: ${_cachedMarkers!.length}', tag: 'TruckMapScreen');
           } else {
-            print('♻️ Using cached markers: ${_cachedMarkers!.length}');
+            AppLogger.debug('Using cached markers: ${_cachedMarkers!.length}', tag: 'TruckMapScreen');
           }
 
           final markers = _cachedMarkers!;
@@ -259,7 +247,7 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
                       ? LatLng(validTrucks.first.latitude, validTrucks.first.longitude)
                       : const LatLng(37.5665, 126.9780))); // Default: Seoul City Hall
 
-          print('📷 Initial camera position: $initialPosition');
+          AppLogger.debug('Initial camera position: $initialPosition', tag: 'TruckMapScreen');
 
           if (validTrucks.isEmpty) {
             return const Center(
@@ -296,7 +284,7 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
 
                 // Auto-focus to first operating truck after map loads
                 if (widget.initialTruckId == null && widget.initialLatLng == null && operatingTrucks.isNotEmpty) {
-                  print('🎯 Auto-focusing to first operating truck: ${operatingTrucks.first.id}');
+                  AppLogger.debug('Auto-focusing to first operating truck: ${operatingTrucks.first.id}', tag: 'TruckMapScreen');
                   await Future.delayed(const Duration(milliseconds: 500));
                   await controller.animateCamera(
                     CameraUpdate.newCameraPosition(
