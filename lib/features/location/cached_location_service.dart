@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../core/utils/app_logger.dart';
 import 'location_service.dart';
 
 /// Cached location service that throttles GPS updates to save battery
@@ -35,7 +35,7 @@ class CachedLocationService {
           case AppLifecycleState.inactive:
             // App is visible or partially visible
             _isAppInForeground = true;
-            debugPrint('🔋 GPS RESUMED - App returned to foreground');
+            AppLogger.debug('GPS RESUMED - App returned to foreground', tag: 'CachedLocationService');
             break;
 
           case AppLifecycleState.paused:
@@ -43,7 +43,7 @@ class CachedLocationService {
           case AppLifecycleState.hidden:
             // App is in background or being terminated
             _isAppInForeground = false;
-            debugPrint('🔋 GPS PAUSED - App moved to background (battery saving)');
+            AppLogger.debug('GPS PAUSED - App moved to background (battery saving)', tag: 'CachedLocationService');
             break;
         }
       },
@@ -54,7 +54,7 @@ class CachedLocationService {
   void dispose() {
     _lifecycleListener?.dispose();
     _lifecycleListener = null;
-    debugPrint('🔋 CachedLocationService disposed');
+    AppLogger.debug('CachedLocationService disposed', tag: 'CachedLocationService');
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -72,7 +72,7 @@ class CachedLocationService {
   void clearCache() {
     _cachedPosition = null;
     _cacheTimestamp = null;
-    debugPrint('📍 CachedLocationService: Cache cleared');
+    AppLogger.debug('Cache cleared', tag: 'CachedLocationService');
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -83,17 +83,17 @@ class CachedLocationService {
   Future<Position?> getPosition() async {
     if (_isCacheValid()) {
       final age = DateTime.now().difference(_cacheTimestamp!).inSeconds;
-      debugPrint('📍 Using cached position (age: ${age}s)');
+      AppLogger.debug('Using cached position (age: ${age}s)', tag: 'CachedLocationService');
       return _cachedPosition;
     }
 
-    debugPrint('📍 Cache miss - fetching new position');
+    AppLogger.debug('Cache miss - fetching new position', tag: 'CachedLocationService');
     final position = await _locationService.getCurrentPosition();
 
     if (position != null) {
       _cachedPosition = position;
       _cacheTimestamp = DateTime.now();
-      debugPrint('📍 Position cached successfully');
+      AppLogger.debug('Position cached successfully', tag: 'CachedLocationService');
     }
 
     return position;
@@ -112,17 +112,17 @@ class CachedLocationService {
   ///
   /// 🔋 OPTIMIZATION: Automatically pauses GPS when app is in background
   Stream<Position> watchPositionCached() {
-    debugPrint('📡 CachedLocationService: Creating throttled position stream');
-    debugPrint('   Throttle interval: 30 seconds');
-    debugPrint('   Minimum distance: 50 meters');
-    debugPrint('   🔋 Background pause: ENABLED');
+    AppLogger.debug('Creating throttled position stream', tag: 'CachedLocationService');
+    AppLogger.debug('Throttle interval: 30 seconds', tag: 'CachedLocationService');
+    AppLogger.debug('Minimum distance: 50 meters', tag: 'CachedLocationService');
+    AppLogger.debug('Background pause: ENABLED', tag: 'CachedLocationService');
 
     return _locationService
         .watchPosition()
         // 🔋 OPTIMIZATION: Skip GPS updates when app is in background
         .where((_) {
           if (!_isAppInForeground) {
-            debugPrint('🔋 Skipping GPS update - app in background');
+            AppLogger.debug('Skipping GPS update - app in background', tag: 'CachedLocationService');
           }
           return _isAppInForeground;
         })
@@ -139,12 +139,14 @@ class CachedLocationService {
           final shouldEmit = distance >= 50;
 
           if (!shouldEmit) {
-            debugPrint(
-              '📍 Skipping update - distance too small: ${distance.toStringAsFixed(1)}m'
+            AppLogger.debug(
+              'Skipping update - distance too small: ${distance.toStringAsFixed(1)}m',
+              tag: 'CachedLocationService'
             );
           } else {
-            debugPrint(
-              '📍 Emitting update - distance: ${distance.toStringAsFixed(1)}m'
+            AppLogger.debug(
+              'Emitting update - distance: ${distance.toStringAsFixed(1)}m',
+              tag: 'CachedLocationService'
             );
           }
 
