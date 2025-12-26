@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../core/constants/marker_colors.dart';
 import '../../../core/utils/app_logger.dart';
@@ -47,9 +48,11 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
       error: (e, s) => AppLogger.error('AsyncValue error', error: e, tag: 'TruckMapScreen'),
     );
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('푸드트럭 지도'),
+        title: Text(l10n.foodTruckMap),
       ),
       body: trucksAsync.when(
         loading: () => const Center(
@@ -65,8 +68,8 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
               children: [
                 const Icon(Icons.error_outline, size: 48, color: Colors.red),
                 const SizedBox(height: 16),
-                const Text('지도를 불러올 수 없습니다', 
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(l10n.cannotLoadMap,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -83,7 +86,7 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
                     ref.invalidate(filteredTruckListProvider);
                   },
                   icon: const Icon(Icons.refresh),
-                  label: const Text('다시 시도'),
+                  label: Text(l10n.retry),
                 ),
               ],
             ),
@@ -106,18 +109,18 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
                 children: [
                   const Icon(Icons.local_shipping_outlined, size: 64, color: Colors.grey),
                   const SizedBox(height: 16),
-                  const Text('현재 운영 중인 트럭이 없습니다', 
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(l10n.noTrucksAvailable,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  const Text('잠시 후 다시 시도해주세요', 
-                    style: TextStyle(color: Colors.grey)),
+                  Text(l10n.pleaseRetryLater,
+                    style: const TextStyle(color: Colors.grey)),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
                     onPressed: () {
                       ref.invalidate(filteredTruckListProvider);
                     },
                     icon: const Icon(Icons.refresh),
-                    label: const Text('새로고침'),
+                    label: Text(l10n.refresh),
                   ),
                 ],
               ),
@@ -149,10 +152,10 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
                 children: [
                   const Icon(Icons.location_off, size: 64, color: Colors.orange),
                   const SizedBox(height: 16),
-                  const Text('위치 정보가 없는 트럭들입니다', 
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(l10n.trucksWithoutLocation,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  Text('총 ${trucks.length}개 트럭의 위치가 설정되지 않았습니다', 
+                  Text(l10n.trucksLocationNotSet.replaceAll('{count}', '${trucks.length}'),
                     style: const TextStyle(color: Colors.grey)),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
@@ -160,7 +163,7 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
                       ref.invalidate(filteredTruckListProvider);
                     },
                     icon: const Icon(Icons.refresh),
-                    label: const Text('다시 시도'),
+                    label: Text(l10n.retry),
                   ),
                 ],
               ),
@@ -218,20 +221,20 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
           AppLogger.debug('Initial camera position: $initialPosition', tag: 'TruckMapScreen');
 
           if (validTrucks.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.local_shipping_outlined, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
+                  const Icon(Icons.local_shipping_outlined, size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
                   Text(
-                    '현재 운영 중인 트럭이 없습니다',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                    l10n.noTrucksAvailable,
+                    style: const TextStyle(fontSize: 18, color: Colors.grey),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    '나중에 다시 확인해주세요',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                    l10n.checkLater,
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                 ],
               ),
