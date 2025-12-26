@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../../../core/utils/app_logger.dart';
 
 part 'analytics_repository.g.dart';
 
@@ -92,7 +93,7 @@ class AnalyticsRepository {
     try {
       final today = DateTime.now();
       final dateKey = _getDateKey(today);
-      
+
       await _firestore
           .collection('trucks')
           .doc(truckId)
@@ -103,9 +104,9 @@ class AnalyticsRepository {
         'date': Timestamp.fromDate(today),
       }, SetOptions(merge: true));
 
-      debugPrint('📊 Tracked click for truck $truckId');
-    } catch (e) {
-      debugPrint('❌ Error tracking click: $e');
+      AppLogger.debug('Tracked click for truck $truckId', tag: 'AnalyticsRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error tracking click', error: e, stackTrace: stackTrace, tag: 'AnalyticsRepository');
     }
   }
 
@@ -145,8 +146,8 @@ class AnalyticsRepository {
         favoriteCount: favoriteCount,
         date: (data['date'] as Timestamp?)?.toDate() ?? today,
       );
-    } catch (e) {
-      debugPrint('❌ Error getting analytics: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting analytics', error: e, stackTrace: stackTrace, tag: 'AnalyticsRepository');
       return TruckAnalytics(
         clickCount: 0,
         reviewCount: 0,
@@ -192,9 +193,9 @@ class AnalyticsRepository {
     DateTimeRange dateRange,
   ) async {
     try {
-      debugPrint('📊 Getting analytics range for truck $truckId');
-      debugPrint('   From: ${_getDateKey(dateRange.start)}');
-      debugPrint('   To: ${_getDateKey(dateRange.end)}');
+      AppLogger.debug('Getting analytics range for truck $truckId', tag: 'AnalyticsRepository');
+      AppLogger.debug('From: ${_getDateKey(dateRange.start)}', tag: 'AnalyticsRepository');
+      AppLogger.debug('To: ${_getDateKey(dateRange.end)}', tag: 'AnalyticsRepository');
 
       final dailyData = <DailyAnalyticsItem>[];
 
@@ -209,7 +210,7 @@ class AnalyticsRepository {
           .orderBy('date', descending: false)
           .get();
 
-      debugPrint('📊 Found ${snapshot.docs.length} analytics documents');
+      AppLogger.debug('Found ${snapshot.docs.length} analytics documents', tag: 'AnalyticsRepository');
 
       // ✅ OPTIMIZATION: Batch fetch all reviews for the date range (instead of N+1 queries)
       final reviewsSnapshot = await _firestore
@@ -221,7 +222,7 @@ class AnalyticsRepository {
               isLessThanOrEqualTo: Timestamp.fromDate(dateRange.end.add(const Duration(days: 1))))
           .get();
 
-      debugPrint('📊 Found ${reviewsSnapshot.docs.length} reviews in date range');
+      AppLogger.debug('Found ${reviewsSnapshot.docs.length} reviews in date range', tag: 'AnalyticsRepository');
 
       // Group reviews by date (in-memory aggregation)
       final reviewsByDate = <String, int>{};
@@ -247,14 +248,13 @@ class AnalyticsRepository {
         ));
       }
 
-      debugPrint('✅ Analytics range retrieved (2 queries instead of N+1)');
+      AppLogger.success('Analytics range retrieved (2 queries instead of N+1)', tag: 'AnalyticsRepository');
       return TruckAnalyticsRange(
         dateRange: dateRange,
         dailyData: dailyData,
       );
     } catch (e, stackTrace) {
-      debugPrint('❌ Error getting analytics range: $e');
-      debugPrint('Stack trace: $stackTrace');
+      AppLogger.error('Error getting analytics range', error: e, stackTrace: stackTrace, tag: 'AnalyticsRepository');
       return TruckAnalyticsRange(
         dateRange: dateRange,
         dailyData: [],
@@ -278,8 +278,8 @@ class AnalyticsRepository {
           .get();
 
       return snapshot.count ?? 0;
-    } catch (e) {
-      debugPrint('❌ Error getting review count for date: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting review count for date', error: e, stackTrace: stackTrace, tag: 'AnalyticsRepository');
       return 0;
     }
   }
