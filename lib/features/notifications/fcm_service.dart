@@ -5,6 +5,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../core/utils/app_logger.dart';
+
 part 'fcm_service.g.dart';
 
 /// FCM Service for push notifications
@@ -22,9 +24,7 @@ class FcmService {
 
   /// Initialize FCM and request permissions
   Future<void> initialize() async {
-    if (kDebugMode) {
-      debugPrint('🔔 Initializing FCM Service');
-    }
+    AppLogger.debug('Initializing FCM Service', tag: 'FcmService');
 
     // Request permission
     final settings = await _messaging.requestPermission(
@@ -37,36 +37,26 @@ class FcmService {
       sound: true,
     );
 
-    if (kDebugMode) {
-      debugPrint('🔔 Permission status: ${settings.authorizationStatus}');
-    }
+    AppLogger.debug('Permission status: ${settings.authorizationStatus}', tag: 'FcmService');
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      if (kDebugMode) {
-        debugPrint('✅ User granted notification permission');
-      }
+      AppLogger.success('User granted notification permission', tag: 'FcmService');
 
       // Get FCM token
       final token = await getToken();
       if (token != null) {
-        if (kDebugMode) {
-          debugPrint('🎫 FCM Token: $token');
-        }
+        AppLogger.debug('FCM Token: $token', tag: 'FcmService');
       }
     } else {
-      if (kDebugMode) {
-        debugPrint('❌ User declined notification permission');
-      }
+      AppLogger.warning('User declined notification permission', tag: 'FcmService');
     }
 
     // Handle foreground messages
     _foregroundMessageSubscription?.cancel();
     _foregroundMessageSubscription = FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (kDebugMode) {
-        debugPrint('📨 Foreground message received: ${message.notification?.title}');
-        debugPrint('   Body: ${message.notification?.body}');
-        debugPrint('   Data: ${message.data}');
-      }
+      AppLogger.debug('Foreground message received: ${message.notification?.title}', tag: 'FcmService');
+      AppLogger.debug('Body: ${message.notification?.body}', tag: 'FcmService');
+      AppLogger.debug('Data: ${message.data}', tag: 'FcmService');
     });
 
     // Handle background messages (requires top-level function)
@@ -77,10 +67,10 @@ class FcmService {
   Future<String?> getToken() async {
     try {
       final token = await _messaging.getToken();
-      debugPrint('🎫 FCM Token retrieved: $token');
+      AppLogger.debug('FCM Token retrieved: $token', tag: 'FcmService');
       return token;
-    } catch (e) {
-      debugPrint('❌ Error getting FCM token: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting FCM token', error: e, stackTrace: stackTrace, tag: 'FcmService');
       return null;
     }
   }
@@ -90,7 +80,7 @@ class FcmService {
     try {
       final token = await getToken();
       if (token == null) {
-        debugPrint('❌ No FCM token to save');
+        AppLogger.warning('No FCM token to save', tag: 'FcmService');
         return;
       }
 
@@ -99,9 +89,9 @@ class FcmService {
         'fcmTokenUpdatedAt': FieldValue.serverTimestamp(),
       });
 
-      debugPrint('✅ FCM token saved to user $userId');
-    } catch (e) {
-      debugPrint('❌ Error saving FCM token: $e');
+      AppLogger.success('FCM token saved to user $userId', tag: 'FcmService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error saving FCM token', error: e, stackTrace: stackTrace, tag: 'FcmService');
     }
   }
 
@@ -111,7 +101,7 @@ class FcmService {
 
   /// Notify all followers when truck opens
   Future<void> notifyFollowers(String truckId, String truckName) async {
-    debugPrint('🔔 Notifying followers of truck $truckId ($truckName)');
+    AppLogger.debug('Notifying followers of truck $truckId ($truckName)', tag: 'FcmService');
 
     try {
       // Get all users who have this truck in their favorites
@@ -120,7 +110,7 @@ class FcmService {
           .where('truckId', isEqualTo: truckId)
           .get();
 
-      debugPrint('📊 Found ${favoritesSnapshot.docs.length} followers');
+      AppLogger.debug('Found ${favoritesSnapshot.docs.length} followers', tag: 'FcmService');
 
       // Get FCM tokens for all followers
       final List<String> tokens = [];
@@ -135,19 +125,19 @@ class FcmService {
         }
       }
 
-      debugPrint('🎫 Found ${tokens.length} valid FCM tokens');
+      AppLogger.debug('Found ${tokens.length} valid FCM tokens', tag: 'FcmService');
 
       if (tokens.isEmpty) {
-        debugPrint('⚠️ No tokens to send notifications to');
+        AppLogger.warning('No tokens to send notifications to', tag: 'FcmService');
         return;
       }
 
       // Note: Sending notifications requires a backend server or Cloud Functions
       // This is a placeholder for the client-side logic
       // In production, you would call a Cloud Function that sends the notification
-      debugPrint('📨 Would send notification to ${tokens.length} users:');
-      debugPrint('   Title: "$truckName is now open!"');
-      debugPrint('   Body: "Your favorite truck is now serving. Come get your food!"');
+      AppLogger.debug('Would send notification to ${tokens.length} users:', tag: 'FcmService');
+      AppLogger.debug('Title: "$truckName is now open!"', tag: 'FcmService');
+      AppLogger.debug('Body: "Your favorite truck is now serving. Come get your food!"', tag: 'FcmService');
 
       // TODO: Call Cloud Function to send notification
       // Example:
@@ -159,8 +149,8 @@ class FcmService {
       //     'truckName': truckName,
       //   }),
       // );
-    } catch (e) {
-      debugPrint('❌ Error notifying followers: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error notifying followers', error: e, stackTrace: stackTrace, tag: 'FcmService');
     }
   }
 
@@ -172,9 +162,9 @@ class FcmService {
   Future<void> subscribeToTruck(String truckId) async {
     try {
       await _messaging.subscribeToTopic('truck_$truckId');
-      debugPrint('✅ Subscribed to truck_$truckId topic');
-    } catch (e) {
-      debugPrint('❌ Error subscribing to topic: $e');
+      AppLogger.success('Subscribed to truck_$truckId topic', tag: 'FcmService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error subscribing to topic', error: e, stackTrace: stackTrace, tag: 'FcmService');
     }
   }
 
@@ -182,9 +172,9 @@ class FcmService {
   Future<void> unsubscribeFromTruck(String truckId) async {
     try {
       await _messaging.unsubscribeFromTopic('truck_$truckId');
-      debugPrint('✅ Unsubscribed from truck_$truckId topic');
-    } catch (e) {
-      debugPrint('❌ Error unsubscribing from topic: $e');
+      AppLogger.success('Unsubscribed from truck_$truckId topic', tag: 'FcmService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error unsubscribing from topic', error: e, stackTrace: stackTrace, tag: 'FcmService');
     }
   }
 
@@ -199,7 +189,7 @@ class FcmService {
 
     // Start new subscription and store it for cleanup
     _tokenRefreshSubscription = _messaging.onTokenRefresh.listen((newToken) {
-      debugPrint('🔄 FCM Token refreshed: $newToken');
+      AppLogger.debug('FCM Token refreshed: $newToken', tag: 'FcmService');
       _firestore.collection('users').doc(userId).update({
         'fcmToken': newToken,
         'fcmTokenUpdatedAt': FieldValue.serverTimestamp(),
@@ -219,9 +209,7 @@ class FcmService {
     _foregroundMessageSubscription?.cancel();
     _foregroundMessageSubscription = null;
 
-    if (kDebugMode) {
-      debugPrint('🧹 FcmService disposed - all subscriptions cancelled');
-    }
+    AppLogger.debug('FcmService disposed - all subscriptions cancelled', tag: 'FcmService');
   }
 }
 
@@ -231,9 +219,9 @@ class FcmService {
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  debugPrint('🌙 Background message received: ${message.notification?.title}');
-  debugPrint('   Body: ${message.notification?.body}');
-  debugPrint('   Data: ${message.data}');
+  AppLogger.debug('Background message received: ${message.notification?.title}', tag: 'FcmService');
+  AppLogger.debug('Body: ${message.notification?.body}', tag: 'FcmService');
+  AppLogger.debug('Data: ${message.data}', tag: 'FcmService');
 }
 
 // ═══════════════════════════════════════════════════════════
