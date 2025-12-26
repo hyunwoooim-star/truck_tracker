@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/utils/app_logger.dart';
 import '../domain/review.dart';
 import '../../truck_list/data/truck_repository.dart';
 
@@ -21,10 +21,10 @@ class ReviewRepository {
 
   /// Add a new review
   Future<String> addReview(Review review) async {
-    debugPrint('📝 ReviewRepository: Adding review');
-    debugPrint('   Truck ID: ${review.truckId}');
-    debugPrint('   User: ${review.userName}');
-    debugPrint('   Rating: ${review.rating} stars');
+    AppLogger.debug('Adding review', tag: 'ReviewRepository');
+    AppLogger.debug('Truck ID: ${review.truckId}', tag: 'ReviewRepository');
+    AppLogger.debug('User: ${review.userName}', tag: 'ReviewRepository');
+    AppLogger.debug('Rating: ${review.rating} stars', tag: 'ReviewRepository');
 
     try {
       final docRef = await _reviewsCollection.add(Review.toFirestore(review));
@@ -34,34 +34,34 @@ class ReviewRepository {
       final totalReviews = await getReviewCount(review.truckId);
       await _truckRepository.updateRatings(review.truckId, avgRating, totalReviews);
 
-      debugPrint('✅ Review added: ${docRef.id}');
+      AppLogger.success('Review added: ${docRef.id}', tag: 'ReviewRepository');
       return docRef.id;
-    } catch (e) {
-      debugPrint('❌ Error adding review: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error adding review', error: e, stackTrace: stackTrace, tag: 'ReviewRepository');
       rethrow;
     }
   }
 
   /// Update a review
   Future<void> updateReview(String reviewId, Map<String, dynamic> updates) async {
-    debugPrint('📝 ReviewRepository: Updating review $reviewId');
-    
+    AppLogger.debug('Updating review $reviewId', tag: 'ReviewRepository');
+
     try {
       await _reviewsCollection.doc(reviewId).update({
         ...updates,
         'updatedAt': FieldValue.serverTimestamp(),
       });
-      
-      debugPrint('✅ Review updated');
-    } catch (e) {
-      debugPrint('❌ Error updating review: $e');
+
+      AppLogger.success('Review updated', tag: 'ReviewRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error updating review', error: e, stackTrace: stackTrace, tag: 'ReviewRepository');
       rethrow;
     }
   }
 
   /// Delete a review
   Future<void> deleteReview(String reviewId) async {
-    debugPrint('📝 ReviewRepository: Deleting review $reviewId');
+    AppLogger.debug('Deleting review $reviewId', tag: 'ReviewRepository');
 
     try {
       // Get the review first to know which truck to update
@@ -77,16 +77,16 @@ class ReviewRepository {
         await _truckRepository.updateRatings(truckId, avgRating, totalReviews);
       }
 
-      debugPrint('✅ Review deleted');
-    } catch (e) {
-      debugPrint('❌ Error deleting review: $e');
+      AppLogger.success('Review deleted', tag: 'ReviewRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error deleting review', error: e, stackTrace: stackTrace, tag: 'ReviewRepository');
       rethrow;
     }
   }
 
   /// Add owner reply to a review
   Future<void> addOwnerReply(String reviewId, String ownerReply) async {
-    debugPrint('💬 ReviewRepository: Adding owner reply to review $reviewId');
+    AppLogger.debug('Adding owner reply to review $reviewId', tag: 'ReviewRepository');
 
     try {
       await _reviewsCollection.doc(reviewId).update({
@@ -95,16 +95,16 @@ class ReviewRepository {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      debugPrint('✅ Owner reply added');
-    } catch (e) {
-      debugPrint('❌ Error adding owner reply: $e');
+      AppLogger.success('Owner reply added', tag: 'ReviewRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error adding owner reply', error: e, stackTrace: stackTrace, tag: 'ReviewRepository');
       rethrow;
     }
   }
 
   /// Delete owner reply from a review
   Future<void> deleteOwnerReply(String reviewId) async {
-    debugPrint('💬 ReviewRepository: Deleting owner reply from review $reviewId');
+    AppLogger.debug('Deleting owner reply from review $reviewId', tag: 'ReviewRepository');
 
     try {
       await _reviewsCollection.doc(reviewId).update({
@@ -113,9 +113,9 @@ class ReviewRepository {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      debugPrint('✅ Owner reply deleted');
-    } catch (e) {
-      debugPrint('❌ Error deleting owner reply: $e');
+      AppLogger.success('Owner reply deleted', tag: 'ReviewRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error deleting owner reply', error: e, stackTrace: stackTrace, tag: 'ReviewRepository');
       rethrow;
     }
   }
@@ -126,7 +126,7 @@ class ReviewRepository {
 
   /// Watch reviews for a truck (real-time stream, limited for performance)
   Stream<List<Review>> watchTruckReviews(String truckId, {int limit = 20}) {
-    debugPrint('📡 ReviewRepository: Watching reviews for truck $truckId (limit: $limit)');
+    AppLogger.debug('Watching reviews for truck $truckId (limit: $limit)', tag: 'ReviewRepository');
 
     return _reviewsCollection
         .where('truckId', isEqualTo: truckId)
@@ -137,20 +137,20 @@ class ReviewRepository {
       final reviews = snapshot.docs.map((doc) {
         try {
           return Review.fromFirestore(doc);
-        } catch (e) {
-          debugPrint('⚠️ Error parsing review ${doc.id}: $e');
+        } catch (e, stackTrace) {
+          AppLogger.warning('Error parsing review ${doc.id}', tag: 'ReviewRepository');
           return null;
         }
       }).whereType<Review>().toList();
-      
-      debugPrint('📡 Loaded ${reviews.length} reviews for truck $truckId');
+
+      AppLogger.debug('Loaded ${reviews.length} reviews for truck $truckId', tag: 'ReviewRepository');
       return reviews;
     });
   }
 
   /// Get reviews for a truck (one-time fetch, limited for performance)
   Future<List<Review>> getTruckReviews(String truckId, {int limit = 100}) async {
-    debugPrint('📝 ReviewRepository: Fetching reviews for truck $truckId (limit: $limit)');
+    AppLogger.debug('Fetching reviews for truck $truckId (limit: $limit)', tag: 'ReviewRepository');
 
     try {
       final snapshot = await _reviewsCollection
@@ -158,22 +158,22 @@ class ReviewRepository {
           .orderBy('createdAt', descending: true)
           .limit(limit)  // 🚀 OPTIMIZATION: Limit to prevent excessive reads
           .get();
-      
+
       final reviews = snapshot.docs
           .map((doc) => Review.fromFirestore(doc))
           .toList();
-      
-      debugPrint('✅ Fetched ${reviews.length} reviews');
+
+      AppLogger.success('Fetched ${reviews.length} reviews', tag: 'ReviewRepository');
       return reviews;
-    } catch (e) {
-      debugPrint('❌ Error fetching reviews: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error fetching reviews', error: e, stackTrace: stackTrace, tag: 'ReviewRepository');
       return [];
     }
   }
 
   /// Get user's reviews (limited for performance)
   Future<List<Review>> getUserReviews(String userId, {int limit = 50}) async {
-    debugPrint('📝 ReviewRepository: Fetching reviews by user $userId (limit: $limit)');
+    AppLogger.debug('Fetching reviews by user $userId (limit: $limit)', tag: 'ReviewRepository');
 
     try {
       final snapshot = await _reviewsCollection
@@ -181,15 +181,15 @@ class ReviewRepository {
           .orderBy('createdAt', descending: true)
           .limit(limit)  // 🚀 OPTIMIZATION: Limit to prevent excessive reads
           .get();
-      
+
       final reviews = snapshot.docs
           .map((doc) => Review.fromFirestore(doc))
           .toList();
-      
-      debugPrint('✅ Fetched ${reviews.length} reviews by user');
+
+      AppLogger.success('Fetched ${reviews.length} reviews by user', tag: 'ReviewRepository');
       return reviews;
-    } catch (e) {
-      debugPrint('❌ Error fetching user reviews: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error fetching user reviews', error: e, stackTrace: stackTrace, tag: 'ReviewRepository');
       return [];
     }
   }
@@ -202,16 +202,16 @@ class ReviewRepository {
   Future<double> getAverageRating(String truckId) async {
     try {
       final reviews = await getTruckReviews(truckId);
-      
+
       if (reviews.isEmpty) return 0.0;
-      
+
       final sum = reviews.fold<int>(0, (sum, review) => sum + review.rating);
       final average = sum / reviews.length;
-      
-      debugPrint('⭐ Average rating for truck $truckId: ${average.toStringAsFixed(1)}');
+
+      AppLogger.debug('Average rating for truck $truckId: ${average.toStringAsFixed(1)}', tag: 'ReviewRepository');
       return average;
-    } catch (e) {
-      debugPrint('❌ Error calculating average rating: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error calculating average rating', error: e, stackTrace: stackTrace, tag: 'ReviewRepository');
       return 0.0;
     }
   }
@@ -223,10 +223,10 @@ class ReviewRepository {
           .where('truckId', isEqualTo: truckId)
           .count()
           .get();
-      
+
       return snapshot.count ?? 0;
-    } catch (e) {
-      debugPrint('❌ Error getting review count: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting review count', error: e, stackTrace: stackTrace, tag: 'ReviewRepository');
       return 0;
     }
   }
@@ -239,10 +239,10 @@ class ReviewRepository {
           .where('userId', isEqualTo: userId)
           .limit(1)
           .get();
-      
+
       return snapshot.docs.isNotEmpty;
-    } catch (e) {
-      debugPrint('❌ Error checking user review: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error checking user review', error: e, stackTrace: stackTrace, tag: 'ReviewRepository');
       return false;
     }
   }
