@@ -64,7 +64,7 @@ class TruckDetailScreen extends ConsumerWidget {
                         memCacheWidth: 800,       // 🚀 OPTIMIZATION: Limit memory cache
                         fit: BoxFit.cover,
                         placeholder: (context, url) => Container(
-                          color: AppTheme.baeminMint.withOpacity(0.1),
+                          color: AppTheme.mustardYellow10,
                           child: const Center(
                             child: CircularProgressIndicator(),
                           ),
@@ -97,7 +97,7 @@ class TruckDetailScreen extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: AppTheme.black10,
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -174,7 +174,7 @@ class TruckDetailScreen extends ConsumerWidget {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.baeminMint.withOpacity(0.1),
+                                  color: AppTheme.mustardYellow10,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Row(
@@ -401,7 +401,7 @@ class TruckDetailScreen extends ConsumerWidget {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: AppTheme.black05,
                     blurRadius: 10,
                     offset: const Offset(0, -2),
                   ),
@@ -446,7 +446,7 @@ class TruckDetailScreen extends ConsumerWidget {
               color: AppTheme.charcoalMedium,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: AppTheme.black20,
                   blurRadius: 10,
                   offset: const Offset(0, -2),
                 ),
@@ -742,7 +742,7 @@ class _ReviewCard extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: AppTheme.baeminMint.withOpacity(0.1),
+                  backgroundColor: AppTheme.mustardYellow10,
                   child: Text(
                     review.userName.substring(0, 1),
                     style: const TextStyle(
@@ -848,10 +848,10 @@ class _ReviewCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFC107).withOpacity(0.1),
+                  color: AppTheme.mustardYellow10,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: const Color(0xFFFFC107).withOpacity(0.3),
+                    color: AppTheme.mustardYellow30,
                   ),
                 ),
                 child: Column(

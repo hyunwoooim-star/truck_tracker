@@ -20,8 +20,8 @@ import '../../talk/presentation/talk_widget.dart';
 import '../../../scripts/migrate_mock_data.dart';
 
 // Mustard and Charcoal color scheme
-const Color _mustard = Color(0xFFFFC107);
-const Color _charcoal = Color(0xFF121212);
+const Color _mustard = AppTheme.mustardYellow;
+const Color _charcoal = AppTheme.midnightCharcoal;
 
 // Mock sales data provider
 final todaySalesProvider = Provider<List<SalesItem>>((ref) {
@@ -257,7 +257,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _mustard.withOpacity(0.3), width: 1),
+        border: Border.all(color: AppTheme.mustardYellow30, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -514,7 +514,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
       decoration: BoxDecoration(
         color: Colors.grey[900],
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _mustard.withOpacity(0.3)),
+        border: Border.all(color: AppTheme.mustardYellow30),
       ),
       child: Row(
         children: [
@@ -618,15 +618,15 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: _buildKanbanColumn(l10n.pending, pending, _mustard.withOpacity(0.3), ref),
+                      child: _buildKanbanColumn(l10n.pending, pending, AppTheme.mustardYellow30, ref),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: _buildKanbanColumn(l10n.preparing, preparing, Colors.orange.withOpacity(0.3), ref),
+                      child: _buildKanbanColumn(l10n.preparing, preparing, AppTheme.orange30, ref),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: _buildKanbanColumn(l10n.ready, ready, Colors.green.withOpacity(0.3), ref),
+                      child: _buildKanbanColumn(l10n.ready, ready, AppTheme.green30, ref),
                     ),
                   ],
                 ),
@@ -708,7 +708,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
       decoration: BoxDecoration(
         color: _charcoal,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: _mustard.withOpacity(0.2)),
+        border: Border.all(color: AppTheme.mustardYellow20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -795,8 +795,8 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: item.isSoldOut
-                            ? Colors.red.withOpacity(0.5)
-                            : _mustard.withOpacity(0.3),
+                            ? AppTheme.red50
+                            : AppTheme.mustardYellow30,
                       ),
                     ),
                     child: Row(
@@ -958,7 +958,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _mustard.withOpacity(0.3), width: 1),
+        border: Border.all(color: AppTheme.mustardYellow30, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1012,7 +1012,7 @@ class _SalesItemCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: AppTheme.black03,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -1024,7 +1024,7 @@ class _SalesItemCard extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppTheme.baeminMint.withOpacity(0.1),
+              color: AppTheme.mustardYellow10,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
