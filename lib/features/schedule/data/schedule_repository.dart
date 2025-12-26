@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/utils/app_logger.dart';
 import '../domain/daily_schedule.dart';
 
 part 'schedule_repository.g.dart';
@@ -29,8 +30,8 @@ class ScheduleRepository {
       if (!doc.exists) return null;
 
       return DailySchedule.fromJson(doc.data()!);
-    } catch (e) {
-      print('❌ Error getting today schedule: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting today schedule', error: e, stackTrace: stackTrace, tag: 'ScheduleRepository');
       return null;
     }
   }
@@ -56,8 +57,8 @@ class ScheduleRepository {
       });
 
       return result;
-    } catch (e) {
-      print('❌ Error getting weekly schedule: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting weekly schedule', error: e, stackTrace: stackTrace, tag: 'ScheduleRepository');
       return {};
     }
   }
@@ -74,8 +75,8 @@ class ScheduleRepository {
       await _firestore.collection('trucks').doc(truckId).update({
         'weeklySchedule': scheduleData,
       });
-    } catch (e) {
-      print('❌ Error updating weekly schedule: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error updating weekly schedule', error: e, stackTrace: stackTrace, tag: 'ScheduleRepository');
       rethrow;
     }
   }
@@ -90,8 +91,8 @@ class ScheduleRepository {
           .collection('schedules')
           .doc(dateKey)
           .set(DailySchedule.toFirestore(schedule));
-    } catch (e) {
-      print('❌ Error updating schedule: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error updating schedule', error: e, stackTrace: stackTrace, tag: 'ScheduleRepository');
       rethrow;
     }
   }
@@ -105,8 +106,8 @@ class ScheduleRepository {
           .collection('schedules')
           .doc(date)
           .delete();
-    } catch (e) {
-      print('❌ Error deleting schedule: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error deleting schedule', error: e, stackTrace: stackTrace, tag: 'ScheduleRepository');
       rethrow;
     }
   }
