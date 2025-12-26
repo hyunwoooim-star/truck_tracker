@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import '../core/utils/app_logger.dart';
 import '../features/truck_list/data/truck_repository.dart';
 import '../features/truck_list/domain/truck.dart';
 
@@ -115,15 +115,14 @@ class MockDataMigration {
   /// Migrate all mock trucks to Firestore
   Future<void> migrateTrucks() async {
     try {
-      debugPrint('🚀 Starting migration of ${mockTrucks.length} trucks to Firestore...');
-      
+      AppLogger.debug('Starting migration of ${mockTrucks.length} trucks to Firestore...', tag: 'MockDataMigration');
+
       await _repository.addTrucksBatch(mockTrucks);
-      
-      debugPrint('✅ Successfully migrated ${mockTrucks.length} trucks!');
-      debugPrint('📊 Truck IDs: ${mockTrucks.map((t) => t.id).join(', ')}');
+
+      AppLogger.success('Successfully migrated ${mockTrucks.length} trucks!', tag: 'MockDataMigration');
+      AppLogger.debug('Truck IDs: ${mockTrucks.map((t) => t.id).join(', ')}', tag: 'MockDataMigration');
     } catch (e, stackTrace) {
-      debugPrint('❌ Error migrating trucks: $e');
-      debugPrint('Stack trace: $stackTrace');
+      AppLogger.error('Error migrating trucks', error: e, stackTrace: stackTrace, tag: 'MockDataMigration');
       rethrow;
     }
   }
@@ -131,14 +130,13 @@ class MockDataMigration {
   /// Clear all trucks from Firestore (use with caution!)
   Future<void> clearAllTrucks() async {
     try {
-      debugPrint('🗑️  Clearing all trucks from Firestore...');
-      
+      AppLogger.debug('Clearing all trucks from Firestore...', tag: 'MockDataMigration');
+
       await _repository.deleteAllTrucks();
-      
-      debugPrint('✅ All trucks cleared!');
+
+      AppLogger.success('All trucks cleared!', tag: 'MockDataMigration');
     } catch (e, stackTrace) {
-      debugPrint('❌ Error clearing trucks: $e');
-      debugPrint('Stack trace: $stackTrace');
+      AppLogger.error('Error clearing trucks', error: e, stackTrace: stackTrace, tag: 'MockDataMigration');
       rethrow;
     }
   }
@@ -146,15 +144,14 @@ class MockDataMigration {
   /// Reset: Clear all and re-migrate
   Future<void> resetData() async {
     try {
-      debugPrint('🔄 Resetting Firestore data...');
-      
+      AppLogger.debug('Resetting Firestore data...', tag: 'MockDataMigration');
+
       await clearAllTrucks();
       await migrateTrucks();
-      
-      debugPrint('✅ Data reset complete!');
+
+      AppLogger.success('Data reset complete!', tag: 'MockDataMigration');
     } catch (e, stackTrace) {
-      debugPrint('❌ Error resetting data: $e');
-      debugPrint('Stack trace: $stackTrace');
+      AppLogger.error('Error resetting data', error: e, stackTrace: stackTrace, tag: 'MockDataMigration');
       rethrow;
     }
   }
