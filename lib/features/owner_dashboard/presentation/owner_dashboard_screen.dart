@@ -23,31 +23,8 @@ import '../../../scripts/migrate_mock_data.dart';
 const Color _mustard = AppTheme.mustardYellow;
 const Color _charcoal = AppTheme.midnightCharcoal;
 
-// Mock sales data provider
-final todaySalesProvider = Provider<List<SalesItem>>((ref) {
-  return [
-    SalesItem(time: '18:30', item: '왕닭꼬치 x 3', amount: 10500),
-    SalesItem(time: '18:45', item: '호떡 세트', amount: 6000),
-    SalesItem(time: '19:10', item: '불막창 모듬', amount: 20000),
-    SalesItem(time: '19:25', item: '심야라멘 x 2', amount: 17000),
-    SalesItem(time: '19:40', item: '크레페퀸 딸기', amount: 5500),
-    SalesItem(time: '20:00', item: '옛날통닭 반반', amount: 15000),
-    SalesItem(time: '20:15', item: '붕어빵 x 5', amount: 5000),
-    SalesItem(time: '20:30', item: '어묵탕', amount: 2000),
-  ];
-});
-
-class SalesItem {
-  final String time;
-  final String item;
-  final int amount;
-
-  SalesItem({
-    required this.time,
-    required this.item,
-    required this.amount,
-  });
-}
+// ❌ REMOVED: Mock sales data provider (todaySalesProvider, SalesItem)
+// TODO: Implement real-time sales tracking from order data
 
 class OwnerDashboardScreen extends ConsumerStatefulWidget {
   const OwnerDashboardScreen({super.key});
@@ -139,8 +116,9 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                 // Today's Announcement Section
                 _buildAnnouncementSection(context, ref, truck, l10n),
 
-                // Live Stats
-                _buildLiveStats(ref, truck, numberFormat, l10n),
+                // ❌ REMOVED: Live Stats (mock data)
+                // TODO: Implement real-time stats from order data
+                // _buildLiveStats(ref, truck, numberFormat, l10n),
 
                 // Kanban Order Board
                 _buildKanbanBoard(ref, truck, l10n),
@@ -501,94 +479,11 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     );
   }
 
-  Widget _buildLiveStats(WidgetRef ref, truck, NumberFormat numberFormat, AppLocalizations l10n) {
-    final salesData = ref.watch(todaySalesProvider);
-    final totalRevenue = salesData.fold<int>(0, (sum, item) => sum + item.amount);
-
-    // Mock: regulars nearby logic
-    final regularsNearby = 12;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.mustardYellow30),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.regularsNearby,
-                  style: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.people, color: _mustard, size: 28),
-                    const SizedBox(width: 8),
-                    Text(
-                      '$regularsNearby',
-                      style: const TextStyle(
-                        color: _mustard,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: 1,
-            height: 60,
-            color: Colors.grey[700],
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.todaysRevenue,
-                  style: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.attach_money, color: _mustard, size: 28),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        '₩${numberFormat.format(totalRevenue)}',
-                        style: const TextStyle(
-                          color: _mustard,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // ❌ REMOVED: _buildLiveStats method (88 lines) - used mock todaySalesProvider
+  // TODO: Implement real-time stats widget using actual order data from truckOrdersProvider
+  // Should show:
+  // - Regular customers nearby (from customer_checkin data)
+  // - Today's revenue (sum of completed orders)
 
   Widget _buildKanbanBoard(WidgetRef ref, truck, AppLocalizations l10n) {
     final ordersAsync = ref.watch(truckOrdersProvider(truck.id));
