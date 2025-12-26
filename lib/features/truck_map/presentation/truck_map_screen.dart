@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../../core/constants/marker_colors.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../truck_list/domain/truck.dart';
 import '../../truck_list/presentation/truck_provider.dart';
@@ -30,41 +31,8 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
   Set<Marker>? _cachedMarkers;
   List<dynamic>? _lastTruckList;
 
-  // Enhanced color mapping helper based on food characteristics
-  static double _getMarkerHue(String foodType) {
-    // Categorize food types by color based on their characteristics:
-    // Red (0°) - Spicy/Grilled foods
-    // Orange (30°) - Warm/Sweet foods
-    // Yellow (60°) - Light/Savory foods
-    // Green (120°) - Fresh/Healthy foods
-    // Cyan (180°) - Cool/Refreshing foods
-    // Blue (240°) - Specialty/Premium foods
-    // Magenta (300°) - Desserts/Sweets
-    // Rose (330°) - Rich/Hearty foods
-    
-    final colorMap = {
-      // Spicy/Grilled - Red
-      '닭꼬치': BitmapDescriptor.hueRed, // 0° - Grilled chicken
-      '불막창': BitmapDescriptor.hueRose, // 330° - Spicy grilled intestines
-      
-      // Warm/Sweet - Orange/Yellow
-      '호떡': BitmapDescriptor.hueOrange, // 30° - Sweet pancake
-      '붕어빵': BitmapDescriptor.hueYellow, // 60° - Fish-shaped pastry
-      
-      // Savory/Comfort - Yellow/Green
-      '어묵': BitmapDescriptor.hueYellow, // 60° - Fish cake
-      '옛날통닭': BitmapDescriptor.hueGreen, // 120° - Fried chicken
-      
-      // Specialty/Premium - Violet/Blue
-      '심야라멘': BitmapDescriptor.hueViolet, // 270° - Late night ramen
-      
-      // Desserts - Magenta/Rose
-      '크레페퀸': BitmapDescriptor.hueMagenta, // 300° - Crepe dessert
-    };
-    
-    // Robust fallback: return Baemin Mint for any unmatched types
-    return colorMap[foodType] ?? 175.0; // Baemin Mint (Cyan-ish)
-  }
+  // Get marker color from centralized MarkerColors
+  static double _getMarkerHue(String foodType) => MarkerColors.getHue(foodType);
 
   @override
   Widget build(BuildContext context) {

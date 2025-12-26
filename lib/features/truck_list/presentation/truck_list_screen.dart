@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../../core/constants/food_types.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../shared/widgets/status_tag.dart';
 import '../../auth/presentation/auth_provider.dart';
@@ -364,18 +365,6 @@ class TruckListScreen extends ConsumerWidget {
 class _FilterBar extends ConsumerWidget {
   const _FilterBar();
 
-  static const List<String> _filterTags = [
-    '전체',
-    '닭꼬치',
-    '호떡',
-    '어묵',
-    '붕어빵',
-    '심야라멘',
-    '불막창',
-    '크레페퀸',
-    '옛날통닭',
-  ];
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedTag = ref.watch(truckFilterNotifierProvider).selectedTag;
@@ -387,7 +376,7 @@ class _FilterBar extends ConsumerWidget {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
-                        children: _filterTags.map((tag) {
+                        children: FoodTypes.filterTags.map((tag) {
             final isSelected = tag == selectedTag;
             
             return Padding(
