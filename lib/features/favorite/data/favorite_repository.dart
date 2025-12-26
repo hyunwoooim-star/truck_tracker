@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/utils/app_logger.dart';
 import '../../notifications/fcm_service.dart';
 import '../../truck_list/data/truck_repository.dart';
 
@@ -25,8 +25,8 @@ class FavoriteRepository {
     required String truckId,
     String? fcmToken,
   }) async {
-    debugPrint('⭐ FavoriteRepository: Adding favorite');
-    debugPrint('   User: $userId, Truck: $truckId');
+    AppLogger.debug('Adding favorite', tag: 'FavoriteRepository');
+    AppLogger.debug('User: $userId, Truck: $truckId', tag: 'FavoriteRepository');
 
     try {
       final docId = '${userId}_$truckId';
@@ -45,9 +45,9 @@ class FavoriteRepository {
       final newCount = await getFavoriteCount(truckId);
       await _truckRepository.updateFavoriteCount(truckId, newCount);
 
-      debugPrint('✅ Favorite added and subscribed to truck notifications');
-    } catch (e) {
-      debugPrint('❌ Error adding favorite: $e');
+      AppLogger.success('Favorite added and subscribed to truck notifications', tag: 'FavoriteRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error adding favorite', error: e, stackTrace: stackTrace, tag: 'FavoriteRepository');
       rethrow;
     }
   }
@@ -57,8 +57,8 @@ class FavoriteRepository {
     required String userId,
     required String truckId,
   }) async {
-    debugPrint('⭐ FavoriteRepository: Removing favorite');
-    debugPrint('   User: $userId, Truck: $truckId');
+    AppLogger.debug('Removing favorite', tag: 'FavoriteRepository');
+    AppLogger.debug('User: $userId, Truck: $truckId', tag: 'FavoriteRepository');
 
     try {
       final docId = '${userId}_$truckId';
@@ -71,9 +71,9 @@ class FavoriteRepository {
       final newCount = await getFavoriteCount(truckId);
       await _truckRepository.updateFavoriteCount(truckId, newCount);
 
-      debugPrint('✅ Favorite removed and unsubscribed from truck notifications');
-    } catch (e) {
-      debugPrint('❌ Error removing favorite: $e');
+      AppLogger.success('Favorite removed and unsubscribed from truck notifications', tag: 'FavoriteRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error removing favorite', error: e, stackTrace: stackTrace, tag: 'FavoriteRepository');
       rethrow;
     }
   }
@@ -108,16 +108,16 @@ class FavoriteRepository {
       final docId = '${userId}_$truckId';
       final doc = await _favoritesCollection.doc(docId).get();
       return doc.exists;
-    } catch (e) {
-      debugPrint('❌ Error checking favorite: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error checking favorite', error: e, stackTrace: stackTrace, tag: 'FavoriteRepository');
       return false;
     }
   }
 
   /// Watch user's favorite truck IDs (real-time stream)
   Stream<List<String>> watchUserFavorites(String userId) {
-    debugPrint('⭐ FavoriteRepository: Watching favorites for user $userId');
-    
+    AppLogger.debug('Watching favorites for user $userId', tag: 'FavoriteRepository');
+
     return _favoritesCollection
         .where('userId', isEqualTo: userId)
         .snapshots()
@@ -125,16 +125,16 @@ class FavoriteRepository {
       final truckIds = snapshot.docs
           .map((doc) => doc.data()['truckId'] as String)
           .toList();
-      
-      debugPrint('⭐ User has ${truckIds.length} favorites');
+
+      AppLogger.debug('User has ${truckIds.length} favorites', tag: 'FavoriteRepository');
       return truckIds;
     });
   }
 
   /// Watch truck's favorite user IDs (for push notifications)
   Stream<List<String>> watchTruckFavorites(String truckId) {
-    debugPrint('⭐ FavoriteRepository: Watching favorites for truck $truckId');
-    
+    AppLogger.debug('Watching favorites for truck $truckId', tag: 'FavoriteRepository');
+
     return _favoritesCollection
         .where('truckId', isEqualTo: truckId)
         .snapshots()
@@ -142,8 +142,8 @@ class FavoriteRepository {
       final userIds = snapshot.docs
           .map((doc) => doc.data()['userId'] as String)
           .toList();
-      
-      debugPrint('⭐ Truck has ${userIds.length} favorites');
+
+      AppLogger.debug('Truck has ${userIds.length} favorites', tag: 'FavoriteRepository');
       return userIds;
     });
   }
@@ -155,10 +155,10 @@ class FavoriteRepository {
           .where('truckId', isEqualTo: truckId)
           .count()
           .get();
-      
+
       return snapshot.count ?? 0;
-    } catch (e) {
-      debugPrint('❌ Error getting favorite count: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting favorite count', error: e, stackTrace: stackTrace, tag: 'FavoriteRepository');
       return 0;
     }
   }
@@ -169,16 +169,16 @@ class FavoriteRepository {
       final snapshot = await _favoritesCollection
           .where('truckId', isEqualTo: truckId)
           .get();
-      
+
       final tokens = snapshot.docs
           .map((doc) => doc.data()['fcmToken'] as String?)
           .whereType<String>()
           .toList();
-      
-      debugPrint('⭐ Found ${tokens.length} FCM tokens for truck $truckId');
+
+      AppLogger.debug('Found ${tokens.length} FCM tokens for truck $truckId', tag: 'FavoriteRepository');
       return tokens;
-    } catch (e) {
-      debugPrint('❌ Error getting FCM tokens: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting FCM tokens', error: e, stackTrace: stackTrace, tag: 'FavoriteRepository');
       return [];
     }
   }
@@ -189,12 +189,12 @@ class FavoriteRepository {
       final snapshot = await _favoritesCollection
           .where('userId', isEqualTo: userId)
           .get();
-      
+
       return snapshot.docs
           .map((doc) => doc.data()['truckId'] as String)
           .toList();
-    } catch (e) {
-      debugPrint('❌ Error getting user favorites: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting user favorites', error: e, stackTrace: stackTrace, tag: 'FavoriteRepository');
       return [];
     }
   }
