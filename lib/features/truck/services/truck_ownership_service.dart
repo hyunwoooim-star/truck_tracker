@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
+
+import '../../../core/utils/app_logger.dart';
 
 /// Service to manage truck ownership (1-Owner-1-Truck policy)
 class TruckOwnershipService {
@@ -11,12 +12,12 @@ class TruckOwnershipService {
 
   /// Get list of available truck IDs (not owned by anyone)
   Future<List<int>> getAvailableTruckIds() async {
-    debugPrint('🚛 TruckOwnershipService: Fetching available truck IDs');
-    
+    AppLogger.debug('Fetching available truck IDs', tag: 'TruckOwnershipService');
+
     try {
       // Get all trucks
       final trucksSnapshot = await _firestore.collection('trucks').get();
-      
+
       // Get occupied truck IDs
       final occupiedIds = trucksSnapshot.docs
           .where((doc) {
@@ -26,7 +27,7 @@ class TruckOwnershipService {
           })
           .map((doc) => int.parse(doc.id))
           .toSet();
-      
+
       // Generate list of available IDs (1-100)
       final availableIds = <int>[];
       for (int i = 1; i <= 100; i++) {
@@ -34,13 +35,13 @@ class TruckOwnershipService {
           availableIds.add(i);
         }
       }
-      
-      debugPrint('✅ Available truck IDs: ${availableIds.length}/100');
-      debugPrint('   IDs: ${availableIds.take(10).join(', ')}${availableIds.length > 10 ? '...' : ''}');
-      
+
+      AppLogger.success('Available truck IDs: ${availableIds.length}/100', tag: 'TruckOwnershipService');
+      AppLogger.debug('IDs: ${availableIds.take(10).join(', ')}${availableIds.length > 10 ? '...' : ''}', tag: 'TruckOwnershipService');
+
       return availableIds;
-    } catch (e) {
-      debugPrint('❌ Error fetching available truck IDs: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error fetching available truck IDs', error: e, stackTrace: stackTrace, tag: 'TruckOwnershipService');
       rethrow;
     }
   }
@@ -60,8 +61,8 @@ class TruckOwnershipService {
       
       final ownerId = truckDoc.data()?['ownerId'] as String?;
       return ownerId == null || ownerId.isEmpty;
-    } catch (e) {
-      debugPrint('❌ Error checking truck availability: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error checking truck availability', error: e, stackTrace: stackTrace, tag: 'TruckOwnershipService');
       return false;
     }
   }
@@ -72,35 +73,35 @@ class TruckOwnershipService {
       // Check in users collection
       final userDoc = await _firestore.collection('users').doc(userId).get();
       final ownedTruckId = userDoc.data()?['ownedTruckId'] as int?;
-      
+
       if (ownedTruckId != null) {
-        debugPrint('✅ User $userId owns truck #$ownedTruckId');
+        AppLogger.debug('User $userId owns truck #$ownedTruckId', tag: 'TruckOwnershipService');
         return ownedTruckId;
       }
-      
+
       // Double-check in trucks collection
       final trucksSnapshot = await _firestore
           .collection('trucks')
           .where('ownerId', isEqualTo: userId)
           .limit(1)
           .get();
-      
+
       if (trucksSnapshot.docs.isNotEmpty) {
         final truckId = int.parse(trucksSnapshot.docs.first.id);
-        debugPrint('✅ Found truck ownership in trucks collection: #$truckId');
-        
+        AppLogger.debug('Found truck ownership in trucks collection: #$truckId', tag: 'TruckOwnershipService');
+
         // Sync back to user document
         await _firestore.collection('users').doc(userId).update({
           'ownedTruckId': truckId,
         });
-        
+
         return truckId;
       }
-      
-      debugPrint('   User $userId does not own any truck');
+
+      AppLogger.debug('User $userId does not own any truck', tag: 'TruckOwnershipService');
       return null;
-    } catch (e) {
-      debugPrint('❌ Error getting user owned truck: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting user owned truck', error: e, stackTrace: stackTrace, tag: 'TruckOwnershipService');
       return null;
     }
   }
@@ -116,42 +117,42 @@ class TruckOwnershipService {
     required String userEmail,
     required String userName,
   }) async {
-    debugPrint('🚛 TruckOwnershipService: Attempting to claim truck #$truckId for user $userId');
-    
+    AppLogger.debug('Attempting to claim truck #$truckId for user $userId', tag: 'TruckOwnershipService');
+
     if (truckId < 1 || truckId > 100) {
-      debugPrint('❌ Invalid truck ID: $truckId (must be 1-100)');
+      AppLogger.error('Invalid truck ID: $truckId (must be 1-100)', tag: 'TruckOwnershipService');
       throw Exception('Truck ID must be between 1 and 100');
     }
-    
+
     try {
       // Run as a transaction to ensure atomicity
       return await _firestore.runTransaction<bool>((transaction) async {
         // 1. Check if user already owns a truck
         final userRef = _firestore.collection('users').doc(userId);
         final userSnapshot = await transaction.get(userRef);
-        
+
         if (!userSnapshot.exists) {
           throw Exception('User document does not exist');
         }
-        
+
         final existingTruckId = userSnapshot.data()?['ownedTruckId'] as int?;
         if (existingTruckId != null) {
-          debugPrint('❌ User already owns truck #$existingTruckId');
+          AppLogger.warning('User already owns truck #$existingTruckId', tag: 'TruckOwnershipService');
           throw Exception('이미 트럭을 소유하고 있습니다 (트럭 #$existingTruckId)');
         }
-        
+
         // 2. Check if truck is available
         final truckRef = _firestore.collection('trucks').doc('$truckId');
         final truckSnapshot = await transaction.get(truckRef);
-        
+
         if (truckSnapshot.exists) {
           final currentOwnerId = truckSnapshot.data()?['ownerId'] as String?;
           if (currentOwnerId != null && currentOwnerId.isNotEmpty) {
-            debugPrint('❌ Truck #$truckId is already owned by $currentOwnerId');
+            AppLogger.warning('Truck #$truckId is already owned by $currentOwnerId', tag: 'TruckOwnershipService');
             throw Exception('이 트럭은 이미 다른 사장님이 소유하고 있습니다');
           }
         }
-        
+
         // 3. Claim the truck
         transaction.set(
           truckRef,
@@ -172,37 +173,37 @@ class TruckOwnershipService {
           },
           SetOptions(merge: true),
         );
-        
+
         // 4. Update user document
         transaction.update(userRef, {
           'ownedTruckId': truckId,
           'role': 'owner',
           'updatedAt': FieldValue.serverTimestamp(),
         });
-        
-        debugPrint('✅ Truck #$truckId successfully claimed by $userId');
+
+        AppLogger.success('Truck #$truckId successfully claimed by $userId', tag: 'TruckOwnershipService');
         return true;
       });
-    } catch (e) {
-      debugPrint('❌ Error claiming truck: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error claiming truck', error: e, stackTrace: stackTrace, tag: 'TruckOwnershipService');
       rethrow;
     }
   }
 
   /// Release truck ownership (admin function)
   Future<void> releaseTruck(int truckId) async {
-    debugPrint('🚛 TruckOwnershipService: Releasing truck #$truckId');
-    
+    AppLogger.debug('Releasing truck #$truckId', tag: 'TruckOwnershipService');
+
     try {
       // Get current owner
       final truckDoc = await _firestore.collection('trucks').doc('$truckId').get();
       final ownerId = truckDoc.data()?['ownerId'] as String?;
-      
+
       if (ownerId == null) {
-        debugPrint('   Truck #$truckId is not owned by anyone');
+        AppLogger.debug('Truck #$truckId is not owned by anyone', tag: 'TruckOwnershipService');
         return;
       }
-      
+
       // Run as transaction
       await _firestore.runTransaction((transaction) async {
         // Update truck document
@@ -212,7 +213,7 @@ class TruckOwnershipService {
           'ownerEmail': FieldValue.delete(),
           'releasedAt': FieldValue.serverTimestamp(),
         });
-        
+
         // Update user document
         final userRef = _firestore.collection('users').doc(ownerId);
         transaction.update(userRef, {
@@ -221,10 +222,10 @@ class TruckOwnershipService {
           'updatedAt': FieldValue.serverTimestamp(),
         });
       });
-      
-      debugPrint('✅ Truck #$truckId released');
-    } catch (e) {
-      debugPrint('❌ Error releasing truck: $e');
+
+      AppLogger.success('Truck #$truckId released', tag: 'TruckOwnershipService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error releasing truck', error: e, stackTrace: stackTrace, tag: 'TruckOwnershipService');
       rethrow;
     }
   }
@@ -270,8 +271,8 @@ class TruckOwnershipService {
         'occupied': occupied,
         'available': available,
       };
-    } catch (e) {
-      debugPrint('❌ Error getting ownership stats: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting ownership stats', error: e, stackTrace: stackTrace, tag: 'TruckOwnershipService');
       return {
         'total': 100,
         'occupied': 0,
