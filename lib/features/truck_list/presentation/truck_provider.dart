@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/utils/app_logger.dart';
 import '../../location/presentation/location_provider.dart';
 import '../data/truck_repository.dart';
 import '../domain/truck.dart';
@@ -20,16 +21,14 @@ TruckRepository truckRepository(TruckRepositoryRef ref) {
 /// Firestore stream provider for real-time updates
 @riverpod
 Stream<List<Truck>> firestoreTruckStream(FirestoreTruckStreamRef ref) {
-  print('🚀 firestoreTruckStreamProvider - Creating new stream subscription');
+  AppLogger.debug('Creating new stream subscription', tag: 'FirestoreTruckStream');
   final repository = ref.watch(truckRepositoryProvider);
 
   final stream = repository.watchTrucks();
 
   // Add debug listener
   return stream.map((trucks) {
-    print(
-      '📡 firestoreTruckStreamProvider - Emitting ${trucks.length} trucks to subscribers',
-    );
+    AppLogger.debug('Emitting ${trucks.length} trucks to subscribers', tag: 'FirestoreTruckStream');
     return trucks;
   });
 }
@@ -67,26 +66,19 @@ class TruckFilterNotifier extends AutoDisposeNotifier<TruckFilterState> {
 /// Filtered truck list provider that combines Firestore stream with filter state
 @riverpod
 Stream<List<Truck>> filteredTruckList(FilteredTruckListRef ref) async* {
-  print('🔍 filteredTruckListProvider - Starting filtered stream');
+  AppLogger.debug('Starting filtered stream', tag: 'FilteredTruckList');
 
   final trucksStream = ref.watch(firestoreTruckStreamProvider.stream);
   final filterState = ref.watch(truckFilterNotifierProvider);
 
-  print(
-    '🔍 Current filter: tag="${filterState.selectedTag}", keyword="${filterState.searchKeyword}"',
-  );
+  AppLogger.debug('Current filter: tag="${filterState.selectedTag}", keyword="${filterState.searchKeyword}"', tag: 'FilteredTruckList');
 
   await for (final trucks in trucksStream) {
-    print('');
-    print(
-      '🔍 filteredTruckListProvider - Received ${trucks.length} trucks from upstream',
-    );
+    AppLogger.debug('Received ${trucks.length} trucks from upstream', tag: 'FilteredTruckList');
 
-    // 🔥 DEBUG: Show all trucks with their status
+    // Show all trucks with their status
     for (final truck in trucks) {
-      print(
-        '  🚚 Truck ${truck.id}: ${truck.foodType} - Status: ${truck.status.name}',
-      );
+      AppLogger.debug('Truck ${truck.id}: ${truck.foodType} - Status: ${truck.status.name}', tag: 'FilteredTruckList');
     }
 
     var filtered = trucks;
@@ -96,9 +88,7 @@ Stream<List<Truck>> filteredTruckList(FilteredTruckListRef ref) async* {
       filtered = filtered
           .where((truck) => truck.foodType == filterState.selectedTag)
           .toList();
-      print(
-        '  🏷️  After tag filter: ${filtered.length} trucks (tag: ${filterState.selectedTag})',
-      );
+      AppLogger.debug('After tag filter: ${filtered.length} trucks (tag: ${filterState.selectedTag})', tag: 'FilteredTruckList');
     }
 
     // Filter by search keyword
@@ -110,13 +100,10 @@ Stream<List<Truck>> filteredTruckList(FilteredTruckListRef ref) async* {
             truck.foodType.toLowerCase().contains(keyword) ||
             truck.locationDescription.toLowerCase().contains(keyword);
       }).toList();
-      print(
-        '  🔎 After search filter: ${filtered.length} trucks (keyword: $keyword)',
-      );
+      AppLogger.debug('After search filter: ${filtered.length} trucks (keyword: $keyword)', tag: 'FilteredTruckList');
     }
 
-    print('  ✅ Yielding ${filtered.length} filtered trucks to UI');
-    print('');
+    AppLogger.success('Yielding ${filtered.length} filtered trucks to UI', tag: 'FilteredTruckList');
 
     yield filtered;
   }
@@ -145,7 +132,7 @@ class SortOptionNotifier extends AutoDisposeNotifier<SortOption> {
 Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
   FilteredTrucksWithDistanceRef ref,
 ) async* {
-  print('📍 filteredTrucksWithDistanceProvider - Starting');
+  AppLogger.debug('Starting distance calculation', tag: 'FilteredTrucksWithDistance');
 
   final trucksStream = ref.watch(filteredTruckListProvider.stream);
   final sortOption = ref.watch(sortOptionNotifierProvider);
@@ -156,16 +143,14 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
   try {
     userPosition = await locationService.getCurrentPosition();
     if (userPosition != null) {
-      print(
-        '📍 User position: ${userPosition.latitude}, ${userPosition.longitude}',
-      );
+      AppLogger.debug('User position: ${userPosition.latitude}, ${userPosition.longitude}', tag: 'FilteredTrucksWithDistance');
     }
-  } catch (e) {
-    print('⚠️ Could not get user position: $e');
+  } catch (e, stackTrace) {
+    AppLogger.warning('Could not get user position', tag: 'FilteredTrucksWithDistance');
   }
 
   await for (final trucks in trucksStream) {
-    print('📍 Processing ${trucks.length} trucks with distance');
+    AppLogger.debug('Processing ${trucks.length} trucks with distance', tag: 'FilteredTrucksWithDistance');
 
     // Convert to TruckWithDistance
     final trucksWithDistance = trucks.map((truck) {
@@ -187,19 +172,19 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
     switch (sortOption) {
       case SortOption.distance:
         trucksWithDistance.sort((a, b) => a.compareByDistance(b));
-        print('📍 Sorted by distance');
+        AppLogger.debug('Sorted by distance', tag: 'FilteredTrucksWithDistance');
         break;
       case SortOption.name:
         trucksWithDistance.sort(
           (a, b) => a.truck.foodType.compareTo(b.truck.foodType),
         );
-        print('📍 Sorted by name');
+        AppLogger.debug('Sorted by name', tag: 'FilteredTrucksWithDistance');
         break;
       case SortOption.rating:
         trucksWithDistance.sort(
           (a, b) => b.truck.avgRating.compareTo(a.truck.avgRating),
         );
-        print('📍 Sorted by rating');
+        AppLogger.debug('Sorted by rating', tag: 'FilteredTrucksWithDistance');
         break;
     }
 
@@ -424,12 +409,12 @@ class TruckListNotifier extends AutoDisposeAsyncNotifier<List<Truck>> {
 /// Score = (favoriteCount * 0.4) + (avgRating * 0.6)
 @riverpod
 Stream<List<Truck>> topRankedTrucks(TopRankedTrucksRef ref) async* {
-  print('🏆 topRankedTrucksProvider - Starting Top 3 calculation');
+  AppLogger.debug('Starting Top 3 calculation', tag: 'TopRankedTrucks');
 
   final trucksStream = ref.watch(firestoreTruckStreamProvider.stream);
 
   await for (final trucks in trucksStream) {
-    print('🏆 Calculating Top 3 from ${trucks.length} trucks');
+    AppLogger.debug('Calculating Top 3 from ${trucks.length} trucks', tag: 'TopRankedTrucks');
 
     // Sort by ranking score (descending)
     final sorted = trucks.toList()
@@ -438,12 +423,13 @@ Stream<List<Truck>> topRankedTrucks(TopRankedTrucksRef ref) async* {
     // Take top 3
     final top3 = sorted.take(3).toList();
 
-    print('🏆 Top 3 Trucks:');
+    AppLogger.debug('Top 3 Trucks:', tag: 'TopRankedTrucks');
     for (var i = 0; i < top3.length; i++) {
       final truck = top3[i];
-      print(
-        '  ${i + 1}. ${truck.truckNumber} - Score: ${truck.rankingScore.toStringAsFixed(2)} '
+      AppLogger.debug(
+        '${i + 1}. ${truck.truckNumber} - Score: ${truck.rankingScore.toStringAsFixed(2)} '
         '(Favorites: ${truck.favoriteCount}, Rating: ${truck.avgRating.toStringAsFixed(1)})',
+        tag: 'TopRankedTrucks',
       );
     }
 
