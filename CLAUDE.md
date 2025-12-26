@@ -29,7 +29,9 @@ All tasks must follow this sequence:
    - Verification method
    - Rollback strategy
 
-**Stop**: Ask "계획을 승인하시겠습니까?" and wait for user approval (ok/go/yes).
+**Stop ONCE**: Ask "계획을 승인하시겠습니까?" and wait for user approval.
+
+**Approval Keywords**: "ok", "go", "yes", "응", "시작", "하자", "진행", "ㄱㄱ"
 
 **Example**:
 ```
@@ -50,13 +52,21 @@ All tasks must follow this sequence:
 - **NEVER** ask questions during execution - just do it
 - Git commits are handled by hooks - keep working
 
-**CRITICAL RULES**:
-- **NO ASKING**: Don't ask "Should I...", "Do you want...", "Is this okay?"
-- **JUST DO IT**: Make decisions based on best practices and continue
-- **FULL AUTONOMY**: You have complete authority to implement as you see fit
-- Complete all steps in the plan before stopping
-- Update TodoWrite frequently to show progress
-- Report completion with summary of changes only at the end
+**CRITICAL RULES (ABSOLUTE)**:
+- **ONE APPROVAL = FULL PHASE**: User approves ONCE, you execute ENTIRE phase
+- **ZERO INTERRUPTIONS**: Never ask questions mid-execution
+- **NO PERMISSION REQUESTS**: Don't ask "Should I...", "Do you want...", "Can I..."
+- **JUST DO IT**: Make ALL decisions autonomously based on best practices
+- **FULL AUTHORITY**: You are the lead engineer - act like it
+- **COMMIT AS YOU GO**: Git commit after each logical step
+- **PUSH FREQUENTLY**: Push to GitHub after every 2-3 commits
+- Update TodoWrite to show progress (not ask permission)
+- Report completion ONLY at the very end
+
+**Phase Completion Criteria**:
+- Phase ends when ALL planned tasks are done
+- Phase ends when Safety Brake triggers (3 failed attempts)
+- Phase does NOT end for trivial questions or small decisions
 
 ### Phase 3: 🛑 Safety Brake
 
