@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/themes/app_theme.dart';
+import 'core/utils/app_logger.dart';
 import 'generated/l10n/app_localizations.dart';
 import 'features/auth/presentation/auth_provider.dart';
 import 'features/auth/presentation/login_screen.dart';
@@ -95,30 +96,30 @@ class AuthWrapper extends ConsumerWidget {
     return authState.when(
       data: (user) {
         if (user == null) {
-          debugPrint('🔐 AuthWrapper: User not logged in → LoginScreen');
+          AppLogger.debug('User not logged in → LoginScreen', tag: 'AuthWrapper');
           // Not logged in → show login screen
           return const LoginScreen();
         }
 
-        debugPrint('🔐 AuthWrapper: User logged in (${user.uid}) → Checking truck ownership');
+        AppLogger.debug('User logged in (${user.uid}) → Checking truck ownership', tag: 'AuthWrapper');
 
         // Logged in → check if owner or customer using Provider
         return truckIdAsync.when(
           data: (ownedTruckId) {
-            debugPrint('🚚 AuthWrapper: Owned truck ID = $ownedTruckId');
+            AppLogger.debug('Owned truck ID = $ownedTruckId', tag: 'AuthWrapper');
 
             if (ownedTruckId != null) {
-              debugPrint('✅ AuthWrapper: User is owner → OwnerDashboardScreen');
+              AppLogger.debug('User is owner → OwnerDashboardScreen', tag: 'AuthWrapper');
               // User owns a truck → owner dashboard
               return const OwnerDashboardScreen();
             } else {
-              debugPrint('✅ AuthWrapper: User is customer → MapFirstScreen');
+              AppLogger.debug('User is customer → MapFirstScreen', tag: 'AuthWrapper');
               // Regular customer → map-first screen (Street Tycoon)
               return const MapFirstScreen();
             }
           },
           loading: () {
-            debugPrint('⏳ AuthWrapper: Loading truck ownership...');
+            AppLogger.debug('Loading truck ownership...', tag: 'AuthWrapper');
             return const Scaffold(
               body: Center(
                 child: CircularProgressIndicator(
@@ -128,14 +129,14 @@ class AuthWrapper extends ConsumerWidget {
             );
           },
           error: (error, stack) {
-            debugPrint('❌ AuthWrapper: Error checking truck ownership: $error');
+            AppLogger.error('Error checking truck ownership', error: error, stackTrace: stack, tag: 'AuthWrapper');
             // On error, assume customer (safer default)
             return const MapFirstScreen();
           },
         );
       },
       loading: () {
-        debugPrint('⏳ AuthWrapper: Loading auth state...');
+        AppLogger.debug('Loading auth state...', tag: 'AuthWrapper');
         return const Scaffold(
           body: Center(
             child: CircularProgressIndicator(
@@ -145,7 +146,7 @@ class AuthWrapper extends ConsumerWidget {
         );
       },
       error: (error, stack) {
-        debugPrint('❌ AuthWrapper: Auth error: $error');
+        AppLogger.error('Auth error', error: error, stackTrace: stack, tag: 'AuthWrapper');
         // On error, show login screen
         return const LoginScreen();
       },
@@ -161,9 +162,9 @@ Future<void> _cleanOldImageCache() async {
     // Remove files older than 7 days
     await cacheManager.emptyCache();
 
-    debugPrint('🧹 Image cache cleaned: Removed files older than 7 days');
-  } catch (e) {
-    debugPrint('⚠️ Failed to clean image cache: $e');
+    AppLogger.debug('Image cache cleaned: Removed files older than 7 days', tag: 'Main');
+  } catch (e, stackTrace) {
+    AppLogger.warning('Failed to clean image cache', tag: 'Main');
     // Non-critical error, continue app startup
   }
 }
