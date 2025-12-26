@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
+import '../core/utils/app_logger.dart';
 import '../features/truck_list/data/migrate_mock_data.dart';
 import '../features/truck_list/data/truck_repository.dart';
 import '../firebase_options.dart';
@@ -14,69 +15,66 @@ import '../firebase_options.dart';
 /// await initializeFirestore();
 /// ```
 Future<void> initializeFirestore() async {
-  debugPrint('🔥 Starting Firestore Initialization...');
-  
+  AppLogger.debug('Starting Firestore Initialization...', tag: 'InitializeFirestore');
+
   try {
     // Ensure Firebase is initialized
     if (Firebase.apps.isEmpty) {
-      debugPrint('📱 Initializing Firebase...');
+      AppLogger.debug('Initializing Firebase...', tag: 'InitializeFirestore');
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-      debugPrint('✅ Firebase initialized');
+      AppLogger.success('Firebase initialized', tag: 'InitializeFirestore');
     } else {
-      debugPrint('✅ Firebase already initialized');
+      AppLogger.debug('Firebase already initialized', tag: 'InitializeFirestore');
     }
 
     // Create repository
     final repository = TruckRepository();
-    debugPrint('📦 Repository created');
+    AppLogger.debug('Repository created', tag: 'InitializeFirestore');
 
     // Check if data already exists
-    debugPrint('🔍 Checking for existing data...');
+    AppLogger.debug('Checking for existing data...', tag: 'InitializeFirestore');
     final existingTrucks = await repository.getTrucks();
-    
+
     if (existingTrucks.isNotEmpty) {
-      debugPrint('⚠️  Found ${existingTrucks.length} existing trucks in Firestore');
-      debugPrint('🗑️  Clearing old data...');
+      AppLogger.warning('Found ${existingTrucks.length} existing trucks in Firestore', tag: 'InitializeFirestore');
+      AppLogger.debug('Clearing old data...', tag: 'InitializeFirestore');
       await repository.deleteAllTrucks();
-      debugPrint('✅ Old data cleared');
+      AppLogger.success('Old data cleared', tag: 'InitializeFirestore');
     }
 
     // Upload mock data
-    debugPrint('📤 Uploading ${MockDataMigration.mockTrucks.length} trucks...');
+    AppLogger.debug('Uploading ${MockDataMigration.mockTrucks.length} trucks...', tag: 'InitializeFirestore');
     await runMockDataMigration(repository);
-    
+
     // Verify upload
     final uploadedTrucks = await repository.getTrucks();
-    debugPrint('✅ Uploaded ${uploadedTrucks.length} trucks successfully!');
+    AppLogger.success('Uploaded ${uploadedTrucks.length} trucks successfully!', tag: 'InitializeFirestore');
     
     // Display summary
-    debugPrint('');
-    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    debugPrint('🎉 FIRESTORE INITIALIZATION COMPLETE!');
-    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    debugPrint('');
-    debugPrint('📊 Summary:');
-    debugPrint('   • Total trucks: ${uploadedTrucks.length}');
-    debugPrint('   • Food types: ${uploadedTrucks.map((t) => t.foodType).toSet().join(', ')}');
-    debugPrint('   • On route: ${uploadedTrucks.where((t) => t.status.name == 'onRoute').length}');
-    debugPrint('   • Resting: ${uploadedTrucks.where((t) => t.status.name == 'resting').length}');
-    debugPrint('   • Maintenance: ${uploadedTrucks.where((t) => t.status.name == 'maintenance').length}');
-    debugPrint('');
-    debugPrint('📍 Locations:');
+    AppLogger.debug('', tag: 'InitializeFirestore');
+    AppLogger.debug('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', tag: 'InitializeFirestore');
+    AppLogger.success('FIRESTORE INITIALIZATION COMPLETE!', tag: 'InitializeFirestore');
+    AppLogger.debug('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', tag: 'InitializeFirestore');
+    AppLogger.debug('', tag: 'InitializeFirestore');
+    AppLogger.debug('Summary:', tag: 'InitializeFirestore');
+    AppLogger.debug('   • Total trucks: ${uploadedTrucks.length}', tag: 'InitializeFirestore');
+    AppLogger.debug('   • Food types: ${uploadedTrucks.map((t) => t.foodType).toSet().join(', ')}', tag: 'InitializeFirestore');
+    AppLogger.debug('   • On route: ${uploadedTrucks.where((t) => t.status.name == 'onRoute').length}', tag: 'InitializeFirestore');
+    AppLogger.debug('   • Resting: ${uploadedTrucks.where((t) => t.status.name == 'resting').length}', tag: 'InitializeFirestore');
+    AppLogger.debug('   • Maintenance: ${uploadedTrucks.where((t) => t.status.name == 'maintenance').length}', tag: 'InitializeFirestore');
+    AppLogger.debug('', tag: 'InitializeFirestore');
+    AppLogger.debug('Locations:', tag: 'InitializeFirestore');
     for (final truck in uploadedTrucks) {
-      debugPrint('   • ${truck.truckNumber} (${truck.foodType}): ${truck.locationDescription}');
+      AppLogger.debug('   • ${truck.truckNumber} (${truck.foodType}): ${truck.locationDescription}', tag: 'InitializeFirestore');
     }
-    debugPrint('');
-    debugPrint('✅ App is now ready to use Firestore data!');
-    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    AppLogger.debug('', tag: 'InitializeFirestore');
+    AppLogger.success('App is now ready to use Firestore data!', tag: 'InitializeFirestore');
+    AppLogger.debug('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', tag: 'InitializeFirestore');
     
   } catch (e, stackTrace) {
-    debugPrint('❌ ERROR during Firestore initialization:');
-    debugPrint('   $e');
-    debugPrint('Stack trace:');
-    debugPrint('$stackTrace');
+    AppLogger.error('ERROR during Firestore initialization', error: e, stackTrace: stackTrace, tag: 'InitializeFirestore');
     rethrow;
   }
 }
@@ -87,15 +85,15 @@ Future<bool> hasFirestoreData() async {
     final repository = TruckRepository();
     final trucks = await repository.getTrucks();
     return trucks.isNotEmpty;
-  } catch (e) {
-    debugPrint('⚠️  Error checking Firestore: $e');
+  } catch (e, stackTrace) {
+    AppLogger.warning('Error checking Firestore', tag: 'InitializeFirestore');
     return false;
   }
 }
 
 /// Reset Firestore data (delete all and re-upload)
 Future<void> resetFirestore() async {
-  debugPrint('🔄 Resetting Firestore data...');
+  AppLogger.debug('Resetting Firestore data...', tag: 'InitializeFirestore');
   await initializeFirestore();
 }
 
