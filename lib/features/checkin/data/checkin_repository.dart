@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../core/utils/app_logger.dart';
 import '../domain/checkin.dart';
 
 final checkinRepositoryProvider = Provider<CheckinRepository>((ref) {
@@ -17,9 +18,9 @@ class CheckinRepository {
     required String truckId,
     required String truckName,
   }) async {
-    debugPrint('📍 CheckinRepository: Recording check-in');
-    debugPrint('   User: $userName ($userId)');
-    debugPrint('   Truck: $truckName ($truckId)');
+    AppLogger.debug('Recording check-in', tag: 'CheckinRepository');
+    AppLogger.debug('User: $userName ($userId)', tag: 'CheckinRepository');
+    AppLogger.debug('Truck: $truckName ($truckId)', tag: 'CheckinRepository');
 
     try {
       await _firestore.collection('checkins').add({
@@ -31,16 +32,16 @@ class CheckinRepository {
         'loyaltyPoints': 10, // Award 10 points per check-in
       });
 
-      debugPrint('✅ Check-in recorded successfully');
-    } catch (e) {
-      debugPrint('❌ Error recording check-in: $e');
+      AppLogger.success('Check-in recorded successfully', tag: 'CheckinRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error recording check-in', error: e, stackTrace: stackTrace, tag: 'CheckinRepository');
       rethrow;
     }
   }
 
   /// Get user's check-in history
   Stream<List<CheckIn>> watchUserCheckins(String userId) {
-    debugPrint('📡 CheckinRepository: Watching check-ins for user: $userId');
+    AppLogger.debug('Watching check-ins for user: $userId', tag: 'CheckinRepository');
 
     return _firestore
         .collection('checkins')
@@ -52,14 +53,14 @@ class CheckinRepository {
           .map((doc) => CheckIn.fromFirestore(doc))
           .toList();
 
-      debugPrint('📍 Received ${checkins.length} check-ins for user');
+      AppLogger.debug('Received ${checkins.length} check-ins for user', tag: 'CheckinRepository');
       return checkins;
     });
   }
 
   /// Get truck's check-in history
   Stream<List<CheckIn>> watchTruckCheckins(String truckId) {
-    debugPrint('📡 CheckinRepository: Watching check-ins for truck: $truckId');
+    AppLogger.debug('Watching check-ins for truck: $truckId', tag: 'CheckinRepository');
 
     return _firestore
         .collection('checkins')
@@ -72,14 +73,14 @@ class CheckinRepository {
           .map((doc) => CheckIn.fromFirestore(doc))
           .toList();
 
-      debugPrint('📍 Received ${checkins.length} check-ins for truck');
+      AppLogger.debug('Received ${checkins.length} check-ins for truck', tag: 'CheckinRepository');
       return checkins;
     });
   }
 
   /// Get total loyalty points for a user
   Future<int> getTotalLoyaltyPoints(String userId) async {
-    debugPrint('📊 CheckinRepository: Getting loyalty points for user: $userId');
+    AppLogger.debug('Getting loyalty points for user: $userId', tag: 'CheckinRepository');
 
     try {
       final snapshot = await _firestore
@@ -92,17 +93,17 @@ class CheckinRepository {
         (sum, doc) => sum + ((doc.data()['loyaltyPoints'] ?? 0) as int),
       );
 
-      debugPrint('✅ Total loyalty points: $totalPoints');
+      AppLogger.success('Total loyalty points: $totalPoints', tag: 'CheckinRepository');
       return totalPoints;
-    } catch (e) {
-      debugPrint('❌ Error getting loyalty points: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error getting loyalty points', error: e, stackTrace: stackTrace, tag: 'CheckinRepository');
       return 0;
     }
   }
 
   /// Check if user has checked in to truck today
   Future<bool> hasCheckedInToday(String userId, String truckId) async {
-    debugPrint('🔍 CheckinRepository: Checking if user checked in today');
+    AppLogger.debug('Checking if user checked in today', tag: 'CheckinRepository');
 
     try {
       final now = DateTime.now();
@@ -116,10 +117,10 @@ class CheckinRepository {
           .get();
 
       final hasCheckedIn = snapshot.docs.isNotEmpty;
-      debugPrint(hasCheckedIn ? '✅ Already checked in today' : '❌ Not checked in today');
+      AppLogger.debug(hasCheckedIn ? 'Already checked in today' : 'Not checked in today', tag: 'CheckinRepository');
       return hasCheckedIn;
-    } catch (e) {
-      debugPrint('❌ Error checking check-in status: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error checking check-in status', error: e, stackTrace: stackTrace, tag: 'CheckinRepository');
       return false;
     }
   }
