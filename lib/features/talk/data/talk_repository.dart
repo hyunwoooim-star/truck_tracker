@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/utils/app_logger.dart';
 import '../domain/talk_message.dart';
 
 part 'talk_repository.g.dart';
@@ -21,31 +21,31 @@ class TalkRepository {
 
   /// Send a talk message
   Future<String> sendMessage(TalkMessage message) async {
-    debugPrint('💬 TalkRepository: Sending message to truck ${message.truckId}');
-    debugPrint('   User: ${message.userName}');
-    debugPrint('   Message: ${message.message}');
+    AppLogger.debug('Sending message to truck ${message.truckId}', tag: 'TalkRepository');
+    AppLogger.debug('User: ${message.userName}', tag: 'TalkRepository');
+    AppLogger.debug('Message: ${message.message}', tag: 'TalkRepository');
 
     try {
       final docRef = await _getTalkCollection(message.truckId)
           .add(TalkMessage.toFirestore(message));
 
-      debugPrint('✅ Message sent: ${docRef.id}');
+      AppLogger.success('Message sent: ${docRef.id}', tag: 'TalkRepository');
       return docRef.id;
-    } catch (e) {
-      debugPrint('❌ Error sending message: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error sending message', error: e, stackTrace: stackTrace, tag: 'TalkRepository');
       rethrow;
     }
   }
 
   /// Delete a message
   Future<void> deleteMessage(String truckId, String messageId) async {
-    debugPrint('💬 TalkRepository: Deleting message $messageId');
+    AppLogger.debug('Deleting message $messageId', tag: 'TalkRepository');
 
     try {
       await _getTalkCollection(truckId).doc(messageId).delete();
-      debugPrint('✅ Message deleted');
-    } catch (e) {
-      debugPrint('❌ Error deleting message: $e');
+      AppLogger.success('Message deleted', tag: 'TalkRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error deleting message', error: e, stackTrace: stackTrace, tag: 'TalkRepository');
       rethrow;
     }
   }
@@ -57,7 +57,7 @@ class TalkRepository {
   /// Watch talk messages for a truck (real-time stream)
   /// Returns the most recent messages (limit: 50)
   Stream<List<TalkMessage>> watchTruckTalk(String truckId) {
-    debugPrint('📡 TalkRepository: Watching talk for truck $truckId');
+    AppLogger.debug('Watching talk for truck $truckId', tag: 'TalkRepository');
 
     return _getTalkCollection(truckId)
         .orderBy('createdAt', descending: true)
@@ -67,8 +67,8 @@ class TalkRepository {
       final messages = snapshot.docs.map((doc) {
         try {
           return TalkMessage.fromFirestore(doc);
-        } catch (e) {
-          debugPrint('⚠️ Error parsing message ${doc.id}: $e');
+        } catch (e, stackTrace) {
+          AppLogger.warning('Error parsing message ${doc.id}', tag: 'TalkRepository');
           return null;
         }
       }).whereType<TalkMessage>().toList();
@@ -76,14 +76,14 @@ class TalkRepository {
       // Reverse to show oldest first
       final reversed = messages.reversed.toList();
 
-      debugPrint('📡 Loaded ${reversed.length} talk messages for truck $truckId');
+      AppLogger.debug('Loaded ${reversed.length} talk messages for truck $truckId', tag: 'TalkRepository');
       return reversed;
     });
   }
 
   /// Get talk messages for a truck (one-time fetch)
   Future<List<TalkMessage>> getTruckTalk(String truckId, {int limit = 50}) async {
-    debugPrint('💬 TalkRepository: Fetching talk for truck $truckId');
+    AppLogger.debug('Fetching talk for truck $truckId', tag: 'TalkRepository');
 
     try {
       final snapshot = await _getTalkCollection(truckId)
@@ -97,17 +97,17 @@ class TalkRepository {
           .reversed
           .toList();
 
-      debugPrint('✅ Fetched ${messages.length} messages');
+      AppLogger.success('Fetched ${messages.length} messages', tag: 'TalkRepository');
       return messages;
-    } catch (e) {
-      debugPrint('❌ Error fetching messages: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error fetching messages', error: e, stackTrace: stackTrace, tag: 'TalkRepository');
       return [];
     }
   }
 
   /// Clear all old messages (keep only recent N messages)
   Future<void> clearOldMessages(String truckId, {int keepRecent = 50}) async {
-    debugPrint('🧹 TalkRepository: Clearing old messages for truck $truckId');
+    AppLogger.debug('Clearing old messages for truck $truckId', tag: 'TalkRepository');
 
     try {
       final snapshot = await _getTalkCollection(truckId)
@@ -115,7 +115,7 @@ class TalkRepository {
           .get();
 
       if (snapshot.docs.length <= keepRecent) {
-        debugPrint('   No old messages to delete');
+        AppLogger.debug('No old messages to delete', tag: 'TalkRepository');
         return;
       }
 
@@ -125,9 +125,9 @@ class TalkRepository {
         await doc.reference.delete();
       }
 
-      debugPrint('✅ Deleted ${toDelete.length} old messages');
-    } catch (e) {
-      debugPrint('❌ Error clearing old messages: $e');
+      AppLogger.success('Deleted ${toDelete.length} old messages', tag: 'TalkRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error clearing old messages', error: e, stackTrace: stackTrace, tag: 'TalkRepository');
     }
   }
 }
