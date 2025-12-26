@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../core/utils/app_logger.dart';
 import '../domain/truck.dart';
 
 /// Repository for managing Truck data with Firestore
@@ -14,18 +15,14 @@ class TruckRepository {
 
   /// Watch all trucks in real-time (limited to 50 for performance)
   Stream<List<Truck>> watchTrucks({int limit = 50}) {
-    print('🔥 TruckRepository.watchTrucks() - Setting up Firestore stream listener (limit: $limit)');
+    AppLogger.debug('Setting up Firestore stream listener (limit: $limit)', tag: 'TruckRepository');
 
     return _trucksCollection
         .where('status', whereIn: ['onRoute', 'resting'])  // Filter out maintenance trucks
         .limit(limit)  // 🚀 OPTIMIZATION: Limit results to prevent excessive reads
         .snapshots()
         .map((snapshot) {
-      print('');
-      print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      print('🔥 FIRESTORE SNAPSHOT RECEIVED at ${DateTime.now()}');
-      print('📦 Total documents in snapshot: ${snapshot.docs.length}');
-      print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      AppLogger.debug('Firestore snapshot received: ${snapshot.docs.length} documents', tag: 'TruckRepository');
       
       final trucks = snapshot.docs.map((doc) {
         try {
@@ -33,13 +30,13 @@ class TruckRepository {
           
           // 🛡️ SAFETY: Check if document data exists
           if (data == null) {
-            print('  ⚠️ Truck ${doc.id} has null data - skipping');
+            AppLogger.warning('Truck ${doc.id} has null data - skipping', tag: 'TruckRepository');
             return null;
           }
-          
+
           // 🛡️ SAFETY: Check for required fields
           if (!data.containsKey('latitude') || !data.containsKey('longitude')) {
-            print('  ⚠️ Truck ${doc.id} missing coordinates - skipping');
+            AppLogger.warning('Truck ${doc.id} missing coordinates - skipping', tag: 'TruckRepository');
             return null;
           }
           
@@ -47,30 +44,25 @@ class TruckRepository {
           
           // 🛡️ SAFETY: Validate coordinates
           if (truck.latitude == 0.0 && truck.longitude == 0.0) {
-            print('  ⚠️ Truck ${doc.id} has (0,0) coordinates - skipping');
+            AppLogger.warning('Truck ${doc.id} has (0,0) coordinates - skipping', tag: 'TruckRepository');
             return null;
           }
-          
-          if (truck.latitude < -90 || truck.latitude > 90 || 
+
+          if (truck.latitude < -90 || truck.latitude > 90 ||
               truck.longitude < -180 || truck.longitude > 180) {
-            print('  ⚠️ Truck ${doc.id} has invalid coordinates: ${truck.latitude}, ${truck.longitude} - skipping');
+            AppLogger.warning('Truck ${doc.id} has invalid coordinates: ${truck.latitude}, ${truck.longitude}', tag: 'TruckRepository');
             return null;
           }
-          
-          print('  ✅ Parsed: ${truck.id} (${truck.foodType}) - ${truck.status.name} - lat:${truck.latitude}, lng:${truck.longitude}');
+
+          AppLogger.debug('Parsed: ${truck.id} (${truck.foodType}) - ${truck.status.name}', tag: 'TruckRepository');
           return truck;
         } catch (e, stackTrace) {
-          print('  ❌ Error parsing truck ${doc.id}: $e');
-          print('  📋 Data: ${doc.data()}');
-          print('  📋 Stack: ${stackTrace.toString().split('\n').take(3).join('\n')}');
+          AppLogger.error('Error parsing truck ${doc.id}', error: e, stackTrace: stackTrace, tag: 'TruckRepository');
           return null;
         }
       }).whereType<Truck>().toList();
-      
-      print('');
-      print('✨ Successfully parsed ${trucks.length} trucks');
-      print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      print('');
+
+      AppLogger.success('Successfully parsed ${trucks.length} trucks', tag: 'TruckRepository');
       
       return trucks;
     });
@@ -78,9 +70,9 @@ class TruckRepository {
 
   /// Get all trucks once (limited to 50 for performance)
   Future<List<Truck>> getTrucks({int limit = 50}) async {
-    print('🔥 TruckRepository.getTrucks() - Fetching trucks (limit: $limit)');
+    AppLogger.debug('Fetching trucks (limit: $limit)', tag: 'TruckRepository');
     final snapshot = await _trucksCollection.limit(limit).get();
-    print('   Retrieved ${snapshot.docs.length} trucks');
+    AppLogger.debug('Retrieved ${snapshot.docs.length} trucks', tag: 'TruckRepository');
     return snapshot.docs.map((doc) => Truck.fromFirestore(doc)).toList();
   }
 
@@ -111,9 +103,7 @@ class TruckRepository {
 
   /// Update truck location and set isOpen to true (for business opening)
   Future<void> openForBusiness(String truckId, double latitude, double longitude) async {
-    print('🔥 TruckRepository.openForBusiness() CALLED');
-    print('   Truck ID: $truckId');
-    print('   Location: $latitude, $longitude');
+    AppLogger.debug('Opening truck for business: $truckId at ($latitude, $longitude)', tag: 'TruckRepository');
 
     try {
       await _trucksCollection.doc(truckId).update({
@@ -124,39 +114,25 @@ class TruckRepository {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      print('✅ Truck opened for business successfully!');
-      print('   Document: trucks/$truckId');
-      print('   isOpen: true (FCM notification will be triggered)');
+      AppLogger.success('Truck opened for business: trucks/$truckId', tag: 'TruckRepository');
     } catch (e, stackTrace) {
-      print('❌ Open for business failed!');
-      print('   Error: $e');
-      print('   Stack: ${stackTrace.toString().split('\n').take(3).join('\n')}');
+      AppLogger.error('Open for business failed for truck $truckId', error: e, stackTrace: stackTrace, tag: 'TruckRepository');
       rethrow;
     }
   }
 
   /// Update truck status
   Future<void> updateStatus(String truckId, TruckStatus status) async {
-    print('');
-    print('🔥 TruckRepository.updateStatus() CALLED');
-    print('   Truck ID: $truckId');
-    print('   New Status: ${status.name}');
-    print('   Firestore Path: trucks/$truckId');
-    
+    AppLogger.debug('Updating truck status: $truckId → ${status.name}', tag: 'TruckRepository');
+
     try {
       await _trucksCollection.doc(truckId).update({
         'status': status.name,
       });
-      
-      print('✅ Firestore UPDATE SUCCESS!');
-      print('   Document: trucks/$truckId');
-      print('   Field: status = ${status.name}');
-      print('');
+
+      AppLogger.success('Status updated: trucks/$truckId = ${status.name}', tag: 'TruckRepository');
     } catch (e, stackTrace) {
-      print('❌ Firestore UPDATE FAILED!');
-      print('   Error: $e');
-      print('   Stack: ${stackTrace.toString().split('\n').take(3).join('\n')}');
-      print('');
+      AppLogger.error('Status update failed for truck $truckId', error: e, stackTrace: stackTrace, tag: 'TruckRepository');
       rethrow;
     }
   }
@@ -199,9 +175,7 @@ class TruckRepository {
 
   /// Update menu items for a truck (real-time update)
   Future<void> updateMenuItems(String truckId, List<Map<String, dynamic>> menuItems) async {
-    print('🔥 TruckRepository.updateMenuItems() CALLED');
-    print('   Truck ID: $truckId');
-    print('   Menu Items Count: ${menuItems.length}');
+    AppLogger.debug('Updating menu items for truck $truckId (${menuItems.length} items)', tag: 'TruckRepository');
 
     try {
       await _trucksCollection.doc(truckId).update({
@@ -209,21 +183,16 @@ class TruckRepository {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      print('✅ Menu items updated successfully!');
-      print('   Document: trucks/$truckId');
+      AppLogger.success('Menu items updated: trucks/$truckId', tag: 'TruckRepository');
     } catch (e, stackTrace) {
-      print('❌ Menu items update failed!');
-      print('   Error: $e');
-      print('   Stack: ${stackTrace.toString().split('\n').take(3).join('\n')}');
+      AppLogger.error('Menu items update failed for truck $truckId', error: e, stackTrace: stackTrace, tag: 'TruckRepository');
       rethrow;
     }
   }
 
   /// Update announcement for a truck
   Future<void> updateAnnouncement(String truckId, String announcement) async {
-    print('📢 TruckRepository.updateAnnouncement() CALLED');
-    print('   Truck ID: $truckId');
-    print('   Announcement: $announcement');
+    AppLogger.debug('Updating announcement for truck $truckId', tag: 'TruckRepository');
 
     try {
       await _trucksCollection.doc(truckId).update({
@@ -231,21 +200,16 @@ class TruckRepository {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      print('✅ Announcement updated successfully!');
-      print('   Document: trucks/$truckId');
+      AppLogger.success('Announcement updated: trucks/$truckId', tag: 'TruckRepository');
     } catch (e, stackTrace) {
-      print('❌ Announcement update failed!');
-      print('   Error: $e');
-      print('   Stack: ${stackTrace.toString().split('\n').take(3).join('\n')}');
+      AppLogger.error('Announcement update failed for truck $truckId', error: e, stackTrace: stackTrace, tag: 'TruckRepository');
       rethrow;
     }
   }
 
   /// Update favorite count for a truck
   Future<void> updateFavoriteCount(String truckId, int count) async {
-    print('⭐ TruckRepository.updateFavoriteCount() CALLED');
-    print('   Truck ID: $truckId');
-    print('   Favorite Count: $count');
+    AppLogger.debug('Updating favorite count for truck $truckId: $count', tag: 'TruckRepository');
 
     try {
       await _trucksCollection.doc(truckId).update({
@@ -253,22 +217,16 @@ class TruckRepository {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      print('✅ Favorite count updated successfully!');
-      print('   Document: trucks/$truckId');
+      AppLogger.success('Favorite count updated: trucks/$truckId', tag: 'TruckRepository');
     } catch (e, stackTrace) {
-      print('❌ Favorite count update failed!');
-      print('   Error: $e');
-      print('   Stack: ${stackTrace.toString().split('\n').take(3).join('\n')}');
+      AppLogger.error('Favorite count update failed for truck $truckId', error: e, stackTrace: stackTrace, tag: 'TruckRepository');
       rethrow;
     }
   }
 
   /// Update rating statistics for a truck
   Future<void> updateRatings(String truckId, double avgRating, int totalReviews) async {
-    print('⭐ TruckRepository.updateRatings() CALLED');
-    print('   Truck ID: $truckId');
-    print('   Avg Rating: $avgRating');
-    print('   Total Reviews: $totalReviews');
+    AppLogger.debug('Updating ratings for truck $truckId: $avgRating ($totalReviews reviews)', tag: 'TruckRepository');
 
     try {
       await _trucksCollection.doc(truckId).update({
@@ -277,12 +235,9 @@ class TruckRepository {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      print('✅ Ratings updated successfully!');
-      print('   Document: trucks/$truckId');
+      AppLogger.success('Ratings updated: trucks/$truckId', tag: 'TruckRepository');
     } catch (e, stackTrace) {
-      print('❌ Ratings update failed!');
-      print('   Error: $e');
-      print('   Stack: ${stackTrace.toString().split('\n').take(3).join('\n')}');
+      AppLogger.error('Ratings update failed for truck $truckId', error: e, stackTrace: stackTrace, tag: 'TruckRepository');
       rethrow;
     }
   }
