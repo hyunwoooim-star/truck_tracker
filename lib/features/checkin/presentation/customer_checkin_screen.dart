@@ -153,15 +153,15 @@ class _CustomerCheckinScreenState extends ConsumerState<CustomerCheckinScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppTheme.electricBlue.withOpacity(0.2),
-                    AppTheme.electricBlue.withOpacity(0.05),
+                    AppTheme.mustardYellow20,
+                    AppTheme.mustardYellow05,
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppTheme.electricBlue.withOpacity(0.3),
+                  color: AppTheme.mustardYellow30,
                 ),
               ),
               child: Column(
@@ -203,7 +203,7 @@ class _CustomerCheckinScreenState extends ConsumerState<CustomerCheckinScreen> {
                 color: Colors.grey[900],
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppTheme.electricBlue.withOpacity(0.2),
+                  color: AppTheme.mustardYellow20,
                 ),
               ),
               clipBehavior: Clip.hardEdge,
@@ -332,7 +332,7 @@ class _CustomerCheckinScreenState extends ConsumerState<CustomerCheckinScreen> {
                 color: Colors.grey[900],
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppTheme.electricBlue.withOpacity(0.2),
+                  color: AppTheme.mustardYellow20,
                 ),
               ),
               child: Column(

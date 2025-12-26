@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/themes/app_theme.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../data/talk_repository.dart';
 import '../domain/talk_message.dart';
 
-const Color _mustard = Color(0xFFFFC107);
-const Color _charcoal = Color(0xFF121212);
+const Color _mustard = AppTheme.mustardYellow;
+const Color _charcoal = AppTheme.midnightCharcoal;
 
 /// Real-time one-line Talk widget for truck-customer communication
 class TalkWidget extends ConsumerStatefulWidget {
@@ -95,7 +96,7 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
       decoration: BoxDecoration(
         color: _charcoal,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _mustard.withOpacity(0.3)),
+        border: Border.all(color: AppTheme.mustardYellow30),
       ),
       child: Column(
         children: [
@@ -103,7 +104,7 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: _mustard.withOpacity(0.1),
+              color: AppTheme.mustardYellow10,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
             ),
             child: Row(
@@ -169,7 +170,7 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
             decoration: BoxDecoration(
               color: Colors.grey[900],
               border: Border(
-                top: BorderSide(color: _mustard.withOpacity(0.3)),
+                top: BorderSide(color: AppTheme.mustardYellow30),
               ),
             ),
             child: Row(
@@ -201,7 +202,7 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
                   onPressed: _sendMessage,
                   icon: const Icon(Icons.send, color: _mustard),
                   style: IconButton.styleFrom(
-                    backgroundColor: _mustard.withOpacity(0.2),
+                    backgroundColor: AppTheme.mustardYellow20,
                   ),
                 ),
               ],

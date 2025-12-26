@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import '../../../core/themes/app_theme.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../owner_dashboard/presentation/owner_status_provider.dart';
 
 // Mustard and Charcoal color scheme
-const Color _mustard = Color(0xFFFFC107);
-const Color _charcoal = Color(0xFF121212);
+const Color _mustard = AppTheme.mustardYellow;
+const Color _charcoal = AppTheme.midnightCharcoal;
 
 class OwnerQRScreen extends ConsumerStatefulWidget {
   const OwnerQRScreen({super.key});
@@ -59,7 +60,7 @@ class _OwnerQRScreenState extends ConsumerState<OwnerQRScreen> {
                     decoration: BoxDecoration(
                       color: Colors.grey[900],
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: _mustard.withOpacity(0.3)),
+                      border: Border.all(color: AppTheme.mustardYellow30),
                     ),
                     child: Column(
                       children: [
@@ -142,7 +143,7 @@ class _OwnerQRScreenState extends ConsumerState<OwnerQRScreen> {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: _mustard.withOpacity(0.3),
+                          color: AppTheme.mustardYellow30,
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -175,7 +176,7 @@ class _OwnerQRScreenState extends ConsumerState<OwnerQRScreen> {
                     decoration: BoxDecoration(
                       color: Colors.grey[900],
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: _mustard.withOpacity(0.2)),
+                      border: Border.all(color: AppTheme.mustardYellow20),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -204,9 +205,9 @@ class _OwnerQRScreenState extends ConsumerState<OwnerQRScreen> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: _mustard.withOpacity(0.1),
+                      color: AppTheme.mustardYellow10,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: _mustard.withOpacity(0.3)),
+                      border: Border.all(color: AppTheme.mustardYellow30),
                     ),
                     child: Column(
                       children: [
