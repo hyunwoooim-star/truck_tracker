@@ -260,5 +260,66 @@
   "favoriteSuccess": "Added to favorites!",
   "favoriteRemoved": "Removed from favorites!",
   "distance": "Distance",
-  "rating": "Rating"
+  "rating": "Rating",
+
+  "foodTruckMap": "Food Truck Map",
+  "cannotLoadMap": "Cannot load map",
+  "noTrucks": "No trucks",
+  "pleaseRetryLater": "Please try again later",
+  "checkLater": "Please check again later",
+  "trucksWithoutLocation": "Trucks without location information",
+  "trucksLocationNotSet": "{count} trucks without location set",
+  "@trucksLocationNotSet": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "searchTrucks": "Search trucks",
+  "searchPlaceholder": "Search by truck number, driver name, menu, location",
+  "viewOnMap": "View on map",
+  "favorite": "Favorite",
+
+  "statusOnRoute": "On Route",
+  "statusResting": "Resting",
+  "statusMaintenance": "Maintenance",
+  "statusStopped": "Stopped",
+  "statusInspection": "Inspection",
+
+  "login": "Login",
+  "signUp": "Sign Up",
+  "email": "Email",
+  "password": "Password",
+  "pleaseEnterEmail": "Please enter email",
+  "pleaseEnterPassword": "Please enter password",
+  "invalidEmailFormat": "Invalid email format",
+  "passwordMinLength": "Password must be at least 6 characters",
+  "agreeToTermsRequired": "Please agree to terms and privacy policy",
+  "agreeToTerms": "Agree to Terms (Required)",
+  "agreeToPrivacy": "Agree to Privacy Policy (Required)",
+  "dontHaveAccount": "Don't have an account? Sign up",
+  "alreadyHaveAccount": "Already have an account? Login",
+  "socialLogin": "Social Login",
+  "continueWithKakao": "Continue with Kakao",
+  "continueWithNaver": "Continue with Naver",
+  "startAsOwnerTest": "Start as Owner (Test)",
+  "browse": "Browse",
+  "ownerLogin": "Owner Login",
+
+  "errorUserNotFound": "Email not registered",
+  "errorWrongPassword": "Incorrect password",
+  "errorEmailInUse": "Email already in use",
+  "errorWeakPassword": "Password must be at least 6 characters",
+  "errorInvalidEmail": "Invalid email format",
+  "errorLoginCancelled": "Login cancelled",
+  "errorLoginFailed": "Error during login",
+
+  "uploadDataWarning": "This will add new data without overwriting existing data.",
+  "upload": "Upload",
+  "uploadingData": "Uploading data...",
+
+  "privacyPolicyTitle": "Privacy Policy",
+  "privacyPolicyContent": "Truck Uncle values your privacy.\n\nInformation we collect:\n• Email address, name, profile photo\n• Location information (optional)\n\nPurpose of use:\n• Service provision and improvement\n• Customer support\n\nData retention period:\n• Until account deletion\n\nYou can request to view, modify, or delete your personal information at any time.\n\nContact: support@truckajeossi.com",
+  "appName": "Truck Uncle"
 }
