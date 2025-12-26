@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:flutter/foundation.dart'; // For debugPrint
 
+import '../../../core/utils/app_logger.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../truck_list/domain/truck.dart';
 import '../../truck_list/presentation/truck_provider.dart';
@@ -68,33 +68,31 @@ class OwnerOperatingStatus extends AutoDisposeNotifier<bool> {
 
   /// Set specific status
   Future<void> setStatus(bool isOperating) async {
-    debugPrint('');
-    debugPrint('🔥🔥🔥 OWNER STATUS UPDATE TRIGGERED 🔥🔥🔥');
-    debugPrint('Current state: $state');
-    debugPrint('New state: $isOperating');
-    debugPrint('Owned Truck ID: $_ownedTruckId');
-    
+    AppLogger.debug('OWNER STATUS UPDATE TRIGGERED', tag: 'OwnerStatus');
+    AppLogger.debug('Current state: $state', tag: 'OwnerStatus');
+    AppLogger.debug('New state: $isOperating', tag: 'OwnerStatus');
+    AppLogger.debug('Owned Truck ID: $_ownedTruckId', tag: 'OwnerStatus');
+
     if (state == isOperating) {
-      debugPrint('⚠️ State unchanged, skipping update');
+      AppLogger.warning('State unchanged, skipping update', tag: 'OwnerStatus');
       return;
     }
-    
+
     state = isOperating;
 
     if (_ownedTruckId == null) {
-      debugPrint('❌ ERROR: No owned truck ID! Cannot update Firestore.');
-      debugPrint('🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥');
+      AppLogger.error('No owned truck ID! Cannot update Firestore.', tag: 'OwnerStatus');
       return;
     }
 
     try {
-      debugPrint('📡 Getting repository...');
+      AppLogger.debug('Getting repository...', tag: 'OwnerStatus');
       final repository = ref.read(truckRepositoryProvider);
-      
+
       final truckStatus = isOperating ? TruckStatus.onRoute : TruckStatus.maintenance;
-      debugPrint('🔄 Updating Firestore...');
-      debugPrint('   Truck ID: $_ownedTruckId');
-      debugPrint('   New Status: ${truckStatus.name}');
+      AppLogger.debug('Updating Firestore...', tag: 'OwnerStatus');
+      AppLogger.debug('Truck ID: $_ownedTruckId', tag: 'OwnerStatus');
+      AppLogger.debug('New Status: ${truckStatus.name}', tag: 'OwnerStatus');
 
       await repository.updateStatus(_ownedTruckId.toString(), truckStatus);
 
@@ -111,21 +109,17 @@ class OwnerOperatingStatus extends AutoDisposeNotifier<bool> {
               'type': 'truck_opening',
               'createdAt': FieldValue.serverTimestamp(),
             });
-            debugPrint('📢 Push notification triggered');
+            AppLogger.debug('Push notification triggered', tag: 'OwnerStatus');
           }
-        } catch (e) {
-          debugPrint('⚠️ Error triggering notification: $e');
+        } catch (e, stackTrace) {
+          AppLogger.warning('Error triggering notification', tag: 'OwnerStatus');
         }
       }
-      
-      debugPrint('✅ Firestore update SUCCESS!');
-      debugPrint('🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥');
+
+      AppLogger.success('Firestore update SUCCESS!', tag: 'OwnerStatus');
     } catch (e, stackTrace) {
-      debugPrint('❌ ERROR updating Firestore: $e');
-      debugPrint('📋 Stack trace:');
-      debugPrint(stackTrace.toString().split('\n').take(5).join('\n'));
-      debugPrint('🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥');
-      
+      AppLogger.error('ERROR updating Firestore', error: e, stackTrace: stackTrace, tag: 'OwnerStatus');
+
       state = !isOperating;
       rethrow;
     }
