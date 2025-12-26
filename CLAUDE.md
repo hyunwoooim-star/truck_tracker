@@ -2,270 +2,207 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+---
 
-Truck Tracker is a Flutter-based real-time food truck tracking application with a "Baemin-style" design. The app supports two user roles: **customers** who track trucks, and **owners** who manage their trucks.
+## 0. 🎯 Prime Directive (Self-Evolution)
 
-## Development Commands
+**You are the lead engineer of this project.**
 
-### Building and Running
-```bash
-# Run the app in development mode
-flutter run -d chrome  # For web
-flutter run            # For default device
+- **Self-Correction**: If you repeat the same mistake or the user corrects you, **immediately update the `## Learned Patterns` section** at the bottom of this file with a concise lesson learned.
+- **Continuous Improvement**: This file is a living document. Update it as you discover better patterns or workflows.
 
-# Build for production
-flutter build web
-flutter build apk      # Android
-flutter build ios      # iOS
+---
 
-# Clean build artifacts
-flutter clean
-flutter pub get
+## 1. 🔄 Workflow Protocol (Strict Plan-Then-Execute)
+
+All tasks must follow this sequence:
+
+### Phase 1: 🧠 Planning
+
+**Trigger**: New feature request, complex modification, or architectural change.
+
+**Action**:
+1. Use `think` mode to analyze the request
+2. Create an **[Implementation Plan]** including:
+   - Files to modify (with line numbers if known)
+   - Expected side effects
+   - Verification method
+   - Rollback strategy
+
+**Stop**: Ask "계획을 승인하시겠습니까?" and wait for user approval (ok/go/yes).
+
+**Example**:
+```
+[Implementation Plan]
+1. Modify: lib/features/truck_list/presentation/truck_list_screen.dart (lines 28, 59, 252)
+2. Side effects: UI strings will change to use AppLocalizations
+3. Verification: Run app and check Korean/English display
+4. Rollback: git reset HEAD^ if issues occur
 ```
 
-### Code Generation
-The project uses `freezed`, `riverpod_generator`, and `json_serializable` for code generation:
+### Phase 2: 🚀 Autonomous Execution
 
-```bash
-# Generate all code (models, providers, serialization)
-flutter pub run build_runner build --delete-conflicting-outputs
+**Trigger**: Plan approved.
 
-# Watch mode (auto-regenerate on file changes)
-flutter pub run build_runner watch --delete-conflicting-outputs
+**Action**:
+- Execute the approved plan without interruption
+- Make minor decisions autonomously (variable names, formatting, etc.)
+- **DO NOT** ask trivial questions during execution
+- Assume git auto-commits are configured (no manual commit needed)
+
+**Rules**:
+- Complete all steps in the plan before stopping
+- Update TodoWrite frequently to show progress
+- Report completion with summary of changes
+
+### Phase 3: 🛑 Safety Brake
+
+**IMMEDIATELY STOP** and report if:
+- Build/compile errors persist after 3 fix attempts (prevent infinite loops)
+- Data loss risk detected (`rm -rf`, `DROP TABLE`, etc.)
+- Core functionality is broken
+- Security vulnerability introduced
+
+Report format:
+```
+⚠️ SAFETY BRAKE TRIGGERED
+Issue: [description]
+Attempted fixes: [1, 2, 3]
+Next steps: [suggestions]
 ```
 
-**IMPORTANT**: After modifying any file with `@freezed`, `@riverpod`, or `@JsonSerializable` annotations, you **must** run build_runner.
+---
 
-### Testing and Linting
-```bash
-# Run all tests
-flutter test
+## 2. 📝 Coding Standards
 
-# Run specific test file
-flutter test test/widget_test.dart
+### Flutter-Specific
+1. **Code Generation**: After modifying `@freezed`, `@riverpod`, or `@JsonSerializable`, you **must** run:
+   ```bash
+   flutter pub run build_runner build --delete-conflicting-outputs
+   ```
 
-# Analyze code for issues
-flutter analyze
-```
+2. **Riverpod Generator**: Use `@riverpod` annotations, NOT manual provider declarations:
+   ```dart
+   // ✅ Correct
+   @riverpod
+   Stream<List<Truck>> trucks(TrucksRef ref) { ... }
 
-## Architecture
+   // ❌ Wrong
+   final trucksProvider = StreamProvider<List<Truck>>(...);
+   ```
 
-### Tech Stack
-- **Framework**: Flutter (Dart 3.10.4+)
-- **State Management**: Riverpod 2.6.1 with `@riverpod` generator annotations
-- **Backend**: Firebase (Firestore, Auth, Storage)
-- **Architecture Pattern**: Feature-based Clean Architecture (data/domain/presentation layers)
-- **Immutability**: Freezed for all domain models
-- **Maps**: Google Maps Flutter
-- **Location**: Geolocator for GPS tracking
+3. **Freezed Models**: All domain models must have `fromFirestore()` and `toFirestore()` methods
 
-### Project Structure
+### Universal Standards
+1. **Modern Syntax**: Use latest stable version syntax only (no legacy patterns)
+2. **Type Safety**: Zero `dynamic` or `any` types (except unavoidable Firestore cases)
+3. **No Hallucination**: If you don't know a library, **read the documentation** (use Read tool) - never guess
+4. **Const Constructors**: Use `const` for all static widgets
+5. **Performance**:
+   - Use `ListView.builder` with `itemExtent` for fixed-height lists
+   - Cache expensive computations (markers, filters)
+   - Pre-compute colors instead of `Color.withOpacity()` in build methods
 
-```
-lib/
-├── core/
-│   ├── themes/          # AppTheme (Electric Blue + Midnight Charcoal)
-│   ├── constants/       # App-wide constants
-│   └── network_client/  # Shared network configuration
-├── features/
-│   ├── auth/            # Firebase Authentication (email, Google prepared)
-│   ├── truck_list/      # Customer view: Browse trucks
-│   ├── truck_map/       # Real-time map with truck markers
-│   ├── truck_detail/    # Truck details, menu, reviews
-│   ├── owner_dashboard/ # Owner view: Manage truck status, schedule
-│   ├── favorite/        # Favorite trucks management
-│   ├── location/        # GPS location services
-│   ├── review/          # Review system
-│   ├── schedule/        # Daily schedule management
-│   ├── analytics/       # Owner analytics
-│   └── storage/         # Firebase Storage (image uploads)
-├── firebase_options.dart
-└── main.dart
-```
+### Git Commit Standards
+- **Format**:
+  ```
+  [Phase X]: Brief title (50 chars max)
 
-### Feature Structure (Clean Architecture)
-Each feature follows this pattern:
-```
-features/<feature_name>/
-├── data/
-│   └── *_repository.dart    # Firestore data access
-├── domain/
-│   └── *.dart               # Freezed models, business logic
-└── presentation/
-    ├── *_provider.dart      # Riverpod state management
-    └── *_screen.dart        # UI widgets
-```
+  ## Changes Made
+  - Bullet points of changes
 
-## Key Architectural Patterns
+  ## Impact
+  - What this affects
 
-### 1. Firestore Real-Time Sync
-The app uses Firestore **streams** (not snapshots) for real-time updates:
-- `TruckRepository.watchTrucks()` returns `Stream<List<Truck>>`
-- Providers consume streams using `@riverpod Stream<T>` pattern
-- Map markers update automatically when truck location/status changes in Firestore
+  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+  Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+  ```
+- **Frequency**: Commit after each completed phase/subtask
+- **Always push**: Every commit must be pushed to GitHub immediately
 
-**Critical**: Truck status changes (`onRoute`, `resting`, `maintenance`) must update Firestore to reflect on all connected clients in real-time.
+---
 
-### 2. Authentication Flow
-- Entry point: `AuthWrapper` in `main.dart`
-- Checks if user is authenticated → Yes/No
-- If authenticated, checks `users/{uid}.ownedTruckId` in Firestore
-  - Has `ownedTruckId` → Navigate to `OwnerDashboardScreen`
-  - No `ownedTruckId` → Navigate to `TruckListScreen` (customer)
-- If not authenticated → Show `LoginScreen`
+## 3. 🎨 Token Optimization
 
-### 3. Freezed Models
-All domain models use Freezed for immutability:
-```dart
-@freezed
-class Truck with _$Truck {
-  const Truck._();
-  const factory Truck({...}) = _Truck;
+### Output Brevity
+- **Code Changes**: Show only modified sections, not entire files
+- **Diffs**: Use concise format:
+  ```dart
+  // Before
+  - const Text('하드코딩'),
 
-  // Custom methods for Firestore
-  factory Truck.fromFirestore(DocumentSnapshot doc) {...}
-  Map<String, dynamic> toFirestore() {...}
-}
-```
+  // After
+  + Text(AppLocalizations.of(context)!.localized),
+  ```
 
-**Pattern**: Always include `fromFirestore()` and `toFirestore()` methods for Firestore integration.
+### Context Management
+- If conversation exceeds 20 turns, suggest `/compact`
+- Reference file paths with line numbers: `truck_list_screen.dart:28`
+- Don't repeat information already in PROJECT_CONTEXT.md
 
-### 4. Riverpod Providers with @riverpod
-This project uses **Riverpod Generator** (`@riverpod` annotations), NOT manual provider declarations:
+### Tool Usage
+- Read files only once per session
+- Use Grep for multi-file searches instead of reading each file
+- Batch related changes together
 
-```dart
-// Stream provider for Firestore real-time data
-@riverpod
-Stream<List<Truck>> firestoreTruckStream(FirestoreTruckStreamRef ref) {
-  final repository = ref.watch(truckRepositoryProvider);
-  return repository.watchTrucks();
-}
+---
 
-// Notifier for state management
-@riverpod
-class TruckFilterNotifier extends AutoDisposeNotifier<TruckFilterState> {
-  @override
-  TruckFilterState build() => const TruckFilterState();
+## 4. 📚 Knowledge Base
 
-  void setSelectedTag(String tag) {
-    state = state.copyWith(selectedTag: tag);
-  }
-}
-```
+### Critical Files
+- **PROJECT_CONTEXT.md**: Architecture, Firebase schema, business logic
+- **ANALYSIS.md**: Known issues and technical debt
+- **IMPROVEMENT_PLAN.md**: Multi-phase improvement roadmap
 
-**IMPORTANT**: After creating/modifying `@riverpod` providers, run `build_runner` to generate `.g.dart` files.
+**Before starting any task, read PROJECT_CONTEXT.md to understand the system.**
 
-### 5. Location-Based Features
-- `LocationService` provides GPS position using Geolocator
-- `filteredTrucksWithDistance` provider enriches trucks with distance calculations
-- Distance is calculated using Haversine formula in `LocationService.calculateDistance()`
-- Trucks can be sorted by distance, name, or rating (via `SortOptionNotifier`)
+### Commands Reference
+See PROJECT_CONTEXT.md § Development Commands for:
+- Build commands
+- Code generation
+- Testing
+- Linting
 
-## Firebase Integration
+---
 
-### Collections Structure
-```
-trucks/
-  {truckId}/
-    - truckNumber: string
-    - driverName: string
-    - status: enum (onRoute|resting|maintenance)
-    - foodType: string
-    - latitude: number
-    - longitude: number
-    - ownerEmail: string
-    - menuItems: array
+## 5. 🧠 Learned Patterns (Auto-Update)
 
-users/
-  {userId}/
-    - uid: string
-    - email: string
-    - displayName: string
-    - role: string (customer|owner)
-    - ownedTruckId: number? (null for customers)
-```
+**Instructions**: When you learn a new pattern or make a mistake, add it here with date.
 
-### Real-Time Updates Pattern
-1. Owner changes truck status in `OwnerDashboardScreen`
-2. Calls `TruckRepository.updateStatus(truckId, newStatus)`
-3. Updates Firestore: `trucks/{truckId}.status = newStatus`
-4. Firestore triggers snapshot listeners
-5. `firestoreTruckStreamProvider` emits new truck list
-6. UI (map markers, truck cards) auto-updates via `ref.watch()`
+### 2025-12-27: Phase 1-4 Completion
+- **Memory Leaks**: Always cancel StreamSubscriptions in dispose()
+- **Safe Queries**: Use `.where().firstOrNull` instead of `.firstWhere(orElse: throw)`
+- **N+1 Queries**: Batch fetch related data, group in-memory
+- **Widget Duplication**: Extract shared widgets to `lib/shared/widgets/`
+- **Localization**: All UI strings must use AppLocalizations, no hardcoded Korean
+- **Color Performance**: Pre-compute opacity variants as constants in AppTheme
 
-### Firebase Services
-- **Auth**: `lib/features/auth/data/auth_service.dart`
-- **Storage**: `lib/features/storage/image_upload_service.dart` (for truck/menu photos)
-- **Firestore**: Each feature has its own repository (e.g., `TruckRepository`, `ReviewRepository`)
+### [Add new lessons here as you learn]
+- Date: Lesson learned
+- Date: Another lesson
 
-## UI/UX Guidelines
+---
 
-### Theme
-- **Primary Color**: Electric Blue (`#00D4FF`) - referenced as `AppTheme.electricBlue` or legacy `AppTheme.baeminMint`
-- **Background**: Midnight Charcoal (`#1A1A1A`) - `AppTheme.midnightCharcoal`
-- **Design**: Dark theme with high contrast, hip and clean aesthetic
+## 6. 🔧 Emergency Procedures
 
-### Performance Optimization
-From `.cursorrules.md`:
-1. **Use `const` constructors** wherever possible for static widgets
-2. **List optimization**: Use `ListView.builder` with `itemExtent` or `prototypeItem`
-3. **Map performance**: Wrap map markers in `RepaintBoundary` to isolate repaints
-4. **Optimistic UI**: Status changes should update UI immediately, then sync with Firestore
+### If Build Fails
+1. Run `flutter clean && flutter pub get`
+2. Run `flutter pub run build_runner build --delete-conflicting-outputs`
+3. Check for missing imports
+4. If still failing after 3 attempts → trigger Safety Brake
 
-### Common Patterns
-- Loading states: Use `AsyncValue.when()` for data/loading/error states
-- Optimistic updates: Update local state first, rollback on error (see `TruckListNotifier.toggleFavorite()`)
-- Real-time indicators: Show connection status for Firestore streams
+### If Tests Fail
+1. Check for mock updates needed
+2. Verify Firestore schema changes
+3. Update test data fixtures
+4. If persistent → report to user
 
-## Common Development Tasks
+### If Git Conflicts
+1. **NEVER** force push to main
+2. Inform user of conflict
+3. Wait for user resolution
+4. Do not attempt auto-merge
 
-### Adding a New Feature
-1. Create feature directory: `lib/features/<feature_name>/`
-2. Add domain models with Freezed: `domain/*.dart`
-3. Create repository for data access: `data/*_repository.dart`
-4. Build providers with `@riverpod`: `presentation/*_provider.dart`
-5. Implement UI screens: `presentation/*_screen.dart`
-6. Run `build_runner build` to generate code
+---
 
-### Modifying Truck Model
-If you add fields to `Truck`:
-1. Update `lib/features/truck_list/domain/truck.dart`
-2. Update `fromFirestore()` and `toFirestore()` methods
-3. Run `build_runner build --delete-conflicting-outputs`
-4. Update Firestore security rules if needed
-5. Migrate existing Firestore data if breaking change
-
-### Debugging Firestore Sync
-The repository has extensive logging:
-- `TruckRepository.watchTrucks()` logs every snapshot received
-- `TruckRepository.updateStatus()` logs before/after Firestore calls
-- Providers log when they receive/emit data
-
-Check console for these markers:
-- `🔥` = Firestore operations
-- `📡` = Stream emissions
-- `🔍` = Filtering operations
-- `📍` = Location calculations
-- `✅` = Success, `❌` = Errors
-
-## Known Constraints
-
-### Authentication Methods
-- **Implemented**: Email/Password
-- **Prepared but not functional**: Google Sign-In (requires web configuration), Kakao, Naver
-- Check `auth_service.dart` for implementation status
-
-### Web Platform
-- Currently configured for web deployment via Firebase Hosting
-- Google Maps requires API key configuration
-- Location permissions handled differently on web vs mobile
-
-## Important Notes
-
-1. **Never skip build_runner**: Generated files (`.freezed.dart`, `.g.dart`) are required for compilation
-2. **Firestore is the source of truth**: All real-time features depend on Firestore streams, not local state
-3. **Owner identification**: Owners are identified by `users/{uid}.ownedTruckId`, NOT by a role field alone
-4. **Real-time sync**: Status changes must go through Firestore, not just local state, for multi-device sync
-5. **Image uploads**: Use `ImageUploadService` for Firebase Storage operations
-6. **GPS permissions**: Request location permissions appropriately per platform (see `LocationService`)
+**End of Constitution**

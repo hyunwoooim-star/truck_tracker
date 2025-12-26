@@ -1,0 +1,53 @@
+# .claudeignore
+# AI가 읽을 필요 없는 파일을 차단하여 토큰 절약
+
+# Dependencies & Build outputs
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+
+# Generated files (AI shouldn't read these)
+**/*.g.dart
+**/*.freezed.dart
+*.config.dart
+coverage/
+
+# Assets (binary files)
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.svg
+**/*.ico
+**/*.ttf
+**/*.otf
+**/*.woff
+**/*.woff2
+
+# IDE & OS files
+.vscode/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Logs
+**/*.log
+
+# Firebase (secrets)
+google-services.json
+GoogleService-Info.plist
+firebase_options.dart
+
+# Git
+.git/
+.gitignore
+
+# Documentation (already in PROJECT_CONTEXT.md)
+README.md.backup
+docs/
+
+# Test snapshots (too large)
+test/**/*.snap
