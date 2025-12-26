@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../notifications/fcm_service.dart';
 import '../../truck_list/presentation/truck_list_screen.dart';
 import '../../owner_dashboard/presentation/owner_dashboard_screen.dart';
@@ -29,9 +30,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    debugPrint('🎬 LoginScreen initialized');
-    debugPrint('   _isLogin: $_isLogin');
-    debugPrint('   _isLoading: $_isLoading');
+    AppLogger.debug('LoginScreen initialized', tag: 'LoginScreen');
+    AppLogger.debug('_isLogin: $_isLogin', tag: 'LoginScreen');
+    AppLogger.debug('_isLoading: $_isLoading', tag: 'LoginScreen');
   }
 
   @override
@@ -42,24 +43,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleEmailAuth() async {
-    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    debugPrint('🔐 LoginScreen: _handleEmailAuth called');
-    debugPrint('   isLogin: $_isLogin');
-    debugPrint('   email: ${_emailController.text.trim()}');
-    debugPrint('   password length: ${_passwordController.text.length}');
-    debugPrint('   _isLoading: $_isLoading');
-    debugPrint('   _agreedToTerms: $_agreedToTerms');
-    debugPrint('   _agreedToPrivacy: $_agreedToPrivacy');
-    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    AppLogger.debug('_handleEmailAuth called', tag: 'LoginScreen');
+    AppLogger.debug('isLogin: $_isLogin', tag: 'LoginScreen');
+    AppLogger.debug('email: ${_emailController.text.trim()}', tag: 'LoginScreen');
+    AppLogger.debug('password length: ${_passwordController.text.length}', tag: 'LoginScreen');
+    AppLogger.debug('_isLoading: $_isLoading', tag: 'LoginScreen');
+    AppLogger.debug('_agreedToTerms: $_agreedToTerms', tag: 'LoginScreen');
+    AppLogger.debug('_agreedToPrivacy: $_agreedToPrivacy', tag: 'LoginScreen');
 
     if (!_formKey.currentState!.validate()) {
-      debugPrint('❌ Form validation failed');
+      AppLogger.warning('Form validation failed', tag: 'LoginScreen');
       return;
     }
 
     // Validate legal agreements for sign-up
     if (!_isLogin && (!_agreedToTerms || !_agreedToPrivacy)) {
-      debugPrint('❌ Legal agreements not accepted');
+      AppLogger.warning('Legal agreements not accepted', tag: 'LoginScreen');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('이용약관 및 개인정보 처리방침에 동의해주세요'),
@@ -75,37 +74,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final authService = ref.read(authServiceProvider);
 
       if (_isLogin) {
-        debugPrint('📧 Attempting email sign in...');
+        AppLogger.debug('Attempting email sign in...', tag: 'LoginScreen');
         // Sign in
         await authService.signInWithEmail(
           _emailController.text.trim(),
           _passwordController.text,
         );
-        debugPrint('✅ Email sign in successful');
+        AppLogger.success('Email sign in successful', tag: 'LoginScreen');
       } else {
-        debugPrint('📧 Attempting email sign up...');
+        AppLogger.debug('Attempting email sign up...', tag: 'LoginScreen');
         // Sign up
         await authService.signUpWithEmail(
           _emailController.text.trim(),
           _passwordController.text,
         );
-        debugPrint('✅ Email sign up successful');
+        AppLogger.success('Email sign up successful', tag: 'LoginScreen');
       }
 
       // Save FCM token for push notifications
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        debugPrint('🔔 Saving FCM token for user: ${user.uid}');
+        AppLogger.debug('Saving FCM token for user: ${user.uid}', tag: 'LoginScreen');
         await FcmService().saveFcmTokenToUser(user.uid);
-        debugPrint('✅ FCM token saved');
+        AppLogger.success('FCM token saved', tag: 'LoginScreen');
       }
 
-      debugPrint('✅ Auth completed - AuthWrapper will handle navigation');
+      AppLogger.success('Auth completed - AuthWrapper will handle navigation', tag: 'LoginScreen');
       // Don't manually navigate - let AuthWrapper handle it
       // AuthWrapper will automatically detect the login state change
       // and navigate to the appropriate screen
-    } catch (e) {
-      debugPrint('❌ Auth error: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Auth error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -433,16 +432,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onPressed: _isLoading
                         ? null
                         : () {
-                            debugPrint('🔄 Toggling login/signup mode');
-                            debugPrint('   Current _isLogin: $_isLogin');
-                            debugPrint('   New _isLogin: ${!_isLogin}');
+                            AppLogger.debug('Toggling login/signup mode', tag: 'LoginScreen');
+                            AppLogger.debug('Current _isLogin: $_isLogin', tag: 'LoginScreen');
+                            AppLogger.debug('New _isLogin: ${!_isLogin}', tag: 'LoginScreen');
                             setState(() {
                               _isLogin = !_isLogin;
                               // Reset checkboxes when switching
                               _agreedToTerms = false;
                               _agreedToPrivacy = false;
                             });
-                            debugPrint('✅ Mode switched to ${_isLogin ? "로그인" : "회원가입"}');
+                            AppLogger.debug('Mode switched to ${_isLogin ? "로그인" : "회원가입"}', tag: 'LoginScreen');
                           },
                     child: Text(
                       _isLogin
@@ -623,11 +622,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       onPressed: _isLoading
                           ? null
                           : () async {
-                              debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-                              debugPrint('🚚 Owner test login button pressed');
-                              debugPrint('   _isLoading: $_isLoading');
-                              debugPrint('   Navigating to OwnerDashboardScreen...');
-                              debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+                              AppLogger.debug('Owner test login button pressed', tag: 'LoginScreen');
+                              AppLogger.debug('_isLoading: $_isLoading', tag: 'LoginScreen');
+                              AppLogger.debug('Navigating to OwnerDashboardScreen...', tag: 'LoginScreen');
                               // 테스트용: 이메일로 로그인 후 Firestore에서 ownedTruckId가 있으면 사장님 대시보드로 이동
                               // 실제로는 위의 이메일 로그인을 사용하고 Firestore에 ownedTruckId를 설정해야 함
                               Navigator.of(context).pushReplacement(
@@ -635,7 +632,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   builder: (_) => const OwnerDashboardScreen(),
                                 ),
                               );
-                              debugPrint('✅ Navigation initiated');
+                              AppLogger.debug('Navigation initiated', tag: 'LoginScreen');
                             },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
@@ -669,16 +666,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   // Skip to main screen (guest mode)
                   TextButton(
                     onPressed: () {
-                      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-                      debugPrint('👤 Guest mode button pressed');
-                      debugPrint('   Navigating to TruckListScreen...');
-                      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+                      AppLogger.debug('Guest mode button pressed', tag: 'LoginScreen');
+                      AppLogger.debug('Navigating to TruckListScreen...', tag: 'LoginScreen');
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (_) => const TruckListScreen(),
                         ),
                       );
-                      debugPrint('✅ Navigation to TruckListScreen initiated');
+                      AppLogger.debug('Navigation to TruckListScreen initiated', tag: 'LoginScreen');
                     },
                     child: const Text(
                       '둘러보기',
