@@ -5,17 +5,6 @@
     "build": "flutter pub run build_runner build --delete-conflicting-outputs",
     "clean": "flutter clean && flutter pub get"
   },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "match": {
-          "toolNames": ["Edit", "Write", "NotebookEdit"]
-        },
-        "command": "cd \"C:\\Users\\임현우\\Desktop\\현우 작업폴더\\truck_tracker\\truck ver.1\\truck_tracker\" && git add -A && git commit -m \"Auto-save: {{toolName}} on {{fileName}}\" || exit 0",
-        "description": "Auto-commit after file modifications (세이브 포인트)"
-      }
-    ]
-  },
   "permissions": {
     "deny": [
       {
