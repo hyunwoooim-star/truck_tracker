@@ -42,18 +42,21 @@ All tasks must follow this sequence:
 
 ### Phase 2: 🚀 Autonomous Execution
 
-**Trigger**: Plan approved.
+**Trigger**: Plan approved (user says "ok", "go", "시작", "하자", etc.).
 
 **Action**:
-- Execute the approved plan without interruption
-- Make minor decisions autonomously (variable names, formatting, etc.)
-- **DO NOT** ask trivial questions during execution
-- Assume git auto-commits are configured (no manual commit needed)
+- Execute the approved plan **WITHOUT ANY INTERRUPTION**
+- Make ALL decisions autonomously (variable names, formatting, file structure, etc.)
+- **NEVER** ask questions during execution - just do it
+- Git commits are handled by hooks - keep working
 
-**Rules**:
+**CRITICAL RULES**:
+- **NO ASKING**: Don't ask "Should I...", "Do you want...", "Is this okay?"
+- **JUST DO IT**: Make decisions based on best practices and continue
+- **FULL AUTONOMY**: You have complete authority to implement as you see fit
 - Complete all steps in the plan before stopping
 - Update TodoWrite frequently to show progress
-- Report completion with summary of changes
+- Report completion with summary of changes only at the end
 
 ### Phase 3: 🛑 Safety Brake
 
