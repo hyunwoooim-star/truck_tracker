@@ -248,5 +248,17 @@
   "pleaseEnterAtLeast5Chars": "Please enter at least 5 characters",
   "photosOptionalMax3": "Photos (optional, max 3)",
   "addPhoto": "Add Photo",
-  "submit": "Submit"
+  "submit": "Submit",
+
+  "truckList": "Truck List",
+  "viewMap": "View Map",
+  "appInfo": "App Info",
+  "privacyPolicy": "Privacy Policy",
+  "noTrucksAvailable": "No trucks available",
+  "loadDataFailed": "Failed to load data",
+  "favoriteFailed": "Failed to add favorite! Please try again later.",
+  "favoriteSuccess": "Added to favorites!",
+  "favoriteRemoved": "Removed from favorites!",
+  "distance": "Distance",
+  "rating": "Rating"
 }

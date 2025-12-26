@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../shared/widgets/status_tag.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../owner_dashboard/presentation/owner_dashboard_screen.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
@@ -25,7 +27,7 @@ class TruckListScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('트럭 리스트'),
+        title: Text(AppLocalizations.of(context)!.truckList),
         actions: [
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
@@ -56,7 +58,7 @@ class TruckListScreen extends ConsumerWidget {
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, __) => Center(
                 child: Text(
-                  '데이터를 불러올 수 없습니다',
+                  AppLocalizations.of(context)!.loadDataFailed,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
@@ -216,7 +218,7 @@ class TruckListScreen extends ConsumerWidget {
                                             ),
                                           ),
                                           const SizedBox(width: 8),
-                                          _StatusTag(status: truck.status),
+                                          StatusTag(status: truck.status),
                                           IconButton(
                                             onPressed: () {
                                               Navigator.of(context).push(
@@ -248,9 +250,9 @@ class TruckListScreen extends ConsumerWidget {
                                                     .showSnackBar(
                                                   SnackBar(
                                                     backgroundColor: AppTheme.electricBlue,
-                                                    content: const Text(
-                                                      '즐겨찾기 반영 실패! 잠시 후 다시 시도해주세요.',
-                                                      style: TextStyle(
+                                                    content: Text(
+                                                      AppLocalizations.of(context)!.favoriteFailed,
+                                                      style: const TextStyle(
                                                         color: Colors.black,
                                                       ),
                                                     ),
@@ -530,65 +532,6 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
   }
 }
 
-class _StatusTag extends StatelessWidget {
-  const _StatusTag({required this.status});
-
-  final TruckStatus status;
-
-  String get _label {
-    switch (status) {
-      case TruckStatus.onRoute:
-        return '운행 중';
-      case TruckStatus.resting:
-        return '대기 / 휴식';
-      case TruckStatus.maintenance:
-        return '점검 중';
-    }
-  }
-
-  Color get _bgColor {
-    switch (status) {
-      case TruckStatus.onRoute:
-        return AppTheme.electricBlue.withOpacity(0.15);
-      case TruckStatus.resting:
-        return AppTheme.textTertiary.withOpacity(0.15);
-      case TruckStatus.maintenance:
-        return const Color(0xFFFF9800).withOpacity(0.15);
-    }
-    // unreachable
-  }
-
-  Color get _textColor {
-    switch (status) {
-      case TruckStatus.onRoute:
-        return AppTheme.electricBlue;
-      case TruckStatus.resting:
-        return AppTheme.textSecondary;
-      case TruckStatus.maintenance:
-        return const Color(0xFFFF9800);
-    }
-    // unreachable
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: _bgColor,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        _label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: _textColor,
-              fontWeight: FontWeight.w600,
-            ),
-      ),
-    );
-  }
-}
-
 // App Drawer with Boss Mode
 class _AppDrawer extends ConsumerWidget {
   const _AppDrawer();
@@ -633,14 +576,14 @@ class _AppDrawer extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.list),
-            title: const Text('트럭 리스트'),
+            title: Text(AppLocalizations.of(context)!.truckList),
             onTap: () {
               Navigator.pop(context);
             },
           ),
           ListTile(
             leading: const Icon(Icons.map),
-            title: const Text('지도 보기'),
+            title: Text(AppLocalizations.of(context)!.viewMap),
             onTap: () {
               Navigator.pop(context);
               Navigator.of(context).push(
@@ -651,7 +594,7 @@ class _AppDrawer extends ConsumerWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: const Text('앱 정보'),
+            title: Text(AppLocalizations.of(context)!.appInfo),
             onTap: () {
               Navigator.pop(context);
               showDialog(
@@ -673,7 +616,7 @@ class _AppDrawer extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.privacy_tip_outlined),
-            title: const Text('개인정보 처리방침'),
+            title: Text(AppLocalizations.of(context)!.privacyPolicy),
             onTap: () {
               Navigator.pop(context);
               showDialog(
