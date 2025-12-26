@@ -1,8 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../core/utils/app_logger.dart';
 
 /// Service for uploading images to Firebase Storage
 class ImageUploadService {
@@ -22,14 +23,14 @@ class ImageUploadService {
         maxHeight: 1920,
         imageQuality: 85,
       );
-      
+
       if (image != null) {
-        debugPrint('📸 Image picked: ${image.name} (${await image.length()} bytes)');
+        AppLogger.debug('Image picked: ${image.name} (${await image.length()} bytes)', tag: 'ImageUploadService');
       }
-      
+
       return image;
-    } catch (e) {
-      debugPrint('❌ Error picking image: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error picking image', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
       return null;
     }
   }
@@ -43,14 +44,14 @@ class ImageUploadService {
         maxHeight: 1920,
         imageQuality: 85,
       );
-      
+
       if (image != null) {
-        debugPrint('📸 Image captured: ${image.name} (${await image.length()} bytes)');
+        AppLogger.debug('Image captured: ${image.name} (${await image.length()} bytes)', tag: 'ImageUploadService');
       }
-      
+
       return image;
-    } catch (e) {
-      debugPrint('❌ Error capturing image: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error capturing image', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
       return null;
     }
   }
@@ -63,15 +64,15 @@ class ImageUploadService {
         maxHeight: 1920,
         imageQuality: 85,
       );
-      
+
       // Limit number of images
       final limitedImages = images.take(maxImages).toList();
-      
-      debugPrint('📸 ${limitedImages.length} images picked');
-      
+
+      AppLogger.debug('${limitedImages.length} images picked', tag: 'ImageUploadService');
+
       return limitedImages;
-    } catch (e) {
-      debugPrint('❌ Error picking multiple images: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error picking multiple images', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
       return [];
     }
   }
@@ -82,15 +83,15 @@ class ImageUploadService {
 
   /// Upload truck main image
   Future<String> uploadTruckImage(XFile image, int truckId) async {
-    debugPrint('📤 Uploading truck #$truckId main image');
-    
+    AppLogger.debug('Uploading truck #$truckId main image', tag: 'ImageUploadService');
+
     try {
       final bytes = await image.readAsBytes();
       final path = 'trucks/$truckId/main.jpg';
-      
+
       return await _uploadBytes(bytes, path);
-    } catch (e) {
-      debugPrint('❌ Error uploading truck image: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error uploading truck image', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
       rethrow;
     }
   }
@@ -101,15 +102,15 @@ class ImageUploadService {
     int truckId,
     String menuId,
   ) async {
-    debugPrint('📤 Uploading menu image for truck #$truckId, menu: $menuId');
-    
+    AppLogger.debug('Uploading menu image for truck #$truckId, menu: $menuId', tag: 'ImageUploadService');
+
     try {
       final bytes = await image.readAsBytes();
       final path = 'trucks/$truckId/menus/$menuId.jpg';
-      
+
       return await _uploadBytes(bytes, path);
-    } catch (e) {
-      debugPrint('❌ Error uploading menu image: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error uploading menu image', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
       rethrow;
     }
   }
@@ -123,25 +124,25 @@ class ImageUploadService {
     List<XFile> images,
     String reviewId,
   ) async {
-    debugPrint('📤 Uploading ${images.length} review images for review: $reviewId');
-    
+    AppLogger.debug('Uploading ${images.length} review images for review: $reviewId', tag: 'ImageUploadService');
+
     try {
       final List<String> urls = [];
-      
+
       for (int i = 0; i < images.length; i++) {
         final bytes = await images[i].readAsBytes();
         final path = 'reviews/$reviewId/photo_$i.jpg';
-        
+
         final url = await _uploadBytes(bytes, path);
         urls.add(url);
-        
-        debugPrint('   ✅ Uploaded photo $i: $url');
+
+        AppLogger.debug('Uploaded photo $i: $url', tag: 'ImageUploadService');
       }
-      
-      debugPrint('✅ All review images uploaded: ${urls.length}');
+
+      AppLogger.success('All review images uploaded: ${urls.length}', tag: 'ImageUploadService');
       return urls;
-    } catch (e) {
-      debugPrint('❌ Error uploading review images: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error uploading review images', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
       rethrow;
     }
   }
@@ -154,7 +155,7 @@ class ImageUploadService {
   Future<String> _uploadBytes(Uint8List bytes, String path) async {
     try {
       final ref = _storage.ref().child(path);
-      
+
       // Set metadata
       final metadata = SettableMetadata(
         contentType: 'image/jpeg',
@@ -162,22 +163,22 @@ class ImageUploadService {
           'uploadedAt': DateTime.now().toIso8601String(),
         },
       );
-      
+
       // Upload
       final uploadTask = ref.putData(bytes, metadata);
-      
+
       // Wait for completion
       final snapshot = await uploadTask;
-      
+
       // Get download URL
       final downloadUrl = await snapshot.ref.getDownloadURL();
-      
-      debugPrint('✅ Upload successful: $path');
-      debugPrint('   URL: $downloadUrl');
-      
+
+      AppLogger.success('Upload successful: $path', tag: 'ImageUploadService');
+      AppLogger.debug('URL: $downloadUrl', tag: 'ImageUploadService');
+
       return downloadUrl;
-    } catch (e) {
-      debugPrint('❌ Error uploading bytes: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error uploading bytes', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
       rethrow;
     }
   }
@@ -191,9 +192,9 @@ class ImageUploadService {
     try {
       final ref = _storage.refFromURL(url);
       await ref.delete();
-      debugPrint('✅ Image deleted: $url');
-    } catch (e) {
-      debugPrint('❌ Error deleting image: $e');
+      AppLogger.success('Image deleted: $url', tag: 'ImageUploadService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error deleting image', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
       // Don't rethrow - deletion failure shouldn't break the app
     }
   }
@@ -203,14 +204,14 @@ class ImageUploadService {
     try {
       final ref = _storage.ref().child('trucks/$truckId/menus');
       final listResult = await ref.listAll();
-      
+
       for (final item in listResult.items) {
         await item.delete();
       }
-      
-      debugPrint('✅ All menu images deleted for truck #$truckId');
-    } catch (e) {
-      debugPrint('❌ Error deleting menu images: $e');
+
+      AppLogger.success('All menu images deleted for truck #$truckId', tag: 'ImageUploadService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error deleting menu images', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
     }
   }
 
@@ -219,14 +220,14 @@ class ImageUploadService {
     try {
       final ref = _storage.ref().child('reviews/$reviewId');
       final listResult = await ref.listAll();
-      
+
       for (final item in listResult.items) {
         await item.delete();
       }
-      
-      debugPrint('✅ All review images deleted for review: $reviewId');
-    } catch (e) {
-      debugPrint('❌ Error deleting review images: $e');
+
+      AppLogger.success('All review images deleted for review: $reviewId', tag: 'ImageUploadService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error deleting review images', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
     }
   }
 
