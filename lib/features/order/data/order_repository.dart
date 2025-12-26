@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/utils/app_logger.dart';
 import '../domain/order.dart' as domain;
 
 part 'order_repository.g.dart';
@@ -19,26 +19,26 @@ class OrderRepository {
 
   /// Place a new order
   Future<String> placeOrder(domain.Order order) async {
-    debugPrint('🛒 OrderRepository: Placing order');
-    debugPrint('   Truck ID: ${order.truckId}');
-    debugPrint('   User: ${order.userName}');
-    debugPrint('   Items: ${order.items.length}');
-    debugPrint('   Total: ₩${order.totalAmount}');
+    AppLogger.debug('Placing order', tag: 'OrderRepository');
+    AppLogger.debug('Truck ID: ${order.truckId}', tag: 'OrderRepository');
+    AppLogger.debug('User: ${order.userName}', tag: 'OrderRepository');
+    AppLogger.debug('Items: ${order.items.length}', tag: 'OrderRepository');
+    AppLogger.debug('Total: ₩${order.totalAmount}', tag: 'OrderRepository');
 
     try {
       final docRef = await _ordersCollection.add(order.toFirestore());
 
-      debugPrint('✅ Order placed: ${docRef.id}');
+      AppLogger.success('Order placed: ${docRef.id}', tag: 'OrderRepository');
       return docRef.id;
-    } catch (e) {
-      debugPrint('❌ Error placing order: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error placing order', error: e, stackTrace: stackTrace, tag: 'OrderRepository');
       rethrow;
     }
   }
 
   /// Update order status
   Future<void> updateOrderStatus(String orderId, domain.OrderStatus status) async {
-    debugPrint('🛒 OrderRepository: Updating order $orderId to $status');
+    AppLogger.debug('Updating order $orderId to $status', tag: 'OrderRepository');
 
     try {
       await _ordersCollection.doc(orderId).update({
@@ -46,22 +46,22 @@ class OrderRepository {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      debugPrint('✅ Order status updated');
-    } catch (e) {
-      debugPrint('❌ Error updating order status: $e');
+      AppLogger.success('Order status updated', tag: 'OrderRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error updating order status', error: e, stackTrace: stackTrace, tag: 'OrderRepository');
       rethrow;
     }
   }
 
   /// Cancel order
   Future<void> cancelOrder(String orderId) async {
-    debugPrint('🛒 OrderRepository: Cancelling order $orderId');
+    AppLogger.debug('Cancelling order $orderId', tag: 'OrderRepository');
 
     try {
       await updateOrderStatus(orderId, domain.OrderStatus.cancelled);
-      debugPrint('✅ Order cancelled');
-    } catch (e) {
-      debugPrint('❌ Error cancelling order: $e');
+      AppLogger.success('Order cancelled', tag: 'OrderRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error cancelling order', error: e, stackTrace: stackTrace, tag: 'OrderRepository');
       rethrow;
     }
   }
@@ -72,7 +72,7 @@ class OrderRepository {
 
   /// Watch orders for a user (real-time stream)
   Stream<List<domain.Order>> watchUserOrders(String userId) {
-    debugPrint('📡 OrderRepository: Watching orders for user $userId');
+    AppLogger.debug('Watching orders for user $userId', tag: 'OrderRepository');
 
     return _ordersCollection
         .where('userId', isEqualTo: userId)
@@ -82,20 +82,20 @@ class OrderRepository {
       final orders = snapshot.docs.map((doc) {
         try {
           return domain.Order.fromFirestore(doc);
-        } catch (e) {
-          debugPrint('⚠️ Error parsing order ${doc.id}: $e');
+        } catch (e, stackTrace) {
+          AppLogger.warning('Error parsing order ${doc.id}', tag: 'OrderRepository');
           return null;
         }
       }).whereType<domain.Order>().toList();
 
-      debugPrint('📡 Loaded ${orders.length} orders for user $userId');
+      AppLogger.debug('Loaded ${orders.length} orders for user $userId', tag: 'OrderRepository');
       return orders;
     });
   }
 
   /// Watch orders for a truck (real-time stream)
   Stream<List<domain.Order>> watchTruckOrders(String truckId) {
-    debugPrint('📡 OrderRepository: Watching orders for truck $truckId');
+    AppLogger.debug('Watching orders for truck $truckId', tag: 'OrderRepository');
 
     return _ordersCollection
         .where('truckId', isEqualTo: truckId)
@@ -105,20 +105,20 @@ class OrderRepository {
       final orders = snapshot.docs.map((doc) {
         try {
           return domain.Order.fromFirestore(doc);
-        } catch (e) {
-          debugPrint('⚠️ Error parsing order ${doc.id}: $e');
+        } catch (e, stackTrace) {
+          AppLogger.warning('Error parsing order ${doc.id}', tag: 'OrderRepository');
           return null;
         }
       }).whereType<domain.Order>().toList();
 
-      debugPrint('📡 Loaded ${orders.length} orders for truck $truckId');
+      AppLogger.debug('Loaded ${orders.length} orders for truck $truckId', tag: 'OrderRepository');
       return orders;
     });
   }
 
   /// Get orders for a user (one-time fetch)
   Future<List<domain.Order>> getUserOrders(String userId) async {
-    debugPrint('🛒 OrderRepository: Fetching orders for user $userId');
+    AppLogger.debug('Fetching orders for user $userId', tag: 'OrderRepository');
 
     try {
       final snapshot = await _ordersCollection
@@ -129,17 +129,17 @@ class OrderRepository {
       final orders =
           snapshot.docs.map((doc) => domain.Order.fromFirestore(doc)).toList();
 
-      debugPrint('✅ Fetched ${orders.length} orders');
+      AppLogger.success('Fetched ${orders.length} orders', tag: 'OrderRepository');
       return orders;
-    } catch (e) {
-      debugPrint('❌ Error fetching orders: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error fetching orders', error: e, stackTrace: stackTrace, tag: 'OrderRepository');
       return [];
     }
   }
 
   /// Get orders for a truck (one-time fetch)
   Future<List<domain.Order>> getTruckOrders(String truckId) async {
-    debugPrint('🛒 OrderRepository: Fetching orders for truck $truckId');
+    AppLogger.debug('Fetching orders for truck $truckId', tag: 'OrderRepository');
 
     try {
       final snapshot = await _ordersCollection
@@ -150,31 +150,31 @@ class OrderRepository {
       final orders =
           snapshot.docs.map((doc) => domain.Order.fromFirestore(doc)).toList();
 
-      debugPrint('✅ Fetched ${orders.length} orders');
+      AppLogger.success('Fetched ${orders.length} orders', tag: 'OrderRepository');
       return orders;
-    } catch (e) {
-      debugPrint('❌ Error fetching orders: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error fetching orders', error: e, stackTrace: stackTrace, tag: 'OrderRepository');
       return [];
     }
   }
 
   /// Get single order by ID
   Future<domain.Order?> getOrder(String orderId) async {
-    debugPrint('🛒 OrderRepository: Fetching order $orderId');
+    AppLogger.debug('Fetching order $orderId', tag: 'OrderRepository');
 
     try {
       final doc = await _ordersCollection.doc(orderId).get();
 
       if (!doc.exists) {
-        debugPrint('⚠️ Order not found');
+        AppLogger.warning('Order not found', tag: 'OrderRepository');
         return null;
       }
 
       final order = domain.Order.fromFirestore(doc);
-      debugPrint('✅ Order fetched');
+      AppLogger.success('Order fetched', tag: 'OrderRepository');
       return order;
-    } catch (e) {
-      debugPrint('❌ Error fetching order: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error fetching order', error: e, stackTrace: stackTrace, tag: 'OrderRepository');
       return null;
     }
   }
