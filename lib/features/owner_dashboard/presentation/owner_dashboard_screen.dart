@@ -99,7 +99,6 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
       ),
       body: ownerTruckAsync.when(
         data: (truck) {
-          final ordersAsync = ref.watch(truckOrdersProvider(truck.id));
           if (truck == null) {
             return Center(
               child: Text(
@@ -108,6 +107,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
               ),
             );
           }
+          final ordersAsync = ref.watch(truckOrdersProvider(truck.id));
 
           return SingleChildScrollView(
             child: Column(
@@ -453,7 +453,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
 
               // 🔄 FIXED: Use Order model for cash sales (unified schema)
               final currentUser = ref.read(currentUserProvider);
-              final order = Order(
+              final order = domain.Order(
                 id: '', // Will be set by Firestore
                 userId: currentUser?.uid ?? 'unknown',
                 userName: currentUser?.displayName ?? currentUser?.email ?? 'Cash Customer',
@@ -461,7 +461,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                 truckName: truck.foodType,
                 items: [], // Empty for manual cash sales
                 totalAmount: amount,
-                status: OrderStatus.completed,
+                status: domain.OrderStatus.completed,
                 paymentMethod: 'cash',
                 source: 'manual',
                 itemName: itemController.text.trim().isEmpty
@@ -659,7 +659,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     );
   }
 
-  Widget _buildKanbanColumn(String title, List<Order> orders, Color color, WidgetRef ref) {
+  Widget _buildKanbanColumn(String title, List<domain.Order> orders, Color color, WidgetRef ref) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -713,7 +713,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     );
   }
 
-  Widget _buildOrderCard(Order order, WidgetRef ref) {
+  Widget _buildOrderCard(domain.Order order, WidgetRef ref) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
@@ -745,17 +745,17 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              if (order.status == OrderStatus.pending)
+              if (order.status == domain.OrderStatus.pending)
                 IconButton(
                   icon: const Icon(Icons.arrow_forward, color: _mustard, size: 20),
-                  onPressed: () => _moveOrder(order, OrderStatus.preparing, ref),
+                  onPressed: () => _moveOrder(order, domain.OrderStatus.preparing, ref),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
-              if (order.status == OrderStatus.preparing)
+              if (order.status == domain.OrderStatus.preparing)
                 IconButton(
                   icon: const Icon(Icons.check, color: Colors.green, size: 20),
-                  onPressed: () => _moveOrder(order, OrderStatus.ready, ref),
+                  onPressed: () => _moveOrder(order, domain.OrderStatus.ready, ref),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -766,7 +766,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     );
   }
 
-  Future<void> _moveOrder(Order order, OrderStatus newStatus, WidgetRef ref) async {
+  Future<void> _moveOrder(domain.Order order, domain.OrderStatus newStatus, WidgetRef ref) async {
     final repository = ref.read(orderRepositoryProvider);
     await repository.updateOrderStatus(order.id, newStatus);
   }
