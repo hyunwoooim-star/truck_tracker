@@ -28,6 +28,7 @@ class Truck with _$Truck {
     @Default(0.0) double avgRating, // 평균 별점
     @Default(0) int totalReviews, // 총 리뷰 개수
     @Default(false) bool isOpen, // 영업 중 여부 (FCM 트리거용)
+    Map<String, dynamic>? weeklySchedule, // 주간 영업 일정 (monday, tuesday, ...)
   }) = _Truck;
 
   // JSON serialization (for local/API use)
@@ -54,6 +55,7 @@ class Truck with _$Truck {
       avgRating: (data['avgRating'] as num?)?.toDouble() ?? 0.0,
       totalReviews: (data['totalReviews'] as num?)?.toInt() ?? 0,
       isOpen: data['isOpen'] as bool? ?? false,
+      weeklySchedule: data['weeklySchedule'] as Map<String, dynamic>?,
     );
   }
 
@@ -75,6 +77,7 @@ class Truck with _$Truck {
       'avgRating': avgRating,
       'totalReviews': totalReviews,
       'isOpen': isOpen,
+      'weeklySchedule': weeklySchedule,
     };
   }
 

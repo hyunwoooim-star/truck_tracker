@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:html' as html;
 
 import 'package:csv/csv.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -78,6 +79,12 @@ class AnalyticsScreen extends ConsumerWidget {
                 _buildSummaryStats(analytics),
                 const SizedBox(height: 24),
 
+                // Daily Clicks Chart
+                if (analytics.dailyData.isNotEmpty) ...[
+                  _buildClicksChart(analytics.dailyData),
+                  const SizedBox(height: 24),
+                ],
+
                 // Daily Data Table
                 if (analytics.dailyData.isNotEmpty)
                   _buildDailyTable(context, analytics.dailyData),
@@ -132,6 +139,122 @@ class AnalyticsScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  /// Daily clicks line chart
+  Widget _buildClicksChart(List<DailyAnalyticsItem> items) {
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    final maxClicks = items.map((e) => e.clickCount).reduce((a, b) => a > b ? a : b).toDouble();
+    final spots = items.asMap().entries.map((entry) {
+      return FlSpot(entry.key.toDouble(), entry.value.clickCount.toDouble());
+    }).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '일별 조회수 추이',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          height: 250,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppTheme.charcoalMedium,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppTheme.electricBlue.withOpacity(0.3)),
+          ),
+          child: LineChart(
+            LineChartData(
+              gridData: FlGridData(
+                show: true,
+                drawVerticalLine: false,
+                horizontalInterval: maxClicks / 5,
+                getDrawingHorizontalLine: (value) {
+                  return FlLine(
+                    color: AppTheme.textSecondary.withOpacity(0.1),
+                    strokeWidth: 1,
+                  );
+                },
+              ),
+              titlesData: FlTitlesData(
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 40,
+                    getTitlesWidget: (value, meta) {
+                      return Text(
+                        value.toInt().toString(),
+                        style: const TextStyle(
+                          color: AppTheme.textSecondary,
+                          fontSize: 12,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      if (value.toInt() >= items.length) return const Text('');
+                      final date = items[value.toInt()].date;
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          DateFormat('MM/dd').format(date),
+                          style: const TextStyle(
+                            color: AppTheme.textSecondary,
+                            fontSize: 10,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              ),
+              borderData: FlBorderData(show: false),
+              minX: 0,
+              maxX: (items.length - 1).toDouble(),
+              minY: 0,
+              maxY: maxClicks * 1.2,
+              lineBarsData: [
+                LineChartBarData(
+                  spots: spots,
+                  isCurved: true,
+                  color: AppTheme.electricBlue,
+                  barWidth: 3,
+                  isStrokeCapRound: true,
+                  dotData: FlDotData(
+                    show: true,
+                    getDotPainter: (spot, percent, barData, index) {
+                      return FlDotCirclePainter(
+                        radius: 4,
+                        color: AppTheme.electricBlue,
+                        strokeWidth: 2,
+                        strokeColor: AppTheme.charcoalMedium,
+                      );
+                    },
+                  ),
+                  belowBarData: BarAreaData(
+                    show: true,
+                    color: AppTheme.electricBlue.withOpacity(0.1),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 

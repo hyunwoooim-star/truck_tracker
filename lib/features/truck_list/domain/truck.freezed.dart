@@ -39,7 +39,9 @@ mixin _$Truck {
       throw _privateConstructorUsedError; // 즐겨찾기 카운트 (전체 사용자)
   double get avgRating => throw _privateConstructorUsedError; // 평균 별점
   int get totalReviews => throw _privateConstructorUsedError; // 총 리뷰 개수
-  bool get isOpen => throw _privateConstructorUsedError;
+  bool get isOpen => throw _privateConstructorUsedError; // 영업 중 여부 (FCM 트리거용)
+  Map<String, dynamic>? get weeklySchedule =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this Truck to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -73,6 +75,7 @@ abstract class $TruckCopyWith<$Res> {
     double avgRating,
     int totalReviews,
     bool isOpen,
+    Map<String, dynamic>? weeklySchedule,
   });
 }
 
@@ -108,6 +111,7 @@ class _$TruckCopyWithImpl<$Res, $Val extends Truck>
     Object? avgRating = null,
     Object? totalReviews = null,
     Object? isOpen = null,
+    Object? weeklySchedule = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -179,6 +183,10 @@ class _$TruckCopyWithImpl<$Res, $Val extends Truck>
                 ? _value.isOpen
                 : isOpen // ignore: cast_nullable_to_non_nullable
                       as bool,
+            weeklySchedule: freezed == weeklySchedule
+                ? _value.weeklySchedule
+                : weeklySchedule // ignore: cast_nullable_to_non_nullable
+                      as Map<String, dynamic>?,
           )
           as $Val,
     );
@@ -211,6 +219,7 @@ abstract class _$$TruckImplCopyWith<$Res> implements $TruckCopyWith<$Res> {
     double avgRating,
     int totalReviews,
     bool isOpen,
+    Map<String, dynamic>? weeklySchedule,
   });
 }
 
@@ -245,6 +254,7 @@ class __$$TruckImplCopyWithImpl<$Res>
     Object? avgRating = null,
     Object? totalReviews = null,
     Object? isOpen = null,
+    Object? weeklySchedule = freezed,
   }) {
     return _then(
       _$TruckImpl(
@@ -316,6 +326,10 @@ class __$$TruckImplCopyWithImpl<$Res>
             ? _value.isOpen
             : isOpen // ignore: cast_nullable_to_non_nullable
                   as bool,
+        weeklySchedule: freezed == weeklySchedule
+            ? _value._weeklySchedule
+            : weeklySchedule // ignore: cast_nullable_to_non_nullable
+                  as Map<String, dynamic>?,
       ),
     );
   }
@@ -342,7 +356,9 @@ class _$TruckImpl extends _Truck {
     this.avgRating = 0.0,
     this.totalReviews = 0,
     this.isOpen = false,
-  }) : super._();
+    final Map<String, dynamic>? weeklySchedule,
+  }) : _weeklySchedule = weeklySchedule,
+       super._();
 
   factory _$TruckImpl.fromJson(Map<String, dynamic> json) =>
       _$$TruckImplFromJson(json);
@@ -394,10 +410,21 @@ class _$TruckImpl extends _Truck {
   @override
   @JsonKey()
   final bool isOpen;
+  // 영업 중 여부 (FCM 트리거용)
+  final Map<String, dynamic>? _weeklySchedule;
+  // 영업 중 여부 (FCM 트리거용)
+  @override
+  Map<String, dynamic>? get weeklySchedule {
+    final value = _weeklySchedule;
+    if (value == null) return null;
+    if (_weeklySchedule is EqualUnmodifiableMapView) return _weeklySchedule;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
 
   @override
   String toString() {
-    return 'Truck(id: $id, truckNumber: $truckNumber, driverName: $driverName, status: $status, foodType: $foodType, locationDescription: $locationDescription, latitude: $latitude, longitude: $longitude, isFavorite: $isFavorite, imageUrl: $imageUrl, ownerEmail: $ownerEmail, bankAccount: $bankAccount, announcement: $announcement, favoriteCount: $favoriteCount, avgRating: $avgRating, totalReviews: $totalReviews, isOpen: $isOpen)';
+    return 'Truck(id: $id, truckNumber: $truckNumber, driverName: $driverName, status: $status, foodType: $foodType, locationDescription: $locationDescription, latitude: $latitude, longitude: $longitude, isFavorite: $isFavorite, imageUrl: $imageUrl, ownerEmail: $ownerEmail, bankAccount: $bankAccount, announcement: $announcement, favoriteCount: $favoriteCount, avgRating: $avgRating, totalReviews: $totalReviews, isOpen: $isOpen, weeklySchedule: $weeklySchedule)';
   }
 
   @override
@@ -435,7 +462,11 @@ class _$TruckImpl extends _Truck {
                 other.avgRating == avgRating) &&
             (identical(other.totalReviews, totalReviews) ||
                 other.totalReviews == totalReviews) &&
-            (identical(other.isOpen, isOpen) || other.isOpen == isOpen));
+            (identical(other.isOpen, isOpen) || other.isOpen == isOpen) &&
+            const DeepCollectionEquality().equals(
+              other._weeklySchedule,
+              _weeklySchedule,
+            ));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -459,6 +490,7 @@ class _$TruckImpl extends _Truck {
     avgRating,
     totalReviews,
     isOpen,
+    const DeepCollectionEquality().hash(_weeklySchedule),
   );
 
   /// Create a copy of Truck
@@ -494,6 +526,7 @@ abstract class _Truck extends Truck {
     final double avgRating,
     final int totalReviews,
     final bool isOpen,
+    final Map<String, dynamic>? weeklySchedule,
   }) = _$TruckImpl;
   const _Truck._() : super._();
 
@@ -532,7 +565,9 @@ abstract class _Truck extends Truck {
   @override
   int get totalReviews; // 총 리뷰 개수
   @override
-  bool get isOpen;
+  bool get isOpen; // 영업 중 여부 (FCM 트리거용)
+  @override
+  Map<String, dynamic>? get weeklySchedule;
 
   /// Create a copy of Truck
   /// with the given fields replaced by the non-null parameter values.

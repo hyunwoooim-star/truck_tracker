@@ -24,6 +24,7 @@ _$TruckImpl _$$TruckImplFromJson(Map<String, dynamic> json) => _$TruckImpl(
   avgRating: (json['avgRating'] as num?)?.toDouble() ?? 0.0,
   totalReviews: (json['totalReviews'] as num?)?.toInt() ?? 0,
   isOpen: json['isOpen'] as bool? ?? false,
+  weeklySchedule: json['weeklySchedule'] as Map<String, dynamic>?,
 );
 
 Map<String, dynamic> _$$TruckImplToJson(_$TruckImpl instance) =>
@@ -45,6 +46,7 @@ Map<String, dynamic> _$$TruckImplToJson(_$TruckImpl instance) =>
       'avgRating': instance.avgRating,
       'totalReviews': instance.totalReviews,
       'isOpen': instance.isOpen,
+      'weeklySchedule': instance.weeklySchedule,
     };
 
 const _$TruckStatusEnumMap = {
