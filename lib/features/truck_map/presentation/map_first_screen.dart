@@ -4,8 +4,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../core/constants/food_types.dart';
+import '../../../core/constants/marker_colors.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../truck_list/domain/truck.dart';
@@ -64,23 +66,10 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
     );
   }
 
-  static double _getMarkerHue(String foodType) {
-    final colorMap = {
-      '닭꼬치': BitmapDescriptor.hueRed,
-      '불막창': BitmapDescriptor.hueRose,
-      '호떡': BitmapDescriptor.hueOrange,
-      '붕어빵': BitmapDescriptor.hueYellow,
-      '어묵': BitmapDescriptor.hueYellow,
-      '옛날통닭': BitmapDescriptor.hueGreen,
-      '심야라멘': BitmapDescriptor.hueViolet,
-      '크레페퀸': BitmapDescriptor.hueMagenta,
-    };
-    return colorMap[foodType] ?? 175.0;
-  }
-
   @override
   Widget build(BuildContext context) {
     final trucksAsync = ref.watch(filteredTruckListProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: Stack(
@@ -106,15 +95,15 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                   .toList();
 
               if (validTrucks.isEmpty) {
-                return const Center(
+                return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.local_shipping_outlined,
+                      const Icon(Icons.local_shipping_outlined,
                           size: 64, color: AppTheme.textTertiary),
-                      SizedBox(height: 16),
-                      Text('현재 운영 중인 트럭이 없습니다',
-                          style: TextStyle(
+                      const SizedBox(height: 16),
+                      Text(l10n.noTrucksAvailable,
+                          style: const TextStyle(
                               fontSize: 18, color: AppTheme.textSecondary)),
                     ],
                   ),
@@ -128,7 +117,7 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                     markerId: MarkerId(truck.id),
                     position: LatLng(truck.latitude, truck.longitude),
                     icon: BitmapDescriptor.defaultMarkerWithHue(
-                        _getMarkerHue(truck.foodType)),
+                        MarkerColors.getHue(truck.foodType)),
                     alpha: truck.status == TruckStatus.maintenance ? 0.3 : 1.0,
                     infoWindow: InfoWindow(
                       title: truck.foodType,
@@ -247,15 +236,15 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                             child: CircularProgressIndicator(
                                 color: AppTheme.mustardYellow)),
                         error: (e, _) => Center(
-                          child: Text('데이터를 불러올 수 없습니다',
+                          child: Text(l10n.loadDataFailed,
                               style: Theme.of(context).textTheme.bodyMedium),
                         ),
                         data: (trucks) {
                           if (trucks.isEmpty) {
-                            return const Center(
-                              child: Text('트럭이 없습니다',
+                            return Center(
+                              child: Text(l10n.noTrucks,
                                   style:
-                                      TextStyle(color: AppTheme.textSecondary)),
+                                      const TextStyle(color: AppTheme.textSecondary)),
                             );
                           }
 
@@ -409,14 +398,15 @@ class _StatusTag extends StatelessWidget {
 
   final TruckStatus status;
 
-  String get _label {
+  String _getLabel(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (status) {
       case TruckStatus.onRoute:
-        return '운행 중';
+        return l10n.statusOnRoute;
       case TruckStatus.resting:
-        return '대기';
+        return l10n.statusStopped;
       case TruckStatus.maintenance:
-        return '점검';
+        return l10n.statusInspection;
     }
   }
 
@@ -451,7 +441,7 @@ class _StatusTag extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        _label,
+        _getLabel(context),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: _textColor,
               fontWeight: FontWeight.w600,
@@ -548,6 +538,7 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
   @override
   Widget build(BuildContext context) {
     final searchKeyword = ref.watch(truckFilterNotifierProvider).searchKeyword;
+    final l10n = AppLocalizations.of(context)!;
 
     if (_controller.text != searchKeyword) {
       _controller.text = searchKeyword;
@@ -563,7 +554,7 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
         controller: _controller,
         style: const TextStyle(color: AppTheme.textPrimary),
         decoration: InputDecoration(
-          hintText: '트럭 검색',
+          hintText: l10n.searchTrucks,
           hintStyle: const TextStyle(color: AppTheme.textTertiary),
           prefixIcon: const Icon(Icons.search, color: AppTheme.textTertiary),
           suffixIcon: searchKeyword.isNotEmpty
