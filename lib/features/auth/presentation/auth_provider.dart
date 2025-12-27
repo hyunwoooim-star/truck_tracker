@@ -5,10 +5,13 @@ import '../data/auth_service.dart';
 
 part 'auth_provider.g.dart';
 
+/// Singleton instance of AuthService to prevent multiple instances
+final _authServiceInstance = AuthService();
+
 /// Auth service provider (kept alive to maintain auth state)
 @Riverpod(keepAlive: true)
 AuthService authService(AuthServiceRef ref) {
-  return AuthService();
+  return _authServiceInstance;
 }
 
 /// Current user stream provider (kept alive to maintain auth state)

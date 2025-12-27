@@ -771,7 +771,17 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
+
+              // Sign out from Firebase
               await ref.read(authServiceProvider).signOut();
+
+              // 🔄 CRITICAL: Invalidate all user-specific providers to clear cached data
+              ref.invalidate(currentUserTruckIdProvider);
+              ref.invalidate(currentUserProvider);
+              ref.invalidate(currentUserIdProvider);
+              ref.invalidate(currentUserEmailProvider);
+              ref.invalidate(ownerTruckProvider);
+              ref.invalidate(truckListProvider);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
