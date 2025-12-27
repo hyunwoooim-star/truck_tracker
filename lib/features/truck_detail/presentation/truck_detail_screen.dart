@@ -187,7 +187,7 @@ class TruckDetailScreen extends ConsumerWidget {
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
-                                      (detail.averageRating ?? 0.0).toStringAsFixed(1),
+                                      (detail?.averageRating ?? 0.0).toStringAsFixed(1),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
@@ -226,7 +226,7 @@ class TruckDetailScreen extends ConsumerWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                detail.operatingHours ?? 'N/A',
+                                detail?.operatingHours ?? 'N/A',
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   color: AppTheme.electricBlue,
                                   fontWeight: FontWeight.w600,
@@ -295,7 +295,7 @@ class TruckDetailScreen extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          ...?detail.menuItems?.map(
+                          ...?detail?.menuItems?.map(
                             (item) => _MenuItemCard(
                               item: item,
                               truck: truck,
