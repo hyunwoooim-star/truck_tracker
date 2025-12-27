@@ -9,6 +9,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../core/constants/food_types.dart';
 import '../../../core/constants/marker_colors.dart';
 import '../../../core/themes/app_theme.dart';
+import '../../../shared/widgets/status_tag.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../truck_list/domain/truck.dart';
@@ -437,7 +438,7 @@ class _TruckCard extends StatelessWidget {
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
-                        _StatusTag(status: truck.status),
+                        StatusTag(status: truck.status),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -473,64 +474,6 @@ class _TruckCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _StatusTag extends StatelessWidget {
-  const _StatusTag({required this.status});
-
-  final TruckStatus status;
-
-  String _getLabel(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    switch (status) {
-      case TruckStatus.onRoute:
-        return l10n.statusOnRoute;
-      case TruckStatus.resting:
-        return l10n.statusStopped;
-      case TruckStatus.maintenance:
-        return l10n.statusInspection;
-    }
-  }
-
-  Color get _bgColor {
-    switch (status) {
-      case TruckStatus.onRoute:
-        return AppTheme.mustardYellow15;
-      case TruckStatus.resting:
-        return AppTheme.textTertiary15;
-      case TruckStatus.maintenance:
-        return AppTheme.orange15;
-    }
-  }
-
-  Color get _textColor {
-    switch (status) {
-      case TruckStatus.onRoute:
-        return AppTheme.mustardYellow;
-      case TruckStatus.resting:
-        return AppTheme.textSecondary;
-      case TruckStatus.maintenance:
-        return const Color(0xFFFF9800);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: _bgColor,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        _getLabel(context),
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: _textColor,
-              fontWeight: FontWeight.w600,
-            ),
       ),
     );
   }
