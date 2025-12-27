@@ -1363,6 +1363,48 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'오류: {error}'**
   String errorWithDetails(Object error);
+
+  /// No description provided for @followedTruck.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭을 팔로우했습니다! 영업 시작 시 알림을 받으실 수 있습니다.'**
+  String get followedTruck;
+
+  /// No description provided for @unfollowedTruck.
+  ///
+  /// In ko, this message translates to:
+  /// **'팔로우를 취소했습니다.'**
+  String get unfollowedTruck;
+
+  /// No description provided for @errorOccurred.
+  ///
+  /// In ko, this message translates to:
+  /// **'오류가 발생했습니다. 다시 시도해주세요.'**
+  String get errorOccurred;
+
+  /// No description provided for @following.
+  ///
+  /// In ko, this message translates to:
+  /// **'팔로잉'**
+  String get following;
+
+  /// No description provided for @followers.
+  ///
+  /// In ko, this message translates to:
+  /// **'팔로워'**
+  String get followers;
+
+  /// No description provided for @myFollowedTrucks.
+  ///
+  /// In ko, this message translates to:
+  /// **'내가 팔로우한 트럭'**
+  String get myFollowedTrucks;
+
+  /// No description provided for @noFollowedTrucks.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 팔로우한 트럭이 없습니다'**
+  String get noFollowedTrucks;
 }
 
 class _AppLocalizationsDelegate

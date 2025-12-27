@@ -343,5 +343,13 @@
         "type": "Object"
       }
     }
-  }
+  },
+
+  "followedTruck": "Followed! You will receive notifications when this truck opens.",
+  "unfollowedTruck": "Unfollowed this truck.",
+  "errorOccurred": "An error occurred. Please try again.",
+  "following": "Following",
+  "followers": "Followers",
+  "myFollowedTrucks": "My Followed Trucks",
+  "noFollowedTrucks": "You haven''t followed any trucks yet"
 }

@@ -53,6 +53,88 @@ class TruckDetailScreen extends ConsumerWidget {
                 expandedHeight: 300,
                 pinned: true,
                 backgroundColor: AppTheme.baeminMint,
+                actions: [
+                  // Follow Button
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final user = FirebaseAuth.instance.currentUser;
+                      if (user == null) return const SizedBox.shrink();
+
+                      final isFollowingAsync = ref.watch(
+                        isFollowingTruckProvider(
+                          userId: user.uid,
+                          truckId: truck.id,
+                        ),
+                      );
+
+                      return isFollowingAsync.when(
+                        loading: () => const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                        error: (_, __) => const SizedBox.shrink(),
+                        data: (isFollowing) => IconButton(
+                          icon: Icon(
+                            isFollowing ? Icons.favorite : Icons.favorite_border,
+                            color: isFollowing ? Colors.red : Colors.white,
+                          ),
+                          onPressed: () async {
+                            final repository = ref.read(followRepositoryProvider);
+                            try {
+                              if (isFollowing) {
+                                await repository.unfollowTruck(
+                                  userId: user.uid,
+                                  truckId: truck.id,
+                                );
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(l10n.unfollowedTruck),
+                                      backgroundColor: AppTheme.charcoalMedium,
+                                    ),
+                                  );
+                                }
+                              } else {
+                                await repository.followTruck(
+                                  userId: user.uid,
+                                  truckId: truck.id,
+                                  notificationsEnabled: true,
+                                );
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(l10n.followedTruck),
+                                      backgroundColor: AppTheme.electricBlue,
+                                    ),
+                                  );
+                                }
+                              }
+                              // Refresh the follow status
+                              ref.invalidate(isFollowingTruckProvider(
+                                userId: user.uid,
+                                truckId: truck.id,
+                              ));
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(l10n.errorOccurred),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                ],
                 flexibleSpace: FlexibleSpaceBar(
                   background: Hero(
                     tag: 'truck_image_${truck.id}',

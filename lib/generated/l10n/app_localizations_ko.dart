@@ -674,4 +674,25 @@ class AppLocalizationsKo extends AppLocalizations {
   String errorWithDetails(Object error) {
     return '오류: $error';
   }
+
+  @override
+  String get followedTruck => '트럭을 팔로우했습니다! 영업 시작 시 알림을 받으실 수 있습니다.';
+
+  @override
+  String get unfollowedTruck => '팔로우를 취소했습니다.';
+
+  @override
+  String get errorOccurred => '오류가 발생했습니다. 다시 시도해주세요.';
+
+  @override
+  String get following => '팔로잉';
+
+  @override
+  String get followers => '팔로워';
+
+  @override
+  String get myFollowedTrucks => '내가 팔로우한 트럭';
+
+  @override
+  String get noFollowedTrucks => '아직 팔로우한 트럭이 없습니다';
 }

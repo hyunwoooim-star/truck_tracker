@@ -682,4 +682,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorWithDetails(Object error) {
     return 'Error: $error';
   }
+
+  @override
+  String get followedTruck =>
+      'Followed! You will receive notifications when this truck opens.';
+
+  @override
+  String get unfollowedTruck => 'Unfollowed this truck.';
+
+  @override
+  String get errorOccurred => 'An error occurred. Please try again.';
+
+  @override
+  String get following => 'Following';
+
+  @override
+  String get followers => 'Followers';
+
+  @override
+  String get myFollowedTrucks => 'My Followed Trucks';
+
+  @override
+  String get noFollowedTrucks => 'You haven\'t followed any trucks yet';
 }
