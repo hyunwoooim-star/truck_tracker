@@ -1311,14 +1311,94 @@ isConnected.when(
 
 ---
 
-## 📝 다음 단계
+## Phase 7-10: 추가 기능 구현 (완료) ✅
 
-1. Phase 1부터 순차적으로 진행
-2. 각 Phase 완료 후 Git 브랜치 생성 및 커밋
-3. Pull Request로 코드 리뷰
-4. 모든 Phase 완료 후 프로덕션 배포
+### Phase 7: Production Readiness
+- Firebase Functions 배포 (FCM 알림)
+- 프로덕션 환경 설정
+- 배포 준비 최종 점검
+
+### Phase 8: Advanced Features
+- **주간 영업일정**: weeklySchedule 필드 추가
+- **Analytics 차트**: fl_chart를 활용한 일일 클릭 트렌드 LineChart
+- **리뷰 사진**: 리뷰 시스템 이미지 업로드 지원
+
+### Phase 9: Order System Enhancement
+- **실시간 주문 통계 대시보드**: owner_dashboard_screen.dart
+  - 오늘의 주문 건수 (total, completed, pending)
+  - 오늘의 매출 통계
+  - _buildTodayOrderStats() 위젯 구현
+  - _OrderStatTile 커스텀 위젯
+
+### Phase 10: Advanced Search & Filter System ⭐
+**구현 내용**:
+
+#### Filter Logic Enhancement (truck_provider.dart)
+- **TruckFilterState 확장**:
+  - `selectedStatuses`: 트럭 상태 필터 (운행중/휴식/정비)
+  - `maxDistance`: 거리 필터 (1km/5km/10km/전체)
+  - `minRating`: 최소 평점 필터 (3.0+/4.0+/4.5+)
+  - `openOnly`: 영업 중만 표시
+  - `hasActiveFilters`: 활성 필터 여부 체크
+
+- **TruckFilterNotifier 메서드**:
+  - `toggleStatus()`: 상태 다중 선택
+  - `setMaxDistance()`: 거리 제한 설정
+  - `setMinRating()`: 최소 평점 설정
+  - `setOpenOnly()`: 영업 중 필터 토글
+  - `clearAllFilters()`: 모든 필터 초기화
+
+- **필터 파이프라인**:
+  1. 음식 종류 → 2. 검색 키워드 → 3. 트럭 상태
+  4. 최소 평점 → 5. 영업 중 여부 → 6. 거리 제한
+
+#### UI Components (truck_list_screen.dart, +250 lines)
+- **_AdvancedFilterDialog** (186 lines):
+  - 상태 필터 칩 (운행 중, 휴식, 정비 중)
+  - 거리 필터 칩 (1km, 5km, 10km, 전체)
+  - 평점 필터 칩 (⭐ 3.0+, 4.0+, 4.5+, 전체)
+  - 영업 중만 표시 스위치
+  - 활성 필터 초기화 버튼
+
+- **_SortOptionsDialog**:
+  - 가까운 순 (GPS 거리 기준)
+  - 이름 순 (가나다 순)
+  - 평점 순 (높은 순)
+
+- **_FilterBar 개선**:
+  - 고급 필터 버튼 (활성 시 배지 표시)
+  - 정렬 버튼
+  - 음식 종류 칩 스크롤
+
+#### UX 개선사항
+- ✅ 필터 활성 시 파란색 배지 표시
+- ✅ 원탭으로 고급 필터 접근
+- ✅ 실시간 필터 적용 (디바운싱 500ms)
+- ✅ Material Design 칩 & 스위치
+- ✅ 필터 조합 가능 (AND 로직)
+- ✅ 명확한 시각적 피드백
+
+**기술적 특징**:
+- Stream 기반 반응형 업데이트
+- 거리 계산 최적화 (사용자 위치 캐싱)
+- Null-safe 필터링
+- 로깅 파이프라인 (디버깅용)
+- 기존 검색/음식 필터와 통합
 
 ---
 
-**작성자**: Claude (Opus 4.5)
-**마지막 업데이트**: 2025-12-26
+## 📝 다음 단계
+
+### 완료된 작업
+- [x] Phase 1-10 모두 완료
+- [x] 웹 배포 이슈 분석 (WEB_DEPLOYMENT_PLAN.md)
+- [x] 고급 검색 & 필터 시스템 구현
+
+### 우선순위 작업
+1. **웹 배포 해결**: WEB_DEPLOYMENT_PLAN.md의 Option 2 (CanvasKit) 시도
+2. **Phase 11+**: 소셜 기능, 쿠폰 시스템 등
+
+---
+
+**작성자**: Claude (Sonnet 4.5)
+**마지막 업데이트**: 2025-12-28
