@@ -446,19 +446,27 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                 return;
               }
 
-              // Create Order with paymentMethod='cash'
-              final orderData = {
-                'truckId': truck.id,
-                'itemName': itemController.text.trim(),
-                'amount': amount,
-                'paymentMethod': 'cash',
-                'source': 'manual',
-                'timestamp': FieldValue.serverTimestamp(),
-                'status': 'completed',
-              };
+              // 🔄 FIXED: Use Order model for cash sales (unified schema)
+              final currentUser = ref.read(currentUserProvider);
+              final order = Order(
+                id: '', // Will be set by Firestore
+                userId: currentUser?.uid ?? 'unknown',
+                userName: currentUser?.displayName ?? currentUser?.email ?? 'Cash Customer',
+                truckId: truck.id,
+                truckName: truck.foodType,
+                items: [], // Empty for manual cash sales
+                totalAmount: amount,
+                status: OrderStatus.completed,
+                paymentMethod: 'cash',
+                source: 'manual',
+                itemName: itemController.text.trim().isEmpty
+                    ? null
+                    : itemController.text.trim(),
+              );
 
               try {
-                await FirebaseFirestore.instance.collection('orders').add(orderData);
+                final orderRepo = ref.read(orderRepositoryProvider);
+                await orderRepo.placeOrder(order);
 
                 if (context.mounted) {
                   Navigator.pop(context);

@@ -22,6 +22,9 @@ class Order with _$Order {
     required int totalAmount,
     required OrderStatus status,
     @Default('') String specialRequests,
+    @Default('card') String paymentMethod, // 'card', 'cash', 'kakao', 'toss'
+    @Default('customer') String source, // 'customer', 'manual' (for cash sales)
+    String? itemName, // Simple item name for manual cash sales
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _Order;
@@ -32,20 +35,31 @@ class Order with _$Order {
   factory Order.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
 
+    // Handle both new schema (items + totalAmount) and legacy schema (itemName + amount)
+    final items = (data['items'] as List<dynamic>?)
+            ?.map((item) => CartItem.fromJson(item as Map<String, dynamic>))
+            .toList() ??
+        [];
+
+    final totalAmount = (data['totalAmount'] as num?)?.toInt() ??
+                        (data['amount'] as num?)?.toInt() ??
+                        0;
+
     return Order(
       id: doc.id,
       userId: data['userId'] ?? '',
       userName: data['userName'] ?? '',
       truckId: data['truckId'] ?? '',
       truckName: data['truckName'] ?? '',
-      items: (data['items'] as List<dynamic>?)
-              ?.map((item) => CartItem.fromJson(item as Map<String, dynamic>))
-              .toList() ??
-          [],
-      totalAmount: (data['totalAmount'] as num?)?.toInt() ?? 0,
+      items: items,
+      totalAmount: totalAmount,
       status: _statusFromString(data['status'] as String? ?? 'pending'),
       specialRequests: data['specialRequests'] ?? '',
-      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+      paymentMethod: data['paymentMethod'] ?? 'card',
+      source: data['source'] ?? 'customer',
+      itemName: data['itemName'],
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate() ??
+                 (data['timestamp'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
@@ -61,6 +75,9 @@ class Order with _$Order {
       'totalAmount': totalAmount,
       'status': status.name,
       'specialRequests': specialRequests,
+      'paymentMethod': paymentMethod,
+      'source': source,
+      if (itemName != null) 'itemName': itemName,
       'createdAt': createdAt != null
           ? Timestamp.fromDate(createdAt!)
           : FieldValue.serverTimestamp(),

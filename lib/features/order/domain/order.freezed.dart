@@ -30,6 +30,12 @@ mixin _$Order {
   int get totalAmount => throw _privateConstructorUsedError;
   OrderStatus get status => throw _privateConstructorUsedError;
   String get specialRequests => throw _privateConstructorUsedError;
+  String get paymentMethod =>
+      throw _privateConstructorUsedError; // 'card', 'cash', 'kakao', 'toss'
+  String get source =>
+      throw _privateConstructorUsedError; // 'customer', 'manual' (for cash sales)
+  String? get itemName =>
+      throw _privateConstructorUsedError; // Simple item name for manual cash sales
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
@@ -57,6 +63,9 @@ abstract class $OrderCopyWith<$Res> {
     int totalAmount,
     OrderStatus status,
     String specialRequests,
+    String paymentMethod,
+    String source,
+    String? itemName,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -86,6 +95,9 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
     Object? totalAmount = null,
     Object? status = null,
     Object? specialRequests = null,
+    Object? paymentMethod = null,
+    Object? source = null,
+    Object? itemName = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -127,6 +139,18 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
                 ? _value.specialRequests
                 : specialRequests // ignore: cast_nullable_to_non_nullable
                       as String,
+            paymentMethod: null == paymentMethod
+                ? _value.paymentMethod
+                : paymentMethod // ignore: cast_nullable_to_non_nullable
+                      as String,
+            source: null == source
+                ? _value.source
+                : source // ignore: cast_nullable_to_non_nullable
+                      as String,
+            itemName: freezed == itemName
+                ? _value.itemName
+                : itemName // ignore: cast_nullable_to_non_nullable
+                      as String?,
             createdAt: freezed == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -159,6 +183,9 @@ abstract class _$$OrderImplCopyWith<$Res> implements $OrderCopyWith<$Res> {
     int totalAmount,
     OrderStatus status,
     String specialRequests,
+    String paymentMethod,
+    String source,
+    String? itemName,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -187,6 +214,9 @@ class __$$OrderImplCopyWithImpl<$Res>
     Object? totalAmount = null,
     Object? status = null,
     Object? specialRequests = null,
+    Object? paymentMethod = null,
+    Object? source = null,
+    Object? itemName = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -228,6 +258,18 @@ class __$$OrderImplCopyWithImpl<$Res>
             ? _value.specialRequests
             : specialRequests // ignore: cast_nullable_to_non_nullable
                   as String,
+        paymentMethod: null == paymentMethod
+            ? _value.paymentMethod
+            : paymentMethod // ignore: cast_nullable_to_non_nullable
+                  as String,
+        source: null == source
+            ? _value.source
+            : source // ignore: cast_nullable_to_non_nullable
+                  as String,
+        itemName: freezed == itemName
+            ? _value.itemName
+            : itemName // ignore: cast_nullable_to_non_nullable
+                  as String?,
         createdAt: freezed == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -254,6 +296,9 @@ class _$OrderImpl extends _Order {
     required this.totalAmount,
     required this.status,
     this.specialRequests = '',
+    this.paymentMethod = 'card',
+    this.source = 'customer',
+    this.itemName,
     this.createdAt,
     this.updatedAt,
   }) : _items = items,
@@ -288,13 +333,24 @@ class _$OrderImpl extends _Order {
   @JsonKey()
   final String specialRequests;
   @override
+  @JsonKey()
+  final String paymentMethod;
+  // 'card', 'cash', 'kakao', 'toss'
+  @override
+  @JsonKey()
+  final String source;
+  // 'customer', 'manual' (for cash sales)
+  @override
+  final String? itemName;
+  // Simple item name for manual cash sales
+  @override
   final DateTime? createdAt;
   @override
   final DateTime? updatedAt;
 
   @override
   String toString() {
-    return 'Order(id: $id, userId: $userId, userName: $userName, truckId: $truckId, truckName: $truckName, items: $items, totalAmount: $totalAmount, status: $status, specialRequests: $specialRequests, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Order(id: $id, userId: $userId, userName: $userName, truckId: $truckId, truckName: $truckName, items: $items, totalAmount: $totalAmount, status: $status, specialRequests: $specialRequests, paymentMethod: $paymentMethod, source: $source, itemName: $itemName, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -315,6 +371,11 @@ class _$OrderImpl extends _Order {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.specialRequests, specialRequests) ||
                 other.specialRequests == specialRequests) &&
+            (identical(other.paymentMethod, paymentMethod) ||
+                other.paymentMethod == paymentMethod) &&
+            (identical(other.source, source) || other.source == source) &&
+            (identical(other.itemName, itemName) ||
+                other.itemName == itemName) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -334,6 +395,9 @@ class _$OrderImpl extends _Order {
     totalAmount,
     status,
     specialRequests,
+    paymentMethod,
+    source,
+    itemName,
     createdAt,
     updatedAt,
   );
@@ -363,6 +427,9 @@ abstract class _Order extends Order {
     required final int totalAmount,
     required final OrderStatus status,
     final String specialRequests,
+    final String paymentMethod,
+    final String source,
+    final String? itemName,
     final DateTime? createdAt,
     final DateTime? updatedAt,
   }) = _$OrderImpl;
@@ -388,6 +455,12 @@ abstract class _Order extends Order {
   OrderStatus get status;
   @override
   String get specialRequests;
+  @override
+  String get paymentMethod; // 'card', 'cash', 'kakao', 'toss'
+  @override
+  String get source; // 'customer', 'manual' (for cash sales)
+  @override
+  String? get itemName; // Simple item name for manual cash sales
   @override
   DateTime? get createdAt;
   @override
