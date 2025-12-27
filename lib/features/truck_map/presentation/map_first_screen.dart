@@ -269,14 +269,15 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
             },
           ),
 
-          // 🔄 ADDED: Logout button (top-right corner)
+          // 🔄 ADDED: Logout button (top-right corner, always visible)
           Positioned(
             top: MediaQuery.of(context).padding.top + 16,
             right: 16,
             child: Material(
-              color: AppTheme.charcoalMedium.withOpacity(0.9),
+              color: AppTheme.charcoalMedium.withOpacity(0.95),
               borderRadius: BorderRadius.circular(12),
-              elevation: 4,
+              elevation: 10, // Increased elevation to ensure it's above DraggableSheet
+              shadowColor: Colors.black.withOpacity(0.5),
               child: InkWell(
                 borderRadius: BorderRadius.circular(12),
                 onTap: () => _showLogoutDialog(context, ref),
