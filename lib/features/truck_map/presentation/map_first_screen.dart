@@ -9,6 +9,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../core/constants/food_types.dart';
 import '../../../core/constants/marker_colors.dart';
 import '../../../core/themes/app_theme.dart';
+import '../../auth/presentation/auth_provider.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../truck_list/domain/truck.dart';
 import '../../truck_list/presentation/truck_provider.dart';
@@ -266,6 +267,67 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                 ),
               );
             },
+          ),
+
+          // 🔄 ADDED: Logout button (top-right corner)
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 16,
+            right: 16,
+            child: Material(
+              color: AppTheme.charcoalMedium.withOpacity(0.9),
+              borderRadius: BorderRadius.circular(12),
+              elevation: 4,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () => _showLogoutDialog(context, ref),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  child: const Icon(
+                    Icons.logout,
+                    color: Colors.red,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Show logout confirmation dialog
+  void _showLogoutDialog(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.charcoalMedium,
+        title: const Text('로그아웃', style: TextStyle(color: Colors.white)),
+        content: const Text('정말 로그아웃하시겠습니까?', style: TextStyle(color: AppTheme.textSecondary)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel, style: const TextStyle(color: AppTheme.textSecondary)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+
+              // Sign out from Firebase
+              await ref.read(authServiceProvider).signOut();
+
+              // 🔄 Invalidate all user-specific providers
+              ref.invalidate(currentUserTruckIdProvider);
+              ref.invalidate(currentUserProvider);
+              ref.invalidate(currentUserIdProvider);
+              ref.invalidate(currentUserEmailProvider);
+              ref.invalidate(truckListProvider);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: const Text('로그아웃', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
