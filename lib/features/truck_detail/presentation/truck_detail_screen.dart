@@ -14,6 +14,7 @@ import '../../order/presentation/cart_provider.dart';
 import '../../review/data/review_repository.dart';
 import '../../review/presentation/review_form_dialog.dart';
 import '../../schedule/data/schedule_repository.dart';
+import '../../social/data/follow_repository.dart';
 import '../../talk/presentation/talk_widget.dart';
 import '../../truck_list/domain/truck.dart';
 import 'truck_detail_provider.dart';
