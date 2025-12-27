@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../notifications/fcm_service.dart';
