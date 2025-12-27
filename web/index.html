@@ -77,6 +77,13 @@
     }
   }
   </script>
+
+  <!-- Force CanvasKit renderer to avoid Impeller shader bug -->
+  <script>
+    window.flutterConfiguration = {
+      canvasKitBaseUrl: "https://www.gstatic.com/flutter-canvaskit/1527ae0ec577a4ef50e65f6fefcfc1326707d9bf/"
+    };
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>

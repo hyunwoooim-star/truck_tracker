@@ -467,7 +467,6 @@ class _FilterBar extends ConsumerWidget {
                 ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -828,7 +827,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
                     selected: filterState.maxDistance == 10000,
                     onSelected: (_) {
                       ref.read(truckFilterNotifierProvider.notifier).setMaxDistance(10000);
-                    ),
+                    },
                     selectedColor: AppTheme.electricBlue,
                     checkmarkColor: Colors.white,
                   ),
@@ -877,7 +876,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
                     selected: filterState.minRating == 4.5,
                     onSelected: (_) {
                       ref.read(truckFilterNotifierProvider.notifier).setMinRating(4.5);
-                    ),
+                    },
                     selectedColor: AppTheme.electricBlue,
                     checkmarkColor: Colors.white,
                   ),
