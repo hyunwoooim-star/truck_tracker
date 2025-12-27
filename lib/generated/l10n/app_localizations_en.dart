@@ -657,4 +657,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appName => 'Truck Uncle';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get confirmLogout => 'Are you sure you want to logout?';
+
+  @override
+  String get analyticsDashboard => 'Analytics Dashboard';
+
+  @override
+  String get scheduleSaved => 'Schedule saved successfully';
+
+  @override
+  String saveFailed(Object error) {
+    return 'Save failed: $error';
+  }
+
+  @override
+  String get weeklySchedule => 'Weekly Schedule';
+
+  @override
+  String errorWithDetails(Object error) {
+    return 'Error: $error';
+  }
 }

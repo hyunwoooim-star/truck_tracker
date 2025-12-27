@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rxdart/rxdart.dart';
@@ -585,18 +585,19 @@ class _AppDrawer extends ConsumerWidget {
             leading: const Icon(Icons.info_outline),
             title: Text(AppLocalizations.of(context)!.appInfo),
             onTap: () {
+              final l10n = AppLocalizations.of(context)!;
               Navigator.pop(context);
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text('트럭아저씨'),
+                  title: Text(l10n.truckUncle),
                   content: const Text(
                     'Version 1.0.0\n\n푸드트럭을 쉽게 찾고 관리할 수 있는 앱입니다.',
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('확인'),
+                      child: Text(l10n.ok),
                     ),
                   ],
                 ),
@@ -607,34 +608,22 @@ class _AppDrawer extends ConsumerWidget {
             leading: const Icon(Icons.privacy_tip_outlined),
             title: Text(AppLocalizations.of(context)!.privacyPolicy),
             onTap: () {
+              final l10n = AppLocalizations.of(context)!;
               Navigator.pop(context);
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text('개인정보 처리방침'),
-                  content: const SingleChildScrollView(
+                  title: Text(l10n.privacyPolicyTitle),
+                  content: SingleChildScrollView(
                     child: Text(
-                      '트럭아저씨는 사용자의 개인정보를 소중히 다룹니다.\n\n'
-                      '수집하는 개인정보:\n'
-                      '- 이메일 주소\n'
-                      '- 위치 정보 (선택적)\n'
-                      '- 기기 정보\n\n'
-                      '개인정보 이용 목적:\n'
-                      '- 서비스 제공 및 운영\n'
-                      '- 푸드트럭 위치 추적 서비스\n'
-                      '- 사용자 인증 및 관리\n\n'
-                      '개인정보 보유 및 이용 기간:\n'
-                      '- 회원 탈퇴 시까지\n'
-                      '- 관계 법령에 따라 보존 필요 시 해당 기간까지\n\n'
-                      '사용자는 언제든지 개인정보 열람, 수정, 삭제를 요청할 수 있습니다.\n\n'
-                      '문의: support@truckajeossi.com',
-                      style: TextStyle(fontSize: 14),
+                      l10n.privacyPolicyContent,
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('확인'),
+                      child: Text(l10n.ok),
                     ),
                   ],
                 ),

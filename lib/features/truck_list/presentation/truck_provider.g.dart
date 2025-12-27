@@ -168,7 +168,7 @@ final sortOptionNotifierProvider =
     );
 
 typedef _$SortOptionNotifier = AutoDisposeNotifier<SortOption>;
-String _$truckListNotifierHash() => r'8b55c04190fe74c2ee90a5296fcd2e4389f6dbae';
+String _$truckListNotifierHash() => r'0934e12641eb17b9cf899476c89b4b896c189043';
 
 /// See also [TruckListNotifier].
 @ProviderFor(TruckListNotifier)

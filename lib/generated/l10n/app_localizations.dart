@@ -1321,6 +1321,48 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'트럭아저씨'**
   String get appName;
+
+  /// No description provided for @logout.
+  ///
+  /// In ko, this message translates to:
+  /// **'로그아웃'**
+  String get logout;
+
+  /// No description provided for @confirmLogout.
+  ///
+  /// In ko, this message translates to:
+  /// **'정말 로그아웃하시겠습니까?'**
+  String get confirmLogout;
+
+  /// No description provided for @analyticsDashboard.
+  ///
+  /// In ko, this message translates to:
+  /// **'통계 대시보드'**
+  String get analyticsDashboard;
+
+  /// No description provided for @scheduleSaved.
+  ///
+  /// In ko, this message translates to:
+  /// **'일정이 저장되었습니다'**
+  String get scheduleSaved;
+
+  /// No description provided for @saveFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장 실패: {error}'**
+  String saveFailed(Object error);
+
+  /// No description provided for @weeklySchedule.
+  ///
+  /// In ko, this message translates to:
+  /// **'주간 영업 일정표'**
+  String get weeklySchedule;
+
+  /// No description provided for @errorWithDetails.
+  ///
+  /// In ko, this message translates to:
+  /// **'오류: {error}'**
+  String errorWithDetails(Object error);
 }
 
 class _AppLocalizationsDelegate

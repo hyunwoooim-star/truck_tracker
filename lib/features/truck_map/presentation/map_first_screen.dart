@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 
 import '../../../core/constants/food_types.dart';
 import '../../../core/constants/marker_colors.dart';
@@ -327,8 +327,8 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppTheme.charcoalMedium,
-        title: const Text('로그아웃', style: TextStyle(color: Colors.white)),
-        content: const Text('정말 로그아웃하시겠습니까?', style: TextStyle(color: AppTheme.textSecondary)),
+        title: Text(l10n.logout, style: const TextStyle(color: Colors.white)),
+        content: Text(l10n.confirmLogout, style: const TextStyle(color: AppTheme.textSecondary)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -351,7 +351,7 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
             ),
-            child: const Text('로그아웃', style: TextStyle(color: Colors.white)),
+            child: Text(l10n.logout, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),

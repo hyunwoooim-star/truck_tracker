@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../auth/presentation/auth_provider.dart';
@@ -769,8 +769,8 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('로그아웃'),
-        content: const Text('정말 로그아웃하시겠습니까?'),
+        title: Text(l10n.logout),
+        content: Text(l10n.confirmLogout),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -794,7 +794,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
             ),
-            child: const Text('로그아웃'),
+            child: Text(l10n.logout),
           ),
         ],
       ),

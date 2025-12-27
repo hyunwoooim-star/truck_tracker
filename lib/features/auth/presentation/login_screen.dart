@@ -59,9 +59,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // Validate legal agreements for sign-up
     if (!_isLogin && (!_agreedToTerms || !_agreedToPrivacy)) {
       AppLogger.warning('Legal agreements not accepted', tag: 'LoginScreen');
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('이용약관 및 개인정보 처리방침에 동의해주세요'),
+        SnackBar(
+          content: Text(l10n.agreeToTermsRequired),
           backgroundColor: Colors.red,
         ),
       );

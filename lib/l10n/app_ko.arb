@@ -219,5 +219,27 @@
 
   "privacyPolicyTitle": "개인정보 처리방침",
   "privacyPolicyContent": "트럭아저씨는 사용자의 개인정보를 소중히 다룹니다.\n\n수집하는 개인정보:\n• 이메일 주소, 이름, 프로필 사진\n• 위치 정보 (선택적)\n\n개인정보 이용 목적:\n• 서비스 제공 및 개선\n• 고객 지원\n\n개인정보 보유 및 이용 기간:\n• 회원 탈퇴 시까지\n\n사용자는 언제든지 개인정보 열람, 수정, 삭제를 요청할 수 있습니다.\n\n문의: support@truckajeossi.com",
-  "appName": "트럭아저씨"
+  "appName": "트럭아저씨",
+
+  "logout": "로그아웃",
+  "confirmLogout": "정말 로그아웃하시겠습니까?",
+  "analyticsDashboard": "통계 대시보드",
+  "scheduleSaved": "일정이 저장되었습니다",
+  "saveFailed": "저장 실패: {error}",
+  "@saveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "weeklySchedule": "주간 영업 일정표",
+  "errorWithDetails": "오류: {error}",
+  "@errorWithDetails": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  }
 }

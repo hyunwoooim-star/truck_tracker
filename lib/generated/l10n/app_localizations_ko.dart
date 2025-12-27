@@ -649,4 +649,29 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get appName => '트럭아저씨';
+
+  @override
+  String get logout => '로그아웃';
+
+  @override
+  String get confirmLogout => '정말 로그아웃하시겠습니까?';
+
+  @override
+  String get analyticsDashboard => '통계 대시보드';
+
+  @override
+  String get scheduleSaved => '일정이 저장되었습니다';
+
+  @override
+  String saveFailed(Object error) {
+    return '저장 실패: $error';
+  }
+
+  @override
+  String get weeklySchedule => '주간 영업 일정표';
+
+  @override
+  String errorWithDetails(Object error) {
+    return '오류: $error';
+  }
 }

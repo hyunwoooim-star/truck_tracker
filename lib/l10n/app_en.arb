@@ -321,5 +321,27 @@
 
   "privacyPolicyTitle": "Privacy Policy",
   "privacyPolicyContent": "Truck Uncle values your privacy.\n\nInformation we collect:\n• Email address, name, profile photo\n• Location information (optional)\n\nPurpose of use:\n• Service provision and improvement\n• Customer support\n\nData retention period:\n• Until account deletion\n\nYou can request to view, modify, or delete your personal information at any time.\n\nContact: support@truckajeossi.com",
-  "appName": "Truck Uncle"
+  "appName": "Truck Uncle",
+
+  "logout": "Logout",
+  "confirmLogout": "Are you sure you want to logout?",
+  "analyticsDashboard": "Analytics Dashboard",
+  "scheduleSaved": "Schedule saved successfully",
+  "saveFailed": "Save failed: {error}",
+  "@saveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "weeklySchedule": "Weekly Schedule",
+  "errorWithDetails": "Error: {error}",
+  "@errorWithDetails": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  }
 }

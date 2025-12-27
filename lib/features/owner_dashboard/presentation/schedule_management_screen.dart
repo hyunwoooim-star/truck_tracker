@@ -53,20 +53,22 @@ class _ScheduleManagementScreenState
     try {
       final repository = ref.read(scheduleRepositoryProvider);
       await repository.updateWeeklySchedule(truckId.toString(), _schedule!);
-      
+
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('일정이 저장되었습니다'),
+          SnackBar(
+            content: Text(l10n.scheduleSaved),
             backgroundColor: AppTheme.electricBlue,
           ),
         );
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('저장 실패: $e'),
+            content: Text(l10n.saveFailed.replaceAll('{error}', e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -86,9 +88,11 @@ class _ScheduleManagementScreenState
       _schedule = _getEmptySchedule();
     }
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('주간 영업 일정표'),
+        title: Text(l10n.weeklySchedule),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),

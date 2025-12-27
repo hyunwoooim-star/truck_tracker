@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 import 'package:truck_tracker/core/themes/app_theme.dart';
 import 'package:truck_tracker/features/truck_list/domain/truck.dart';
 

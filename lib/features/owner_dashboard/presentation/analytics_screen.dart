@@ -34,7 +34,7 @@ class AnalyticsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('통계 대시보드'),
+        title: Text(l10n.analyticsDashboard),
         actions: [
           // Date Range Picker Button
           IconButton(
@@ -60,7 +60,7 @@ class AnalyticsScreen extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
-              Text('오류: $e', textAlign: TextAlign.center),
+              Text(l10n.errorWithDetails.replaceAll('{error}', e.toString()), textAlign: TextAlign.center),
             ],
           ),
         ),
