@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:truck_tracker/core/themes/app_theme.dart';
 import 'package:truck_tracker/features/truck_list/domain/truck.dart';
 
@@ -18,14 +19,15 @@ class StatusTag extends StatelessWidget {
 
   final TruckStatus status;
 
-  String get _label {
+  String _getLabel(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (status) {
       case TruckStatus.onRoute:
-        return '운행 중';
+        return l10n.statusOnRoute;
       case TruckStatus.resting:
-        return '대기 / 휴식';
+        return l10n.statusResting;
       case TruckStatus.maintenance:
-        return '점검 중';
+        return l10n.statusMaintenance;
     }
   }
 
@@ -60,7 +62,7 @@ class StatusTag extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        _label,
+        _getLabel(context),
         style: TextStyle(
           color: _textColor,
           fontSize: 12,
