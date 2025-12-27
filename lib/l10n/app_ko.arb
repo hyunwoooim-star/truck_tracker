@@ -249,5 +249,9 @@
   "following": "팔로잉",
   "followers": "팔로워",
   "myFollowedTrucks": "내가 팔로우한 트럭",
-  "noFollowedTrucks": "아직 팔로우한 트럭이 없습니다"
+  "noFollowedTrucks": "아직 팔로우한 트럭이 없습니다",
+  "notifications": "알림",
+  "notificationsOn": "알림 켜짐",
+  "notificationsOff": "알림 꺼짐",
+  "browseAndFollowTrucks": "트럭을 둘러보고 팔로우해보세요!"
 }

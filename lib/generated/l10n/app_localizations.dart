@@ -1405,6 +1405,30 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'아직 팔로우한 트럭이 없습니다'**
   String get noFollowedTrucks;
+
+  /// No description provided for @notifications.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림'**
+  String get notifications;
+
+  /// No description provided for @notificationsOn.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림 켜짐'**
+  String get notificationsOn;
+
+  /// No description provided for @notificationsOff.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림 꺼짐'**
+  String get notificationsOff;
+
+  /// No description provided for @browseAndFollowTrucks.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭을 둘러보고 팔로우해보세요!'**
+  String get browseAndFollowTrucks;
 }
 
 class _AppLocalizationsDelegate

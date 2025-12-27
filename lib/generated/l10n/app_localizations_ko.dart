@@ -695,4 +695,16 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get noFollowedTrucks => '아직 팔로우한 트럭이 없습니다';
+
+  @override
+  String get notifications => '알림';
+
+  @override
+  String get notificationsOn => '알림 켜짐';
+
+  @override
+  String get notificationsOff => '알림 꺼짐';
+
+  @override
+  String get browseAndFollowTrucks => '트럭을 둘러보고 팔로우해보세요!';
 }

@@ -704,4 +704,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noFollowedTrucks => 'You haven\'t followed any trucks yet';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get notificationsOn => 'Notifications On';
+
+  @override
+  String get notificationsOff => 'Notifications Off';
+
+  @override
+  String get browseAndFollowTrucks => 'Browse and follow your favorite trucks!';
 }

@@ -351,5 +351,9 @@
   "following": "Following",
   "followers": "Followers",
   "myFollowedTrucks": "My Followed Trucks",
-  "noFollowedTrucks": "You haven''t followed any trucks yet"
+  "noFollowedTrucks": "You haven''t followed any trucks yet",
+  "notifications": "Notifications",
+  "notificationsOn": "Notifications On",
+  "notificationsOff": "Notifications Off",
+  "browseAndFollowTrucks": "Browse and follow your favorite trucks!"
 }
