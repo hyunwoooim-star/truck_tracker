@@ -469,4 +469,184 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get submit => '등록';
+
+  @override
+  String get truckList => '트럭 리스트';
+
+  @override
+  String get viewMap => '지도 보기';
+
+  @override
+  String get appInfo => '앱 정보';
+
+  @override
+  String get privacyPolicy => '개인정보 처리방침';
+
+  @override
+  String get noTrucksAvailable => '현재 운영 중인 트럭이 없습니다';
+
+  @override
+  String get loadDataFailed => '데이터를 불러올 수 없습니다';
+
+  @override
+  String get favoriteFailed => '즐겨찾기 반영 실패!';
+
+  @override
+  String get favoriteSuccess => '즐겨찾기에 추가되었습니다!';
+
+  @override
+  String get favoriteRemoved => '즐겨찾기에서 제거되었습니다!';
+
+  @override
+  String get distance => '거리';
+
+  @override
+  String get rating => '평점';
+
+  @override
+  String get foodTruckMap => '푸드트럭 지도';
+
+  @override
+  String get cannotLoadMap => '지도를 불러올 수 없습니다';
+
+  @override
+  String get noTrucks => '트럭이 없습니다';
+
+  @override
+  String get pleaseRetryLater => '잠시 후 다시 시도해주세요';
+
+  @override
+  String get checkLater => '나중에 다시 확인해주세요';
+
+  @override
+  String get trucksWithoutLocation => '위치 정보가 없는 트럭들입니다';
+
+  @override
+  String trucksLocationNotSet(Object count) {
+    return '총 $count개 트럭의 위치가 설정되지 않았습니다';
+  }
+
+  @override
+  String get searchTrucks => '트럭 검색';
+
+  @override
+  String get searchPlaceholder => '트럭 번호, 기사명, 메뉴, 위치로 검색';
+
+  @override
+  String get viewOnMap => '지도에서 보기';
+
+  @override
+  String get favorite => '즐겨찾기';
+
+  @override
+  String get statusOnRoute => '운행 중';
+
+  @override
+  String get statusResting => '대기 / 휴식';
+
+  @override
+  String get statusMaintenance => '점검 중';
+
+  @override
+  String get statusStopped => '대기';
+
+  @override
+  String get statusInspection => '점검';
+
+  @override
+  String get login => '로그인';
+
+  @override
+  String get signUp => '회원가입';
+
+  @override
+  String get email => '이메일';
+
+  @override
+  String get password => '비밀번호';
+
+  @override
+  String get pleaseEnterEmail => '이메일을 입력해주세요';
+
+  @override
+  String get pleaseEnterPassword => '비밀번호를 입력해주세요';
+
+  @override
+  String get invalidEmailFormat => '올바른 이메일 형식이 아닙니다';
+
+  @override
+  String get passwordMinLength => '비밀번호는 최소 6자 이상이어야 합니다';
+
+  @override
+  String get agreeToTermsRequired => '이용약관 및 개인정보 처리방침에 동의해주세요';
+
+  @override
+  String get agreeToTerms => '이용약관에 동의합니다 (필수)';
+
+  @override
+  String get agreeToPrivacy => '개인정보 처리방침에 동의합니다 (필수)';
+
+  @override
+  String get dontHaveAccount => '계정이 없으신가요? 회원가입';
+
+  @override
+  String get alreadyHaveAccount => '이미 계정이 있으신가요? 로그인';
+
+  @override
+  String get socialLogin => '소셜 로그인';
+
+  @override
+  String get continueWithKakao => '카카오로 계속하기';
+
+  @override
+  String get continueWithNaver => '네이버로 계속하기';
+
+  @override
+  String get startAsOwnerTest => '사장님으로 시작하기 (테스트)';
+
+  @override
+  String get browse => '둘러보기';
+
+  @override
+  String get ownerLogin => '사장님 로그인';
+
+  @override
+  String get errorUserNotFound => '등록되지 않은 이메일입니다';
+
+  @override
+  String get errorWrongPassword => '비밀번호가 올바르지 않습니다';
+
+  @override
+  String get errorEmailInUse => '이미 사용 중인 이메일입니다';
+
+  @override
+  String get errorWeakPassword => '비밀번호는 최소 6자 이상이어야 합니다';
+
+  @override
+  String get errorInvalidEmail => '올바른 이메일 형식이 아닙니다';
+
+  @override
+  String get errorLoginCancelled => '로그인이 취소되었습니다';
+
+  @override
+  String get errorLoginFailed => '로그인 중 오류가 발생했습니다';
+
+  @override
+  String get uploadDataWarning => '이 작업은 기존 데이터를 덮어쓰지 않고 새로 추가합니다.';
+
+  @override
+  String get upload => '업로드';
+
+  @override
+  String get uploadingData => '데이터 업로드 중...';
+
+  @override
+  String get privacyPolicyTitle => '개인정보 처리방침';
+
+  @override
+  String get privacyPolicyContent =>
+      '트럭아저씨는 사용자의 개인정보를 소중히 다룹니다.\n\n수집하는 개인정보:\n• 이메일 주소, 이름, 프로필 사진\n• 위치 정보 (선택적)\n\n개인정보 이용 목적:\n• 서비스 제공 및 개선\n• 고객 지원\n\n개인정보 보유 및 이용 기간:\n• 회원 탈퇴 시까지\n\n사용자는 언제든지 개인정보 열람, 수정, 삭제를 요청할 수 있습니다.\n\n문의: support@truckajeossi.com';
+
+  @override
+  String get appName => '트럭아저씨';
 }

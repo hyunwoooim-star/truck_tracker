@@ -474,4 +474,187 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get submit => 'Submit';
+
+  @override
+  String get truckList => 'Truck List';
+
+  @override
+  String get viewMap => 'View Map';
+
+  @override
+  String get appInfo => 'App Info';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get noTrucksAvailable => 'No trucks available';
+
+  @override
+  String get loadDataFailed => 'Failed to load data';
+
+  @override
+  String get favoriteFailed =>
+      'Failed to add favorite! Please try again later.';
+
+  @override
+  String get favoriteSuccess => 'Added to favorites!';
+
+  @override
+  String get favoriteRemoved => 'Removed from favorites!';
+
+  @override
+  String get distance => 'Distance';
+
+  @override
+  String get rating => 'Rating';
+
+  @override
+  String get foodTruckMap => 'Food Truck Map';
+
+  @override
+  String get cannotLoadMap => 'Cannot load map';
+
+  @override
+  String get noTrucks => 'No trucks';
+
+  @override
+  String get pleaseRetryLater => 'Please try again later';
+
+  @override
+  String get checkLater => 'Please check again later';
+
+  @override
+  String get trucksWithoutLocation => 'Trucks without location information';
+
+  @override
+  String trucksLocationNotSet(Object count) {
+    return '$count trucks without location set';
+  }
+
+  @override
+  String get searchTrucks => 'Search trucks';
+
+  @override
+  String get searchPlaceholder =>
+      'Search by truck number, driver name, menu, location';
+
+  @override
+  String get viewOnMap => 'View on map';
+
+  @override
+  String get favorite => 'Favorite';
+
+  @override
+  String get statusOnRoute => 'On Route';
+
+  @override
+  String get statusResting => 'Resting';
+
+  @override
+  String get statusMaintenance => 'Maintenance';
+
+  @override
+  String get statusStopped => 'Stopped';
+
+  @override
+  String get statusInspection => 'Inspection';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get signUp => 'Sign Up';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get pleaseEnterEmail => 'Please enter email';
+
+  @override
+  String get pleaseEnterPassword => 'Please enter password';
+
+  @override
+  String get invalidEmailFormat => 'Invalid email format';
+
+  @override
+  String get passwordMinLength => 'Password must be at least 6 characters';
+
+  @override
+  String get agreeToTermsRequired => 'Please agree to terms and privacy policy';
+
+  @override
+  String get agreeToTerms => 'Agree to Terms (Required)';
+
+  @override
+  String get agreeToPrivacy => 'Agree to Privacy Policy (Required)';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account? Sign up';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account? Login';
+
+  @override
+  String get socialLogin => 'Social Login';
+
+  @override
+  String get continueWithKakao => 'Continue with Kakao';
+
+  @override
+  String get continueWithNaver => 'Continue with Naver';
+
+  @override
+  String get startAsOwnerTest => 'Start as Owner (Test)';
+
+  @override
+  String get browse => 'Browse';
+
+  @override
+  String get ownerLogin => 'Owner Login';
+
+  @override
+  String get errorUserNotFound => 'Email not registered';
+
+  @override
+  String get errorWrongPassword => 'Incorrect password';
+
+  @override
+  String get errorEmailInUse => 'Email already in use';
+
+  @override
+  String get errorWeakPassword => 'Password must be at least 6 characters';
+
+  @override
+  String get errorInvalidEmail => 'Invalid email format';
+
+  @override
+  String get errorLoginCancelled => 'Login cancelled';
+
+  @override
+  String get errorLoginFailed => 'Error during login';
+
+  @override
+  String get uploadDataWarning =>
+      'This will add new data without overwriting existing data.';
+
+  @override
+  String get upload => 'Upload';
+
+  @override
+  String get uploadingData => 'Uploading data...';
+
+  @override
+  String get privacyPolicyTitle => 'Privacy Policy';
+
+  @override
+  String get privacyPolicyContent =>
+      'Truck Uncle values your privacy.\n\nInformation we collect:\n• Email address, name, profile photo\n• Location information (optional)\n\nPurpose of use:\n• Service provision and improvement\n• Customer support\n\nData retention period:\n• Until account deletion\n\nYou can request to view, modify, or delete your personal information at any time.\n\nContact: support@truckajeossi.com';
+
+  @override
+  String get appName => 'Truck Uncle';
 }

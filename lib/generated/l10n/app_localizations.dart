@@ -967,6 +967,360 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'등록'**
   String get submit;
+
+  /// No description provided for @truckList.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭 리스트'**
+  String get truckList;
+
+  /// No description provided for @viewMap.
+  ///
+  /// In ko, this message translates to:
+  /// **'지도 보기'**
+  String get viewMap;
+
+  /// No description provided for @appInfo.
+  ///
+  /// In ko, this message translates to:
+  /// **'앱 정보'**
+  String get appInfo;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In ko, this message translates to:
+  /// **'개인정보 처리방침'**
+  String get privacyPolicy;
+
+  /// No description provided for @noTrucksAvailable.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 운영 중인 트럭이 없습니다'**
+  String get noTrucksAvailable;
+
+  /// No description provided for @loadDataFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'데이터를 불러올 수 없습니다'**
+  String get loadDataFailed;
+
+  /// No description provided for @favoriteFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'즐겨찾기 반영 실패!'**
+  String get favoriteFailed;
+
+  /// No description provided for @favoriteSuccess.
+  ///
+  /// In ko, this message translates to:
+  /// **'즐겨찾기에 추가되었습니다!'**
+  String get favoriteSuccess;
+
+  /// No description provided for @favoriteRemoved.
+  ///
+  /// In ko, this message translates to:
+  /// **'즐겨찾기에서 제거되었습니다!'**
+  String get favoriteRemoved;
+
+  /// No description provided for @distance.
+  ///
+  /// In ko, this message translates to:
+  /// **'거리'**
+  String get distance;
+
+  /// No description provided for @rating.
+  ///
+  /// In ko, this message translates to:
+  /// **'평점'**
+  String get rating;
+
+  /// No description provided for @foodTruckMap.
+  ///
+  /// In ko, this message translates to:
+  /// **'푸드트럭 지도'**
+  String get foodTruckMap;
+
+  /// No description provided for @cannotLoadMap.
+  ///
+  /// In ko, this message translates to:
+  /// **'지도를 불러올 수 없습니다'**
+  String get cannotLoadMap;
+
+  /// No description provided for @noTrucks.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭이 없습니다'**
+  String get noTrucks;
+
+  /// No description provided for @pleaseRetryLater.
+  ///
+  /// In ko, this message translates to:
+  /// **'잠시 후 다시 시도해주세요'**
+  String get pleaseRetryLater;
+
+  /// No description provided for @checkLater.
+  ///
+  /// In ko, this message translates to:
+  /// **'나중에 다시 확인해주세요'**
+  String get checkLater;
+
+  /// No description provided for @trucksWithoutLocation.
+  ///
+  /// In ko, this message translates to:
+  /// **'위치 정보가 없는 트럭들입니다'**
+  String get trucksWithoutLocation;
+
+  /// No description provided for @trucksLocationNotSet.
+  ///
+  /// In ko, this message translates to:
+  /// **'총 {count}개 트럭의 위치가 설정되지 않았습니다'**
+  String trucksLocationNotSet(Object count);
+
+  /// No description provided for @searchTrucks.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭 검색'**
+  String get searchTrucks;
+
+  /// No description provided for @searchPlaceholder.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭 번호, 기사명, 메뉴, 위치로 검색'**
+  String get searchPlaceholder;
+
+  /// No description provided for @viewOnMap.
+  ///
+  /// In ko, this message translates to:
+  /// **'지도에서 보기'**
+  String get viewOnMap;
+
+  /// No description provided for @favorite.
+  ///
+  /// In ko, this message translates to:
+  /// **'즐겨찾기'**
+  String get favorite;
+
+  /// No description provided for @statusOnRoute.
+  ///
+  /// In ko, this message translates to:
+  /// **'운행 중'**
+  String get statusOnRoute;
+
+  /// No description provided for @statusResting.
+  ///
+  /// In ko, this message translates to:
+  /// **'대기 / 휴식'**
+  String get statusResting;
+
+  /// No description provided for @statusMaintenance.
+  ///
+  /// In ko, this message translates to:
+  /// **'점검 중'**
+  String get statusMaintenance;
+
+  /// No description provided for @statusStopped.
+  ///
+  /// In ko, this message translates to:
+  /// **'대기'**
+  String get statusStopped;
+
+  /// No description provided for @statusInspection.
+  ///
+  /// In ko, this message translates to:
+  /// **'점검'**
+  String get statusInspection;
+
+  /// No description provided for @login.
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인'**
+  String get login;
+
+  /// No description provided for @signUp.
+  ///
+  /// In ko, this message translates to:
+  /// **'회원가입'**
+  String get signUp;
+
+  /// No description provided for @email.
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일'**
+  String get email;
+
+  /// No description provided for @password.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호'**
+  String get password;
+
+  /// No description provided for @pleaseEnterEmail.
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일을 입력해주세요'**
+  String get pleaseEnterEmail;
+
+  /// No description provided for @pleaseEnterPassword.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호를 입력해주세요'**
+  String get pleaseEnterPassword;
+
+  /// No description provided for @invalidEmailFormat.
+  ///
+  /// In ko, this message translates to:
+  /// **'올바른 이메일 형식이 아닙니다'**
+  String get invalidEmailFormat;
+
+  /// No description provided for @passwordMinLength.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호는 최소 6자 이상이어야 합니다'**
+  String get passwordMinLength;
+
+  /// No description provided for @agreeToTermsRequired.
+  ///
+  /// In ko, this message translates to:
+  /// **'이용약관 및 개인정보 처리방침에 동의해주세요'**
+  String get agreeToTermsRequired;
+
+  /// No description provided for @agreeToTerms.
+  ///
+  /// In ko, this message translates to:
+  /// **'이용약관에 동의합니다 (필수)'**
+  String get agreeToTerms;
+
+  /// No description provided for @agreeToPrivacy.
+  ///
+  /// In ko, this message translates to:
+  /// **'개인정보 처리방침에 동의합니다 (필수)'**
+  String get agreeToPrivacy;
+
+  /// No description provided for @dontHaveAccount.
+  ///
+  /// In ko, this message translates to:
+  /// **'계정이 없으신가요? 회원가입'**
+  String get dontHaveAccount;
+
+  /// No description provided for @alreadyHaveAccount.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 계정이 있으신가요? 로그인'**
+  String get alreadyHaveAccount;
+
+  /// No description provided for @socialLogin.
+  ///
+  /// In ko, this message translates to:
+  /// **'소셜 로그인'**
+  String get socialLogin;
+
+  /// No description provided for @continueWithKakao.
+  ///
+  /// In ko, this message translates to:
+  /// **'카카오로 계속하기'**
+  String get continueWithKakao;
+
+  /// No description provided for @continueWithNaver.
+  ///
+  /// In ko, this message translates to:
+  /// **'네이버로 계속하기'**
+  String get continueWithNaver;
+
+  /// No description provided for @startAsOwnerTest.
+  ///
+  /// In ko, this message translates to:
+  /// **'사장님으로 시작하기 (테스트)'**
+  String get startAsOwnerTest;
+
+  /// No description provided for @browse.
+  ///
+  /// In ko, this message translates to:
+  /// **'둘러보기'**
+  String get browse;
+
+  /// No description provided for @ownerLogin.
+  ///
+  /// In ko, this message translates to:
+  /// **'사장님 로그인'**
+  String get ownerLogin;
+
+  /// No description provided for @errorUserNotFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'등록되지 않은 이메일입니다'**
+  String get errorUserNotFound;
+
+  /// No description provided for @errorWrongPassword.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호가 올바르지 않습니다'**
+  String get errorWrongPassword;
+
+  /// No description provided for @errorEmailInUse.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 사용 중인 이메일입니다'**
+  String get errorEmailInUse;
+
+  /// No description provided for @errorWeakPassword.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호는 최소 6자 이상이어야 합니다'**
+  String get errorWeakPassword;
+
+  /// No description provided for @errorInvalidEmail.
+  ///
+  /// In ko, this message translates to:
+  /// **'올바른 이메일 형식이 아닙니다'**
+  String get errorInvalidEmail;
+
+  /// No description provided for @errorLoginCancelled.
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인이 취소되었습니다'**
+  String get errorLoginCancelled;
+
+  /// No description provided for @errorLoginFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인 중 오류가 발생했습니다'**
+  String get errorLoginFailed;
+
+  /// No description provided for @uploadDataWarning.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 작업은 기존 데이터를 덮어쓰지 않고 새로 추가합니다.'**
+  String get uploadDataWarning;
+
+  /// No description provided for @upload.
+  ///
+  /// In ko, this message translates to:
+  /// **'업로드'**
+  String get upload;
+
+  /// No description provided for @uploadingData.
+  ///
+  /// In ko, this message translates to:
+  /// **'데이터 업로드 중...'**
+  String get uploadingData;
+
+  /// No description provided for @privacyPolicyTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'개인정보 처리방침'**
+  String get privacyPolicyTitle;
+
+  /// No description provided for @privacyPolicyContent.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭아저씨는 사용자의 개인정보를 소중히 다룹니다.\n\n수집하는 개인정보:\n• 이메일 주소, 이름, 프로필 사진\n• 위치 정보 (선택적)\n\n개인정보 이용 목적:\n• 서비스 제공 및 개선\n• 고객 지원\n\n개인정보 보유 및 이용 기간:\n• 회원 탈퇴 시까지\n\n사용자는 언제든지 개인정보 열람, 수정, 삭제를 요청할 수 있습니다.\n\n문의: support@truckajeossi.com'**
+  String get privacyPolicyContent;
+
+  /// No description provided for @appName.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭아저씨'**
+  String get appName;
 }
 
 class _AppLocalizationsDelegate

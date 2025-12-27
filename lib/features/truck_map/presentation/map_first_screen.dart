@@ -218,11 +218,33 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                       ),
                     ),
 
-                    // Search Bar (Fixed)
+                    // Search Bar + Logout Button (Fixed)
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 8),
-                      child: _SearchBar(),
+                      child: Row(
+                        children: [
+                          Expanded(child: _SearchBar()),
+                          const SizedBox(width: 8),
+                          // Logout Button
+                          Material(
+                            color: AppTheme.charcoalMedium,
+                            borderRadius: BorderRadius.circular(12),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(12),
+                              onTap: () => _showLogoutDialog(context, ref),
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                child: const Icon(
+                                  Icons.logout,
+                                  color: Colors.red,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
 
                     // Filter Tags (Fixed)
