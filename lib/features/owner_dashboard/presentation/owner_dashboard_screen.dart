@@ -9,7 +9,8 @@ import '../../auth/presentation/auth_provider.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../location/location_service.dart';
 import '../../truck_list/data/truck_repository.dart';
-import '../../order/domain/order.dart';
+import '../../order/domain/order.dart' hide Order;
+import '../../order/domain/order.dart' as domain show Order, OrderStatus;
 import '../../order/data/order_repository.dart';
 import '../../truck_detail/presentation/truck_detail_provider.dart';
 import 'analytics_screen.dart';
@@ -98,6 +99,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
       ),
       body: ownerTruckAsync.when(
         data: (truck) {
+          final ordersAsync = ref.watch(truckOrdersProvider(truck.id));
           if (truck == null) {
             return Center(
               child: Text(
@@ -121,9 +123,12 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                 // Today's Announcement Section
                 _buildAnnouncementSection(context, ref, truck, l10n),
 
-                // ❌ REMOVED: Live Stats (mock data)
-                // TODO: Implement real-time stats from order data
-                // _buildLiveStats(ref, truck, numberFormat, l10n),
+                // Today's Order Stats
+                ordersAsync.when(
+                  data: (orders) => _buildTodayOrderStats(orders, numberFormat, l10n),
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, __) => const SizedBox.shrink(),
+                ),
 
                 // Kanban Order Board
                 _buildKanbanBoard(ref, truck, l10n),
@@ -497,6 +502,105 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
   // Should show:
   // - Regular customers nearby (from customer_checkin data)
   // - Today's revenue (sum of completed orders)
+
+  /// Today's order statistics widget
+  Widget _buildTodayOrderStats(List<domain.Order> orders, NumberFormat numberFormat, AppLocalizations l10n) {
+    final today = DateTime.now();
+    final todayOrders = orders.where((order) {
+      if (order.createdAt == null) return false;
+      final orderDate = order.createdAt!;
+      return orderDate.year == today.year &&
+             orderDate.month == today.month &&
+             orderDate.day == today.day;
+    }).toList();
+
+    final totalOrders = todayOrders.length;
+    final completedOrders = todayOrders.where((o) => o.status == domain.OrderStatus.completed).length;
+    final pendingOrders = todayOrders.where((o) => o.status == domain.OrderStatus.pending || o.status == domain.OrderStatus.confirmed).length;
+    final totalRevenue = todayOrders
+        .where((o) => o.status == domain.OrderStatus.completed)
+        .fold<int>(0, (sum, order) => sum + order.totalAmount);
+
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.mustardYellow15,
+            AppTheme.electricBlue.withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.mustardYellow, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.today, color: AppTheme.mustardYellow, size: 28),
+              const SizedBox(width: 12),
+              const Text(
+                '오늘의 주문 현황',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.mustardYellow,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: _OrderStatTile(
+                  icon: Icons.receipt_long,
+                  label: '총 주문',
+                  value: '$totalOrders',
+                  color: AppTheme.electricBlue,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _OrderStatTile(
+                  icon: Icons.check_circle,
+                  label: '완료',
+                  value: '$completedOrders',
+                  color: Colors.green,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _OrderStatTile(
+                  icon: Icons.pending,
+                  label: '대기',
+                  value: '$pendingOrders',
+                  color: Colors.orange,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _OrderStatTile(
+                  icon: Icons.attach_money,
+                  label: '매출',
+                  value: '₩${numberFormat.format(totalRevenue)}',
+                  color: AppTheme.mustardYellow,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildKanbanBoard(WidgetRef ref, truck, AppLocalizations l10n) {
     final ordersAsync = ref.watch(truckOrdersProvider(truck.id));
@@ -930,6 +1034,55 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             child: TalkWidget(
               truckId: truck.id,
               isOwner: true,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Order stat tile widget
+class _OrderStatTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+
+  const _OrderStatTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.charcoalMedium,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 32),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppTheme.textSecondary,
             ),
           ),
         ],
