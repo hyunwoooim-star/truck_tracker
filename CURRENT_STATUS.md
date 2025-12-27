@@ -19,6 +19,14 @@
 - Phase 9: Order System Enhancement (실시간 주문 통계 대시보드)
 - Phase 10: Advanced Search & Filter (상태/거리/평점/영업중 필터, 정렬)
 
+### Phase 11-15 계획 완료 📋
+- Phase 11: Social Features (팔로우 시스템 구조)
+- Phase 12: Coupon System (쿠폰/프로모션 설계)
+- Phase 13: Real-time Chat (채팅 시스템 설계)
+- Phase 14: Payment Integration (결제 연동 계획)
+- Phase 15: Advanced Notifications (고급 알림 설계)
+- **문서**: `PHASE_11-15_ROADMAP.md` (상세 구현 가이드)
+
 ### 핵심 기능 구현 완료 ✅
 - ✅ 실시간 트럭 지도 & 리스트
 - ✅ 즐겨찾기 시스템
@@ -57,11 +65,12 @@ Firebase Console에서 푸시 알림 동작 확인:
 4. Functions 로그 확인
 ```
 
-### 옵션 3: Phase 11+ 구현 (다음 세션)
-- 소셜 기능 (트럭 팔로우, 피드)
-- 쿠폰/프로모션 시스템
-- 지역별 트럭 그룹화
-- 사용자 레벨/배지 시스템
+### 옵션 3: Phase 11-15 구현 (PHASE_11-15_ROADMAP.md 참고)
+- **Phase 11**: 소셜 기능 (TruckFollow 모델 완료, Repository 구현 필요)
+- **Phase 12**: 쿠폰 시스템 (설계 완료, 구현 필요)
+- **Phase 13**: 실시간 채팅 (설계 완료, 구현 필요)
+- **Phase 14**: 결제 연동 (카카오페이/토스, PG 계약 필요)
+- **Phase 15**: 고급 알림 (FCM 확장, 맞춤형 알림)
 
 ---
 
@@ -70,11 +79,12 @@ Firebase Console에서 푸시 알림 동작 확인:
 | 문서 | 용도 |
 |------|------|
 | **CURRENT_STATUS.md** | 현재 상태 & 다음 작업 (이 파일) |
+| **PHASE_11-15_ROADMAP.md** | Phase 11-15 상세 설계 & 구현 가이드 ⭐ |
 | **WEB_DEPLOYMENT_PLAN.md** | 웹 배포 Shader 이슈 해결 계획 |
 | **README.md** | 프로젝트 소개 & 시작 가이드 |
 | **CLAUDE.md** | AI 개발 워크플로우 |
 | **PROJECT_CONTEXT.md** | 아키텍처 & Firebase 스키마 |
-| **IMPROVEMENT_PLAN.md** | Phase 1-9 개선 계획 |
+| **IMPROVEMENT_PLAN.md** | Phase 1-10 개선 계획 |
 | **SESSION_SUMMARY.md** | 최근 세션 요약 |
 
 ---
@@ -115,5 +125,5 @@ firebase deploy --only hosting
 
 **Firebase Project**: `truck-tracker-fa0b0`
 **Git Branch**: `main`
-**현재 Phase**: Phase 10 완료 ✅
-**다음 작업**: 웹 배포 해결 (WEB_DEPLOYMENT_PLAN.md) → Phase 11+
+**현재 Phase**: Phase 1-10 완료 ✅ | Phase 11-15 설계 완료 📋
+**다음 작업**: Phase 11-15 구현 (PHASE_11-15_ROADMAP.md) 또는 웹 배포 해결
