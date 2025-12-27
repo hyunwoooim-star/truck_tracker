@@ -5,6 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/utils/app_logger.dart';
+import '../../auth/presentation/auth_provider.dart';
+import '../../favorite/data/favorite_repository.dart';
 import '../../location/presentation/location_provider.dart';
 import '../data/truck_repository.dart';
 import '../domain/truck.dart';
@@ -385,20 +387,40 @@ class TruckListNotifier extends AutoDisposeAsyncNotifier<List<Truck>> {
 
   Future<void> toggleFavorite(String id) async {
     final previous = state.value ?? [];
-    // optimistic update
+
+    // Get current user ID
+    final userId = ref.read(currentUserIdProvider);
+    if (userId == null) {
+      AppLogger.warning('Cannot toggle favorite: User not logged in', tag: 'TruckProvider');
+      return;
+    }
+
+    // Optimistic update
     final updated = previous
         .map((t) => t.id == id ? t.copyWith(isFavorite: !t.isFavorite) : t)
         .toList();
     state = AsyncData(updated);
 
     try {
-      // mock latency
-      await Future<void>.delayed(const Duration(milliseconds: 350));
-      // mock failure chance 15%
-      final fail = Random().nextDouble() < 0.15;
-      if (fail) throw Exception('toggle_failed');
-    } catch (_) {
-      // rollback
+      // 🔄 FIXED: Use real FavoriteRepository instead of mock
+      final favoriteRepo = FavoriteRepository();
+      final newFavoriteState = await favoriteRepo.toggleFavorite(
+        userId: userId,
+        truckId: id,
+      );
+
+      AppLogger.success(
+        'Favorite toggled: ${newFavoriteState ? "added" : "removed"}',
+        tag: 'TruckProvider',
+      );
+    } catch (e, stackTrace) {
+      AppLogger.error(
+        'Failed to toggle favorite',
+        error: e,
+        stackTrace: stackTrace,
+        tag: 'TruckProvider',
+      );
+      // Rollback on error
       state = AsyncData(previous);
       rethrow;
     }
