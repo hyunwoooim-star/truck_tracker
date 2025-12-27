@@ -46,7 +46,7 @@ final firestoreTruckStreamProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef FirestoreTruckStreamRef = AutoDisposeStreamProviderRef<List<Truck>>;
-String _$filteredTruckListHash() => r'3dd53a4398c0caee80e86eaa2198eae66fed6b3e';
+String _$filteredTruckListHash() => r'86cd74390ec71d37a884274a0f8569eeaeb35722';
 
 /// Filtered truck list provider that combines Firestore stream with filter state
 ///
@@ -67,7 +67,7 @@ final filteredTruckListProvider =
 // ignore: unused_element
 typedef FilteredTruckListRef = AutoDisposeStreamProviderRef<List<Truck>>;
 String _$filteredTrucksWithDistanceHash() =>
-    r'5de18e5b56aac71a448c919688fec598e6894f68';
+    r'5f799735c5dfd80aafaf08759480a02b48866ad2';
 
 /// Filtered and sorted truck list with distance information
 ///
@@ -131,7 +131,7 @@ final topRankedTrucksProvider = AutoDisposeStreamProvider<List<Truck>>.internal(
 // ignore: unused_element
 typedef TopRankedTrucksRef = AutoDisposeStreamProviderRef<List<Truck>>;
 String _$truckFilterNotifierHash() =>
-    r'ad5b897675b41fc72a234001ae1f408e98d4b97f';
+    r'f834102de8ab21a4008ed8b543ca2cdd17b2df29';
 
 /// Filter state provider
 ///

@@ -37,17 +37,50 @@ Stream<List<Truck>> firestoreTruckStream(FirestoreTruckStreamRef ref) {
 
 /// Filter state to manage selected tag and search keyword
 class TruckFilterState {
-  const TruckFilterState({this.selectedTag = '전체', this.searchKeyword = ''});
+  const TruckFilterState({
+    this.selectedTag = '전체',
+    this.searchKeyword = '',
+    this.selectedStatuses = const {},
+    this.maxDistance,
+    this.minRating,
+    this.openOnly = false,
+  });
 
   final String selectedTag;
   final String searchKeyword;
+  final Set<TruckStatus> selectedStatuses; // Empty = all statuses
+  final double? maxDistance; // null = any distance, in meters
+  final double? minRating; // null = any rating
+  final bool openOnly; // Show only open trucks
 
-  TruckFilterState copyWith({String? selectedTag, String? searchKeyword}) {
+  TruckFilterState copyWith({
+    String? selectedTag,
+    String? searchKeyword,
+    Set<TruckStatus>? selectedStatuses,
+    double? Function()? maxDistance,
+    double? Function()? minRating,
+    bool? openOnly,
+  }) {
     return TruckFilterState(
       selectedTag: selectedTag ?? this.selectedTag,
       searchKeyword: searchKeyword ?? this.searchKeyword,
+      selectedStatuses: selectedStatuses ?? this.selectedStatuses,
+      maxDistance: maxDistance != null ? maxDistance() : this.maxDistance,
+      minRating: minRating != null ? minRating() : this.minRating,
+      openOnly: openOnly ?? this.openOnly,
     );
   }
+
+  bool get hasActiveFilters {
+    return selectedTag != '전체' ||
+        searchKeyword.isNotEmpty ||
+        selectedStatuses.isNotEmpty ||
+        maxDistance != null ||
+        minRating != null ||
+        openOnly;
+  }
+
+  void clearAll() {}
 }
 
 /// Filter state provider
@@ -62,6 +95,32 @@ class TruckFilterNotifier extends AutoDisposeNotifier<TruckFilterState> {
 
   void setSearchKeyword(String keyword) {
     state = state.copyWith(searchKeyword: keyword);
+  }
+
+  void toggleStatus(TruckStatus status) {
+    final currentStatuses = Set<TruckStatus>.from(state.selectedStatuses);
+    if (currentStatuses.contains(status)) {
+      currentStatuses.remove(status);
+    } else {
+      currentStatuses.add(status);
+    }
+    state = state.copyWith(selectedStatuses: currentStatuses);
+  }
+
+  void setMaxDistance(double? distance) {
+    state = state.copyWith(maxDistance: () => distance);
+  }
+
+  void setMinRating(double? rating) {
+    state = state.copyWith(minRating: () => rating);
+  }
+
+  void setOpenOnly(bool openOnly) {
+    state = state.copyWith(openOnly: openOnly);
+  }
+
+  void clearAllFilters() {
+    state = const TruckFilterState();
   }
 }
 
@@ -105,6 +164,28 @@ Stream<List<Truck>> filteredTruckList(FilteredTruckListRef ref) async* {
       AppLogger.debug('After search filter: ${filtered.length} trucks (keyword: $keyword)', tag: 'FilteredTruckList');
     }
 
+    // Filter by truck status
+    if (filterState.selectedStatuses.isNotEmpty) {
+      filtered = filtered
+          .where((truck) => filterState.selectedStatuses.contains(truck.status))
+          .toList();
+      AppLogger.debug('After status filter: ${filtered.length} trucks', tag: 'FilteredTruckList');
+    }
+
+    // Filter by min rating
+    if (filterState.minRating != null) {
+      filtered = filtered
+          .where((truck) => truck.avgRating >= filterState.minRating!)
+          .toList();
+      AppLogger.debug('After rating filter: ${filtered.length} trucks (min: ${filterState.minRating})', tag: 'FilteredTruckList');
+    }
+
+    // Filter by open status
+    if (filterState.openOnly) {
+      filtered = filtered.where((truck) => truck.isOpen).toList();
+      AppLogger.debug('After open filter: ${filtered.length} trucks', tag: 'FilteredTruckList');
+    }
+
     AppLogger.success('Yielding ${filtered.length} filtered trucks to UI', tag: 'FilteredTruckList');
 
     yield filtered;
@@ -138,6 +219,7 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
 
   final trucksStream = ref.watch(filteredTruckListProvider.stream);
   final sortOption = ref.watch(sortOptionNotifierProvider);
+  final filterState = ref.watch(truckFilterNotifierProvider);
   final locationService = ref.watch(locationServiceProvider);
 
   // Get current position (non-blocking)
@@ -155,7 +237,7 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
     AppLogger.debug('Processing ${trucks.length} trucks with distance', tag: 'FilteredTrucksWithDistance');
 
     // Convert to TruckWithDistance
-    final trucksWithDistance = trucks.map((truck) {
+    var trucksWithDistance = trucks.map((truck) {
       double distance = double.infinity;
 
       if (userPosition != null) {
@@ -169,6 +251,14 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
 
       return TruckWithDistance(truck: truck, distanceInMeters: distance);
     }).toList();
+
+    // Filter by max distance
+    if (filterState.maxDistance != null && userPosition != null) {
+      trucksWithDistance = trucksWithDistance
+          .where((t) => t.distanceInMeters <= filterState.maxDistance!)
+          .toList();
+      AppLogger.debug('After distance filter: ${trucksWithDistance.length} trucks (max: ${filterState.maxDistance}m)', tag: 'FilteredTrucksWithDistance');
+    }
 
     // Sort based on sort option
     switch (sortOption) {

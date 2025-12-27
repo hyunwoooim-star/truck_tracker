@@ -1,0 +1,150 @@
+Compiling lib\main.dart for the Web...                          
+Wasm dry run findings:
+Found incompatibilities with WebAssembly.
+
+package:truck_tracker/features/owner_dashboard/presentation/analytics_screen.dart 2:1 - dart:html unsupported (0)
+
+Consider addressing these issues to enable wasm builds. See docs for more info: https://docs.flutter.dev/platform-integration/web/wasm
+
+Use --no-wasm-dry-run to disable these warnings.
+Target dart2js failed: ProcessException: Process exited abnormally with exit code 1:
+lib/features/owner_dashboard/presentation/owner_dashboard_screen.dart:662:48:
+Error: Type 'Order' not found.
+  Widget _buildKanbanColumn(String title, List<Order> orders, Color color, WidgetRef ref) {
+                                               ^^^^^
+lib/features/owner_dashboard/presentation/owner_dashboard_screen.dart:716:26:
+Error: Type 'Order' not found.
+  Widget _buildOrderCard(Order order, WidgetRef ref) {
+                         ^^^^^
+lib/features/owner_dashboard/presentation/owner_dashboard_screen.dart:769:27:
+Error: Type 'Order' not found.
+  Future<void> _moveOrder(Order order, OrderStatus newStatus, WidgetRef ref) async {
+                          ^^^^^
+lib/features/owner_dashboard/presentation/owner_dashboard_screen.dart:102:67:
+Error: Property 'id' cannot be accessed on 'Truck?' because it is potentially null.
+ - 'Truck' is from 'package:truck_tracker/features/truck_list/domain/truck.dart' ('lib/features/truck_list/domain/truck.dart').
+          final ordersAsync = ref.watch(truckOrdersProvider(truck.id));
+                                                                  ^^
+lib/features/owner_dashboard/presentation/owner_dashboard_screen.dart:456:29:
+Error: The method 'Order' isn't defined for the type '_OwnerDashboardScreenState'.
+ - '_OwnerDashboardScreenState' is from 'package:truck_tracker/features/owner_dashboard/presentation/owner_dashboard_screen.dart' ('lib/features/owner_dashboard/presentation/owner_dashboard_screen.dart').
+              final order = Order(
+                            ^^^^^
+lib/features/owner_dashboard/presentation/owner_dashboard_screen.dart:662:48:
+Error: 'Order' isn't a type.
+  Widget _buildKanbanColumn(String title, List<Order> orders, Color color, WidgetRef ref) {
+                                               ^^^^^
+lib/features/owner_dashboard/presentation/owner_dashboard_screen.dart:716:26:
+Error: 'Order' isn't a type.
+  Widget _buildOrderCard(Order order, WidgetRef ref) {
+                         ^^^^^
+lib/features/owner_dashboard/presentation/owner_dashboard_screen.dart:769:27:
+Error: 'Order' isn't a type.
+  Future<void> _moveOrder(Order order, OrderStatus newStatus, WidgetRef ref) async {
+                          ^^^^^
+Error: Compilation failed.
+  Command: C:\Users\임현우\Downloads\flutter_windows_3.38.5-stable\flutter\bin\cache\dart-sdk\bin\dart.exe compile js --platform-binaries=C:\Users\임현우\Downloads\flutter_windows_3.38.5-stable\flutter\bin\cache\flutter_web_sdk\kernel --invoker=flutter_tool -Ddart.vm.product=true -DFLUTTER_VERSION=3.38.5 -DFLUTTER_CHANNEL=stable -DFLUTTER_GIT_URL=https://github.com/flutter/flutter.git -DFLUTTER_FRAMEWORK_REVISION=f6ff1529fd -DFLUTTER_ENGINE_REVISION=1527ae0ec5 -DFLUTTER_DART_VERSION=3.10.4 -DFLUTTER_WEB_USE_SKIA=true -DFLUTTER_WEB_USE_SKWASM=false -DFLUTTER_WEB_CANVASKIT_URL=https://www.gstatic.com/flutter-canvaskit/1527ae0ec577a4ef50e65f6fefcfc1326707d9bf/ --native-null-assertions --no-source-maps -O4 --minify -o C:\Users\임현우\Desktop\현우 작업폴더\truck_tracker\truck ver.1\truck_tracker\.dart_tool\flutter_build\a6b979125d5eea5334b667844b946d1d\app.dill --packages=C:\Users\임현우\Desktop\현우 작업폴더\truck_tracker\truck ver.1\truck_tracker\.dart_tool\package_config.json --cfe-only C:\Users\임현우\Desktop\현우 작업폴더\truck_tracker\truck ver.1\truck_tracker\.dart_tool\flutter_build\a6b979125d5eea5334b667844b946d1d\main.dart
+#0      RunResult.throwException (package:flutter_tools/src/base/process.dart:153:5)
+#1      _DefaultProcessUtils.run (package:flutter_tools/src/base/process.dart:379:19)
+<asynchronous suspension>
+#2      Dart2JSTarget.build (package:flutter_tools/src/build_system/targets/web.dart:207:5)
+<asynchronous suspension>
+#3      _BuildInstance._invokeInternal (package:flutter_tools/src/build_system/build_system.dart:895:9)
+<asynchronous suspension>
+#4      Future.wait.<anonymous closure> (dart:async/future.dart:546:21)
+<asynchronous suspension>
+#5      _BuildInstance.invokeTarget (package:flutter_tools/src/build_system/build_system.dart:833:32)
+<asynchronous suspension>
+#6      Future.wait.<anonymous closure> (dart:async/future.dart:546:21)
+<asynchronous suspension>
+#7      _BuildInstance.invokeTarget (package:flutter_tools/src/build_system/build_system.dart:833:32)
+<asynchronous suspension>
+#8      FlutterBuildSystem.build (package:flutter_tools/src/build_system/build_system.dart:653:16)
+<asynchronous suspension>
+#9      WebBuilder.buildWeb (package:flutter_tools/src/web/compile.dart:94:34)
+<asynchronous suspension>
+#10     BuildWebCommand.runCommand (package:flutter_tools/src/commands/build_web.dart:296:5)
+<asynchronous suspension>
+#11     FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:1559:27)
+<asynchronous suspension>
+#12     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#13     CommandRunner.runCommand (package:args/command_runner.dart:212:13)
+<asynchronous suspension>
+#14     FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:487:9)
+<asynchronous suspension>
+#15     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#16     FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:422:5)
+<asynchronous suspension>
+#17     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:104:11)
+<asynchronous suspension>
+#18     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#19     main (package:flutter_tools/executable.dart:103:3)
+<asynchronous suspension>
+
+Compiling lib\main.dart for the Web...                             49.1s
+Error: Failed to compile application for the Web.
+Compiling lib\main.dart for the Web...                          
+Wasm dry run findings:
+Found incompatibilities with WebAssembly.
+
+package:truck_tracker/features/owner_dashboard/presentation/analytics_screen.dart 2:1 - dart:html unsupported (0)
+
+Consider addressing these issues to enable wasm builds. See docs for more info: https://docs.flutter.dev/platform-integration/web/wasm
+
+Use --no-wasm-dry-run to disable these warnings.
+Target dart2js failed: ProcessException: Process exited abnormally with exit code 1:
+lib/features/owner_dashboard/presentation/owner_dashboard_screen.dart:113:11:
+Error: Expected ')' before this.
+          return SingleChildScrollView(
+          ^^^^^^
+lib/features/owner_dashboard/presentation/owner_dashboard_screen.dart:100:33:
+Error: Required named parameter 'error' must be provided.
+      body: ownerTruckAsync.when(
+                                ^
+Error: Compilation failed.
+  Command: C:\Users\임현우\Downloads\flutter_windows_3.38.5-stable\flutter\bin\cache\dart-sdk\bin\dart.exe compile js --platform-binaries=C:\Users\임현우\Downloads\flutter_windows_3.38.5-stable\flutter\bin\cache\flutter_web_sdk\kernel --invoker=flutter_tool -Ddart.vm.product=true -DFLUTTER_VERSION=3.38.5 -DFLUTTER_CHANNEL=stable -DFLUTTER_GIT_URL=https://github.com/flutter/flutter.git -DFLUTTER_FRAMEWORK_REVISION=f6ff1529fd -DFLUTTER_ENGINE_REVISION=1527ae0ec5 -DFLUTTER_DART_VERSION=3.10.4 -DFLUTTER_WEB_USE_SKIA=true -DFLUTTER_WEB_USE_SKWASM=false -DFLUTTER_WEB_CANVASKIT_URL=https://www.gstatic.com/flutter-canvaskit/1527ae0ec577a4ef50e65f6fefcfc1326707d9bf/ --native-null-assertions --no-source-maps -O4 --minify -o C:\Users\임현우\Desktop\현우 작업폴더\truck_tracker\truck ver.1\truck_tracker\.dart_tool\flutter_build\a6b979125d5eea5334b667844b946d1d\app.dill --packages=C:\Users\임현우\Desktop\현우 작업폴더\truck_tracker\truck ver.1\truck_tracker\.dart_tool\package_config.json --cfe-only C:\Users\임현우\Desktop\현우 작업폴더\truck_tracker\truck ver.1\truck_tracker\.dart_tool\flutter_build\a6b979125d5eea5334b667844b946d1d\main.dart
+#0      RunResult.throwException (package:flutter_tools/src/base/process.dart:153:5)
+#1      _DefaultProcessUtils.run (package:flutter_tools/src/base/process.dart:379:19)
+<asynchronous suspension>
+#2      Dart2JSTarget.build (package:flutter_tools/src/build_system/targets/web.dart:207:5)
+<asynchronous suspension>
+#3      _BuildInstance._invokeInternal (package:flutter_tools/src/build_system/build_system.dart:895:9)
+<asynchronous suspension>
+#4      Future.wait.<anonymous closure> (dart:async/future.dart:546:21)
+<asynchronous suspension>
+#5      _BuildInstance.invokeTarget (package:flutter_tools/src/build_system/build_system.dart:833:32)
+<asynchronous suspension>
+#6      Future.wait.<anonymous closure> (dart:async/future.dart:546:21)
+<asynchronous suspension>
+#7      _BuildInstance.invokeTarget (package:flutter_tools/src/build_system/build_system.dart:833:32)
+<asynchronous suspension>
+#8      FlutterBuildSystem.build (package:flutter_tools/src/build_system/build_system.dart:653:16)
+<asynchronous suspension>
+#9      WebBuilder.buildWeb (package:flutter_tools/src/web/compile.dart:94:34)
+<asynchronous suspension>
+#10     BuildWebCommand.runCommand (package:flutter_tools/src/commands/build_web.dart:296:5)
+<asynchronous suspension>
+#11     FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:1559:27)
+<asynchronous suspension>
+#12     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#13     CommandRunner.runCommand (package:args/command_runner.dart:212:13)
+<asynchronous suspension>
+#14     FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:487:9)
+<asynchronous suspension>
+#15     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#16     FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:422:5)
+<asynchronous suspension>
+#17     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:104:11)
+<asynchronous suspension>
+#18     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#19     main (package:flutter_tools/executable.dart:103:3)
+<asynchronous suspension>
+
+Compiling lib\main.dart for the Web...                             48.8s
+Error: Failed to compile application for the Web.

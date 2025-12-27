@@ -368,15 +368,63 @@ class _FilterBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedTag = ref.watch(truckFilterNotifierProvider).selectedTag;
+    final filterState = ref.watch(truckFilterNotifierProvider);
+    final currentSort = ref.watch(sortOptionNotifierProvider);
 
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        children: FoodTypes.filterTags.map((tag) {
+      child: Row(
+        children: [
+          // Advanced Filter Button
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 8),
+            child: IconButton(
+              icon: Badge(
+                isLabelVisible: filterState.hasActiveFilters,
+                child: const Icon(Icons.filter_list),
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => const _AdvancedFilterDialog(),
+                );
+              },
+              tooltip: '고급 필터',
+              style: IconButton.styleFrom(
+                backgroundColor: filterState.hasActiveFilters
+                    ? AppTheme.electricBlue.withOpacity(0.2)
+                    : AppTheme.charcoalMedium,
+                foregroundColor: filterState.hasActiveFilters
+                    ? AppTheme.electricBlue
+                    : AppTheme.textPrimary,
+              ),
+            ),
+          ),
+          // Sort Button
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: IconButton(
+              icon: const Icon(Icons.sort),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => const _SortOptionsDialog(),
+                );
+              },
+              tooltip: '정렬',
+              style: IconButton.styleFrom(
+                backgroundColor: AppTheme.charcoalMedium,
+                foregroundColor: AppTheme.textPrimary,
+              ),
+            ),
+          ),
+          // Food Type Chips
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: FoodTypes.filterTags.map((tag) {
             final isSelected = tag == selectedTag;
             
             return Padding(
@@ -416,7 +464,11 @@ class _FilterBar extends ConsumerWidget {
               ),
             );
           }).toList(),
-        ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -666,6 +718,255 @@ class _AppDrawer extends ConsumerWidget {
           const SizedBox(height: 16),
         ],
       ),
+    );
+  }
+}
+
+/// Advanced Filter Dialog
+class _AdvancedFilterDialog extends ConsumerWidget {
+  const _AdvancedFilterDialog();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final filterState = ref.watch(truckFilterNotifierProvider);
+    final l10n = AppLocalizations.of(context)!;
+
+    return AlertDialog(
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text('고급 필터'),
+          if (filterState.hasActiveFilters)
+            TextButton(
+              onPressed: () {
+                ref.read(truckFilterNotifierProvider.notifier).clearAllFilters();
+              },
+              child: const Text('초기화', style: TextStyle(color: AppTheme.electricBlue)),
+            ),
+        ],
+      ),
+      content: SingleChildScrollView(
+        child: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Truck Status Filter
+              const Text(
+                '트럭 상태',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: TruckStatus.values.map((status) {
+                  final isSelected = filterState.selectedStatuses.contains(status);
+                  String label;
+                  switch (status) {
+                    case TruckStatus.onRoute:
+                      label = '운행 중';
+                      break;
+                    case TruckStatus.resting:
+                      label = '휴식';
+                      break;
+                    case TruckStatus.maintenance:
+                      label = '정비 중';
+                      break;
+                  }
+                  return FilterChip(
+                    label: Text(label),
+                    selected: isSelected,
+                    onSelected: (_) {
+                      ref.read(truckFilterNotifierProvider.notifier).toggleStatus(status);
+                    },
+                    selectedColor: AppTheme.electricBlue,
+                    checkmarkColor: Colors.white,
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 16),
+
+              // Distance Filter
+              const Text(
+                '거리',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: [
+                  FilterChip(
+                    label: const Text('전체'),
+                    selected: filterState.maxDistance == null,
+                    onSelected: (_) {
+                      ref.read(truckFilterNotifierProvider.notifier).setMaxDistance(null);
+                    },
+                    selectedColor: AppTheme.electricBlue,
+                    checkmarkColor: Colors.white,
+                  ),
+                  FilterChip(
+                    label: const Text('1km 이내'),
+                    selected: filterState.maxDistance == 1000,
+                    onSelected: (_) {
+                      ref.read(truckFilterNotifierProvider.notifier).setMaxDistance(1000);
+                    },
+                    selectedColor: AppTheme.electricBlue,
+                    checkmarkColor: Colors.white,
+                  ),
+                  FilterChip(
+                    label: const Text('5km 이내'),
+                    selected: filterState.maxDistance == 5000,
+                    onSelected: (_) {
+                      ref.read(truckFilterNotifierProvider.notifier).setMaxDistance(5000);
+                    },
+                    selectedColor: AppTheme.electricBlue,
+                    checkmarkColor: Colors.white,
+                  ),
+                  FilterChip(
+                    label: const Text('10km 이내'),
+                    selected: filterState.maxDistance == 10000,
+                    onSelected: (_) {
+                      ref.read(truckFilterNotifierProvider.notifier).setMaxDistance(10000);
+                    ),
+                    selectedColor: AppTheme.electricBlue,
+                    checkmarkColor: Colors.white,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Rating Filter
+              const Text(
+                '평점',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: [
+                  FilterChip(
+                    label: const Text('전체'),
+                    selected: filterState.minRating == null,
+                    onSelected: (_) {
+                      ref.read(truckFilterNotifierProvider.notifier).setMinRating(null);
+                    },
+                    selectedColor: AppTheme.electricBlue,
+                    checkmarkColor: Colors.white,
+                  ),
+                  FilterChip(
+                    label: const Text('⭐ 3.0+'),
+                    selected: filterState.minRating == 3.0,
+                    onSelected: (_) {
+                      ref.read(truckFilterNotifierProvider.notifier).setMinRating(3.0);
+                    },
+                    selectedColor: AppTheme.electricBlue,
+                    checkmarkColor: Colors.white,
+                  ),
+                  FilterChip(
+                    label: const Text('⭐ 4.0+'),
+                    selected: filterState.minRating == 4.0,
+                    onSelected: (_) {
+                      ref.read(truckFilterNotifierProvider.notifier).setMinRating(4.0);
+                    },
+                    selectedColor: AppTheme.electricBlue,
+                    checkmarkColor: Colors.white,
+                  ),
+                  FilterChip(
+                    label: const Text('⭐ 4.5+'),
+                    selected: filterState.minRating == 4.5,
+                    onSelected: (_) {
+                      ref.read(truckFilterNotifierProvider.notifier).setMinRating(4.5);
+                    ),
+                    selectedColor: AppTheme.electricBlue,
+                    checkmarkColor: Colors.white,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Open Only Filter
+              SwitchListTile(
+                title: const Text('영업 중만 표시'),
+                subtitle: const Text('현재 영업 중인 트럭만 표시합니다'),
+                value: filterState.openOnly,
+                onChanged: (value) {
+                  ref.read(truckFilterNotifierProvider.notifier).setOpenOnly(value);
+                },
+                activeColor: AppTheme.electricBlue,
+                contentPadding: EdgeInsets.zero,
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.ok),
+        ),
+      ],
+    );
+  }
+}
+
+/// Sort Options Dialog
+class _SortOptionsDialog extends ConsumerWidget {
+  const _SortOptionsDialog();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentSort = ref.watch(sortOptionNotifierProvider);
+    final l10n = AppLocalizations.of(context)!;
+
+    return AlertDialog(
+      title: const Text('정렬'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: SortOption.values.map((option) {
+          String label;
+          IconData icon;
+          switch (option) {
+            case SortOption.distance:
+              label = '가까운 순';
+              icon = Icons.near_me;
+              break;
+            case SortOption.name:
+              label = '이름 순';
+              icon = Icons.sort_by_alpha;
+              break;
+            case SortOption.rating:
+              label = '평점 순';
+              icon = Icons.star;
+              break;
+          }
+          return RadioListTile<SortOption>(
+            title: Row(
+              children: [
+                Icon(icon, size: 20, color: AppTheme.electricBlue),
+                const SizedBox(width: 8),
+                Text(label),
+              ],
+            ),
+            value: option,
+            groupValue: currentSort,
+            onChanged: (value) {
+              if (value != null) {
+                ref.read(sortOptionNotifierProvider.notifier).setSortOption(value);
+                Navigator.pop(context);
+              }
+            },
+            activeColor: AppTheme.electricBlue,
+            contentPadding: EdgeInsets.zero,
+          );
+        }).toList(),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.ok),
+        ),
+      ],
     );
   }
 }
