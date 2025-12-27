@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../core/themes/app_theme.dart';
-import '../../../generated/l10n/app_localizations.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../location/location_service.dart';
@@ -752,18 +752,19 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
 
   /// Show migration dialog to upload data to Firestore
   void _showMigrationDialog(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Firestore 데이터 마이그레이션'),
-        content: const Text(
+        content: Text(
           '8개의 트럭 데이터를 Firestore에 업로드하시겠습니까?\n\n'
-          '이 작업은 기존 데이터를 덮어쓰지 않고 새로 추가합니다.',
+          '${l10n.uploadDataWarning}',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -773,7 +774,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.baeminMint,
             ),
-            child: const Text('업로드'),
+            child: Text(l10n.upload),
           ),
         ],
       ),
@@ -782,13 +783,14 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
 
   /// Run the migration
   Future<void> _runMigration(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     // Show loading
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Row(
+          content: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
@@ -796,8 +798,8 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               ),
-              SizedBox(width: 16),
-              Text('데이터 업로드 중...'),
+              const SizedBox(width: 16),
+              Text(l10n.uploadingData),
             ],
           ),
           backgroundColor: AppTheme.baeminMint,
