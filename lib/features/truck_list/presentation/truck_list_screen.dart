@@ -661,7 +661,6 @@ class _AppDrawer extends ConsumerWidget {
               ref.invalidate(currentUserProvider);
               ref.invalidate(currentUserIdProvider);
               ref.invalidate(currentUserEmailProvider);
-              ref.invalidate(truckListProvider);
             },
           ),
           const SizedBox(height: 16),

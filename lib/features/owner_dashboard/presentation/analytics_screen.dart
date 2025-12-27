@@ -60,7 +60,7 @@ class AnalyticsScreen extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
-              Text(l10n.errorWithDetails.replaceAll('{error}', e.toString()), textAlign: TextAlign.center),
+              Text(l10n.errorWithDetails(e), textAlign: TextAlign.center),
             ],
           ),
         ),

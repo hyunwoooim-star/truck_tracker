@@ -346,7 +346,6 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
               ref.invalidate(currentUserProvider);
               ref.invalidate(currentUserIdProvider);
               ref.invalidate(currentUserEmailProvider);
-              ref.invalidate(truckListProvider);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,

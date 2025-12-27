@@ -69,7 +69,7 @@ class _ScheduleManagementScreenState
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.saveFailed.replaceAll('{error}', e.toString())),
+            content: Text(l10n.saveFailed(e)),
             backgroundColor: Colors.red,
           ),
         );

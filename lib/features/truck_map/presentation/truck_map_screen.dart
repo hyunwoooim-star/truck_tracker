@@ -155,7 +155,7 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
                   Text(l10n.trucksWithoutLocation,
                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  Text(l10n.trucksLocationNotSet.replaceAll('{count}', '${trucks.length}'),
+                  Text(l10n.trucksLocationNotSet(trucks.length),
                     style: const TextStyle(color: Colors.grey)),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(

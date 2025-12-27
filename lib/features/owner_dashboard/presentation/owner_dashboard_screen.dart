@@ -789,7 +789,6 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
               ref.invalidate(currentUserIdProvider);
               ref.invalidate(currentUserEmailProvider);
               ref.invalidate(ownerTruckProvider);
-              ref.invalidate(truckListProvider);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
@@ -931,85 +930,6 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             child: TalkWidget(
               truckId: truck.id,
               isOwner: true,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SalesItemCard extends StatelessWidget {
-  const _SalesItemCard({required this.sale});
-
-  final SalesItem sale;
-
-  @override
-  Widget build(BuildContext context) {
-    final numberFormat = NumberFormat('#,###');
-    
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.grey.shade200,
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.black03,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppTheme.mustardYellow10,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              Icons.receipt_long,
-              color: AppTheme.baeminMint,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  sale.item,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  sale.time,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            '₩${numberFormat.format(sale.amount)}',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.baeminMint,
             ),
           ),
         ],
