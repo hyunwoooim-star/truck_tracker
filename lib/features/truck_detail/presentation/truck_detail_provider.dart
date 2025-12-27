@@ -17,14 +17,12 @@ Stream<TruckDetail?> truckDetailStream(TruckDetailStreamRef ref, String truckId)
   return repository.watchTruckDetail(truckId);
 }
 
-@riverpod
-Future<TruckDetail> truckDetail(TruckDetailRef ref, String truckId) async {
-  // Simulate network delay
-  await Future.delayed(const Duration(milliseconds: 300));
-
-  // Mock data based on truck ID
-  return _getMockTruckDetail(truckId);
-}
+// ❌ REMOVED: Mock data provider - Use truckDetailNotifierProvider instead
+// @riverpod
+// Future<TruckDetail> truckDetail(TruckDetailRef ref, String truckId) async {
+//   await Future.delayed(const Duration(milliseconds: 300));
+//   return _getMockTruckDetail(truckId);
+// }
 
 @riverpod
 class TruckDetailNotifier extends _$TruckDetailNotifier {
