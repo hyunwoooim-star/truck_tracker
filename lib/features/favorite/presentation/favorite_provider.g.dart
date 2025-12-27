@@ -25,7 +25,7 @@ final favoriteTruckIdProvider = AutoDisposeProvider<String?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef FavoriteTruckIdRef = AutoDisposeProviderRef<String?>;
-String _$favoriteToggleHash() => r'21b54525158d5f7e8bf8e53a342cad4fac1e2c09';
+String _$favoriteToggleHash() => r'f2af315200ab9a5847324a7d7be6f83b41c2c602';
 
 /// Provider for toggling favorite status
 ///

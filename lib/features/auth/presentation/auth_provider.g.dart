@@ -6,13 +6,13 @@ part of 'auth_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authServiceHash() => r'e771c719cfb4bd87b7f15fc6722ef9f56a9844e4';
+String _$authServiceHash() => r'3d2d141ca5addcfbfc5c4612d4188b84040459ad';
 
-/// Auth service provider
+/// Auth service provider (kept alive to maintain auth state)
 ///
 /// Copied from [authService].
 @ProviderFor(authService)
-final authServiceProvider = AutoDisposeProvider<AuthService>.internal(
+final authServiceProvider = Provider<AuthService>.internal(
   authService,
   name: r'authServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -24,14 +24,14 @@ final authServiceProvider = AutoDisposeProvider<AuthService>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AuthServiceRef = AutoDisposeProviderRef<AuthService>;
-String _$authStateChangesHash() => r'cb3239e0d20d013396e1666241a4ee8ef03acdf0';
+typedef AuthServiceRef = ProviderRef<AuthService>;
+String _$authStateChangesHash() => r'62dfbd5bbbfc2ce68e842d9f9d1528bbbb26c966';
 
-/// Current user stream provider
+/// Current user stream provider (kept alive to maintain auth state)
 ///
 /// Copied from [authStateChanges].
 @ProviderFor(authStateChanges)
-final authStateChangesProvider = AutoDisposeStreamProvider<User?>.internal(
+final authStateChangesProvider = StreamProvider<User?>.internal(
   authStateChanges,
   name: r'authStateChangesProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -43,14 +43,14 @@ final authStateChangesProvider = AutoDisposeStreamProvider<User?>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AuthStateChangesRef = AutoDisposeStreamProviderRef<User?>;
-String _$currentUserHash() => r'beedd437b6d28f4b92a31b760fefac8491066e22';
+typedef AuthStateChangesRef = StreamProviderRef<User?>;
+String _$currentUserHash() => r'6b0cdf66db660333bc7f785159ec5dd86580ccfa';
 
-/// Current user provider
+/// Current user provider (kept alive to maintain auth state)
 ///
 /// Copied from [currentUser].
 @ProviderFor(currentUser)
-final currentUserProvider = AutoDisposeProvider<User?>.internal(
+final currentUserProvider = Provider<User?>.internal(
   currentUser,
   name: r'currentUserProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -62,14 +62,14 @@ final currentUserProvider = AutoDisposeProvider<User?>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef CurrentUserRef = AutoDisposeProviderRef<User?>;
-String _$currentUserIdHash() => r'84bc2174cac75080f7d11cc1edab8daafee14df1';
+typedef CurrentUserRef = ProviderRef<User?>;
+String _$currentUserIdHash() => r'1e5fe278e29d1ba8474359614a4d7233c0aa7127';
 
-/// Current user ID provider
+/// Current user ID provider (kept alive to maintain auth state)
 ///
 /// Copied from [currentUserId].
 @ProviderFor(currentUserId)
-final currentUserIdProvider = AutoDisposeProvider<String?>.internal(
+final currentUserIdProvider = Provider<String?>.internal(
   currentUserId,
   name: r'currentUserIdProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -81,14 +81,14 @@ final currentUserIdProvider = AutoDisposeProvider<String?>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef CurrentUserIdRef = AutoDisposeProviderRef<String?>;
-String _$currentUserEmailHash() => r'74291b092ce9e949f0e560273716886574d9f642';
+typedef CurrentUserIdRef = ProviderRef<String?>;
+String _$currentUserEmailHash() => r'2d91c02d3bfe21590fe15eee0fb3fbf520bc1405';
 
-/// Current user email provider
+/// Current user email provider (kept alive to maintain auth state)
 ///
 /// Copied from [currentUserEmail].
 @ProviderFor(currentUserEmail)
-final currentUserEmailProvider = AutoDisposeProvider<String>.internal(
+final currentUserEmailProvider = Provider<String>.internal(
   currentUserEmail,
   name: r'currentUserEmailProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -100,14 +100,14 @@ final currentUserEmailProvider = AutoDisposeProvider<String>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef CurrentUserEmailRef = AutoDisposeProviderRef<String>;
-String _$isAuthenticatedHash() => r'fe6f954f2d7938a820a402d3f97973c87930d8b5';
+typedef CurrentUserEmailRef = ProviderRef<String>;
+String _$isAuthenticatedHash() => r'78dc0081ed4cc7780f28000eea1ac908ee5abcab';
 
-/// Is authenticated provider
+/// Is authenticated provider (kept alive to maintain auth state)
 ///
 /// Copied from [isAuthenticated].
 @ProviderFor(isAuthenticated)
-final isAuthenticatedProvider = AutoDisposeProvider<bool>.internal(
+final isAuthenticatedProvider = Provider<bool>.internal(
   isAuthenticated,
   name: r'isAuthenticatedProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -119,7 +119,7 @@ final isAuthenticatedProvider = AutoDisposeProvider<bool>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef IsAuthenticatedRef = AutoDisposeProviderRef<bool>;
+typedef IsAuthenticatedRef = ProviderRef<bool>;
 String _$currentUserTruckIdHash() =>
     r'374274a8f38555245f5d9910824f26918fef7215';
 

@@ -26,7 +26,7 @@ final truckRepositoryProvider = AutoDisposeProvider<TruckRepository>.internal(
 // ignore: unused_element
 typedef TruckRepositoryRef = AutoDisposeProviderRef<TruckRepository>;
 String _$firestoreTruckStreamHash() =>
-    r'9b81d786b5f3eab3241cbb66560cba9c02f52ef7';
+    r'8fcd08a079af5be5cd67a613544e1549452c2c9d';
 
 /// Firestore stream provider for real-time updates
 ///
@@ -46,7 +46,7 @@ final firestoreTruckStreamProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef FirestoreTruckStreamRef = AutoDisposeStreamProviderRef<List<Truck>>;
-String _$filteredTruckListHash() => r'57e693d8b01cb49f42934c3ccd1080ab2e56518f';
+String _$filteredTruckListHash() => r'3dd53a4398c0caee80e86eaa2198eae66fed6b3e';
 
 /// Filtered truck list provider that combines Firestore stream with filter state
 ///
@@ -67,7 +67,7 @@ final filteredTruckListProvider =
 // ignore: unused_element
 typedef FilteredTruckListRef = AutoDisposeStreamProviderRef<List<Truck>>;
 String _$filteredTrucksWithDistanceHash() =>
-    r'7b327a711e811e7a86ec664d5873e27e97c970ee';
+    r'5de18e5b56aac71a448c919688fec598e6894f68';
 
 /// Filtered and sorted truck list with distance information
 ///
@@ -110,7 +110,7 @@ final filteredTruckListMockProvider =
 // ignore: unused_element
 typedef FilteredTruckListMockRef =
     AutoDisposeProviderRef<AsyncValue<List<Truck>>>;
-String _$topRankedTrucksHash() => r'9f68fde10fb0cf14c5990cf6d30a7e3c52934d73';
+String _$topRankedTrucksHash() => r'0e15e8e474be521498144b980686c5ab0d560abb';
 
 /// Top 3 ranked trucks based on ranking score
 /// Score = (favoriteCount * 0.4) + (avgRating * 0.6)

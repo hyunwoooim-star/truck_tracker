@@ -6,7 +6,7 @@ part of 'owner_status_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$ownerTruckStatusHash() => r'1445f9b52bd064aa1a14b69c8d52017a2b8a8634';
+String _$ownerTruckStatusHash() => r'76b0f582f3db22b64cbdab4f4ae64024ebaeb933';
 
 /// Stream provider to watch the owner's truck status in real-time
 ///
@@ -46,7 +46,7 @@ final ownerTruckProvider = AutoDisposeStreamProvider<Truck?>.internal(
 // ignore: unused_element
 typedef OwnerTruckRef = AutoDisposeStreamProviderRef<Truck?>;
 String _$ownerOperatingStatusHash() =>
-    r'a22de5a16980fbf9a17adfe9b03ecbff408ec3e0';
+    r'3d2c7de773883eb8f42e8b2ba8e3124613880a8c';
 
 /// Provider that manages operating status for Owner's truck
 ///
