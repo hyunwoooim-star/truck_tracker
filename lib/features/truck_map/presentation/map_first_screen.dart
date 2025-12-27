@@ -296,10 +296,10 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
             top: MediaQuery.of(context).padding.top + 16,
             right: 16,
             child: Material(
-              color: AppTheme.charcoalMedium.withOpacity(0.95),
+              color: AppTheme.charcoalMedium95,
               borderRadius: BorderRadius.circular(12),
               elevation: 10, // Increased elevation to ensure it's above DraggableSheet
-              shadowColor: Colors.black.withOpacity(0.5),
+              shadowColor: AppTheme.black50,
               child: InkWell(
                 borderRadius: BorderRadius.circular(12),
                 onTap: () => _showLogoutDialog(context, ref),

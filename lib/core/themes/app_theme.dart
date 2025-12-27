@@ -46,6 +46,9 @@ class AppTheme {
   static const Color black30 = Color(0x4D000000);  // 30% opacity
   static const Color black50 = Color(0x80000000);  // 50% opacity
 
+  // Charcoal opacity variants
+  static const Color charcoalMedium95 = Color(0xF21A1A1A);  // charcoalMedium (0xFF1A1A1A) with 95% opacity
+
   // White opacity variants
   static const Color white10 = Color(0x1AFFFFFF);
   static const Color white20 = Color(0x33FFFFFF);
