@@ -269,7 +269,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       if (value == null || value.isEmpty) {
                         return '이메일을 입력해주세요';
                       }
-                      if (!value.contains('@')) {
+                      // RFC 5322 compliant email regex (simplified)
+                      final emailRegex = RegExp(
+                        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                      );
+                      if (!emailRegex.hasMatch(value)) {
                         return '올바른 이메일 형식이 아닙니다';
                       }
                       return null;
@@ -326,6 +330,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       if (value.length < 6) {
                         return '비밀번호는 최소 6자 이상이어야 합니다';
                       }
+                      // TODO: For production, add stronger validation for sign-up mode:
+                      // - At least one uppercase letter
+                      // - At least one lowercase letter
+                      // - At least one number
+                      // - At least one special character
                       return null;
                     },
                   ),

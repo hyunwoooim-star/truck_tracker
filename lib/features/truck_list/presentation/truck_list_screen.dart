@@ -643,23 +643,23 @@ class _AppDrawer extends ConsumerWidget {
           ),
           const Spacer(),
           const Divider(),
-          // Boss Mode Button (Hidden at the bottom)
+          // Logout Button
           ListTile(
             leading: const Icon(
-              Icons.admin_panel_settings,
-              color: AppTheme.electricBlue,
+              Icons.logout,
+              color: Colors.red,
             ),
             title: const Text(
-              '사장님 로그인',
+              '로그아웃',
               style: TextStyle(
-                color: AppTheme.electricBlue,
+                color: Colors.red,
                 fontWeight: FontWeight.w600,
               ),
             ),
             trailing: const Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: AppTheme.electricBlue,
+              color: Colors.red,
             ),
             onTap: () {
               Navigator.pop(context);

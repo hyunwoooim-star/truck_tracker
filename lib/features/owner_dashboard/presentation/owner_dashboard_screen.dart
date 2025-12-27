@@ -89,6 +89,11 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             tooltip: l10n.uploadDataTooltip,
             onPressed: () => _showMigrationDialog(context, ref),
           ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: '로그아웃',
+            onPressed: () => _showLogoutDialog(context, ref),
+          ),
         ],
       ),
       body: ownerTruckAsync.when(
@@ -748,6 +753,34 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
   Future<void> _toggleSoldOut(item, String truckId, WidgetRef ref) async {
     final detailProvider = ref.read(truckDetailNotifierProvider(truckId).notifier);
     await detailProvider.toggleMenuItemSoldOut(item.id);
+  }
+
+  /// Show logout confirmation dialog
+  void _showLogoutDialog(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('로그아웃'),
+        content: const Text('정말 로그아웃하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await ref.read(authServiceProvider).signOut();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: const Text('로그아웃'),
+          ),
+        ],
+      ),
+    );
   }
 
   /// Show migration dialog to upload data to Firestore

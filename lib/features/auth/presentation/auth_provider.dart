@@ -5,21 +5,21 @@ import '../data/auth_service.dart';
 
 part 'auth_provider.g.dart';
 
-/// Auth service provider
-@riverpod
+/// Auth service provider (kept alive to maintain auth state)
+@Riverpod(keepAlive: true)
 AuthService authService(AuthServiceRef ref) {
   return AuthService();
 }
 
-/// Current user stream provider
-@riverpod
+/// Current user stream provider (kept alive to maintain auth state)
+@Riverpod(keepAlive: true)
 Stream<User?> authStateChanges(AuthStateChangesRef ref) {
   final authService = ref.watch(authServiceProvider);
   return authService.authStateChanges;
 }
 
-/// Current user provider
-@riverpod
+/// Current user provider (kept alive to maintain auth state)
+@Riverpod(keepAlive: true)
 User? currentUser(CurrentUserRef ref) {
   final authState = ref.watch(authStateChangesProvider);
   return authState.when(
@@ -29,22 +29,22 @@ User? currentUser(CurrentUserRef ref) {
   );
 }
 
-/// Current user ID provider
-@riverpod
+/// Current user ID provider (kept alive to maintain auth state)
+@Riverpod(keepAlive: true)
 String? currentUserId(CurrentUserIdRef ref) {
   final user = ref.watch(currentUserProvider);
   return user?.uid;
 }
 
-/// Current user email provider
-@riverpod
+/// Current user email provider (kept alive to maintain auth state)
+@Riverpod(keepAlive: true)
 String currentUserEmail(CurrentUserEmailRef ref) {
   final user = ref.watch(currentUserProvider);
   return user?.email ?? '';
 }
 
-/// Is authenticated provider
-@riverpod
+/// Is authenticated provider (kept alive to maintain auth state)
+@Riverpod(keepAlive: true)
 bool isAuthenticated(IsAuthenticatedRef ref) {
   final user = ref.watch(currentUserProvider);
   return user != null;
