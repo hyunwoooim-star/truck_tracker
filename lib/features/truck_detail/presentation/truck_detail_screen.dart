@@ -17,6 +17,8 @@ import '../../schedule/data/schedule_repository.dart';
 import '../../social/data/follow_repository.dart';
 import '../../talk/presentation/talk_widget.dart';
 import '../../truck_list/domain/truck.dart';
+import '../../chat/data/chat_repository.dart';
+import '../../chat/presentation/chat_screen.dart';
 import 'truck_detail_provider.dart';
 
 class TruckDetailScreen extends ConsumerWidget {
@@ -54,6 +56,48 @@ class TruckDetailScreen extends ConsumerWidget {
                 pinned: true,
                 backgroundColor: AppTheme.baeminMint,
                 actions: [
+                  // Chat Button
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final user = FirebaseAuth.instance.currentUser;
+                      if (user == null) return const SizedBox.shrink();
+
+                      return IconButton(
+                        icon: const Icon(Icons.chat_bubble_outline),
+                        onPressed: () async {
+                          try {
+                            // Get or create chat room
+                            final chatRepository = ref.read(chatRepositoryProvider);
+                            final chatRoomId = await chatRepository.getOrCreateChatRoom(
+                              customerId: user.uid,
+                              customerName: user.displayName ?? user.email ?? 'User',
+                              truckId: truck.id,
+                              truckName: truck.foodType,
+                            );
+
+                            // Navigate to ChatScreen
+                            if (context.mounted) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatScreen(chatRoomId: chatRoomId),
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(l10n.errorOccurred),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                      );
+                    },
+                  ),
                   // Follow Button
                   Consumer(
                     builder: (context, ref, _) {
