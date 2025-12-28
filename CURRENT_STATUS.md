@@ -38,7 +38,7 @@
 ### 핵심 기능 구현 완료 ✅
 - ✅ 실시간 트럭 지도 & 리스트
 - ✅ 즐겨찾기 시스템
-- ✅ **FCM 푸시 알림** (영업 시작 시 자동)
+- ✅ **FCM 푸시 알림** (5가지 Cloud Functions)
 - ✅ QR 체크인
 - ✅ 리뷰 시스템
 - ✅ 사장님 대시보드
@@ -48,6 +48,13 @@
 - ✅ **쿠폰 시스템** (프로모션 & 할인)
 - ✅ **실시간 채팅** (고객-사장님 소통)
 - ✅ **맞춤형 알림 설정** (9가지 알림 타입)
+
+### Cloud Functions 구현 완료 ✅ (5개)
+- ✅ **notifyTruckOpening**: 트럭 영업 시작 알림
+- ✅ **notifyOrderStatus**: 주문 상태 변경 알림 (6가지 상태)
+- ✅ **notifyCouponCreated**: 새 쿠폰 발행 알림
+- ✅ **notifyChatMessage**: 채팅 메시지 알림
+- ✅ **notifyNearbyTrucks**: 근처 트럭 알림 (Haversine 거리 계산)
 
 ---
 
@@ -77,16 +84,17 @@ Firebase Console에서 푸시 알림 동작 확인:
 4. Functions 로그 확인
 ```
 
-### 옵션 3: Cloud Functions 배포 (1일, 권장)
-**목표**: 4가지 알림 Cloud Functions 배포
+### 옵션 3: Cloud Functions 배포 (10분, 권장) ✅ 코드 완료
+**상태**: 코드 구현 완료, Firebase CLI 설치 후 배포 가능
 
-**작업 내역**:
-1. `notifyOrderStatus` - 주문 상태 변경 알림
-2. `notifyCouponCreated` - 새 쿠폰 발행 알림
-3. `notifyChatMessage` - 채팅 메시지 알림
-4. `notifyNearbyTrucks` - 근처 트럭 알림 (Haversine 거리 계산)
+**배포 방법**:
+```bash
+npm install -g firebase-tools
+firebase login
+firebase deploy --only functions
+```
 
-**참고 문서**: PHASE_15_REPORT.md (Cloud Functions 섹션)
+**참고 문서**: `CLOUD_FUNCTIONS_DEPLOYMENT.md` (상세 가이드)
 
 ### 옵션 4: Phase 14 결제 연동 계획
 - **결제 시스템**: 카카오페이/토스 (PG 계약 필요)
@@ -100,7 +108,8 @@ Firebase Console에서 푸시 알림 동작 확인:
 | 문서 | 용도 |
 |------|------|
 | **CURRENT_STATUS.md** | 현재 상태 & 다음 작업 (이 파일) |
-| **PHASE_11-15_ROADMAP.md** | Phase 11-15 상세 설계 & 구현 가이드 ⭐ |
+| **CLOUD_FUNCTIONS_DEPLOYMENT.md** | Cloud Functions 배포 가이드 ⭐ |
+| **PHASE_11-15_ROADMAP.md** | Phase 11-15 상세 설계 & 구현 가이드 |
 | **WEB_DEPLOYMENT_PLAN.md** | 웹 배포 Shader 이슈 해결 계획 |
 | **README.md** | 프로젝트 소개 & 시작 가이드 |
 | **CLAUDE.md** | AI 개발 워크플로우 |
@@ -146,7 +155,7 @@ firebase deploy --only hosting
 
 **Firebase Project**: `truck-tracker-fa0b0`
 **Git Branch**: `main`
-**최신 커밋**: `7fdfdbf` - [Phase 13 & 15 - 통합]: 메인 화면에 채팅 및 알림 설정 통합
-**현재 Phase**: Phase 1-13, 15 완전 구현 ✅ | Phase 14 계획 단계 📋
-**프로덕션 준비**: ✅ Phase 11-13, 15 즉시 배포 가능
-**다음 권장 작업**: Cloud Functions 4개 배포 또는 웹 배포 해결
+**최신 커밋**: `6ac73ad` - [Cloud Functions]: 4개 알림 함수 구현
+**현재 Phase**: Phase 1-13, 15 완전 구현 ✅ | Cloud Functions 5개 구현 ✅ | Phase 14 계획 단계 📋
+**프로덕션 준비**: ✅ Phase 11-13, 15 + Cloud Functions 즉시 배포 가능
+**다음 권장 작업**: Firebase CLI 설치 후 Functions 배포 (10분)
