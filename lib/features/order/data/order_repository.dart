@@ -77,6 +77,7 @@ class OrderRepository {
     return _ordersCollection
         .where('userId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
+        .limit(100) // Limit to recent 100 orders for performance
         .snapshots()
         .map((snapshot) {
       final orders = snapshot.docs.map((doc) {
@@ -100,6 +101,7 @@ class OrderRepository {
     return _ordersCollection
         .where('truckId', isEqualTo: truckId)
         .orderBy('createdAt', descending: true)
+        .limit(50) // Limit to recent 50 orders for performance
         .snapshots()
         .map((snapshot) {
       final orders = snapshot.docs.map((doc) {
