@@ -81,7 +81,7 @@ class AppTheme {
 
   static ThemeData get dark {
     return ThemeData(
-      useMaterial3: true,
+      useMaterial3: false,  // Disable Material 3 to avoid ink_sparkle shader compilation bug
       splashFactory: NoSplash.splashFactory, // Disable ink sparkle to avoid shader compilation bug
       brightness: Brightness.dark,
       scaffoldBackgroundColor: midnightCharcoal,
