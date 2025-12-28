@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_performance/firebase_performance.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -21,31 +25,53 @@ import 'features/notifications/fcm_service.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // Wrap entire app in error zone for Crashlytics
+  await runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+    // Initialize Firebase
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
-  // 🔐 AUTH PERSISTENCE: Enable local persistence for web to prevent incognito mode requirement
-  if (kIsWeb) {
-    await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
-    AppLogger.debug('Firebase Auth persistence set to LOCAL for web', tag: 'Main');
-  }
+    // 📊 CRASHLYTICS: Initialize crash reporting (not available on web)
+    if (!kIsWeb) {
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
+      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+      AppLogger.debug('Firebase Crashlytics initialized', tag: 'Main');
+    }
 
-  // Initialize FCM (Firebase Cloud Messaging)
-  final fcmService = FcmService();
-  await fcmService.initialize();
+    // 📈 PERFORMANCE: Initialize performance monitoring (not available on web)
+    if (!kIsWeb) {
+      await FirebasePerformance.instance.setPerformanceCollectionEnabled(!kDebugMode);
+      AppLogger.debug('Firebase Performance initialized', tag: 'Main');
+    }
 
-  // 🧹 OPTIMIZATION: Clean old image cache (7 days+) to free storage
-  _cleanOldImageCache();
+    // 🔐 AUTH PERSISTENCE: Enable local persistence for web to prevent incognito mode requirement
+    if (kIsWeb) {
+      await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+      AppLogger.debug('Firebase Auth persistence set to LOCAL for web', tag: 'Main');
+    }
 
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+    // Initialize FCM (Firebase Cloud Messaging)
+    final fcmService = FcmService();
+    await fcmService.initialize();
+
+    // 🧹 OPTIMIZATION: Clean old image cache (7 days+) to free storage
+    _cleanOldImageCache();
+
+    runApp(
+      const ProviderScope(
+        child: MyApp(),
+      ),
+    );
+  }, (error, stack) {
+    // Catch async errors and report to Crashlytics
+    if (!kIsWeb) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    }
+    AppLogger.error('Uncaught async error', error: error, stackTrace: stack, tag: 'Main');
+  });
 }
 
 class MyApp extends ConsumerWidget {
