@@ -1,10 +1,10 @@
-# 작업 세션 요약 (2025-12-28) - MEGA PHASE UI 완전 구현
+# 작업 세션 요약 (2025-12-28) - MEGA PHASE 완전 통합
 
 ## ✅ 완료된 작업
 
-### MEGA PHASE: Phase 13 & 15 UI 완전 구현
+### MEGA PHASE: Phase 13 & 15 UI 완전 구현 + 메인 화면 통합 ✅
 
-이번 세션에서 **Phase 13 (Real-time Chat)**과 **Phase 15 (Advanced Notifications)**의 모든 사용자 인터페이스와 Localization을 완전히 구현했습니다.
+이번 세션에서 **Phase 13 (Real-time Chat)**과 **Phase 15 (Advanced Notifications)**의 모든 사용자 인터페이스와 Localization을 완전히 구현하고, 메인 화면에 통합까지 완료했습니다.
 
 ---
 
@@ -26,7 +26,7 @@
 
 ---
 
-## 🆕 이번 세션 (UI 구현)
+## 🆕 이번 세션 (UI 구현 + 통합)
 
 ### 1. ChatListScreen 구현
 **파일**: `lib/features/chat/presentation/chat_list_screen.dart` (210+ 라인)
@@ -147,7 +147,49 @@
 
 ---
 
-### 5. 웹 배포 시도 (실패)
+### 5. 메인 화면 통합 완료 ✅
+
+#### TruckDetailScreen 통합
+**파일**: `lib/features/truck_detail/presentation/truck_detail_screen.dart` (+44 라인)
+
+**기능**:
+- ✅ 채팅 시작 버튼 (AppBar actions)
+- ✅ ChatRepository.getOrCreateChatRoom() 호출
+- ✅ ChatScreen으로 자동 이동
+- ✅ 에러 처리 (SnackBar)
+
+**사용자 플로우**:
+1. 트럭 상세 페이지 진입
+2. 상단 채팅 버튼 클릭
+3. 채팅방 자동 생성 또는 기존 채팅방 로드
+4. ChatScreen으로 즉시 이동
+
+---
+
+#### MapFirstScreen 통합
+**파일**: `lib/features/truck_map/presentation/map_first_screen.dart` (+102 라인)
+
+**기능**:
+- ✅ 알림 설정 버튼 (노란색 종 아이콘)
+- ✅ 채팅 목록 버튼 (노란색 채팅 아이콘)
+- ✅ 안 읽은 메시지 수 배지 (빨간색 원형, 9+)
+- ✅ 로그아웃 버튼 (빨간색 아이콘)
+- ✅ 3개 버튼 나란히 배치 (top-right corner)
+
+**UI 구성**:
+```
+[알림 설정] [채팅(배지)] [로그아웃]
+   🔔         💬(5)        🚪
+```
+
+**사용자 경험**:
+- 안 읽은 메시지가 있으면 채팅 버튼에 빨간 배지 표시
+- 실시간으로 배지 숫자 업데이트 (Riverpod Stream)
+- 로그인하지 않은 사용자에게는 채팅 버튼 숨김
+
+---
+
+### 6. 웹 배포 시도 (실패)
 
 #### 시도한 해결책
 1. ✅ Flutter 최신 버전 확인 (이미 3.38.5 stable)
@@ -175,14 +217,16 @@ failed with exit code -1073741819.
 
 ### 코드 생성
 - **UI 화면**: 3개 (ChatListScreen, ChatScreen, NotificationSettingsScreen)
-- **추가된 코드**: ~850 라인 (Dart)
+- **메인 화면 통합**: 2개 (TruckDetailScreen, MapFirstScreen)
+- **추가된 코드**: ~1,000 라인 (Dart)
 - **Localization**: 86 라인 (43개 문자열 x 2개 언어)
-- **총 라인 수**: ~936 라인
+- **총 라인 수**: ~1,086 라인
 
 ### Git
-- **커밋**: 1개 (0d6e09b - "MEGA PHASE: Phase 13 & 15 UI 완전 구현")
-- **변경된 파일**: 8개
-- **추가된 라인**: 1,225 라인
+- **커밋**: 7개 (UI 구현 5개 + 통합 1개 + 문서 업데이트 1개)
+- **변경된 파일**: 10개
+- **추가된 라인**: 1,391 라인
+- **최신 커밋**: `7fdfdbf` - [Phase 13 & 15 - 통합]: 메인 화면에 채팅 및 알림 설정 통합
 
 ### 토큰 사용량
 - **이전 세션**: ~79,000 / 200,000 (39.5%)
@@ -198,19 +242,20 @@ failed with exit code -1073741819.
 - [x] Phase 13 ChatRepository (백엔드)
 - [x] Phase 13 ChatListScreen (UI)
 - [x] Phase 13 ChatScreen (UI)
+- [x] Phase 13 메인 화면 통합 (TruckDetailScreen, MapFirstScreen)
 - [x] Phase 15 NotificationPreferencesRepository (백엔드)
 - [x] Phase 15 NotificationSettingsScreen (UI)
+- [x] Phase 15 메인 화면 통합 (MapFirstScreen)
 - [x] Firestore Security Rules
 - [x] Riverpod Providers (13개)
 - [x] Localization (한국어/영어)
+- [x] 안 읽은 메시지 배지 (실시간 업데이트)
 
 ### 🟡 단기 구현 필요 (1주일)
-- [ ] 트럭 상세 페이지에서 채팅 시작 버튼 추가
-- [ ] 메인 화면에서 알림 설정 화면 라우팅
-- [ ] 상단 바에 채팅 아이콘 (안 읽은 메시지 배지)
 - [ ] Cloud Functions 4개 배포 (주문, 쿠폰, 채팅, 근처 트럭)
-- [ ] FCM 토큰 관리
+- [ ] FCM 토큰 관리 개선
 - [ ] 이미지 압축 (`flutter_image_compress`)
+- [ ] 테스트 작성 (ChatRepository, NotificationPreferencesRepository)
 
 ### 🟠 중기 개선 (2-3주)
 - [ ] 메시지 페이지네이션 (최근 50개만 로드)
@@ -223,28 +268,7 @@ failed with exit code -1073741819.
 
 ## 🔄 다음 세션에서 할 일
 
-### 옵션 1: 라우팅 및 통합 (권장, 1일)
-**목표**: UI 완성 후 앱에 통합
-
-**작업 내역**:
-1. **트럭 상세 페이지에 채팅 버튼 추가**
-   - FloatingActionButton 또는 AppBar action
-   - ChatRepository.getOrCreateChatRoom() 호출
-   - ChatScreen으로 이동
-
-2. **메인 화면에 알림 설정 라우트 추가**
-   - Drawer 또는 Settings 화면에서 접근
-   - NotificationSettingsScreen 이동
-
-3. **상단 바에 채팅 아이콘 추가**
-   - 안 읽은 메시지 수 배지 표시
-   - ChatListScreen으로 이동
-
-**예상 시간**: 2-3시간
-
----
-
-### 옵션 2: Cloud Functions 배포 (1일)
+### 옵션 1: Cloud Functions 배포 (권장, 1일)
 **목표**: 4가지 알림 Cloud Functions 배포
 
 **작업 내역**:
@@ -259,7 +283,7 @@ failed with exit code -1073741819.
 
 ---
 
-### 옵션 3: 웹 배포 해결 (0.5-1일)
+### 옵션 2: 웹 배포 해결 (0.5-1일)
 **방법 1**: Flutter 3.24.x로 다운그레이드
 **방법 2**: Flutter 3.39.x 업데이트 대기
 
@@ -267,7 +291,7 @@ failed with exit code -1073741819.
 
 ---
 
-### 옵션 4: 이미지 최적화 (0.5일)
+### 옵션 3: 이미지 최적화 (0.5일)
 **목표**: 채팅 이미지 압축 및 썸네일 생성
 
 **작업 내역**:
@@ -395,7 +419,8 @@ failed with exit code -1073741819.
 - [x] ChatScreen (UI)
 - [x] Localization (12개 문자열)
 - [x] 문서화 (PHASE_13_REPORT.md + UI_IMPLEMENTATION_REPORT.md)
-- [ ] 트럭 상세 페이지 통합
+- [x] **트럭 상세 페이지 통합** ✅
+- [x] **메인 화면 통합 (채팅 목록 버튼)** ✅
 - [ ] 이미지 압축
 - [ ] 테스트 작성
 
@@ -407,17 +432,17 @@ failed with exit code -1073741819.
 - [x] NotificationSettingsScreen (UI)
 - [x] Localization (31개 문자열)
 - [x] 문서화 (PHASE_15_REPORT.md + UI_IMPLEMENTATION_REPORT.md)
-- [ ] 메인 화면 라우팅
+- [x] **메인 화면 라우팅** ✅
 - [ ] Cloud Functions 4개 배포
-- [ ] FCM 토큰 관리
+- [ ] FCM 토큰 관리 개선
 - [ ] 테스트 작성
 
 ---
 
-**마지막 업데이트**: 2025-12-28
-**마지막 커밋**: 0d6e09b
+**마지막 업데이트**: 2025-12-28 22:53
+**마지막 커밋**: `7fdfdbf` - [Phase 13 & 15 - 통합]: 메인 화면에 채팅 및 알림 설정 통합
 **브랜치**: main
 **프로젝트 ID**: truck-tracker-fa0b0
-**다음 권장 작업**: 라우팅 통합 및 Cloud Functions 배포
+**다음 권장 작업**: Cloud Functions 배포 또는 웹 배포 해결
 
-🚀 **Truck Tracker - Phase 13 & 15 UI 완전 구현 완료!**
+🚀 **Truck Tracker - Phase 13 & 15 완전 통합 완료!**

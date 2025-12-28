@@ -8,12 +8,12 @@
 ## ✅ 완료된 작업
 
 ### MEGA PHASE 11-15 구현 완료 🎉 (2025-12-28)
-- **Phase 11 (Social Features)**: FollowRepository, Follow UI, UserProfileScreen
-- **Phase 12 (Coupon System)**: Coupon 모델, CouponRepository, 완전한 백엔드
-- **Phase 13 (Chat)**: ChatMessage, ChatRoom 모델 (기본 구조)
-- **Phase 15 (Notifications)**: FCM 기본 구현 완료 (Phase 10)
-- **Security Rules**: Firestore 통합 보안 규칙 (185 라인)
-- **문서화**: 4개 상세 보고서 (1200+ 라인)
+- **Phase 11 (Social Features)**: ✅ FollowRepository, Follow UI, UserProfileScreen
+- **Phase 12 (Coupon System)**: ✅ Coupon 모델, CouponRepository, 완전한 백엔드
+- **Phase 13 (Chat)**: ✅ ChatRepository, ChatListScreen, ChatScreen, 메인 화면 통합
+- **Phase 15 (Notifications)**: ✅ NotificationPreferencesRepository, NotificationSettingsScreen, 메인 화면 통합
+- **Security Rules**: Firestore 통합 보안 규칙 (192 라인)
+- **문서화**: 8개 상세 보고서 (5000+ 라인)
 
 ### IMPROVEMENT_PLAN Phase 1-10 완료 ✅
 - Phase 1: Critical Fixes (메모리 누수, 크래시 제거)
@@ -44,6 +44,10 @@
 - ✅ 사장님 대시보드
 - ✅ 통계 & 분석
 - ✅ Firebase Auth (이메일, Google)
+- ✅ **팔로우 시스템** (단골 트럭 관리)
+- ✅ **쿠폰 시스템** (프로모션 & 할인)
+- ✅ **실시간 채팅** (고객-사장님 소통)
+- ✅ **맞춤형 알림 설정** (9가지 알림 타입)
 
 ---
 
@@ -73,12 +77,21 @@ Firebase Console에서 푸시 알림 동작 확인:
 4. Functions 로그 확인
 ```
 
-### 옵션 3: Phase 11-15 구현 (PHASE_11-15_ROADMAP.md 참고)
-- **Phase 11**: 소셜 기능 (TruckFollow 모델 완료, Repository 구현 필요)
-- **Phase 12**: 쿠폰 시스템 (설계 완료, 구현 필요)
-- **Phase 13**: 실시간 채팅 (설계 완료, 구현 필요)
-- **Phase 14**: 결제 연동 (카카오페이/토스, PG 계약 필요)
-- **Phase 15**: 고급 알림 (FCM 확장, 맞춤형 알림)
+### 옵션 3: Cloud Functions 배포 (1일, 권장)
+**목표**: 4가지 알림 Cloud Functions 배포
+
+**작업 내역**:
+1. `notifyOrderStatus` - 주문 상태 변경 알림
+2. `notifyCouponCreated` - 새 쿠폰 발행 알림
+3. `notifyChatMessage` - 채팅 메시지 알림
+4. `notifyNearbyTrucks` - 근처 트럭 알림 (Haversine 거리 계산)
+
+**참고 문서**: PHASE_15_REPORT.md (Cloud Functions 섹션)
+
+### 옵션 4: Phase 14 결제 연동 계획
+- **결제 시스템**: 카카오페이/토스 (PG 계약 필요)
+- **사전 준비**: PG사 계약, API 키 발급
+- **예상 기간**: 2-3주
 
 ---
 
@@ -133,6 +146,7 @@ firebase deploy --only hosting
 
 **Firebase Project**: `truck-tracker-fa0b0`
 **Git Branch**: `main`
-**현재 Phase**: Phase 1-12 완전 구현 ✅ | Phase 13-15 기본 구조 완성 📋
-**프로덕션 준비**: ✅ Phase 11-12 즉시 배포 가능
-**다음 작업**: Phase 12 UI 구현 또는 Phase 13 Repository/UI 완성
+**최신 커밋**: `7fdfdbf` - [Phase 13 & 15 - 통합]: 메인 화면에 채팅 및 알림 설정 통합
+**현재 Phase**: Phase 1-13, 15 완전 구현 ✅ | Phase 14 계획 단계 📋
+**프로덕션 준비**: ✅ Phase 11-13, 15 즉시 배포 가능
+**다음 권장 작업**: Cloud Functions 4개 배포 또는 웹 배포 해결
