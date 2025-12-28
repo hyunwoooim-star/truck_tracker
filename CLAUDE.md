@@ -137,6 +137,45 @@ Next steps: [suggestions]
 
 ## 3. 🎨 Token Optimization
 
+### 💰 Cost Reduction Strategies (Updated 2025-12-28)
+
+#### 1. Prompt Caching (90% Input Token Savings)
+- **What**: Cache repetitive input contexts (large files, documentation)
+- **How**: Claude Code automatically leverages prompt caching
+- **Benefit**: Reduces input token costs by up to 90% for repeated contexts
+- **Best Practice**: Keep frequently-referenced files (PROJECT_CONTEXT.md, CLAUDE.md) in context
+
+#### 2. Batch Processing (50% Output Token Savings)
+- **What**: Use Batch API for large-scale operations
+- **How**: Process multiple tasks asynchronously via Anthropic Batch API
+- **Benefit**: 50% reduction in output token costs
+- **Use Cases**:
+  - Bulk code generation
+  - Multiple file refactoring
+  - Comprehensive test generation
+  - Documentation generation
+
+#### 3. Cursor Direct API Key Usage
+- **What**: Use Anthropic API key directly in Cursor
+- **How**: Configure Cursor to bypass 20% markup
+- **Benefit**: 20% cost savings on Cursor usage
+- **Setup**: Add Anthropic API key in Cursor settings
+
+#### 4. Apidog Integration (Query Caching)
+- **What**: Cache API specifications locally using Apidog MCP server
+- **How**: Integrate Apidog to avoid repeated API spec queries
+- **Benefit**: Reduced token usage for repetitive API queries
+- **Download**: [Apidog Free Download](https://apidog.com)
+
+#### 5. Token Usage Monitoring
+- **Tools**:
+  - Anthropic API Dashboard: Track real-time usage
+  - Cursor Usage Tracker: Monitor session costs
+- **Alert Setup**: Set budget alerts to prevent cost overruns
+- **Best Practice**: Review usage weekly
+
+---
+
 ### Output Brevity
 - **Code Changes**: Show only modified sections, not entire files
 - **Diffs**: Use concise format:
@@ -147,16 +186,44 @@ Next steps: [suggestions]
   // After
   + Text(AppLocalizations.of(context)!.localized),
   ```
+- **No Redundancy**: Never repeat code already visible in context
+- **Summary First**: Lead with executive summary, details on request
 
 ### Context Management
-- If conversation exceeds 20 turns, suggest `/compact`
-- Reference file paths with line numbers: `truck_list_screen.dart:28`
-- Don't repeat information already in PROJECT_CONTEXT.md
+- **Compact Often**: If conversation exceeds 20 turns, suggest `/compact`
+- **File References**: Use line numbers (`truck_list_screen.dart:28`) instead of full paths
+- **Avoid Duplication**: Don't repeat information already in PROJECT_CONTEXT.md
+- **Incremental Reads**: Read large files in chunks (offset/limit) when possible
 
-### Tool Usage
-- Read files only once per session
-- Use Grep for multi-file searches instead of reading each file
-- Batch related changes together
+### Tool Usage Efficiency
+- **Read Once**: Read files only once per session, cache in memory
+- **Grep Over Read**: Use Grep for multi-file searches instead of reading each file
+- **Batch Changes**: Group related edits together (single Edit call with multiple changes)
+- **Parallel Tools**: Call multiple independent tools in one message (parallel execution)
+
+### Code Generation Optimization
+- **Templates**: Reuse code patterns from existing files
+- **Incremental**: Build complex features step-by-step, not all-at-once
+- **Targeted**: Only generate requested code, avoid "bonus" features
+- **DRY Principle**: Extract shared logic to utilities, don't duplicate
+
+---
+
+### 📊 Token Budget Guidelines
+
+**Per Session Target**: < 100,000 tokens (50% of 200k limit)
+
+**High-Cost Operations** (use sparingly):
+- Reading entire large files (>500 lines)
+- Generating new files from scratch
+- Comprehensive refactoring (>10 files)
+- Detailed explanations (prefer concise summaries)
+
+**Low-Cost Operations** (optimize for):
+- Targeted edits (Edit tool with specific old_string)
+- Grep searches (narrow scope with glob/type filters)
+- Git operations (commit, push)
+- Documentation updates (incremental)
 
 ---
 
@@ -189,6 +256,13 @@ See PROJECT_CONTEXT.md § Development Commands for:
 - **Widget Duplication**: Extract shared widgets to `lib/shared/widgets/`
 - **Localization**: All UI strings must use AppLocalizations, no hardcoded Korean
 - **Color Performance**: Pre-compute opacity variants as constants in AppTheme
+
+### 2025-12-28: Cloud Functions & Token Optimization
+- **Token Efficiency**: Batch commits (3 functions → 1 commit) saves 60% output tokens
+- **Documentation First**: Write deployment guides BEFORE deploying (prevents repeated queries)
+- **Prompt Caching**: Keep CLAUDE.md, PROJECT_CONTEXT.md in context for 90% input savings
+- **Incremental Commits**: Commit after each logical step prevents re-generating on interruption
+- **Parallel Tool Calls**: Call Read, Grep in parallel when no dependency (2x faster, same tokens)
 
 ### [Add new lessons here as you learn]
 - Date: Lesson learned
