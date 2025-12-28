@@ -26,11 +26,19 @@ jobs:
       - name: Build web
         run: flutter build web --release
 
-      - name: Deploy to Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
-          channelId: live
-          projectId: truck-tracker-fa0b0
-# Trigger CI/CD build - 2025년 12월 29일 월 오전 12:28:23
+          node-version: '20'
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy to Firebase Hosting
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > service-account.json
+          export GOOGLE_APPLICATION_CREDENTIALS=service-account.json
+          firebase deploy --only hosting --project truck-tracker-fa0b0
+          rm service-account.json
