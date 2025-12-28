@@ -123,10 +123,14 @@ firebase deploy --only functions
 
 1. **🔴 웹 빌드 실패** (블로킹)
    - **증상**: ShaderCompilerException - `ink_sparkle.frag` 컴파일 실패
-   - **원인**: Flutter Impeller 컴파일러 버그 (impellerc.exe 크래시)
+   - **원인**: Flutter 3.23.0+ `impellerc.exe` 버그 (exit code -1073741819 = Access Violation)
    - **영향**: 웹 배포 불가 (Android/iOS는 정상)
-   - **해결책**: WEB_DEPLOYMENT_PLAN.md 참고 (4가지 옵션 제시)
-   - **권장 솔루션**: CanvasKit 렌더러 사용 (성공률 95%)
+   - **GitHub 이슈**: [flutter/flutter#157886](https://github.com/flutter/flutter/issues/157886)
+   - **해결책**:
+     1. Flutter 3.22.x로 다운그레이드 (권장)
+     2. Linux/Mac에서 빌드 (CI/CD)
+     3. Firebase App Hosting 사용
+   - **참고 문서**: COMPREHENSIVE_PROJECT_PLAN.md
 
 2. **Kakao/Naver 로그인**
    - 구조만 준비, API 키 미발급
@@ -155,7 +159,8 @@ firebase deploy --only hosting
 
 **Firebase Project**: `truck-tracker-fa0b0`
 **Git Branch**: `main`
-**최신 커밋**: `6ac73ad` - [Cloud Functions]: 4개 알림 함수 구현
+**최신 커밋**: `c6ebedf` - [Fix]: Phase 13 코드 통합 오류 수정 및 종합 플랜 작성
 **현재 Phase**: Phase 1-13, 15 완전 구현 ✅ | Cloud Functions 5개 구현 ✅ | Phase 14 계획 단계 📋
 **프로덕션 준비**: ✅ Phase 11-13, 15 + Cloud Functions 즉시 배포 가능
-**다음 권장 작업**: Firebase CLI 설치 후 Functions 배포 (10분)
+**웹 빌드 상태**: 🔴 Flutter 3.23+ impellerc.exe 버그로 실패 (Flutter 다운그레이드 필요)
+**다음 권장 작업**: Flutter 3.22.x로 다운그레이드 후 웹 빌드 재시도
