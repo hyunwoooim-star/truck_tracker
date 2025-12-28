@@ -121,16 +121,17 @@ firebase deploy --only functions
 
 ## 🚧 알려진 이슈
 
-1. **🔴 웹 빌드 실패** (블로킹)
-   - **증상**: ShaderCompilerException - `ink_sparkle.frag` 컴파일 실패
-   - **원인**: Flutter 3.23.0+ `impellerc.exe` 버그 (exit code -1073741819 = Access Violation)
-   - **영향**: 웹 배포 불가 (Android/iOS는 정상)
+1. **🟡 웹 빌드** (GitHub Actions로 해결)
+   - **증상**: Windows에서 ShaderCompilerException - `ink_sparkle.frag` 컴파일 실패
+   - **원인**: Flutter 3.23.0+ `impellerc.exe` 버그 (exit code -1073741819)
    - **GitHub 이슈**: [flutter/flutter#157886](https://github.com/flutter/flutter/issues/157886)
-   - **해결책**:
-     1. Flutter 3.22.x로 다운그레이드 (권장)
-     2. Linux/Mac에서 빌드 (CI/CD)
-     3. Firebase App Hosting 사용
-   - **참고 문서**: COMPREHENSIVE_PROJECT_PLAN.md
+   - **해결책**: ✅ GitHub Actions 워크플로우 생성 완료
+     - `.github/workflows/web-deploy.yml`
+     - Ubuntu Linux에서 빌드 (셰이더 컴파일 정상)
+   - **설정 필요**:
+     1. Firebase Console → 서비스 계정 → 키 생성
+     2. GitHub → Settings → Secrets → `FIREBASE_SERVICE_ACCOUNT` 추가
+     3. main 브랜치 push 시 자동 빌드/배포
 
 2. **Kakao/Naver 로그인**
    - 구조만 준비, API 키 미발급
@@ -159,8 +160,8 @@ firebase deploy --only hosting
 
 **Firebase Project**: `truck-tracker-fa0b0`
 **Git Branch**: `main`
-**최신 커밋**: `c6ebedf` - [Fix]: Phase 13 코드 통합 오류 수정 및 종합 플랜 작성
+**최신 커밋**: `22bcf37` - [CI/CD]: GitHub Actions 웹 빌드/배포 워크플로우 추가
 **현재 Phase**: Phase 1-13, 15 완전 구현 ✅ | Cloud Functions 5개 구현 ✅ | Phase 14 계획 단계 📋
 **프로덕션 준비**: ✅ Phase 11-13, 15 + Cloud Functions 즉시 배포 가능
-**웹 빌드 상태**: 🔴 Flutter 3.23+ impellerc.exe 버그로 실패 (Flutter 다운그레이드 필요)
-**다음 권장 작업**: Flutter 3.22.x로 다운그레이드 후 웹 빌드 재시도
+**웹 빌드 상태**: 🟡 GitHub Actions로 Linux 빌드 설정 완료 (FIREBASE_SERVICE_ACCOUNT 시크릿 필요)
+**다음 권장 작업**: GitHub 시크릿 설정 후 자동 배포 활성화
