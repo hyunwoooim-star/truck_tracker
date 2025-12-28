@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../data/notification_preferences_repository.dart';
 
 /// Notification settings screen
@@ -308,9 +309,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
                     ref.invalidate(notificationSettingsStreamProvider(user.uid));
 
                     if (!context.mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('설정이 초기화되었습니다')),
-                    );
+                    SnackBarHelper.showInfo(context, '설정이 초기화되었습니다');
                   }
                 },
                 icon: const Icon(Icons.refresh),

@@ -8,6 +8,7 @@ import '../../../generated/l10n/app_localizations.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../truck_list/data/truck_repository.dart';
 import '../../truck_list/domain/truck.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../data/follow_repository.dart';
 
 /// User Profile Screen showing followed trucks and statistics
@@ -371,23 +372,13 @@ class _FollowedTruckCard extends ConsumerWidget {
                           truckId: truck.id,
                         );
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(l10n.unfollowedTruck),
-                              backgroundColor: AppTheme.charcoalMedium,
-                            ),
-                          );
+                          SnackBarHelper.showInfo(context, l10n.unfollowedTruck);
                         }
                         // Refresh the list
                         ref.invalidate(userFollowsProvider(userId));
                       } catch (e) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(l10n.errorOccurred),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
+                          SnackBarHelper.showError(context, l10n.errorOccurred);
                         }
                       }
                     },

@@ -7,6 +7,7 @@ import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/password_validator.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../../notifications/fcm_service.dart';
 import '../../truck_list/presentation/truck_list_screen.dart';
 import '../../owner_dashboard/presentation/owner_dashboard_screen.dart';
@@ -63,12 +64,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!_isLogin && (!_agreedToTerms || !_agreedToPrivacy)) {
       AppLogger.warning('Legal agreements not accepted', tag: 'LoginScreen');
       final l10n = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.agreeToTermsRequired),
-          backgroundColor: Colors.red,
-        ),
-      );
+      SnackBarHelper.showError(context, l10n.agreeToTermsRequired);
       return;
     }
 
@@ -110,12 +106,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e, stackTrace) {
       AppLogger.error('Auth error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_getErrorMessage(e.toString())),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
       }
     } finally {
       if (mounted) {
@@ -134,12 +125,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       // Don't manually navigate - let AuthWrapper handle it
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_getErrorMessage(e.toString())),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
       }
     } finally {
       if (mounted) {
@@ -156,9 +142,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       // Don't manually navigate - let AuthWrapper handle it
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_getErrorMessage(e.toString())), backgroundColor: Colors.red),
-        );
+        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -173,9 +157,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       // Don't manually navigate - let AuthWrapper handle it
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_getErrorMessage(e.toString())), backgroundColor: Colors.red),
-        );
+        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);

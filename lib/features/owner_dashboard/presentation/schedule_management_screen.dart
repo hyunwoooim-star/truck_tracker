@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../schedule/data/schedule_repository.dart';
 import '../../schedule/domain/daily_schedule.dart';
@@ -57,22 +58,12 @@ class _ScheduleManagementScreenState
 
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.scheduleSaved),
-            backgroundColor: AppTheme.electricBlue,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.scheduleSaved);
       }
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.saveFailed(e)),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, l10n.saveFailed(e));
       }
     }
   }

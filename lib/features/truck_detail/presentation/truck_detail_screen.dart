@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../analytics/data/analytics_repository.dart';
 import '../../order/data/order_repository.dart';
@@ -90,12 +91,7 @@ class TruckDetailScreen extends ConsumerWidget {
                             }
                           } catch (e) {
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(l10n.errorOccurred),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
+                              SnackBarHelper.showError(context, l10n.errorOccurred);
                             }
                           }
                         },
@@ -139,12 +135,7 @@ class TruckDetailScreen extends ConsumerWidget {
                                   truckId: truck.id,
                                 );
                                 if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(l10n.unfollowedTruck),
-                                      backgroundColor: AppTheme.charcoalMedium,
-                                    ),
-                                  );
+                                  SnackBarHelper.showInfo(context, l10n.unfollowedTruck);
                                 }
                               } else {
                                 await repository.followTruck(
@@ -153,12 +144,7 @@ class TruckDetailScreen extends ConsumerWidget {
                                   notificationsEnabled: true,
                                 );
                                 if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(l10n.followedTruck),
-                                      backgroundColor: AppTheme.electricBlue,
-                                    ),
-                                  );
+                                  SnackBarHelper.showSuccess(context, l10n.followedTruck);
                                 }
                               }
                               // Refresh the follow status
@@ -168,12 +154,7 @@ class TruckDetailScreen extends ConsumerWidget {
                               ));
                             } catch (e) {
                               if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(l10n.errorOccurred),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
+                                SnackBarHelper.showError(context, l10n.errorOccurred);
                               }
                             }
                           },
@@ -1159,12 +1140,7 @@ Future<void> _launchNaverMap(BuildContext context, Truck truck, AppLocalizations
     }
   } catch (e) {
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.cannotOpenNaverMap),
-          backgroundColor: Colors.red[400],
-        ),
-      );
+      SnackBarHelper.showError(context, l10n.cannotOpenNaverMap);
     }
   }
 }
@@ -1221,12 +1197,7 @@ Future<void> _launchKakaoMap(BuildContext context, Truck truck, AppLocalizations
     }
   } catch (e) {
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.cannotOpenKakaoMap),
-          backgroundColor: Colors.red[400],
-        ),
-      );
+      SnackBarHelper.showError(context, l10n.cannotOpenKakaoMap);
     }
   }
 }
@@ -1241,12 +1212,7 @@ Future<void> _launchGoogleMaps(BuildContext context, Truck truck, AppLocalizatio
     await launchUrl(googleUrl, mode: LaunchMode.externalApplication);
   } catch (e) {
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.cannotOpenGoogleMaps),
-          backgroundColor: Colors.red[400],
-        ),
-      );
+      SnackBarHelper.showError(context, l10n.cannotOpenGoogleMaps);
     }
   }
 }
@@ -1257,12 +1223,7 @@ Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLo
   final user = FirebaseAuth.instance.currentUser;
 
   if (user == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.loginRequiredToOrder),
-        backgroundColor: Colors.red,
-      ),
-    );
+    SnackBarHelper.showWarning(context, l10n.loginRequiredToOrder);
     return;
   }
 
@@ -1350,22 +1311,11 @@ Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLo
 
     // Show success message
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.orderCompleted(orderId.substring(0, 8))),
-          backgroundColor: AppTheme.electricBlue,
-          duration: const Duration(seconds: 3),
-        ),
-      );
+      SnackBarHelper.showSuccess(context, l10n.orderCompleted(orderId.substring(0, 8)));
     }
   } catch (e) {
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.orderFailed('$e')),
-          backgroundColor: Colors.red,
-        ),
-      );
+      SnackBarHelper.showError(context, l10n.orderFailed('$e'));
     }
   }
 }

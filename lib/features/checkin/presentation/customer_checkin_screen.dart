@@ -6,6 +6,7 @@ import '../../../generated/l10n/app_localizations.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../truck_list/data/truck_repository.dart';
 import '../../truck_list/presentation/truck_provider.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../data/checkin_repository.dart';
 
 class CustomerCheckinScreen extends ConsumerStatefulWidget {
@@ -87,48 +88,12 @@ class _CustomerCheckinScreenState extends ConsumerState<CustomerCheckinScreen> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.error, color: Colors.white),
-            const SizedBox(width: 12),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: Colors.red,
-        duration: const Duration(seconds: 3),
-      ),
-    );
+    SnackBarHelper.showError(context, message);
   }
 
   void _showSuccess(String truckName) {
     final l10n = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle, color: Colors.white),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.checkInSuccessful,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Text(l10n.loyaltyPoints(truckName)),
-                ],
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 4),
-      ),
-    );
+    SnackBarHelper.showSuccess(context, '${l10n.checkInSuccessful} - ${l10n.loyaltyPoints(truckName)}');
   }
 
   @override

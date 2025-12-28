@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../analytics/data/analytics_repository.dart';
 import '../../auth/presentation/auth_provider.dart';
@@ -512,19 +513,9 @@ class AnalyticsScreen extends ConsumerWidget {
         ..click();
       html.Url.revokeObjectUrl(url);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.csvDownloadSuccess),
-          backgroundColor: AppTheme.electricBlue,
-        ),
-      );
+      SnackBarHelper.showSuccess(context, l10n.csvDownloadSuccess);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.csvDownloadError('$e')),
-          backgroundColor: Colors.red,
-        ),
-      );
+      SnackBarHelper.showError(context, l10n.csvDownloadError('$e'));
     }
   }
 }

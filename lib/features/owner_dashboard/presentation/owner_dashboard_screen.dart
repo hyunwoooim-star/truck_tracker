@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../location/location_service.dart';
@@ -163,12 +164,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
       child: ElevatedButton(
         onPressed: () async {
           if (isOperating) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.alreadyOpenForBusiness),
-                backgroundColor: _mustard,
-              ),
-            );
+            SnackBarHelper.showWarning(context, l10n.alreadyOpenForBusiness);
             return;
           }
 
@@ -190,22 +186,11 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             await ref.read(ownerOperatingStatusProvider.notifier).setStatus(true);
 
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.businessStartedNotification),
-                  backgroundColor: _mustard,
-                  duration: const Duration(seconds: 2),
-                ),
-              );
+              SnackBarHelper.showSuccess(context, l10n.businessStartedNotification);
             }
           } catch (e) {
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${l10n.error}: $e'),
-                  backgroundColor: Colors.red,
-                ),
-              );
+              SnackBarHelper.showError(context, '${l10n.error}: $e');
             }
           }
         },
@@ -348,21 +333,11 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
 
                 if (context.mounted) {
                   Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.announcementUpdated),
-                      backgroundColor: _mustard,
-                    ),
-                  );
+                  SnackBarHelper.showSuccess(context, l10n.announcementUpdated);
                 }
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('${l10n.error}: $e'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
+                  SnackBarHelper.showError(context, '${l10n.error}: $e');
                 }
               }
             },
@@ -445,9 +420,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             onPressed: () async {
               final amount = int.tryParse(amountController.text);
               if (amount == null || amount <= 0) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.invalidAmount)),
-                );
+                SnackBarHelper.showWarning(context, l10n.invalidAmount);
                 return;
               }
 
@@ -475,18 +448,11 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
 
                 if (context.mounted) {
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.cashSaleRecorded(NumberFormat('#,###').format(amount))),
-                      backgroundColor: _mustard,
-                    ),
-                  );
+                  SnackBarHelper.showSuccess(context, l10n.cashSaleRecorded(NumberFormat('#,###').format(amount)));
                 }
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${l10n.error}: $e'), backgroundColor: Colors.red),
-                  );
+                  SnackBarHelper.showError(context, '${l10n.error}: $e');
                 }
               }
             },
@@ -940,26 +906,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     final l10n = AppLocalizations.of(context)!;
     // Show loading
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Text(l10n.uploadingData),
-            ],
-          ),
-          backgroundColor: AppTheme.baeminMint,
-          duration: const Duration(seconds: 5),
-        ),
-      );
+      SnackBarHelper.showInfo(context, l10n.uploadingData);
     }
 
     try {
@@ -967,37 +914,11 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
       await runMockDataMigration(repository);
 
       if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 16),
-                Text('✅ 8개 트럭 데이터가 성공적으로 업로드되었습니다!'),
-              ],
-            ),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 3),
-          ),
-        );
+        SnackBarHelper.showSuccess(context, '8개 트럭 데이터가 성공적으로 업로드되었습니다!');
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.error, color: Colors.white),
-                const SizedBox(width: 16),
-                Expanded(child: Text('❌ 업로드 실패: $e')),
-              ],
-            ),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 5),
-          ),
-        );
+        SnackBarHelper.showError(context, '업로드 실패: $e');
       }
     }
   }

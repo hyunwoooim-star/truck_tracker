@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../data/talk_repository.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../domain/talk_message.dart';
 
 const Color _mustard = AppTheme.mustardYellow;
@@ -52,9 +53,7 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
 
     final currentUser = ref.read(currentUserProvider);
     if (currentUser == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please log in to send messages')),
-      );
+      SnackBarHelper.showWarning(context, 'Please log in to send messages');
       return;
     }
 
@@ -77,12 +76,7 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
       Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error sending message: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Error sending message: $e');
       }
     }
   }

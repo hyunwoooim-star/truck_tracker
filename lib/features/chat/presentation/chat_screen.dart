@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../data/chat_repository.dart';
 import '../domain/chat_message.dart';
 
@@ -130,9 +131,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         );
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('이미지 전송에 실패했습니다')),
-      );
+      SnackBarHelper.showError(context, '이미지 전송에 실패했습니다');
     }
   }
 

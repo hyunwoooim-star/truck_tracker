@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../storage/image_upload_service.dart';
 import '../data/review_repository.dart';
@@ -56,9 +57,7 @@ class _ReviewFormDialogState extends ConsumerState<ReviewFormDialog> {
     final l10n = AppLocalizations.of(context)!;
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.loginRequired)),
-      );
+      SnackBarHelper.showWarning(context, l10n.loginRequired);
       return;
     }
 
@@ -94,21 +93,14 @@ class _ReviewFormDialogState extends ConsumerState<ReviewFormDialog> {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.reviewSubmitted),
-            backgroundColor: AppTheme.electricBlue,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.reviewSubmitted);
       }
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.reviewSubmissionFailed('$e'))),
-        );
+        SnackBarHelper.showError(context, l10n.reviewSubmissionFailed('$e'));
       }
-    } finally{
+    } finally {
       if (mounted) {
         setState(() => _isSubmitting = false);
       }
