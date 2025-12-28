@@ -164,6 +164,22 @@ service cloud.firestore {
     }
 
     // ═══════════════════════════════════════════════════════════
+    // PHASE 15: NOTIFICATION SETTINGS
+    // ═══════════════════════════════════════════════════════════
+    match /notificationSettings/{userId} {
+      // Read: User can only read their own settings
+      allow read: if isAuthenticated()
+        && request.auth.uid == userId;
+
+      // Create, Update: User can only modify their own settings
+      allow create, update: if isAuthenticated()
+        && request.auth.uid == userId;
+
+      // Delete: Not allowed (use resetToDefault instead)
+      allow delete: if false;
+    }
+
+    // ═══════════════════════════════════════════════════════════
     // USERS (Profile data)
     // ═══════════════════════════════════════════════════════════
     match /users/{userId} {
