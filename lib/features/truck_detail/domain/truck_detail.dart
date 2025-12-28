@@ -7,7 +7,7 @@ part 'truck_detail.freezed.dart';
 part 'truck_detail.g.dart';
 
 @freezed
-class TruckDetail with _$TruckDetail {
+sealed class TruckDetail with _$TruckDetail {
   const TruckDetail._();
 
   const factory TruckDetail({

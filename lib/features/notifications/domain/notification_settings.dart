@@ -6,7 +6,7 @@ part 'notification_settings.g.dart';
 
 /// User's notification preferences
 @freezed
-class NotificationSettings with _$NotificationSettings {
+sealed class NotificationSettings with _$NotificationSettings {
   const NotificationSettings._();
 
   const factory NotificationSettings({

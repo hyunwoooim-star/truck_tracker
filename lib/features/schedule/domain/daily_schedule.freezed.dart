@@ -122,10 +122,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _DailySchedule():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -184,10 +181,7 @@ return $default(_that.isOpen,_that.location,_that.startTime,_that.endTime,_that.
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isOpen,  String location,  String? startTime,  String? endTime,  double? latitude,  double? longitude)  $default,) {final _that = this;
 switch (_that) {
 case _DailySchedule():
-return $default(_that.isOpen,_that.location,_that.startTime,_that.endTime,_that.latitude,_that.longitude);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.isOpen,_that.location,_that.startTime,_that.endTime,_that.latitude,_that.longitude);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

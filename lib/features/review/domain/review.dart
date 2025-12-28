@@ -6,7 +6,7 @@ part 'review.g.dart';
 
 /// Review model for truck reviews
 @freezed
-class Review with _$Review {
+sealed class Review with _$Review {
   const factory Review({
     required String id,
     required String truckId,

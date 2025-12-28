@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/utils/app_logger.dart';
-import '../domain/order.dart' as domain;
+import '../domain/order.dart';
 
 part 'order_repository.g.dart';
 
@@ -18,7 +18,7 @@ class OrderRepository {
   // ═══════════════════════════════════════════════════════════
 
   /// Place a new order
-  Future<String> placeOrder(domain.Order order) async {
+  Future<String> placeOrder(Order order) async {
     AppLogger.debug('Placing order', tag: 'OrderRepository');
     AppLogger.debug('Truck ID: ${order.truckId}', tag: 'OrderRepository');
     AppLogger.debug('User: ${order.userName}', tag: 'OrderRepository');
@@ -37,7 +37,7 @@ class OrderRepository {
   }
 
   /// Update order status
-  Future<void> updateOrderStatus(String orderId, domain.OrderStatus status) async {
+  Future<void> updateOrderStatus(String orderId, OrderStatus status) async {
     AppLogger.debug('Updating order $orderId to $status', tag: 'OrderRepository');
 
     try {
@@ -58,7 +58,7 @@ class OrderRepository {
     AppLogger.debug('Cancelling order $orderId', tag: 'OrderRepository');
 
     try {
-      await updateOrderStatus(orderId, domain.OrderStatus.cancelled);
+      await updateOrderStatus(orderId, OrderStatus.cancelled);
       AppLogger.success('Order cancelled', tag: 'OrderRepository');
     } catch (e, stackTrace) {
       AppLogger.error('Error cancelling order', error: e, stackTrace: stackTrace, tag: 'OrderRepository');
@@ -71,7 +71,7 @@ class OrderRepository {
   // ═══════════════════════════════════════════════════════════
 
   /// Watch orders for a user (real-time stream)
-  Stream<List<domain.Order>> watchUserOrders(String userId) {
+  Stream<List<Order>> watchUserOrders(String userId) {
     AppLogger.debug('Watching orders for user $userId', tag: 'OrderRepository');
 
     return _ordersCollection
@@ -82,12 +82,12 @@ class OrderRepository {
         .map((snapshot) {
       final orders = snapshot.docs.map((doc) {
         try {
-          return domain.Order.fromFirestore(doc);
+          return Order.fromFirestore(doc);
         } catch (e, stackTrace) {
           AppLogger.warning('Error parsing order ${doc.id}', tag: 'OrderRepository');
           return null;
         }
-      }).whereType<domain.Order>().toList();
+      }).whereType<Order>().toList();
 
       AppLogger.debug('Loaded ${orders.length} orders for user $userId', tag: 'OrderRepository');
       return orders;
@@ -95,7 +95,7 @@ class OrderRepository {
   }
 
   /// Watch orders for a truck (real-time stream)
-  Stream<List<domain.Order>> watchTruckOrders(String truckId) {
+  Stream<List<Order>> watchTruckOrders(String truckId) {
     AppLogger.debug('Watching orders for truck $truckId', tag: 'OrderRepository');
 
     return _ordersCollection
@@ -106,12 +106,12 @@ class OrderRepository {
         .map((snapshot) {
       final orders = snapshot.docs.map((doc) {
         try {
-          return domain.Order.fromFirestore(doc);
+          return Order.fromFirestore(doc);
         } catch (e, stackTrace) {
           AppLogger.warning('Error parsing order ${doc.id}', tag: 'OrderRepository');
           return null;
         }
-      }).whereType<domain.Order>().toList();
+      }).whereType<Order>().toList();
 
       AppLogger.debug('Loaded ${orders.length} orders for truck $truckId', tag: 'OrderRepository');
       return orders;
@@ -119,7 +119,7 @@ class OrderRepository {
   }
 
   /// Get orders for a user (one-time fetch)
-  Future<List<domain.Order>> getUserOrders(String userId) async {
+  Future<List<Order>> getUserOrders(String userId) async {
     AppLogger.debug('Fetching orders for user $userId', tag: 'OrderRepository');
 
     try {
@@ -129,7 +129,7 @@ class OrderRepository {
           .get();
 
       final orders =
-          snapshot.docs.map((doc) => domain.Order.fromFirestore(doc)).toList();
+          snapshot.docs.map((doc) => Order.fromFirestore(doc)).toList();
 
       AppLogger.success('Fetched ${orders.length} orders', tag: 'OrderRepository');
       return orders;
@@ -140,7 +140,7 @@ class OrderRepository {
   }
 
   /// Get orders for a truck (one-time fetch)
-  Future<List<domain.Order>> getTruckOrders(String truckId) async {
+  Future<List<Order>> getTruckOrders(String truckId) async {
     AppLogger.debug('Fetching orders for truck $truckId', tag: 'OrderRepository');
 
     try {
@@ -150,7 +150,7 @@ class OrderRepository {
           .get();
 
       final orders =
-          snapshot.docs.map((doc) => domain.Order.fromFirestore(doc)).toList();
+          snapshot.docs.map((doc) => Order.fromFirestore(doc)).toList();
 
       AppLogger.success('Fetched ${orders.length} orders', tag: 'OrderRepository');
       return orders;
@@ -161,7 +161,7 @@ class OrderRepository {
   }
 
   /// Get single order by ID
-  Future<domain.Order?> getOrder(String orderId) async {
+  Future<Order?> getOrder(String orderId) async {
     AppLogger.debug('Fetching order $orderId', tag: 'OrderRepository');
 
     try {
@@ -172,7 +172,7 @@ class OrderRepository {
         return null;
       }
 
-      final order = domain.Order.fromFirestore(doc);
+      final order = Order.fromFirestore(doc);
       AppLogger.success('Order fetched', tag: 'OrderRepository');
       return order;
     } catch (e, stackTrace) {
@@ -189,14 +189,14 @@ OrderRepository orderRepository(Ref ref) {
 
 /// Provider for watching user orders
 @riverpod
-Stream<List<domain.Order>> userOrders(Ref ref, String userId) {
+Stream<List<Order>> userOrders(Ref ref, String userId) {
   final repository = ref.watch(orderRepositoryProvider);
   return repository.watchUserOrders(userId);
 }
 
 /// Provider for watching truck orders
 @riverpod
-Stream<List<domain.Order>> truckOrders(Ref ref, String truckId) {
+Stream<List<Order>> truckOrders(Ref ref, String truckId) {
   final repository = ref.watch(orderRepositoryProvider);
   return repository.watchTruckOrders(truckId);
 }

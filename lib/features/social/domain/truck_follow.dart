@@ -6,7 +6,7 @@ part 'truck_follow.g.dart';
 
 /// User following a truck (for notifications and updates)
 @freezed
-class TruckFollow with _$TruckFollow {
+sealed class TruckFollow with _$TruckFollow {
   const TruckFollow._();
 
   const factory TruckFollow({

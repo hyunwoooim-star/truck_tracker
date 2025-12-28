@@ -139,10 +139,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _Truck():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -201,10 +198,7 @@ return $default(_that.id,_that.truckNumber,_that.driverName,_that.status,_that.f
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String truckNumber,  String driverName,  TruckStatus status,  String foodType,  String locationDescription,  double latitude,  double longitude,  bool isFavorite,  String imageUrl,  String ownerEmail,  String? bankAccount,  String announcement,  int favoriteCount,  double avgRating,  int totalReviews,  bool isOpen,  Map<String, dynamic>? weeklySchedule)  $default,) {final _that = this;
 switch (_that) {
 case _Truck():
-return $default(_that.id,_that.truckNumber,_that.driverName,_that.status,_that.foodType,_that.locationDescription,_that.latitude,_that.longitude,_that.isFavorite,_that.imageUrl,_that.ownerEmail,_that.bankAccount,_that.announcement,_that.favoriteCount,_that.avgRating,_that.totalReviews,_that.isOpen,_that.weeklySchedule);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.id,_that.truckNumber,_that.driverName,_that.status,_that.foodType,_that.locationDescription,_that.latitude,_that.longitude,_that.isFavorite,_that.imageUrl,_that.ownerEmail,_that.bankAccount,_that.announcement,_that.favoriteCount,_that.avgRating,_that.totalReviews,_that.isOpen,_that.weeklySchedule);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

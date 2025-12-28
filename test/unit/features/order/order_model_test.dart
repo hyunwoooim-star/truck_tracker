@@ -14,7 +14,7 @@ void main() {
         items: [
           const CartItem(
             menuItemId: 'menu-1',
-            name: 'Taco',
+            menuItemName: 'Taco',
             price: 5000,
             quantity: 2,
           ),
@@ -64,7 +64,7 @@ void main() {
         items: [
           const CartItem(
             menuItemId: 'menu-1',
-            name: 'Burger',
+            menuItemName: 'Burger',
             price: 8000,
             quantity: 1,
           ),
@@ -118,13 +118,13 @@ void main() {
     test('creates CartItem with required fields', () {
       const item = CartItem(
         menuItemId: 'menu-1',
-        name: 'Taco',
+        menuItemName: 'Taco',
         price: 5000,
         quantity: 2,
       );
 
       expect(item.menuItemId, 'menu-1');
-      expect(item.name, 'Taco');
+      expect(item.menuItemName, 'Taco');
       expect(item.price, 5000);
       expect(item.quantity, 2);
     });
@@ -132,7 +132,7 @@ void main() {
     test('CartItem toJson works correctly', () {
       const item = CartItem(
         menuItemId: 'menu-1',
-        name: 'Taco',
+        menuItemName: 'Taco',
         price: 5000,
         quantity: 2,
       );
@@ -140,7 +140,7 @@ void main() {
       final json = item.toJson();
 
       expect(json['menuItemId'], 'menu-1');
-      expect(json['name'], 'Taco');
+      expect(json['menuItemName'], 'Taco');
       expect(json['price'], 5000);
       expect(json['quantity'], 2);
     });
@@ -148,7 +148,7 @@ void main() {
     test('CartItem fromJson works correctly', () {
       final json = {
         'menuItemId': 'menu-2',
-        'name': 'Burrito',
+        'menuItemName': 'Burrito',
         'price': 7000,
         'quantity': 3,
       };
@@ -156,7 +156,7 @@ void main() {
       final item = CartItem.fromJson(json);
 
       expect(item.menuItemId, 'menu-2');
-      expect(item.name, 'Burrito');
+      expect(item.menuItemName, 'Burrito');
       expect(item.price, 7000);
       expect(item.quantity, 3);
     });

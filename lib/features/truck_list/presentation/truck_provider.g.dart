@@ -201,7 +201,7 @@ final class FilteredTruckListProvider
   }
 }
 
-String _$filteredTruckListHash() => r'1eb75f9d5d6e6bdcf8d4a3e8a9b85003cfb8a852';
+String _$filteredTruckListHash() => r'aedfb86f89954c6b74256e53ec440eb5833caf8c';
 
 /// Sort state provider
 
@@ -308,7 +308,7 @@ final class FilteredTrucksWithDistanceProvider
 }
 
 String _$filteredTrucksWithDistanceHash() =>
-    r'b171a0cb9425f827754b54e668208e8ec2639848';
+    r'178c0aeb685bbf6f6a0f24ef5010bb44f057ebb0';
 
 /// LEGACY: Mock data filtered list (kept for reference/fallback)
 
@@ -361,7 +361,7 @@ final class FilteredTruckListMockProvider
 }
 
 String _$filteredTruckListMockHash() =>
-    r'b23cfa25ef5168048188f555af443208b0dbdb23';
+    r'bd22af34a98a2256a69e4042cb688579bf30894e';
 
 @ProviderFor(TruckListNotifier)
 final truckListProvider = TruckListNotifierProvider._();
@@ -452,7 +452,7 @@ final class TopRankedTrucksProvider
   }
 }
 
-String _$topRankedTrucksHash() => r'3846d12c362f1060d3d1480959246590762c6825';
+String _$topRankedTrucksHash() => r'6140258a6051f5dcd6248f06f54c74a6b6144661';
 
 /// Provider for getting a single truck by ID
 

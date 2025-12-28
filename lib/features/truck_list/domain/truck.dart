@@ -7,7 +7,7 @@ part 'truck.g.dart';
 enum TruckStatus { onRoute, resting, maintenance }
 
 @freezed
-class Truck with _$Truck {
+sealed class Truck with _$Truck {
   const Truck._();
 
   const factory Truck({

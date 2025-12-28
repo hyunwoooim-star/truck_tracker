@@ -9,7 +9,7 @@ enum OrderStatus { pending, confirmed, preparing, ready, completed, cancelled }
 
 /// Order model for customer orders
 @freezed
-class Order with _$Order {
+sealed class Order with _$Order {
   const Order._();
 
   const factory Order({

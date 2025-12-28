@@ -5,7 +5,7 @@ part 'checkin.freezed.dart';
 part 'checkin.g.dart';
 
 @freezed
-class CheckIn with _$CheckIn {
+sealed class CheckIn with _$CheckIn {
   const CheckIn._();
 
   const factory CheckIn({

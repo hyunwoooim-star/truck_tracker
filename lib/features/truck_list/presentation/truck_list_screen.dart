@@ -65,7 +65,7 @@ class TruckListScreen extends ConsumerWidget {
               ),
               data: (trucks) {
                 // Get top ranked trucks (sync or empty list if loading)
-                final topRanked = topRankedAsync.valueOrNull ?? [];
+                final topRanked = topRankedAsync.value ?? [];
 
                 return ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -243,7 +243,7 @@ class TruckListScreen extends ConsumerWidget {
                                           IconButton(
                                             onPressed: () async {
                                               final notifier = ref.read(
-                                                  truckListNotifierProvider.notifier);
+                                                  truckListProvider.notifier);
                                               try {
                                                 await notifier.toggleFavorite(truck.id);
                                               } catch (_) {
@@ -367,9 +367,9 @@ class _FilterBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedTag = ref.watch(truckFilterNotifierProvider).selectedTag;
-    final filterState = ref.watch(truckFilterNotifierProvider);
-    final currentSort = ref.watch(sortOptionNotifierProvider);
+    final selectedTag = ref.watch(truckFilterProvider).selectedTag;
+    final filterState = ref.watch(truckFilterProvider);
+    final currentSort = ref.watch(sortOptionProvider);
 
     return Container(
       height: 60,
@@ -441,7 +441,7 @@ class _FilterBar extends ConsumerWidget {
                 selected: isSelected,
                 onSelected: (selected) {
                   if (selected) {
-                    ref.read(truckFilterNotifierProvider.notifier)
+                    ref.read(truckFilterProvider.notifier)
                         .setSelectedTag(tag);
                   }
                 },
@@ -500,7 +500,7 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
         .distinct() // Skip duplicate consecutive values
         .listen((searchQuery) {
       // Update filter only after user stops typing for 500ms
-      ref.read(truckFilterNotifierProvider.notifier)
+      ref.read(truckFilterProvider.notifier)
           .setSearchKeyword(searchQuery);
     });
   }
@@ -515,7 +515,7 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    final searchKeyword = ref.watch(truckFilterNotifierProvider).searchKeyword;
+    final searchKeyword = ref.watch(truckFilterProvider).searchKeyword;
 
     // Sync controller with state on first build
     if (!_isInitialized) {
@@ -547,7 +547,7 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
                   icon: const Icon(Icons.clear, color: AppTheme.textTertiary),
                   onPressed: () {
                     _controller.clear();
-                    ref.read(truckFilterNotifierProvider.notifier)
+                    ref.read(truckFilterProvider.notifier)
                         .setSearchKeyword('');
                   },
                 )
@@ -727,7 +727,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filterState = ref.watch(truckFilterNotifierProvider);
+    final filterState = ref.watch(truckFilterProvider);
     final l10n = AppLocalizations.of(context)!;
 
     return AlertDialog(
@@ -738,7 +738,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
           if (filterState.hasActiveFilters)
             TextButton(
               onPressed: () {
-                ref.read(truckFilterNotifierProvider.notifier).clearAllFilters();
+                ref.read(truckFilterProvider.notifier).clearAllFilters();
               },
               child: const Text('초기화', style: TextStyle(color: AppTheme.electricBlue)),
             ),
@@ -777,7 +777,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
                     label: Text(label),
                     selected: isSelected,
                     onSelected: (_) {
-                      ref.read(truckFilterNotifierProvider.notifier).toggleStatus(status);
+                      ref.read(truckFilterProvider.notifier).toggleStatus(status);
                     },
                     selectedColor: AppTheme.electricBlue,
                     checkmarkColor: Colors.white,
@@ -799,7 +799,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
                     label: const Text('전체'),
                     selected: filterState.maxDistance == null,
                     onSelected: (_) {
-                      ref.read(truckFilterNotifierProvider.notifier).setMaxDistance(null);
+                      ref.read(truckFilterProvider.notifier).setMaxDistance(null);
                     },
                     selectedColor: AppTheme.electricBlue,
                     checkmarkColor: Colors.white,
@@ -808,7 +808,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
                     label: const Text('1km 이내'),
                     selected: filterState.maxDistance == 1000,
                     onSelected: (_) {
-                      ref.read(truckFilterNotifierProvider.notifier).setMaxDistance(1000);
+                      ref.read(truckFilterProvider.notifier).setMaxDistance(1000);
                     },
                     selectedColor: AppTheme.electricBlue,
                     checkmarkColor: Colors.white,
@@ -817,7 +817,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
                     label: const Text('5km 이내'),
                     selected: filterState.maxDistance == 5000,
                     onSelected: (_) {
-                      ref.read(truckFilterNotifierProvider.notifier).setMaxDistance(5000);
+                      ref.read(truckFilterProvider.notifier).setMaxDistance(5000);
                     },
                     selectedColor: AppTheme.electricBlue,
                     checkmarkColor: Colors.white,
@@ -826,7 +826,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
                     label: const Text('10km 이내'),
                     selected: filterState.maxDistance == 10000,
                     onSelected: (_) {
-                      ref.read(truckFilterNotifierProvider.notifier).setMaxDistance(10000);
+                      ref.read(truckFilterProvider.notifier).setMaxDistance(10000);
                     },
                     selectedColor: AppTheme.electricBlue,
                     checkmarkColor: Colors.white,
@@ -848,7 +848,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
                     label: const Text('전체'),
                     selected: filterState.minRating == null,
                     onSelected: (_) {
-                      ref.read(truckFilterNotifierProvider.notifier).setMinRating(null);
+                      ref.read(truckFilterProvider.notifier).setMinRating(null);
                     },
                     selectedColor: AppTheme.electricBlue,
                     checkmarkColor: Colors.white,
@@ -857,7 +857,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
                     label: const Text('⭐ 3.0+'),
                     selected: filterState.minRating == 3.0,
                     onSelected: (_) {
-                      ref.read(truckFilterNotifierProvider.notifier).setMinRating(3.0);
+                      ref.read(truckFilterProvider.notifier).setMinRating(3.0);
                     },
                     selectedColor: AppTheme.electricBlue,
                     checkmarkColor: Colors.white,
@@ -866,7 +866,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
                     label: const Text('⭐ 4.0+'),
                     selected: filterState.minRating == 4.0,
                     onSelected: (_) {
-                      ref.read(truckFilterNotifierProvider.notifier).setMinRating(4.0);
+                      ref.read(truckFilterProvider.notifier).setMinRating(4.0);
                     },
                     selectedColor: AppTheme.electricBlue,
                     checkmarkColor: Colors.white,
@@ -875,7 +875,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
                     label: const Text('⭐ 4.5+'),
                     selected: filterState.minRating == 4.5,
                     onSelected: (_) {
-                      ref.read(truckFilterNotifierProvider.notifier).setMinRating(4.5);
+                      ref.read(truckFilterProvider.notifier).setMinRating(4.5);
                     },
                     selectedColor: AppTheme.electricBlue,
                     checkmarkColor: Colors.white,
@@ -890,7 +890,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
                 subtitle: const Text('현재 영업 중인 트럭만 표시합니다'),
                 value: filterState.openOnly,
                 onChanged: (value) {
-                  ref.read(truckFilterNotifierProvider.notifier).setOpenOnly(value);
+                  ref.read(truckFilterProvider.notifier).setOpenOnly(value);
                 },
                 activeColor: AppTheme.electricBlue,
                 contentPadding: EdgeInsets.zero,
@@ -915,7 +915,7 @@ class _SortOptionsDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentSort = ref.watch(sortOptionNotifierProvider);
+    final currentSort = ref.watch(sortOptionProvider);
     final l10n = AppLocalizations.of(context)!;
 
     return AlertDialog(
@@ -951,7 +951,7 @@ class _SortOptionsDialog extends ConsumerWidget {
             groupValue: currentSort,
             onChanged: (value) {
               if (value != null) {
-                ref.read(sortOptionNotifierProvider.notifier).setSortOption(value);
+                ref.read(sortOptionProvider.notifier).setSortOption(value);
                 Navigator.pop(context);
               }
             },

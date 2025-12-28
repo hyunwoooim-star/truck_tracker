@@ -589,7 +589,7 @@ class _FilterBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedTag = ref.watch(truckFilterNotifierProvider).selectedTag;
+    final selectedTag = ref.watch(truckFilterProvider).selectedTag;
 
     return Container(
       height: 60,
@@ -616,7 +616,7 @@ class _FilterBar extends ConsumerWidget {
                 onSelected: (selected) {
                   if (selected) {
                     ref
-                        .read(truckFilterNotifierProvider.notifier)
+                        .read(truckFilterProvider.notifier)
                         .setSelectedTag(tag);
                   }
                 },
@@ -670,7 +670,7 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    final searchKeyword = ref.watch(truckFilterNotifierProvider).searchKeyword;
+    final searchKeyword = ref.watch(truckFilterProvider).searchKeyword;
     final l10n = AppLocalizations.of(context)!;
 
     if (_controller.text != searchKeyword) {
@@ -696,7 +696,7 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
                   onPressed: () {
                     _controller.clear();
                     ref
-                        .read(truckFilterNotifierProvider.notifier)
+                        .read(truckFilterProvider.notifier)
                         .setSearchKeyword('');
                   },
                 )
@@ -711,7 +711,7 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
               const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),
         onChanged: (value) {
-          ref.read(truckFilterNotifierProvider.notifier).setSearchKeyword(value);
+          ref.read(truckFilterProvider.notifier).setSearchKeyword(value);
         },
       ),
     );

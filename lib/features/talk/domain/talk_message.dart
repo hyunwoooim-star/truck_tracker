@@ -6,7 +6,7 @@ part 'talk_message.g.dart';
 
 /// Talk message model for real-time one-line communication
 @freezed
-class TalkMessage with _$TalkMessage {
+sealed class TalkMessage with _$TalkMessage {
   const factory TalkMessage({
     required String id,
     required String truckId,

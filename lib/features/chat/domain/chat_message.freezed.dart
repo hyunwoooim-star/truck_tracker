@@ -122,10 +122,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _ChatMessage():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -184,10 +181,7 @@ return $default(_that.id,_that.chatRoomId,_that.senderId,_that.senderName,_that.
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String chatRoomId,  String senderId,  String senderName,  String message,  DateTime timestamp,  bool isRead,  String? imageUrl)  $default,) {final _that = this;
 switch (_that) {
 case _ChatMessage():
-return $default(_that.id,_that.chatRoomId,_that.senderId,_that.senderName,_that.message,_that.timestamp,_that.isRead,_that.imageUrl);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.id,_that.chatRoomId,_that.senderId,_that.senderName,_that.message,_that.timestamp,_that.isRead,_that.imageUrl);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

@@ -6,7 +6,7 @@ part 'app_user.g.dart';
 
 /// User model for the application
 @freezed
-class AppUser with _$AppUser {
+sealed class AppUser with _$AppUser {
   const factory AppUser({
     required String uid,
     required String email,

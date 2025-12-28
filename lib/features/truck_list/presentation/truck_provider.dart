@@ -129,8 +129,9 @@ class TruckFilterNotifier extends _$TruckFilterNotifier {
 Stream<List<Truck>> filteredTruckList(Ref ref) async* {
   AppLogger.debug('Starting filtered stream', tag: 'FilteredTruckList');
 
-  final trucksStream = ref.watch(firestoreTruckStreamProvider.stream);
-  final filterState = ref.watch(truckFilterNotifierProvider);
+  final repository = ref.watch(truckRepositoryProvider);
+  final filterState = ref.watch(truckFilterProvider);
+  final trucksStream = repository.watchTrucks();
 
   AppLogger.debug('Current filter: tag="${filterState.selectedTag}", keyword="${filterState.searchKeyword}"', tag: 'FilteredTruckList');
 
@@ -217,10 +218,11 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
 ) async* {
   AppLogger.debug('Starting distance calculation', tag: 'FilteredTrucksWithDistance');
 
-  final trucksStream = ref.watch(filteredTruckListProvider.stream);
-  final sortOption = ref.watch(sortOptionNotifierProvider);
-  final filterState = ref.watch(truckFilterNotifierProvider);
+  final repository = ref.watch(truckRepositoryProvider);
+  final sortOption = ref.watch(sortOptionProvider);
+  final filterState = ref.watch(truckFilterProvider);
   final locationService = ref.watch(locationServiceProvider);
+  final trucksStream = repository.watchTrucks();
 
   // Get current position (non-blocking)
   Position? userPosition;
@@ -287,8 +289,8 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
 /// LEGACY: Mock data filtered list (kept for reference/fallback)
 @riverpod
 AsyncValue<List<Truck>> filteredTruckListMock(Ref ref) {
-  final trucksAsync = ref.watch(truckListNotifierProvider);
-  final filterState = ref.watch(truckFilterNotifierProvider);
+  final trucksAsync = ref.watch(truckListProvider);
+  final filterState = ref.watch(truckFilterProvider);
 
   return trucksAsync.when(
     data: (trucks) {
@@ -523,7 +525,8 @@ class TruckListNotifier extends _$TruckListNotifier {
 Stream<List<Truck>> topRankedTrucks(Ref ref) async* {
   AppLogger.debug('Starting Top 3 calculation', tag: 'TopRankedTrucks');
 
-  final trucksStream = ref.watch(firestoreTruckStreamProvider.stream);
+  final repository = ref.watch(truckRepositoryProvider);
+  final trucksStream = repository.watchTrucks();
 
   await for (final trucks in trucksStream) {
     AppLogger.debug('Calculating Top 3 from ${trucks.length} trucks', tag: 'TopRankedTrucks');

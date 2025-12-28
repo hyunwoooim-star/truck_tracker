@@ -6,7 +6,7 @@ part 'chat_room.g.dart';
 
 /// Chat room model for 1:1 messaging
 @freezed
-class ChatRoom with _$ChatRoom {
+sealed class ChatRoom with _$ChatRoom {
   const ChatRoom._();
 
   const factory ChatRoom({

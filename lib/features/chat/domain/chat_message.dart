@@ -6,7 +6,7 @@ part 'chat_message.g.dart';
 
 /// Chat message model for 1:1 messaging between customer and owner
 @freezed
-class ChatMessage with _$ChatMessage {
+sealed class ChatMessage with _$ChatMessage {
   const ChatMessage._();
 
   const factory ChatMessage({

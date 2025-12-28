@@ -13,7 +13,7 @@ enum CouponType {
 
 /// Coupon model for promotions and discounts
 @freezed
-class Coupon with _$Coupon {
+sealed class Coupon with _$Coupon {
   const Coupon._();
 
   const factory Coupon({

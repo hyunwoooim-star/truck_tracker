@@ -5,7 +5,7 @@ part 'cart_item.g.dart';
 
 /// Cart item model for menu items in cart
 @freezed
-class CartItem with _$CartItem {
+sealed class CartItem with _$CartItem {
   const factory CartItem({
     required String menuItemId,
     required String menuItemName,

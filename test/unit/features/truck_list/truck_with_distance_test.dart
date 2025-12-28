@@ -17,7 +17,7 @@ void main() {
           locationDescription: 'Test Location',
           latitude: 37.5665,
           longitude: 126.9780,
-          imageUrl: null,
+          imageUrl: 'https://example.com/truck-$id.jpg',
         );
 
     group('distanceText', () {

@@ -6,8 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
-import '../../truck_list/data/truck_repository.dart';
-import '../../truck_list/domain/truck.dart';
+import '../../truck_list/presentation/truck_provider.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../data/follow_repository.dart';
 
@@ -326,7 +325,7 @@ class _FollowedTruckCard extends ConsumerWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              truck.rating.toStringAsFixed(1),
+                              truck.avgRating.toStringAsFixed(1),
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: AppTheme.electricBlue,
                                     fontWeight: FontWeight.bold,

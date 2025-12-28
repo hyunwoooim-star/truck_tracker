@@ -111,7 +111,7 @@ final class UserOrdersProvider
   }
 }
 
-String _$userOrdersHash() => r'b82b31c74c9f616ce9824b81de3c48354584d6d4';
+String _$userOrdersHash() => r'e4a671c1f061cf2886de1e2e5ee225e695c34591';
 
 /// Provider for watching user orders
 
@@ -195,7 +195,7 @@ final class TruckOrdersProvider
   }
 }
 
-String _$truckOrdersHash() => r'7dfda08ab320c1f5ff6bc17f18bd66dfd78f286b';
+String _$truckOrdersHash() => r'6a2e4ae6607966b1c1bf7d180e50925effe77654';
 
 /// Provider for watching truck orders
 

@@ -5,7 +5,7 @@ part 'daily_schedule.g.dart';
 
 /// Daily schedule for a truck
 @freezed
-class DailySchedule with _$DailySchedule {
+sealed class DailySchedule with _$DailySchedule {
   const factory DailySchedule({
     @Default(false) bool isOpen,
     @Default('') String location,
