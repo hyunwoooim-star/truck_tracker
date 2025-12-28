@@ -403,23 +403,41 @@ Contributions are welcome! Please follow these steps:
 
 ## 📚 Documentation
 
-- **[CLAUDE.md](CLAUDE.md)**: Behavioral rules and workflow for AI development
-- **[PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)**: Detailed architecture and Firebase schema
+### User Guides
+- **[USER_GUIDE.md](USER_GUIDE.md)**: Customer and owner manual (Korean)
+- **[OPERATIONS_GUIDE.md](OPERATIONS_GUIDE.md)**: System administrator guide
+
+### Technical Documentation
+- **[CLAUDE.md](CLAUDE.md)**: AI development workflow and rules
+- **[PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)**: Architecture and Firebase schema
+- **[CHANGELOG.md](CHANGELOG.md)**: Version history and changes
+- **[PROJECT_AUDIT_REPORT.md](PROJECT_AUDIT_REPORT.md)**: Security audit
+
+### Deployment Guides
+- **[CLOUD_FUNCTIONS_DEPLOYMENT_GUIDE.md](CLOUD_FUNCTIONS_DEPLOYMENT_GUIDE.md)**: Functions deployment
+- **[CURRENT_STATUS.md](CURRENT_STATUS.md)**: Current project status
+
+### Development
 - **[ANALYSIS.md](ANALYSIS.md)**: Code analysis and known issues
 - **[IMPROVEMENT_PLAN.md](IMPROVEMENT_PLAN.md)**: Multi-phase improvement roadmap
+- **[PHASE_16-20_SECURITY_AND_QUALITY.md](PHASE_16-20_SECURITY_AND_QUALITY.md)**: Production roadmap
 
 ---
 
 ## 🐛 Known Issues
 
-- **Google Sign-In**: Requires additional web configuration
-- **Kakao/Naver login**: Prepared but not functional
-- **FCM Cloud Function**: Needs implementation for automated notifications
-- **Flutter Windows Tests**: Shader compilation error on Windows (Flutter 3.38.5 bug)
-  - Tests work fine on Linux/Mac or in CI/CD
-  - Workaround: Use Android emulator or web for testing
+- **Kakao/Naver login**: Structure ready, requires API keys
+- **Cloud Functions**: Code ready, deployment pending
+- **Flutter Windows Shader Bug**: Use GitHub Actions CI/CD for web builds
 
 See [ANALYSIS.md](ANALYSIS.md) for complete list.
+
+---
+
+## 🌐 Live Demo
+
+- **Web**: https://truck-tracker-fa0b0.web.app
+- **Firebase Project**: truck-tracker-fa0b0
 
 ---
 
