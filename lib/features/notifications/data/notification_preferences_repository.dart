@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../core/utils/logger.dart';
+import '../../../core/utils/app_logger.dart';
 import '../domain/notification_settings.dart';
 
 part 'notification_preferences_repository.g.dart';

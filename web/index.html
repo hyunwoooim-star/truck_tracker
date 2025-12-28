@@ -78,10 +78,10 @@
   }
   </script>
 
-  <!-- Force CanvasKit renderer to avoid Impeller shader bug -->
+  <!-- Force HTML renderer to avoid Impeller shader compilation bug on Windows -->
   <script>
     window.flutterConfiguration = {
-      canvasKitBaseUrl: "https://www.gstatic.com/flutter-canvaskit/1527ae0ec577a4ef50e65f6fefcfc1326707d9bf/"
+      renderer: "html"
     };
   </script>
 </head>

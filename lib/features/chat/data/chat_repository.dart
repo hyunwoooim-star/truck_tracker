@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../core/utils/logger.dart';
+import '../../../core/utils/app_logger.dart';
 import '../domain/chat_message.dart';
 import '../domain/chat_room.dart';
 

@@ -68,12 +68,16 @@ class TruckDetailScreen extends ConsumerWidget {
                           try {
                             // Get or create chat room
                             final chatRepository = ref.read(chatRepositoryProvider);
-                            final chatRoomId = await chatRepository.getOrCreateChatRoom(
-                              customerId: user.uid,
-                              customerName: user.displayName ?? user.email ?? 'User',
+                            final chatRoom = await chatRepository.getOrCreateChatRoom(
+                              userId: user.uid,
+                              userName: user.displayName ?? user.email ?? 'User',
                               truckId: truck.id,
                               truckName: truck.foodType,
                             );
+                            final chatRoomId = chatRoom?.id;
+                            if (chatRoomId == null) {
+                              throw Exception('Failed to create chat room');
+                            }
 
                             // Navigate to ChatScreen
                             if (context.mounted) {
