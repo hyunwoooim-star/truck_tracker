@@ -53,7 +53,7 @@ final class CouponRepositoryProvider
   }
 }
 
-String _$couponRepositoryHash() => r'd0f8ed70b2f95839d7412c051deef6e818cf2e3b';
+String _$couponRepositoryHash() => r'0bcf95632f01b3d49dc9c2aa4bf65f395fcb4afb';
 
 /// Provider for watching truck's coupons
 
@@ -115,7 +115,7 @@ final class TruckCouponsProvider
   }
 }
 
-String _$truckCouponsHash() => r'bcc4e8a1fa636c9cee184e178445771e741d2d3e';
+String _$truckCouponsHash() => r'2b3aa897389e19e114f7d00c71040e7049cb3994';
 
 /// Provider for watching truck's coupons
 
@@ -199,7 +199,7 @@ final class ValidTruckCouponsProvider
   }
 }
 
-String _$validTruckCouponsHash() => r'085b310aa072c2ddc40394cfcb1db585091bc46e';
+String _$validTruckCouponsHash() => r'8fc3e57c7b6f277d98d8329794a4f92c4ef8d09c';
 
 /// Provider for getting valid coupons
 
@@ -283,7 +283,7 @@ final class UserUsedCouponsProvider
   }
 }
 
-String _$userUsedCouponsHash() => r'a4f196101349ae3e36a6dc621611de513458b542';
+String _$userUsedCouponsHash() => r'329f5c8814a74640bc7a62689ba93bf33c3f12ac';
 
 /// Provider for getting user's used coupons
 

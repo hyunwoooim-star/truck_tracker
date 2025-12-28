@@ -53,7 +53,7 @@ final class LocationServiceProvider
   }
 }
 
-String _$locationServiceHash() => r'f7b3dbe3e362693a99dbd0c857f576f80a3f5f74';
+String _$locationServiceHash() => r'38d15292e1d1d4553c8f07a36b00411aa0a8d30e';
 
 /// Cached location service provider (with 30s throttling for battery optimization)
 
@@ -106,7 +106,7 @@ final class CachedLocationServiceProvider
 }
 
 String _$cachedLocationServiceHash() =>
-    r'62e370ddb596da3b761f9c32b57d416c3f99ffb7';
+    r'1697223d57e2aec2212fe38a3439cbc845769037';
 
 /// Current position provider (one-time fetch)
 
@@ -149,7 +149,7 @@ final class CurrentPositionProvider
   }
 }
 
-String _$currentPositionHash() => r'55a9f881cdcbabf1907c25d7ac7267ebb0144e6a';
+String _$currentPositionHash() => r'1de9ec7ce7bce1e4f94caec9183bb5855e9b34fc';
 
 /// Current position stream (real-time updates)
 
@@ -189,7 +189,7 @@ final class CurrentPositionStreamProvider
 }
 
 String _$currentPositionStreamHash() =>
-    r'9dc7bbc32eaddc667bdcdb02024e04bc1d7f723e';
+    r'67de064595e2c9a0b4c6b3c20a48c88e86fdf730';
 
 /// Location permission provider
 
@@ -236,7 +236,7 @@ final class LocationPermissionProvider
 }
 
 String _$locationPermissionHash() =>
-    r'b728470a00931be1d6e1ff81e490728c940ef4cf';
+    r'654c454a917f2e7fa789861b07636280d4c6f491';
 
 /// Has location permission provider
 
@@ -275,7 +275,7 @@ final class HasLocationPermissionProvider
 }
 
 String _$hasLocationPermissionHash() =>
-    r'2a25d7b5c19c6afe5ed99d10d3921d42dea3e0c1';
+    r'741dc69c3dd3c35cd88842e1903ffc8ab1d477ff';
 
 /// Cached position stream (throttled 30s, 50m distance filter for battery optimization)
 
@@ -315,7 +315,7 @@ final class CachedPositionStreamProvider
 }
 
 String _$cachedPositionStreamHash() =>
-    r'6c5212b9e81f55cb8048b59e2b1a3c3baeebbda5';
+    r'607aa94fc8c1172216ac41bdfbcde46ecc66df22';
 
 /// Cached position provider (one-time fetch with 30s cache)
 
@@ -358,4 +358,4 @@ final class CachedPositionProvider
   }
 }
 
-String _$cachedPositionHash() => r'c455b71c39ba7656e58ac924b069fbf1f462d672';
+String _$cachedPositionHash() => r'700c5715d664306e43710ab6f13232ee6c23c384';

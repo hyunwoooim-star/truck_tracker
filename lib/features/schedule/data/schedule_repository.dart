@@ -114,13 +114,13 @@ class ScheduleRepository {
 }
 
 @riverpod
-ScheduleRepository scheduleRepository(ScheduleRepositoryRef ref) {
+ScheduleRepository scheduleRepository(Ref ref) {
   return ScheduleRepository();
 }
 
 @riverpod
 Future<DailySchedule?> todaySchedule(
-    TodayScheduleRef ref, String truckId) async {
+    Ref ref, String truckId) async {
   final repository = ref.watch(scheduleRepositoryProvider);
   return repository.getTodaySchedule(truckId);
 }

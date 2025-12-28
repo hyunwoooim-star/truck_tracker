@@ -249,20 +249,20 @@ class ReviewRepository {
 }
 
 @riverpod
-ReviewRepository reviewRepository(ReviewRepositoryRef ref) {
+ReviewRepository reviewRepository(Ref ref) {
   return ReviewRepository();
 }
 
 /// Provider for watching reviews of a specific truck
 @riverpod
-Stream<List<Review>> truckReviews(TruckReviewsRef ref, String truckId) {
+Stream<List<Review>> truckReviews(Ref ref, String truckId) {
   final repository = ref.watch(reviewRepositoryProvider);
   return repository.watchTruckReviews(truckId);
 }
 
 /// Provider for average rating of a truck
 @riverpod
-Future<double> truckAverageRating(TruckAverageRatingRef ref, String truckId) {
+Future<double> truckAverageRating(Ref ref, String truckId) {
   final repository = ref.watch(reviewRepositoryProvider);
   return repository.getAverageRating(truckId);
 }

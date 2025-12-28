@@ -55,7 +55,7 @@ final class TruckDetailRepositoryProvider
 }
 
 String _$truckDetailRepositoryHash() =>
-    r'938a9dfb4753e5c3e58858e2e8b7e9846ae2c131';
+    r'1d4c3ed1a7745fb9d03d9c0cb4fed1e060f8924a';
 
 @ProviderFor(truckDetailStream)
 final truckDetailStreamProvider = TruckDetailStreamFamily._();
@@ -112,7 +112,7 @@ final class TruckDetailStreamProvider
   }
 }
 
-String _$truckDetailStreamHash() => r'85cd681bce732150c714725d4ecd9c9eeb7acf75';
+String _$truckDetailStreamHash() => r'b9caf473d44857f9f332b86a7efb40965120de75';
 
 final class TruckDetailStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<TruckDetail?>, String> {

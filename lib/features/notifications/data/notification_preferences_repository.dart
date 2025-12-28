@@ -215,14 +215,14 @@ class NotificationPreferencesRepository {
 
 @riverpod
 NotificationPreferencesRepository notificationPreferencesRepository(
-  NotificationPreferencesRepositoryRef ref,
+  Ref ref,
 ) {
   return NotificationPreferencesRepository();
 }
 
 @riverpod
 Future<NotificationSettings> notificationSettings(
-  NotificationSettingsRef ref,
+  Ref ref,
   String userId,
 ) {
   final repository = ref.watch(notificationPreferencesRepositoryProvider);
@@ -231,7 +231,7 @@ Future<NotificationSettings> notificationSettings(
 
 @riverpod
 Stream<NotificationSettings> notificationSettingsStream(
-  NotificationSettingsStreamRef ref,
+  Ref ref,
   String userId,
 ) {
   final repository = ref.watch(notificationPreferencesRepositoryProvider);

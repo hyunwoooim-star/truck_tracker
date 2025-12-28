@@ -55,7 +55,7 @@ final class FavoriteRepositoryProvider
 }
 
 String _$favoriteRepositoryHash() =>
-    r'4db8ff3394d8f2a3e23519de3cb7972abf3044aa';
+    r'11bb25fec0ff72efae7673cfdf33e9a06818a261';
 
 /// Provider for watching user's favorite truck IDs
 
@@ -117,7 +117,7 @@ final class UserFavoritesProvider
   }
 }
 
-String _$userFavoritesHash() => r'ba323740eb66d016d7d9439b6ae20e439b4fad6e';
+String _$userFavoritesHash() => r'a33edbfa084a94742fe65b9f1136bbd6a53f214f';
 
 /// Provider for watching user's favorite truck IDs
 
@@ -199,7 +199,7 @@ final class IsTruckFavoritedProvider
   }
 }
 
-String _$isTruckFavoritedHash() => r'359588c74516ea430200d23cb4b5c9525e37115e';
+String _$isTruckFavoritedHash() => r'fb6bce1c7e3b07fba4b6047c31db4e7df87025f0';
 
 /// Provider for checking if a truck is favorited
 
@@ -287,7 +287,7 @@ final class TruckFavoriteCountProvider
 }
 
 String _$truckFavoriteCountHash() =>
-    r'0d39e7dad197fe08d7d00d5a06eac8e5ea89a4b6';
+    r'df637628fbef3c59afd1ff56ce2b00bbd8ea9bc9';
 
 /// Provider for truck favorite count
 

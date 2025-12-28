@@ -224,7 +224,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 /// Provider for FCM Service with proper lifecycle management
 @riverpod
-FcmService fcmService(FcmServiceRef ref) {
+FcmService fcmService(Ref ref) {
   final service = FcmService();
 
   // Ensure dispose is called when provider is disposed

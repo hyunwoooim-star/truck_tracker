@@ -133,13 +133,13 @@ class TalkRepository {
 }
 
 @riverpod
-TalkRepository talkRepository(TalkRepositoryRef ref) {
+TalkRepository talkRepository(Ref ref) {
   return TalkRepository();
 }
 
 /// Provider for watching talk messages of a specific truck
 @riverpod
-Stream<List<TalkMessage>> truckTalk(TruckTalkRef ref, String truckId) {
+Stream<List<TalkMessage>> truckTalk(Ref ref, String truckId) {
   final repository = ref.watch(talkRepositoryProvider);
   return repository.watchTruckTalk(truckId);
 }

@@ -300,13 +300,13 @@ class CouponRepository {
 // ═══════════════════════════════════════════════════════════
 
 @riverpod
-CouponRepository couponRepository(CouponRepositoryRef ref) {
+CouponRepository couponRepository(Ref ref) {
   return CouponRepository();
 }
 
 /// Provider for watching truck's coupons
 @riverpod
-Stream<List<Coupon>> truckCoupons(TruckCouponsRef ref, String truckId) {
+Stream<List<Coupon>> truckCoupons(Ref ref, String truckId) {
   final repository = ref.watch(couponRepositoryProvider);
   return repository.watchTruckCoupons(truckId);
 }
@@ -314,14 +314,14 @@ Stream<List<Coupon>> truckCoupons(TruckCouponsRef ref, String truckId) {
 /// Provider for getting valid coupons
 @riverpod
 Future<List<Coupon>> validTruckCoupons(
-    ValidTruckCouponsRef ref, String truckId) {
+    Ref ref, String truckId) {
   final repository = ref.watch(couponRepositoryProvider);
   return repository.getValidCoupons(truckId);
 }
 
 /// Provider for getting user's used coupons
 @riverpod
-Future<List<Coupon>> userUsedCoupons(UserUsedCouponsRef ref, String userId) {
+Future<List<Coupon>> userUsedCoupons(Ref ref, String userId) {
   final repository = ref.watch(couponRepositoryProvider);
   return repository.getUserUsedCoupons(userId);
 }

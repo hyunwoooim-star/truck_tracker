@@ -16,13 +16,13 @@ part 'truck_provider.g.dart';
 
 /// Repository provider
 @riverpod
-TruckRepository truckRepository(TruckRepositoryRef ref) {
+TruckRepository truckRepository(Ref ref) {
   return TruckRepository();
 }
 
 /// Firestore stream provider for real-time updates
 @riverpod
-Stream<List<Truck>> firestoreTruckStream(FirestoreTruckStreamRef ref) {
+Stream<List<Truck>> firestoreTruckStream(Ref ref) {
   AppLogger.debug('Creating new stream subscription', tag: 'FirestoreTruckStream');
   final repository = ref.watch(truckRepositoryProvider);
 
@@ -85,7 +85,7 @@ class TruckFilterState {
 
 /// Filter state provider
 @riverpod
-class TruckFilterNotifier extends AutoDisposeNotifier<TruckFilterState> {
+class TruckFilterNotifier extends _$TruckFilterNotifier {
   @override
   TruckFilterState build() => const TruckFilterState();
 
@@ -126,7 +126,7 @@ class TruckFilterNotifier extends AutoDisposeNotifier<TruckFilterState> {
 
 /// Filtered truck list provider that combines Firestore stream with filter state
 @riverpod
-Stream<List<Truck>> filteredTruckList(FilteredTruckListRef ref) async* {
+Stream<List<Truck>> filteredTruckList(Ref ref) async* {
   AppLogger.debug('Starting filtered stream', tag: 'FilteredTruckList');
 
   final trucksStream = ref.watch(firestoreTruckStreamProvider.stream);
@@ -201,7 +201,7 @@ enum SortOption {
 
 /// Sort state provider
 @riverpod
-class SortOptionNotifier extends AutoDisposeNotifier<SortOption> {
+class SortOptionNotifier extends _$SortOptionNotifier {
   @override
   SortOption build() => SortOption.distance; // Default: distance sort
 
@@ -213,7 +213,7 @@ class SortOptionNotifier extends AutoDisposeNotifier<SortOption> {
 /// Filtered and sorted truck list with distance information
 @riverpod
 Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
-  FilteredTrucksWithDistanceRef ref,
+  Ref ref,
 ) async* {
   AppLogger.debug('Starting distance calculation', tag: 'FilteredTrucksWithDistance');
 
@@ -286,7 +286,7 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
 
 /// LEGACY: Mock data filtered list (kept for reference/fallback)
 @riverpod
-AsyncValue<List<Truck>> filteredTruckListMock(FilteredTruckListMockRef ref) {
+AsyncValue<List<Truck>> filteredTruckListMock(Ref ref) {
   final trucksAsync = ref.watch(truckListNotifierProvider);
   final filterState = ref.watch(truckFilterNotifierProvider);
 
@@ -320,7 +320,7 @@ AsyncValue<List<Truck>> filteredTruckListMock(FilteredTruckListMockRef ref) {
 }
 
 @riverpod
-class TruckListNotifier extends AutoDisposeAsyncNotifier<List<Truck>> {
+class TruckListNotifier extends _$TruckListNotifier {
   Timer? _positionUpdateTimer;
   static const _positionUpdateInterval = Duration(seconds: 5);
   static const _movementRange =
@@ -520,7 +520,7 @@ class TruckListNotifier extends AutoDisposeAsyncNotifier<List<Truck>> {
 /// Top 3 ranked trucks based on ranking score
 /// Score = (favoriteCount * 0.4) + (avgRating * 0.6)
 @riverpod
-Stream<List<Truck>> topRankedTrucks(TopRankedTrucksRef ref) async* {
+Stream<List<Truck>> topRankedTrucks(Ref ref) async* {
   AppLogger.debug('Starting Top 3 calculation', tag: 'TopRankedTrucks');
 
   final trucksStream = ref.watch(firestoreTruckStreamProvider.stream);
@@ -547,4 +547,11 @@ Stream<List<Truck>> topRankedTrucks(TopRankedTrucksRef ref) async* {
 
     yield top3;
   }
+}
+
+/// Provider for getting a single truck by ID
+@riverpod
+Future<Truck?> singleTruck(Ref ref, String truckId) async {
+  final repository = ref.watch(truckRepositoryProvider);
+  return repository.getTruck(truckId);
 }

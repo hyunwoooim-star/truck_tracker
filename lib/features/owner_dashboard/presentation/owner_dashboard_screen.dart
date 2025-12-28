@@ -826,7 +826,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
   }
 
   Future<void> _toggleSoldOut(item, String truckId, WidgetRef ref) async {
-    final detailProvider = ref.read(truckDetailNotifierProvider(truckId).notifier);
+    final detailProvider = ref.read(truckDetailProvider(truckId).notifier);
     await detailProvider.toggleMenuItemSoldOut(item.id);
   }
 

@@ -65,7 +65,7 @@ final class UnreadChatCountProvider
   }
 }
 
-String _$unreadChatCountHash() => r'fa8a8c410589c70817f84e409c1e2fd4bac333c0';
+String _$unreadChatCountHash() => r'acf67154524a4f130eb102fc1bec3ffde35548da';
 
 /// Provider for unread chat count
 /// This wraps the totalUnreadCount from chat_repository for consistency

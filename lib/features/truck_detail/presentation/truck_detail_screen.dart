@@ -34,7 +34,7 @@ class TruckDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     // 🔄 FIXED: Use real Firestore stream instead of mock data
-    final detailAsync = ref.watch(truckDetailNotifierProvider(truck.id));
+    final detailAsync = ref.watch(truckDetailProvider(truck.id));
 
     // Track truck click for analytics
     WidgetsBinding.instance.addPostFrameCallback((_) {

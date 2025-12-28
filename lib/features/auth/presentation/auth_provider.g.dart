@@ -52,7 +52,7 @@ final class AuthServiceProvider
   }
 }
 
-String _$authServiceHash() => r'3d2d141ca5addcfbfc5c4612d4188b84040459ad';
+String _$authServiceHash() => r'1c95590ad32559edae196691da64d739ee41ea44';
 
 /// Current user stream provider (kept alive to maintain auth state)
 
@@ -90,7 +90,7 @@ final class AuthStateChangesProvider
   }
 }
 
-String _$authStateChangesHash() => r'62dfbd5bbbfc2ce68e842d9f9d1528bbbb26c966';
+String _$authStateChangesHash() => r'68ee03e85e9d009c8d76470c92a017e82647c35b';
 
 /// Current user provider (kept alive to maintain auth state)
 
@@ -135,7 +135,7 @@ final class CurrentUserProvider extends $FunctionalProvider<User?, User?, User?>
   }
 }
 
-String _$currentUserHash() => r'6b0cdf66db660333bc7f785159ec5dd86580ccfa';
+String _$currentUserHash() => r'4860fc878d28fab0020b28e64a9598e5d8d6ad18';
 
 /// Current user ID provider (kept alive to maintain auth state)
 
@@ -181,7 +181,7 @@ final class CurrentUserIdProvider
   }
 }
 
-String _$currentUserIdHash() => r'1e5fe278e29d1ba8474359614a4d7233c0aa7127';
+String _$currentUserIdHash() => r'b6b0117742f15cce6dec214a2045e0b400741870';
 
 /// Current user email provider (kept alive to maintain auth state)
 
@@ -227,7 +227,7 @@ final class CurrentUserEmailProvider
   }
 }
 
-String _$currentUserEmailHash() => r'2d91c02d3bfe21590fe15eee0fb3fbf520bc1405';
+String _$currentUserEmailHash() => r'b4df1f9b05672e26d53d646d895c2664ecf3a550';
 
 /// Is authenticated provider (kept alive to maintain auth state)
 
@@ -273,7 +273,7 @@ final class IsAuthenticatedProvider
   }
 }
 
-String _$isAuthenticatedHash() => r'78dc0081ed4cc7780f28000eea1ac908ee5abcab';
+String _$isAuthenticatedHash() => r'fddebdc2007304fe7096090fb6e944a9842192be';
 
 /// Current user truck ID provider (queries Firestore for ownedTruckId)
 
@@ -312,4 +312,4 @@ final class CurrentUserTruckIdProvider
 }
 
 String _$currentUserTruckIdHash() =>
-    r'374274a8f38555245f5d9910824f26918fef7215';
+    r'ddb30fcbfcd51fc634e65e6fbb717bf1c2172761';

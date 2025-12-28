@@ -36,7 +36,7 @@ final class FavoriteToggleProvider
   FavoriteToggle create() => FavoriteToggle();
 }
 
-String _$favoriteToggleHash() => r'f2af315200ab9a5847324a7d7be6f83b41c2c602';
+String _$favoriteToggleHash() => r'29b02fe258c9a9455c18bad9e1f3b6b1463db548';
 
 /// Provider for toggling favorite status
 
@@ -102,4 +102,4 @@ final class FavoriteTruckIdProvider
   }
 }
 
-String _$favoriteTruckIdHash() => r'6bf088d50c6231570957555d01dce86fc6e6385c';
+String _$favoriteTruckIdHash() => r'69691ab5ccd686fb37d85556036337ab970a3f3a';

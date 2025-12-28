@@ -7,12 +7,12 @@ import '../data/truck_detail_repository.dart';
 part 'truck_detail_provider.g.dart';
 
 @riverpod
-TruckDetailRepository truckDetailRepository(TruckDetailRepositoryRef ref) {
+TruckDetailRepository truckDetailRepository(Ref ref) {
   return TruckDetailRepository();
 }
 
 @riverpod
-Stream<TruckDetail?> truckDetailStream(TruckDetailStreamRef ref, String truckId) {
+Stream<TruckDetail?> truckDetailStream(Ref ref, String truckId) {
   final repository = ref.watch(truckDetailRepositoryProvider);
   return repository.watchTruckDetail(truckId);
 }

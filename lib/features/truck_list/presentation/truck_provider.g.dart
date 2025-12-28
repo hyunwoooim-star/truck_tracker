@@ -53,7 +53,7 @@ final class TruckRepositoryProvider
   }
 }
 
-String _$truckRepositoryHash() => r'd3843127b16224873bbe4ffef3db43d146316d35';
+String _$truckRepositoryHash() => r'8b1e16782766263a676c4d16bd32f7446f663995';
 
 /// Firestore stream provider for real-time updates
 
@@ -98,7 +98,7 @@ final class FirestoreTruckStreamProvider
 }
 
 String _$firestoreTruckStreamHash() =>
-    r'8fcd08a079af5be5cd67a613544e1549452c2c9d';
+    r'52a7440e0871ab21ea54bed99c10dc58ce458ba5';
 
 /// Filter state provider
 
@@ -137,7 +137,7 @@ final class TruckFilterNotifierProvider
 }
 
 String _$truckFilterNotifierHash() =>
-    r'f834102de8ab21a4008ed8b543ca2cdd17b2df29';
+    r'e0a459cc83fd6f0ad9e272418d13d85cdc6483a6';
 
 /// Filter state provider
 
@@ -201,7 +201,7 @@ final class FilteredTruckListProvider
   }
 }
 
-String _$filteredTruckListHash() => r'86cd74390ec71d37a884274a0f8569eeaeb35722';
+String _$filteredTruckListHash() => r'1eb75f9d5d6e6bdcf8d4a3e8a9b85003cfb8a852';
 
 /// Sort state provider
 
@@ -240,7 +240,7 @@ final class SortOptionNotifierProvider
 }
 
 String _$sortOptionNotifierHash() =>
-    r'7657c73ca502eab530f06ab78b271af96dfd90d5';
+    r'18d83beb55ad392de7d5d57b0c373423fe0d78f2';
 
 /// Sort state provider
 
@@ -308,7 +308,7 @@ final class FilteredTrucksWithDistanceProvider
 }
 
 String _$filteredTrucksWithDistanceHash() =>
-    r'5f799735c5dfd80aafaf08759480a02b48866ad2';
+    r'b171a0cb9425f827754b54e668208e8ec2639848';
 
 /// LEGACY: Mock data filtered list (kept for reference/fallback)
 
@@ -361,7 +361,7 @@ final class FilteredTruckListMockProvider
 }
 
 String _$filteredTruckListMockHash() =>
-    r'c2057472855252ecbeabcf5d944baca085d9e403';
+    r'b23cfa25ef5168048188f555af443208b0dbdb23';
 
 @ProviderFor(TruckListNotifier)
 final truckListProvider = TruckListNotifierProvider._();
@@ -387,7 +387,7 @@ final class TruckListNotifierProvider
   TruckListNotifier create() => TruckListNotifier();
 }
 
-String _$truckListNotifierHash() => r'0934e12641eb17b9cf899476c89b4b896c189043';
+String _$truckListNotifierHash() => r'c6014efc3f680189a8c9cd8398f305da0e464a2c';
 
 abstract class _$TruckListNotifier extends $AsyncNotifier<List<Truck>> {
   FutureOr<List<Truck>> build();
@@ -452,4 +452,82 @@ final class TopRankedTrucksProvider
   }
 }
 
-String _$topRankedTrucksHash() => r'0e15e8e474be521498144b980686c5ab0d560abb';
+String _$topRankedTrucksHash() => r'3846d12c362f1060d3d1480959246590762c6825';
+
+/// Provider for getting a single truck by ID
+
+@ProviderFor(singleTruck)
+final singleTruckProvider = SingleTruckFamily._();
+
+/// Provider for getting a single truck by ID
+
+final class SingleTruckProvider
+    extends $FunctionalProvider<AsyncValue<Truck?>, Truck?, FutureOr<Truck?>>
+    with $FutureModifier<Truck?>, $FutureProvider<Truck?> {
+  /// Provider for getting a single truck by ID
+  SingleTruckProvider._({
+    required SingleTruckFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'singleTruckProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$singleTruckHash();
+
+  @override
+  String toString() {
+    return r'singleTruckProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<Truck?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Truck?> create(Ref ref) {
+    final argument = this.argument as String;
+    return singleTruck(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SingleTruckProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$singleTruckHash() => r'00044f5c94ce7b73b6329c271eeb0d77c891790d';
+
+/// Provider for getting a single truck by ID
+
+final class SingleTruckFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<Truck?>, String> {
+  SingleTruckFamily._()
+    : super(
+        retry: null,
+        name: r'singleTruckProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Provider for getting a single truck by ID
+
+  SingleTruckProvider call(String truckId) =>
+      SingleTruckProvider._(argument: truckId, from: this);
+
+  @override
+  String toString() => r'singleTruckProvider';
+}

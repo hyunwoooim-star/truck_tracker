@@ -55,7 +55,7 @@ final class ScheduleRepositoryProvider
 }
 
 String _$scheduleRepositoryHash() =>
-    r'85fb357cc129c9eacba355128d9132d718df1195';
+    r'0961b45f21f081fbd866b70d750eac53db83f9a1';
 
 @ProviderFor(todaySchedule)
 final todayScheduleProvider = TodayScheduleFamily._();
@@ -112,7 +112,7 @@ final class TodayScheduleProvider
   }
 }
 
-String _$todayScheduleHash() => r'e68e71c9bd3046dcf41fb84988a58e2c56a2a040';
+String _$todayScheduleHash() => r'33de0d2088fbccf9d1535d324a870e21e3570fbc';
 
 final class TodayScheduleFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<DailySchedule?>, String> {

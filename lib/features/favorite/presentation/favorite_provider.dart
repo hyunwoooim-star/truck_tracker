@@ -8,7 +8,7 @@ part 'favorite_provider.g.dart';
 
 /// Provider for toggling favorite status
 @riverpod
-class FavoriteToggle extends AutoDisposeAsyncNotifier<bool> {
+class FavoriteToggle extends _$FavoriteToggle {
   @override
   Future<bool> build() async {
     // Initial state: check if favorited
@@ -49,7 +49,7 @@ class FavoriteToggle extends AutoDisposeAsyncNotifier<bool> {
 
 /// Temporary provider for truck ID (will be passed via constructor in UI)
 @riverpod
-String? favoriteTruckId(FavoriteTruckIdRef ref) {
+String? favoriteTruckId(Ref ref) {
   return null;
 }
 

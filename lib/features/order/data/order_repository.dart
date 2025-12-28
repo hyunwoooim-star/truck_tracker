@@ -183,20 +183,20 @@ class OrderRepository {
 }
 
 @riverpod
-OrderRepository orderRepository(OrderRepositoryRef ref) {
+OrderRepository orderRepository(Ref ref) {
   return OrderRepository();
 }
 
 /// Provider for watching user orders
 @riverpod
-Stream<List<domain.Order>> userOrders(UserOrdersRef ref, String userId) {
+Stream<List<domain.Order>> userOrders(Ref ref, String userId) {
   final repository = ref.watch(orderRepositoryProvider);
   return repository.watchUserOrders(userId);
 }
 
 /// Provider for watching truck orders
 @riverpod
-Stream<List<domain.Order>> truckOrders(TruckOrdersRef ref, String truckId) {
+Stream<List<domain.Order>> truckOrders(Ref ref, String truckId) {
   final repository = ref.watch(orderRepositoryProvider);
   return repository.watchTruckOrders(truckId);
 }

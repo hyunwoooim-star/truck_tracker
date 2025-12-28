@@ -201,13 +201,13 @@ class FavoriteRepository {
 }
 
 @riverpod
-FavoriteRepository favoriteRepository(FavoriteRepositoryRef ref) {
+FavoriteRepository favoriteRepository(Ref ref) {
   return FavoriteRepository();
 }
 
 /// Provider for watching user's favorite truck IDs
 @riverpod
-Stream<List<String>> userFavorites(UserFavoritesRef ref, String userId) {
+Stream<List<String>> userFavorites(Ref ref, String userId) {
   final repository = ref.watch(favoriteRepositoryProvider);
   return repository.watchUserFavorites(userId);
 }
@@ -215,7 +215,7 @@ Stream<List<String>> userFavorites(UserFavoritesRef ref, String userId) {
 /// Provider for checking if a truck is favorited
 @riverpod
 Future<bool> isTruckFavorited(
-  IsTruckFavoritedRef ref, {
+  Ref ref, {
   required String userId,
   required String truckId,
 }) {
@@ -225,7 +225,7 @@ Future<bool> isTruckFavorited(
 
 /// Provider for truck favorite count
 @riverpod
-Future<int> truckFavoriteCount(TruckFavoriteCountRef ref, String truckId) {
+Future<int> truckFavoriteCount(Ref ref, String truckId) {
   final repository = ref.watch(favoriteRepositoryProvider);
   return repository.getFavoriteCount(truckId);
 }

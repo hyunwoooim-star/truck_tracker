@@ -51,7 +51,7 @@ final class OwnerOperatingStatusProvider
 }
 
 String _$ownerOperatingStatusHash() =>
-    r'3d2c7de773883eb8f42e8b2ba8e3124613880a8c';
+    r'8378c81c135b8186c23841df71313e12613c1cb3';
 
 /// Provider that manages operating status for Owner's truck
 ///
@@ -117,7 +117,7 @@ final class OwnerTruckStatusProvider
   }
 }
 
-String _$ownerTruckStatusHash() => r'76b0f582f3db22b64cbdab4f4ae64024ebaeb933';
+String _$ownerTruckStatusHash() => r'e0e88f391bfd45e9eef2e82133787e58b6976b4f';
 
 /// Provider to get the owner's truck data
 
@@ -155,4 +155,4 @@ final class OwnerTruckProvider
   }
 }
 
-String _$ownerTruckHash() => r'5f82ff47d0081c0d3ed4cc5eceba8dc4446a51b9';
+String _$ownerTruckHash() => r'afa2dbccd2f71634a1ed3cf83fba554dde46f9d6';

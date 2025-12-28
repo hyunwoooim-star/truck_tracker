@@ -49,7 +49,7 @@ final class OrderRepositoryProvider
   }
 }
 
-String _$orderRepositoryHash() => r'9253d73f04ce8fb2e624da9bd81ad25a644540cd';
+String _$orderRepositoryHash() => r'ad125924bfd6b4d7ba75c24a542b39f8aba0a469';
 
 /// Provider for watching user orders
 
@@ -111,7 +111,7 @@ final class UserOrdersProvider
   }
 }
 
-String _$userOrdersHash() => r'fad867b94a6045b524701a79f1b91c313e218fb3';
+String _$userOrdersHash() => r'b82b31c74c9f616ce9824b81de3c48354584d6d4';
 
 /// Provider for watching user orders
 
@@ -195,7 +195,7 @@ final class TruckOrdersProvider
   }
 }
 
-String _$truckOrdersHash() => r'b76284d25f7e6ad1ccabdbebbd8c0ab9e5758eef';
+String _$truckOrdersHash() => r'7dfda08ab320c1f5ff6bc17f18bd66dfd78f286b';
 
 /// Provider for watching truck orders
 

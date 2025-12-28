@@ -263,13 +263,13 @@ class FollowRepository {
 // ═══════════════════════════════════════════════════════════
 
 @riverpod
-FollowRepository followRepository(FollowRepositoryRef ref) {
+FollowRepository followRepository(Ref ref) {
   return FollowRepository();
 }
 
 /// Provider for watching user's followed trucks
 @riverpod
-Stream<List<TruckFollow>> userFollows(UserFollowsRef ref, String userId) {
+Stream<List<TruckFollow>> userFollows(Ref ref, String userId) {
   final repository = ref.watch(followRepositoryProvider);
   return repository.watchUserFollows(userId);
 }
@@ -277,7 +277,7 @@ Stream<List<TruckFollow>> userFollows(UserFollowsRef ref, String userId) {
 /// Provider for checking if user is following a truck
 @riverpod
 Future<bool> isFollowingTruck(
-  IsFollowingTruckRef ref, {
+  Ref ref, {
   required String userId,
   required String truckId,
 }) {
@@ -287,7 +287,7 @@ Future<bool> isFollowingTruck(
 
 /// Provider for truck follower count
 @riverpod
-Future<int> truckFollowerCount(TruckFollowerCountRef ref, String truckId) {
+Future<int> truckFollowerCount(Ref ref, String truckId) {
   final repository = ref.watch(followRepositoryProvider);
   return repository.getFollowerCount(truckId);
 }

@@ -48,7 +48,7 @@ final class ChatRepositoryProvider
   }
 }
 
-String _$chatRepositoryHash() => r'7956fc1edca9bb8f22bf4cb09bc189b02b36af89';
+String _$chatRepositoryHash() => r'ea9e083da4dcdf131e1c2e9541b05be8efba8977';
 
 @ProviderFor(userChatRooms)
 final userChatRoomsProvider = UserChatRoomsFamily._();
@@ -105,7 +105,7 @@ final class UserChatRoomsProvider
   }
 }
 
-String _$userChatRoomsHash() => r'95091e614a357db26f08a9f8ff77c8322fdc274a';
+String _$userChatRoomsHash() => r'f25d6bbc069aa1b667479a141bbe61f9c48bf0fc';
 
 final class UserChatRoomsFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<ChatRoom>>, String> {
@@ -180,7 +180,7 @@ final class TruckChatRoomsProvider
   }
 }
 
-String _$truckChatRoomsHash() => r'860afe46cbac4158e11e216adac2bdc1f7fd67ec';
+String _$truckChatRoomsHash() => r'd6a34c8713adcb104f588fce806e9dda84db80de';
 
 final class TruckChatRoomsFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<ChatRoom>>, String> {
@@ -257,7 +257,7 @@ final class ChatMessagesProvider
   }
 }
 
-String _$chatMessagesHash() => r'be11a5253e57c5508e59715309cfba1f63c24ca2';
+String _$chatMessagesHash() => r'efdbbd3b655d1b810a7c856c10cf887a5f233872';
 
 final class ChatMessagesFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<ChatMessage>>, String> {
@@ -326,7 +326,7 @@ final class TotalUnreadCountProvider
   }
 }
 
-String _$totalUnreadCountHash() => r'7a7314171aa94f438b1ec55786bc5bba625a03af';
+String _$totalUnreadCountHash() => r'5d40290911370c4dd80dec20e70269f17f5921be';
 
 final class TotalUnreadCountFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<int>, String> {

@@ -304,13 +304,13 @@ class ChatRepository {
 // ═══════════════════════════════════════════════════════════
 
 @riverpod
-ChatRepository chatRepository(ChatRepositoryRef ref) {
+ChatRepository chatRepository(Ref ref) {
   return ChatRepository();
 }
 
 @riverpod
 Stream<List<ChatRoom>> userChatRooms(
-  UserChatRoomsRef ref,
+  Ref ref,
   String userId,
 ) {
   final repository = ref.watch(chatRepositoryProvider);
@@ -319,7 +319,7 @@ Stream<List<ChatRoom>> userChatRooms(
 
 @riverpod
 Stream<List<ChatRoom>> truckChatRooms(
-  TruckChatRoomsRef ref,
+  Ref ref,
   String truckId,
 ) {
   final repository = ref.watch(chatRepositoryProvider);
@@ -328,7 +328,7 @@ Stream<List<ChatRoom>> truckChatRooms(
 
 @riverpod
 Stream<List<ChatMessage>> chatMessages(
-  ChatMessagesRef ref,
+  Ref ref,
   String chatRoomId,
 ) {
   final repository = ref.watch(chatRepositoryProvider);
@@ -337,7 +337,7 @@ Stream<List<ChatMessage>> chatMessages(
 
 @riverpod
 Future<int> totalUnreadCount(
-  TotalUnreadCountRef ref,
+  Ref ref,
   String userId,
 ) {
   final repository = ref.watch(chatRepositoryProvider);

@@ -48,7 +48,7 @@ final class TalkRepositoryProvider
   }
 }
 
-String _$talkRepositoryHash() => r'b77e85ffcf54aa4ca46c185138ff844183bcfe3d';
+String _$talkRepositoryHash() => r'4eb000a8277259ea3383cf046e1cf580bfed6e01';
 
 /// Provider for watching talk messages of a specific truck
 
@@ -112,7 +112,7 @@ final class TruckTalkProvider
   }
 }
 
-String _$truckTalkHash() => r'9300b624656b342f3e955b72093a62d23bef8948';
+String _$truckTalkHash() => r'b135ffd6c971fe7f67ea9cb287d9cd846b4c32df';
 
 /// Provider for watching talk messages of a specific truck
 

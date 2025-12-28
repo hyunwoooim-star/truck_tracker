@@ -53,7 +53,7 @@ final class FollowRepositoryProvider
   }
 }
 
-String _$followRepositoryHash() => r'1534e9ed4d6c553f39db200bfac98591376072e2';
+String _$followRepositoryHash() => r'afa745f8bde582eb58fffc2d7e68cf1c4e7ba9d4';
 
 /// Provider for watching user's followed trucks
 
@@ -117,7 +117,7 @@ final class UserFollowsProvider
   }
 }
 
-String _$userFollowsHash() => r'98d2d9feb4518b2807a9a753accd1cf96597e52d';
+String _$userFollowsHash() => r'38dd82076f446b0b101430915d74856922d5a29c';
 
 /// Provider for watching user's followed trucks
 
@@ -199,7 +199,7 @@ final class IsFollowingTruckProvider
   }
 }
 
-String _$isFollowingTruckHash() => r'45f8ae3de1d99ad3da28391d853419e0e706c014';
+String _$isFollowingTruckHash() => r'bd1630f697b4e4c13b6140d71f52097439e536a9';
 
 /// Provider for checking if user is following a truck
 
@@ -287,7 +287,7 @@ final class TruckFollowerCountProvider
 }
 
 String _$truckFollowerCountHash() =>
-    r'542ebd638ecd5fddc0d19905026944e4383fd09a';
+    r'b0181f2333d8e1644a8694ebd19894b13ade5162';
 
 /// Provider for truck follower count
 

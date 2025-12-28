@@ -290,14 +290,14 @@ class AnalyticsRepository {
 }
 
 @riverpod
-AnalyticsRepository analyticsRepository(AnalyticsRepositoryRef ref) {
+AnalyticsRepository analyticsRepository(Ref ref) {
   return AnalyticsRepository();
 }
 
 /// Provider for today's analytics
 @riverpod
 Future<TruckAnalytics> todayAnalytics(
-  TodayAnalyticsRef ref,
+  Ref ref,
   String truckId,
 ) {
   final repository = ref.watch(analyticsRepositoryProvider);
@@ -306,7 +306,7 @@ Future<TruckAnalytics> todayAnalytics(
 
 /// Date range state notifier
 @riverpod
-class AnalyticsDateRangeNotifier extends AutoDisposeNotifier<DateTimeRange> {
+class AnalyticsDateRangeNotifier extends _$AnalyticsDateRangeNotifier {
   @override
   DateTimeRange build() {
     final now = DateTime.now();
@@ -332,7 +332,7 @@ class AnalyticsDateRangeNotifier extends AutoDisposeNotifier<DateTimeRange> {
 /// Provider for analytics range
 @riverpod
 Future<TruckAnalyticsRange> analyticsRange(
-  AnalyticsRangeRef ref,
+  Ref ref,
   String truckId,
   DateTimeRange dateRange,
 ) {

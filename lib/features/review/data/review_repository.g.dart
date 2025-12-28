@@ -53,7 +53,7 @@ final class ReviewRepositoryProvider
   }
 }
 
-String _$reviewRepositoryHash() => r'7fd924fac12f53f0c8e56e7492a6158592e5ffcf';
+String _$reviewRepositoryHash() => r'9074e9261943e5c6b2bb9fdd2f37ccb86cd6f931';
 
 /// Provider for watching reviews of a specific truck
 
@@ -115,7 +115,7 @@ final class TruckReviewsProvider
   }
 }
 
-String _$truckReviewsHash() => r'b85dd95b6bf1b94782de9c3d2b34f3bc6827c888';
+String _$truckReviewsHash() => r'ae939c9b7e0f00010d439f14337813ed9e567c44';
 
 /// Provider for watching reviews of a specific truck
 
@@ -194,7 +194,7 @@ final class TruckAverageRatingProvider
 }
 
 String _$truckAverageRatingHash() =>
-    r'9b5abcc21769c08a8a4c3f56680526dd4dccd37e';
+    r'8bc89f17e820c24c62c6cb1a8a15a44c8b814cb5';
 
 /// Provider for average rating of a truck
 

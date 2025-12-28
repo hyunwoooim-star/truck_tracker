@@ -59,7 +59,7 @@ final class NotificationPreferencesRepositoryProvider
 }
 
 String _$notificationPreferencesRepositoryHash() =>
-    r'b5ab8e3423c68e453a1031c5dfdec6bdafca7d8c';
+    r'ec09c8318cf9c793ee7726c9348b1a8e20ccbf40';
 
 @ProviderFor(notificationSettings)
 final notificationSettingsProvider = NotificationSettingsFamily._();
@@ -119,7 +119,7 @@ final class NotificationSettingsProvider
 }
 
 String _$notificationSettingsHash() =>
-    r'76eab21b60230376187a34af3d599df8d88cd410';
+    r'b3aa82c64bfa66a50856c8f0433bb83d3ca9f80b';
 
 final class NotificationSettingsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<NotificationSettings>, String> {
@@ -198,7 +198,7 @@ final class NotificationSettingsStreamProvider
 }
 
 String _$notificationSettingsStreamHash() =>
-    r'8cbd8bf9b434e8b46dbf857c47c3afdbb51879ce';
+    r'e565ec7328d62877074d6d63e617999a0fe6afce';
 
 final class NotificationSettingsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<NotificationSettings>, String> {

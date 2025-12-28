@@ -23,7 +23,7 @@ class AnalyticsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     // Watch the date range state
-    final dateRange = ref.watch(analyticsDateRangeNotifierProvider);
+    final dateRange = ref.watch(analyticsDateRangeProvider);
 
     // Fetch analytics for the date range - wait for truckId to load first
     final analyticsAsync = truckIdAsync.when(
@@ -444,7 +444,7 @@ class AnalyticsScreen extends ConsumerWidget {
 
   /// Show date range picker
   Future<void> _showDateRangePicker(BuildContext context, WidgetRef ref) async {
-    final currentRange = ref.read(analyticsDateRangeNotifierProvider);
+    final currentRange = ref.read(analyticsDateRangeProvider);
 
     final picked = await showDateRangePicker(
       context: context,
@@ -467,7 +467,7 @@ class AnalyticsScreen extends ConsumerWidget {
     );
 
     if (picked != null) {
-      ref.read(analyticsDateRangeNotifierProvider.notifier).setDateRange(picked);
+      ref.read(analyticsDateRangeProvider.notifier).setDateRange(picked);
     }
   }
 

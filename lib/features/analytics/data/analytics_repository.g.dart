@@ -55,7 +55,7 @@ final class AnalyticsRepositoryProvider
 }
 
 String _$analyticsRepositoryHash() =>
-    r'f250e4697d4a5a6a098297c0a41915f7aa308579';
+    r'f030e0acf6ef2e867679a83103920a380e75f5fc';
 
 /// Provider for today's analytics
 
@@ -117,7 +117,7 @@ final class TodayAnalyticsProvider
   }
 }
 
-String _$todayAnalyticsHash() => r'7236987c6ff3f97d1bb6944c3e4e403257b2d760';
+String _$todayAnalyticsHash() => r'50510e43f3807866394b11248c3ae61f5683fc21';
 
 /// Provider for today's analytics
 
@@ -179,7 +179,7 @@ final class AnalyticsDateRangeNotifierProvider
 }
 
 String _$analyticsDateRangeNotifierHash() =>
-    r'deef71cc7346a89c0fdeee8e2d3275c526e7c9f9';
+    r'8343d40cdbdea5f9c7eaacc71fd63f726439febe';
 
 /// Date range state notifier
 
@@ -265,7 +265,7 @@ final class AnalyticsRangeProvider
   }
 }
 
-String _$analyticsRangeHash() => r'7b0763362dd03bb2d51415ae2ff49f66c9468e61';
+String _$analyticsRangeHash() => r'5ea01310769a09b4a2d7f8b2d127c3eba3e7410a';
 
 /// Provider for analytics range
 

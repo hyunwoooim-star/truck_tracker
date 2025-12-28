@@ -12,7 +12,7 @@ part 'owner_status_provider.g.dart';
 ///
 /// This syncs with Firestore in real-time
 @riverpod
-class OwnerOperatingStatus extends AutoDisposeNotifier<bool> {
+class OwnerOperatingStatus extends _$OwnerOperatingStatus {
   int? _ownedTruckId;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -128,7 +128,7 @@ class OwnerOperatingStatus extends AutoDisposeNotifier<bool> {
 
 /// Stream provider to watch the owner's truck status in real-time
 @riverpod
-Stream<TruckStatus?> ownerTruckStatus(OwnerTruckStatusRef ref) async* {
+Stream<TruckStatus?> ownerTruckStatus(Ref ref) async* {
   final repository = ref.watch(truckRepositoryProvider);
   
   // Get truck ID from current user
@@ -159,7 +159,7 @@ Stream<TruckStatus?> ownerTruckStatus(OwnerTruckStatusRef ref) async* {
 
 /// Provider to get the owner's truck data
 @riverpod
-Stream<Truck?> ownerTruck(OwnerTruckRef ref) async* {
+Stream<Truck?> ownerTruck(Ref ref) async* {
   final repository = ref.watch(truckRepositoryProvider);
   final userEmail = ref.watch(currentUserEmailProvider);
   

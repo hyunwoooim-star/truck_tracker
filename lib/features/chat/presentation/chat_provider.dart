@@ -7,7 +7,7 @@ part 'chat_provider.g.dart';
 /// Provider for unread chat count
 /// This wraps the totalUnreadCount from chat_repository for consistency
 @riverpod
-Stream<int> unreadChatCount(UnreadChatCountRef ref, String userId) async* {
+Stream<int> unreadChatCount(Ref ref, String userId) async* {
   final repository = ref.watch(chatRepositoryProvider);
 
   // Initial value

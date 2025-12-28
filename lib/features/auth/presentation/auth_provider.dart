@@ -10,20 +10,20 @@ final _authServiceInstance = AuthService();
 
 /// Auth service provider (kept alive to maintain auth state)
 @Riverpod(keepAlive: true)
-AuthService authService(AuthServiceRef ref) {
+AuthService authService(Ref ref) {
   return _authServiceInstance;
 }
 
 /// Current user stream provider (kept alive to maintain auth state)
 @Riverpod(keepAlive: true)
-Stream<User?> authStateChanges(AuthStateChangesRef ref) {
+Stream<User?> authStateChanges(Ref ref) {
   final authService = ref.watch(authServiceProvider);
   return authService.authStateChanges;
 }
 
 /// Current user provider (kept alive to maintain auth state)
 @Riverpod(keepAlive: true)
-User? currentUser(CurrentUserRef ref) {
+User? currentUser(Ref ref) {
   final authState = ref.watch(authStateChangesProvider);
   return authState.when(
     data: (user) => user,
@@ -34,28 +34,28 @@ User? currentUser(CurrentUserRef ref) {
 
 /// Current user ID provider (kept alive to maintain auth state)
 @Riverpod(keepAlive: true)
-String? currentUserId(CurrentUserIdRef ref) {
+String? currentUserId(Ref ref) {
   final user = ref.watch(currentUserProvider);
   return user?.uid;
 }
 
 /// Current user email provider (kept alive to maintain auth state)
 @Riverpod(keepAlive: true)
-String currentUserEmail(CurrentUserEmailRef ref) {
+String currentUserEmail(Ref ref) {
   final user = ref.watch(currentUserProvider);
   return user?.email ?? '';
 }
 
 /// Is authenticated provider (kept alive to maintain auth state)
 @Riverpod(keepAlive: true)
-bool isAuthenticated(IsAuthenticatedRef ref) {
+bool isAuthenticated(Ref ref) {
   final user = ref.watch(currentUserProvider);
   return user != null;
 }
 
 /// Current user truck ID provider (queries Firestore for ownedTruckId)
 @riverpod
-Future<int?> currentUserTruckId(CurrentUserTruckIdRef ref) async {
+Future<int?> currentUserTruckId(Ref ref) async {
   final userId = ref.watch(currentUserIdProvider);
 
   if (userId == null) {
