@@ -132,23 +132,17 @@ class FcmService {
         return;
       }
 
-      // Note: Sending notifications requires a backend server or Cloud Functions
-      // This is a placeholder for the client-side logic
-      // In production, you would call a Cloud Function that sends the notification
-      AppLogger.debug('Would send notification to ${tokens.length} users:', tag: 'FcmService');
-      AppLogger.debug('Title: "$truckName is now open!"', tag: 'FcmService');
-      AppLogger.debug('Body: "Your favorite truck is now serving. Come get your food!"', tag: 'FcmService');
-
-      // TODO: Call Cloud Function to send notification
-      // Example:
-      // await http.post(
-      //   Uri.parse('https://YOUR_CLOUD_FUNCTION_URL/sendTruckOpenNotification'),
-      //   body: json.encode({
-      //     'tokens': tokens,
-      //     'truckId': truckId,
-      //     'truckName': truckName,
-      //   }),
-      // );
+      // Note: Notifications are handled automatically by Cloud Functions
+      // The `notifyTruckOpening` function triggers on Firestore document update
+      // when truck.isOpen changes from false to true.
+      // Users subscribed to topic `truck_{truckId}` will receive push notifications.
+      //
+      // Cloud Function: functions/index.js#notifyTruckOpening
+      // Trigger: Firestore onUpdate('trucks/{truckId}')
+      //
+      // This client-side method is kept for logging/debugging purposes.
+      AppLogger.debug('Truck opened - Cloud Function will send notifications', tag: 'FcmService');
+      AppLogger.debug('Followers count: ${tokens.length}', tag: 'FcmService');
     } catch (e, stackTrace) {
       AppLogger.error('Error notifying followers', error: e, stackTrace: stackTrace, tag: 'FcmService');
     }

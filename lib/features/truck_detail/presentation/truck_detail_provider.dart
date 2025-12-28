@@ -154,14 +154,13 @@ TruckDetail _getMockTruckDetail(String truckId) {
     ],
   };
 
-  // TODO: Mock reviews removed - incompatible with Review model
-  // Real reviews will come from Firestore via ReviewRepository
+  // Reviews are loaded from Firestore via ReviewRepository (see truck_detail_screen.dart)
+  // TruckDetail.reviews is kept empty here - actual reviews fetched separately for real-time updates
 
   final menuItems = menuItemsMap[truckId] ?? menuItemsMap['1']!;
-  // TODO: Fix mock reviews to match Review model (requires truckId, userId, int rating)
-  final List<Review> reviews = []; // reviewsMap[truckId] ?? reviewsMap['1']!;
+  final List<Review> reviews = []; // Loaded via truckReviewsProvider
 
-  final avgRating = 4.5; // reviews.isEmpty ? 4.5 : reviews.map((r) => r.rating).reduce((a, b) => a + b) / reviews.length;
+  final avgRating = 4.5; // Calculated from actual reviews in UI
 
   return TruckDetail(
     truckId: truckId,

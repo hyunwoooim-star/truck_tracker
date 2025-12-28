@@ -25,8 +25,8 @@ import '../../../scripts/migrate_mock_data.dart';
 const Color _mustard = AppTheme.mustardYellow;
 const Color _charcoal = AppTheme.midnightCharcoal;
 
-// ❌ REMOVED: Mock sales data provider (todaySalesProvider, SalesItem)
-// TODO: Implement real-time sales tracking from order data
+// Real-time sales tracking implemented via _buildTodayOrderStats
+// Uses truckOrdersProvider for live order data
 
 class OwnerDashboardScreen extends ConsumerStatefulWidget {
   const OwnerDashboardScreen({super.key});
@@ -463,11 +463,8 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     );
   }
 
-  // ❌ REMOVED: _buildLiveStats method (88 lines) - used mock todaySalesProvider
-  // TODO: Implement real-time stats widget using actual order data from truckOrdersProvider
-  // Should show:
-  // - Regular customers nearby (from customer_checkin data)
-  // - Today's revenue (sum of completed orders)
+  // Real-time stats implemented in _buildTodayOrderStats below
+  // Shows: total orders, completed orders, pending orders, today's revenue
 
   /// Today's order statistics widget
   Widget _buildTodayOrderStats(List<domain.Order> orders, NumberFormat numberFormat, AppLocalizations l10n) {
