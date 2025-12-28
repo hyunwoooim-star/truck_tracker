@@ -6,7 +6,7 @@ part of 'review.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ReviewImpl _$$ReviewImplFromJson(Map<String, dynamic> json) => _$ReviewImpl(
+_Review _$ReviewFromJson(Map<String, dynamic> json) => _Review(
   id: json['id'] as String,
   truckId: json['truckId'] as String,
   userId: json['userId'] as String,
@@ -29,18 +29,17 @@ _$ReviewImpl _$$ReviewImplFromJson(Map<String, dynamic> json) => _$ReviewImpl(
       : DateTime.parse(json['updatedAt'] as String),
 );
 
-Map<String, dynamic> _$$ReviewImplToJson(_$ReviewImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'truckId': instance.truckId,
-      'userId': instance.userId,
-      'userName': instance.userName,
-      'userPhotoURL': instance.userPhotoURL,
-      'rating': instance.rating,
-      'comment': instance.comment,
-      'photoUrls': instance.photoUrls,
-      'ownerReply': instance.ownerReply,
-      'ownerReplyAt': instance.ownerReplyAt?.toIso8601String(),
-      'createdAt': instance.createdAt?.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
-    };
+Map<String, dynamic> _$ReviewToJson(_Review instance) => <String, dynamic>{
+  'id': instance.id,
+  'truckId': instance.truckId,
+  'userId': instance.userId,
+  'userName': instance.userName,
+  'userPhotoURL': instance.userPhotoURL,
+  'rating': instance.rating,
+  'comment': instance.comment,
+  'photoUrls': instance.photoUrls,
+  'ownerReply': instance.ownerReply,
+  'ownerReplyAt': instance.ownerReplyAt?.toIso8601String(),
+  'createdAt': instance.createdAt?.toIso8601String(),
+  'updatedAt': instance.updatedAt?.toIso8601String(),
+};

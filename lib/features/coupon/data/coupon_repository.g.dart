@@ -6,440 +6,303 @@ part of 'coupon_repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$couponRepositoryHash() => r'd0f8ed70b2f95839d7412c051deef6e818cf2e3b';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [couponRepository].
 @ProviderFor(couponRepository)
-final couponRepositoryProvider = AutoDisposeProvider<CouponRepository>.internal(
-  couponRepository,
-  name: r'couponRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$couponRepositoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final couponRepositoryProvider = CouponRepositoryProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef CouponRepositoryRef = AutoDisposeProviderRef<CouponRepository>;
-String _$truckCouponsHash() => r'bcc4e8a1fa636c9cee184e178445771e741d2d3e';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// Provider for watching truck's coupons
-///
-/// Copied from [truckCoupons].
-@ProviderFor(truckCoupons)
-const truckCouponsProvider = TruckCouponsFamily();
-
-/// Provider for watching truck's coupons
-///
-/// Copied from [truckCoupons].
-class TruckCouponsFamily extends Family<AsyncValue<List<Coupon>>> {
-  /// Provider for watching truck's coupons
-  ///
-  /// Copied from [truckCoupons].
-  const TruckCouponsFamily();
-
-  /// Provider for watching truck's coupons
-  ///
-  /// Copied from [truckCoupons].
-  TruckCouponsProvider call(String truckId) {
-    return TruckCouponsProvider(truckId);
-  }
-
-  @override
-  TruckCouponsProvider getProviderOverride(
-    covariant TruckCouponsProvider provider,
-  ) {
-    return call(provider.truckId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'truckCouponsProvider';
-}
-
-/// Provider for watching truck's coupons
-///
-/// Copied from [truckCoupons].
-class TruckCouponsProvider extends AutoDisposeStreamProvider<List<Coupon>> {
-  /// Provider for watching truck's coupons
-  ///
-  /// Copied from [truckCoupons].
-  TruckCouponsProvider(String truckId)
-    : this._internal(
-        (ref) => truckCoupons(ref as TruckCouponsRef, truckId),
-        from: truckCouponsProvider,
-        name: r'truckCouponsProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$truckCouponsHash,
-        dependencies: TruckCouponsFamily._dependencies,
-        allTransitiveDependencies:
-            TruckCouponsFamily._allTransitiveDependencies,
-        truckId: truckId,
+final class CouponRepositoryProvider
+    extends
+        $FunctionalProvider<
+          CouponRepository,
+          CouponRepository,
+          CouponRepository
+        >
+    with $Provider<CouponRepository> {
+  CouponRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'couponRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
       );
 
-  TruckCouponsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.truckId,
-  }) : super.internal();
+  @override
+  String debugGetCreateSourceHash() => _$couponRepositoryHash();
 
-  final String truckId;
+  @$internal
+  @override
+  $ProviderElement<CouponRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  Override overrideWith(
-    Stream<List<Coupon>> Function(TruckCouponsRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: TruckCouponsProvider._internal(
-        (ref) => create(ref as TruckCouponsRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        truckId: truckId,
-      ),
-    );
+  CouponRepository create(Ref ref) {
+    return couponRepository(ref);
   }
 
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(CouponRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<CouponRepository>(value),
+    );
+  }
+}
+
+String _$couponRepositoryHash() => r'd0f8ed70b2f95839d7412c051deef6e818cf2e3b';
+
+/// Provider for watching truck's coupons
+
+@ProviderFor(truckCoupons)
+final truckCouponsProvider = TruckCouponsFamily._();
+
+/// Provider for watching truck's coupons
+
+final class TruckCouponsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Coupon>>,
+          List<Coupon>,
+          Stream<List<Coupon>>
+        >
+    with $FutureModifier<List<Coupon>>, $StreamProvider<List<Coupon>> {
+  /// Provider for watching truck's coupons
+  TruckCouponsProvider._({
+    required TruckCouponsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'truckCouponsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
   @override
-  AutoDisposeStreamProviderElement<List<Coupon>> createElement() {
-    return _TruckCouponsProviderElement(this);
+  String debugGetCreateSourceHash() => _$truckCouponsHash();
+
+  @override
+  String toString() {
+    return r'truckCouponsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<List<Coupon>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Coupon>> create(Ref ref) {
+    final argument = this.argument as String;
+    return truckCoupons(ref, argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is TruckCouponsProvider && other.truckId == truckId;
+    return other is TruckCouponsProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, truckId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin TruckCouponsRef on AutoDisposeStreamProviderRef<List<Coupon>> {
-  /// The parameter `truckId` of this provider.
-  String get truckId;
-}
+String _$truckCouponsHash() => r'bcc4e8a1fa636c9cee184e178445771e741d2d3e';
 
-class _TruckCouponsProviderElement
-    extends AutoDisposeStreamProviderElement<List<Coupon>>
-    with TruckCouponsRef {
-  _TruckCouponsProviderElement(super.provider);
+/// Provider for watching truck's coupons
+
+final class TruckCouponsFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<Coupon>>, String> {
+  TruckCouponsFamily._()
+    : super(
+        retry: null,
+        name: r'truckCouponsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Provider for watching truck's coupons
+
+  TruckCouponsProvider call(String truckId) =>
+      TruckCouponsProvider._(argument: truckId, from: this);
 
   @override
-  String get truckId => (origin as TruckCouponsProvider).truckId;
+  String toString() => r'truckCouponsProvider';
+}
+
+/// Provider for getting valid coupons
+
+@ProviderFor(validTruckCoupons)
+final validTruckCouponsProvider = ValidTruckCouponsFamily._();
+
+/// Provider for getting valid coupons
+
+final class ValidTruckCouponsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Coupon>>,
+          List<Coupon>,
+          FutureOr<List<Coupon>>
+        >
+    with $FutureModifier<List<Coupon>>, $FutureProvider<List<Coupon>> {
+  /// Provider for getting valid coupons
+  ValidTruckCouponsProvider._({
+    required ValidTruckCouponsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'validTruckCouponsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$validTruckCouponsHash();
+
+  @override
+  String toString() {
+    return r'validTruckCouponsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<List<Coupon>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<Coupon>> create(Ref ref) {
+    final argument = this.argument as String;
+    return validTruckCoupons(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ValidTruckCouponsProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$validTruckCouponsHash() => r'085b310aa072c2ddc40394cfcb1db585091bc46e';
 
 /// Provider for getting valid coupons
-///
-/// Copied from [validTruckCoupons].
-@ProviderFor(validTruckCoupons)
-const validTruckCouponsProvider = ValidTruckCouponsFamily();
 
-/// Provider for getting valid coupons
-///
-/// Copied from [validTruckCoupons].
-class ValidTruckCouponsFamily extends Family<AsyncValue<List<Coupon>>> {
-  /// Provider for getting valid coupons
-  ///
-  /// Copied from [validTruckCoupons].
-  const ValidTruckCouponsFamily();
-
-  /// Provider for getting valid coupons
-  ///
-  /// Copied from [validTruckCoupons].
-  ValidTruckCouponsProvider call(String truckId) {
-    return ValidTruckCouponsProvider(truckId);
-  }
-
-  @override
-  ValidTruckCouponsProvider getProviderOverride(
-    covariant ValidTruckCouponsProvider provider,
-  ) {
-    return call(provider.truckId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'validTruckCouponsProvider';
-}
-
-/// Provider for getting valid coupons
-///
-/// Copied from [validTruckCoupons].
-class ValidTruckCouponsProvider
-    extends AutoDisposeFutureProvider<List<Coupon>> {
-  /// Provider for getting valid coupons
-  ///
-  /// Copied from [validTruckCoupons].
-  ValidTruckCouponsProvider(String truckId)
-    : this._internal(
-        (ref) => validTruckCoupons(ref as ValidTruckCouponsRef, truckId),
-        from: validTruckCouponsProvider,
+final class ValidTruckCouponsFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<List<Coupon>>, String> {
+  ValidTruckCouponsFamily._()
+    : super(
+        retry: null,
         name: r'validTruckCouponsProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$validTruckCouponsHash,
-        dependencies: ValidTruckCouponsFamily._dependencies,
-        allTransitiveDependencies:
-            ValidTruckCouponsFamily._allTransitiveDependencies,
-        truckId: truckId,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  ValidTruckCouponsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.truckId,
-  }) : super.internal();
+  /// Provider for getting valid coupons
 
-  final String truckId;
+  ValidTruckCouponsProvider call(String truckId) =>
+      ValidTruckCouponsProvider._(argument: truckId, from: this);
 
   @override
-  Override overrideWith(
-    FutureOr<List<Coupon>> Function(ValidTruckCouponsRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: ValidTruckCouponsProvider._internal(
-        (ref) => create(ref as ValidTruckCouponsRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        truckId: truckId,
-      ),
-    );
+  String toString() => r'validTruckCouponsProvider';
+}
+
+/// Provider for getting user's used coupons
+
+@ProviderFor(userUsedCoupons)
+final userUsedCouponsProvider = UserUsedCouponsFamily._();
+
+/// Provider for getting user's used coupons
+
+final class UserUsedCouponsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Coupon>>,
+          List<Coupon>,
+          FutureOr<List<Coupon>>
+        >
+    with $FutureModifier<List<Coupon>>, $FutureProvider<List<Coupon>> {
+  /// Provider for getting user's used coupons
+  UserUsedCouponsProvider._({
+    required UserUsedCouponsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'userUsedCouponsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$userUsedCouponsHash();
+
+  @override
+  String toString() {
+    return r'userUsedCouponsProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  AutoDisposeFutureProviderElement<List<Coupon>> createElement() {
-    return _ValidTruckCouponsProviderElement(this);
+  $FutureProviderElement<List<Coupon>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<Coupon>> create(Ref ref) {
+    final argument = this.argument as String;
+    return userUsedCoupons(ref, argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is ValidTruckCouponsProvider && other.truckId == truckId;
+    return other is UserUsedCouponsProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, truckId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin ValidTruckCouponsRef on AutoDisposeFutureProviderRef<List<Coupon>> {
-  /// The parameter `truckId` of this provider.
-  String get truckId;
-}
-
-class _ValidTruckCouponsProviderElement
-    extends AutoDisposeFutureProviderElement<List<Coupon>>
-    with ValidTruckCouponsRef {
-  _ValidTruckCouponsProviderElement(super.provider);
-
-  @override
-  String get truckId => (origin as ValidTruckCouponsProvider).truckId;
 }
 
 String _$userUsedCouponsHash() => r'a4f196101349ae3e36a6dc621611de513458b542';
 
 /// Provider for getting user's used coupons
-///
-/// Copied from [userUsedCoupons].
-@ProviderFor(userUsedCoupons)
-const userUsedCouponsProvider = UserUsedCouponsFamily();
 
-/// Provider for getting user's used coupons
-///
-/// Copied from [userUsedCoupons].
-class UserUsedCouponsFamily extends Family<AsyncValue<List<Coupon>>> {
-  /// Provider for getting user's used coupons
-  ///
-  /// Copied from [userUsedCoupons].
-  const UserUsedCouponsFamily();
-
-  /// Provider for getting user's used coupons
-  ///
-  /// Copied from [userUsedCoupons].
-  UserUsedCouponsProvider call(String userId) {
-    return UserUsedCouponsProvider(userId);
-  }
-
-  @override
-  UserUsedCouponsProvider getProviderOverride(
-    covariant UserUsedCouponsProvider provider,
-  ) {
-    return call(provider.userId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'userUsedCouponsProvider';
-}
-
-/// Provider for getting user's used coupons
-///
-/// Copied from [userUsedCoupons].
-class UserUsedCouponsProvider extends AutoDisposeFutureProvider<List<Coupon>> {
-  /// Provider for getting user's used coupons
-  ///
-  /// Copied from [userUsedCoupons].
-  UserUsedCouponsProvider(String userId)
-    : this._internal(
-        (ref) => userUsedCoupons(ref as UserUsedCouponsRef, userId),
-        from: userUsedCouponsProvider,
+final class UserUsedCouponsFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<List<Coupon>>, String> {
+  UserUsedCouponsFamily._()
+    : super(
+        retry: null,
         name: r'userUsedCouponsProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$userUsedCouponsHash,
-        dependencies: UserUsedCouponsFamily._dependencies,
-        allTransitiveDependencies:
-            UserUsedCouponsFamily._allTransitiveDependencies,
-        userId: userId,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  UserUsedCouponsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.userId,
-  }) : super.internal();
+  /// Provider for getting user's used coupons
 
-  final String userId;
+  UserUsedCouponsProvider call(String userId) =>
+      UserUsedCouponsProvider._(argument: userId, from: this);
 
   @override
-  Override overrideWith(
-    FutureOr<List<Coupon>> Function(UserUsedCouponsRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: UserUsedCouponsProvider._internal(
-        (ref) => create(ref as UserUsedCouponsRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        userId: userId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<List<Coupon>> createElement() {
-    return _UserUsedCouponsProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is UserUsedCouponsProvider && other.userId == userId;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, userId.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'userUsedCouponsProvider';
 }
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin UserUsedCouponsRef on AutoDisposeFutureProviderRef<List<Coupon>> {
-  /// The parameter `userId` of this provider.
-  String get userId;
-}
-
-class _UserUsedCouponsProviderElement
-    extends AutoDisposeFutureProviderElement<List<Coupon>>
-    with UserUsedCouponsRef {
-  _UserUsedCouponsProviderElement(super.provider);
-
-  @override
-  String get userId => (origin as UserUsedCouponsProvider).userId;
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

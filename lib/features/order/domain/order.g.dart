@@ -6,7 +6,7 @@ part of 'order.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$OrderImpl _$$OrderImplFromJson(Map<String, dynamic> json) => _$OrderImpl(
+_Order _$OrderFromJson(Map<String, dynamic> json) => _Order(
   id: json['id'] as String,
   userId: json['userId'] as String,
   userName: json['userName'] as String,
@@ -29,23 +29,22 @@ _$OrderImpl _$$OrderImplFromJson(Map<String, dynamic> json) => _$OrderImpl(
       : DateTime.parse(json['updatedAt'] as String),
 );
 
-Map<String, dynamic> _$$OrderImplToJson(_$OrderImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'userId': instance.userId,
-      'userName': instance.userName,
-      'truckId': instance.truckId,
-      'truckName': instance.truckName,
-      'items': instance.items,
-      'totalAmount': instance.totalAmount,
-      'status': _$OrderStatusEnumMap[instance.status]!,
-      'specialRequests': instance.specialRequests,
-      'paymentMethod': instance.paymentMethod,
-      'source': instance.source,
-      'itemName': instance.itemName,
-      'createdAt': instance.createdAt?.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
-    };
+Map<String, dynamic> _$OrderToJson(_Order instance) => <String, dynamic>{
+  'id': instance.id,
+  'userId': instance.userId,
+  'userName': instance.userName,
+  'truckId': instance.truckId,
+  'truckName': instance.truckName,
+  'items': instance.items,
+  'totalAmount': instance.totalAmount,
+  'status': _$OrderStatusEnumMap[instance.status]!,
+  'specialRequests': instance.specialRequests,
+  'paymentMethod': instance.paymentMethod,
+  'source': instance.source,
+  'itemName': instance.itemName,
+  'createdAt': instance.createdAt?.toIso8601String(),
+  'updatedAt': instance.updatedAt?.toIso8601String(),
+};
 
 const _$OrderStatusEnumMap = {
   OrderStatus.pending: 'pending',

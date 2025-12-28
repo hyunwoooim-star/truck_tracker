@@ -707,4 +707,136 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get browseAndFollowTrucks => '트럭을 둘러보고 팔로우해보세요!';
+
+  @override
+  String get chat => '채팅';
+
+  @override
+  String get chatList => '채팅 목록';
+
+  @override
+  String get sendMessage => '메시지 전송';
+
+  @override
+  String get typeMessage => '메시지를 입력하세요...';
+
+  @override
+  String get noChatHistory => '아직 채팅 내역이 없습니다';
+
+  @override
+  String get startChatFromTruck => '트럭 상세 페이지에서 채팅을 시작해보세요';
+
+  @override
+  String get cannotLoadChat => '채팅 목록을 불러올 수 없습니다';
+
+  @override
+  String get cannotLoadMessages => '메시지를 불러올 수 없습니다';
+
+  @override
+  String get startChat => '채팅을 시작해보세요';
+
+  @override
+  String get yesterday => '어제';
+
+  @override
+  String get imageSendFailed => '이미지 전송에 실패했습니다';
+
+  @override
+  String get read => '읽음';
+
+  @override
+  String get notificationSettings => '알림 설정';
+
+  @override
+  String enabledNotifications(Object count) {
+    return '$count개 알림 활성화';
+  }
+
+  @override
+  String get enableAll => '전체 켜기';
+
+  @override
+  String get disableAll => '전체 끄기';
+
+  @override
+  String get basicNotifications => '기본 알림';
+
+  @override
+  String get socialNotifications => '소셜 알림';
+
+  @override
+  String get marketingNotifications => '마케팅';
+
+  @override
+  String get locationBasedNotifications => '위치 기반 알림';
+
+  @override
+  String get truckOpeningNotification => '트럭 영업 시작';
+
+  @override
+  String get truckOpeningDesc => '팔로우한 트럭이 영업을 시작하면 알림';
+
+  @override
+  String get orderUpdatesNotification => '주문 상태 변경';
+
+  @override
+  String get orderUpdatesDesc => '주문이 준비되면 알림';
+
+  @override
+  String get newCouponsNotification => '새 쿠폰';
+
+  @override
+  String get newCouponsDesc => '팔로우한 트럭이 새 쿠폰을 발행하면 알림';
+
+  @override
+  String get reviewsNotification => '리뷰 답글';
+
+  @override
+  String get reviewsDesc => '작성한 리뷰에 사장님이 답글을 달면 알림';
+
+  @override
+  String get followedTrucksNotification => '팔로우한 트럭 활동';
+
+  @override
+  String get followedTrucksDesc => '팔로우한 트럭의 새로운 소식 알림';
+
+  @override
+  String get chatMessagesNotification => '채팅 메시지';
+
+  @override
+  String get chatMessagesDesc => '새 채팅 메시지를 받으면 알림';
+
+  @override
+  String get promotionsNotification => '프로모션';
+
+  @override
+  String get promotionsDesc => '특별 이벤트 및 프로모션 알림';
+
+  @override
+  String get nearbyTrucksNotification => '근처 트럭 알림';
+
+  @override
+  String get nearbyTrucksDesc => '근처에서 트럭이 영업을 시작하면 알림';
+
+  @override
+  String notificationRadius(Object radius) {
+    return '알림 반경: $radius km';
+  }
+
+  @override
+  String nearbyRadiusDesc(Object radius) {
+    return '현재 위치로부터 ${radius}km 이내의 트럭이 영업을 시작하면 알림을 받습니다.';
+  }
+
+  @override
+  String get resetSettings => '설정 초기화';
+
+  @override
+  String get resetSettingsConfirm => '알림 설정을 기본값으로 되돌립니다.\n계속하시겠습니까?';
+
+  @override
+  String get settingsReset => '설정이 초기화되었습니다';
+
+  @override
+  String get cannotLoadSettings => '설정을 불러올 수 없습니다';
 }

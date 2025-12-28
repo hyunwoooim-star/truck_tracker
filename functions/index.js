@@ -2,12 +2,39 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
+// CORS whitelist for security
+const allowedOrigins = [
+  'https://truck-tracker-fa0b0.web.app',
+  'https://truck-tracker-fa0b0.firebaseapp.com',
+  'http://localhost:3000',
+  'http://localhost:5000',
+  'http://localhost:8080',
+];
+
+/**
+ * Set CORS headers with whitelist validation
+ * Only allows requests from approved origins
+ */
+function setCorsHeaders(req, res) {
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.set('Access-Control-Allow-Origin', origin);
+  } else {
+    // Reject unauthorized origins
+    res.set('Access-Control-Allow-Origin', 'null');
+  }
+
+  res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.set('Access-Control-Max-Age', '3600');
+}
+
 exports.createCustomToken = functions.https.onRequest(async (req, res) => {
-  // Enable CORS
-  res.set('Access-Control-Allow-Origin', '*');
+  // Apply CORS security
+  setCorsHeaders(req, res);
+
   if (req.method === 'OPTIONS') {
-    res.set('Access-Control-Allow-Methods', 'POST');
-    res.set('Access-Control-Allow-Headers', 'Content-Type');
     res.status(204).send('');
     return;
   }

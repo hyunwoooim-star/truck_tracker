@@ -169,7 +169,7 @@ class AnalyticsScreen extends ConsumerWidget {
           decoration: BoxDecoration(
             color: AppTheme.charcoalMedium,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.electricBlue.withOpacity(0.3)),
+            border: Border.all(color: AppTheme.mustardYellow30),
           ),
           child: LineChart(
             LineChartData(
@@ -179,7 +179,7 @@ class AnalyticsScreen extends ConsumerWidget {
                 horizontalInterval: maxClicks / 5,
                 getDrawingHorizontalLine: (value) {
                   return FlLine(
-                    color: AppTheme.textSecondary.withOpacity(0.1),
+                    color: AppTheme.textSecondary10,
                     strokeWidth: 1,
                   );
                 },
@@ -247,7 +247,7 @@ class AnalyticsScreen extends ConsumerWidget {
                   ),
                   belowBarData: BarAreaData(
                     show: true,
-                    color: AppTheme.electricBlue.withOpacity(0.1),
+                    color: AppTheme.mustardYellow10,
                   ),
                 ),
               ],

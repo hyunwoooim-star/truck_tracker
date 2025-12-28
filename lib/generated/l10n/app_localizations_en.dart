@@ -716,4 +716,140 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browseAndFollowTrucks => 'Browse and follow your favorite trucks!';
+
+  @override
+  String get chat => 'Chat';
+
+  @override
+  String get chatList => 'Chat List';
+
+  @override
+  String get sendMessage => 'Send Message';
+
+  @override
+  String get typeMessage => 'Type a message...';
+
+  @override
+  String get noChatHistory => 'No chat history yet';
+
+  @override
+  String get startChatFromTruck => 'Start a chat from the truck detail page';
+
+  @override
+  String get cannotLoadChat => 'Cannot load chat list';
+
+  @override
+  String get cannotLoadMessages => 'Cannot load messages';
+
+  @override
+  String get startChat => 'Start chatting';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get imageSendFailed => 'Failed to send image';
+
+  @override
+  String get read => 'Read';
+
+  @override
+  String get notificationSettings => 'Notification Settings';
+
+  @override
+  String enabledNotifications(Object count) {
+    return '$count notifications enabled';
+  }
+
+  @override
+  String get enableAll => 'Enable All';
+
+  @override
+  String get disableAll => 'Disable All';
+
+  @override
+  String get basicNotifications => 'Basic Notifications';
+
+  @override
+  String get socialNotifications => 'Social Notifications';
+
+  @override
+  String get marketingNotifications => 'Marketing';
+
+  @override
+  String get locationBasedNotifications => 'Location-Based Notifications';
+
+  @override
+  String get truckOpeningNotification => 'Truck Opening';
+
+  @override
+  String get truckOpeningDesc =>
+      'Get notified when followed trucks start business';
+
+  @override
+  String get orderUpdatesNotification => 'Order Updates';
+
+  @override
+  String get orderUpdatesDesc => 'Get notified when your order is ready';
+
+  @override
+  String get newCouponsNotification => 'New Coupons';
+
+  @override
+  String get newCouponsDesc =>
+      'Get notified when followed trucks issue new coupons';
+
+  @override
+  String get reviewsNotification => 'Review Replies';
+
+  @override
+  String get reviewsDesc => 'Get notified when owners reply to your reviews';
+
+  @override
+  String get followedTrucksNotification => 'Followed Truck Activity';
+
+  @override
+  String get followedTrucksDesc => 'Get updates about trucks you follow';
+
+  @override
+  String get chatMessagesNotification => 'Chat Messages';
+
+  @override
+  String get chatMessagesDesc => 'Get notified of new chat messages';
+
+  @override
+  String get promotionsNotification => 'Promotions';
+
+  @override
+  String get promotionsDesc => 'Receive special events and promotions';
+
+  @override
+  String get nearbyTrucksNotification => 'Nearby Trucks';
+
+  @override
+  String get nearbyTrucksDesc =>
+      'Get notified when trucks start business nearby';
+
+  @override
+  String notificationRadius(Object radius) {
+    return 'Notification Radius: $radius km';
+  }
+
+  @override
+  String nearbyRadiusDesc(Object radius) {
+    return 'You will receive notifications when trucks within ${radius}km of your location start business.';
+  }
+
+  @override
+  String get resetSettings => 'Reset Settings';
+
+  @override
+  String get resetSettingsConfirm =>
+      'Reset notification settings to default.\nContinue?';
+
+  @override
+  String get settingsReset => 'Settings have been reset';
+
+  @override
+  String get cannotLoadSettings => 'Cannot load settings';
 }

@@ -6,348 +6,291 @@ part of 'analytics_repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(analyticsRepository)
+final analyticsRepositoryProvider = AnalyticsRepositoryProvider._();
+
+final class AnalyticsRepositoryProvider
+    extends
+        $FunctionalProvider<
+          AnalyticsRepository,
+          AnalyticsRepository,
+          AnalyticsRepository
+        >
+    with $Provider<AnalyticsRepository> {
+  AnalyticsRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'analyticsRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$analyticsRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<AnalyticsRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  AnalyticsRepository create(Ref ref) {
+    return analyticsRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AnalyticsRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AnalyticsRepository>(value),
+    );
+  }
+}
+
 String _$analyticsRepositoryHash() =>
     r'f250e4697d4a5a6a098297c0a41915f7aa308579';
 
-/// See also [analyticsRepository].
-@ProviderFor(analyticsRepository)
-final analyticsRepositoryProvider =
-    AutoDisposeProvider<AnalyticsRepository>.internal(
-      analyticsRepository,
-      name: r'analyticsRepositoryProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$analyticsRepositoryHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+/// Provider for today's analytics
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef AnalyticsRepositoryRef = AutoDisposeProviderRef<AnalyticsRepository>;
+@ProviderFor(todayAnalytics)
+final todayAnalyticsProvider = TodayAnalyticsFamily._();
+
+/// Provider for today's analytics
+
+final class TodayAnalyticsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<TruckAnalytics>,
+          TruckAnalytics,
+          FutureOr<TruckAnalytics>
+        >
+    with $FutureModifier<TruckAnalytics>, $FutureProvider<TruckAnalytics> {
+  /// Provider for today's analytics
+  TodayAnalyticsProvider._({
+    required TodayAnalyticsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'todayAnalyticsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$todayAnalyticsHash();
+
+  @override
+  String toString() {
+    return r'todayAnalyticsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<TruckAnalytics> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<TruckAnalytics> create(Ref ref) {
+    final argument = this.argument as String;
+    return todayAnalytics(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is TodayAnalyticsProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
 String _$todayAnalyticsHash() => r'7236987c6ff3f97d1bb6944c3e4e403257b2d760';
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
 /// Provider for today's analytics
-///
-/// Copied from [todayAnalytics].
-@ProviderFor(todayAnalytics)
-const todayAnalyticsProvider = TodayAnalyticsFamily();
 
-/// Provider for today's analytics
-///
-/// Copied from [todayAnalytics].
-class TodayAnalyticsFamily extends Family<AsyncValue<TruckAnalytics>> {
-  /// Provider for today's analytics
-  ///
-  /// Copied from [todayAnalytics].
-  const TodayAnalyticsFamily();
-
-  /// Provider for today's analytics
-  ///
-  /// Copied from [todayAnalytics].
-  TodayAnalyticsProvider call(String truckId) {
-    return TodayAnalyticsProvider(truckId);
-  }
-
-  @override
-  TodayAnalyticsProvider getProviderOverride(
-    covariant TodayAnalyticsProvider provider,
-  ) {
-    return call(provider.truckId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'todayAnalyticsProvider';
-}
-
-/// Provider for today's analytics
-///
-/// Copied from [todayAnalytics].
-class TodayAnalyticsProvider extends AutoDisposeFutureProvider<TruckAnalytics> {
-  /// Provider for today's analytics
-  ///
-  /// Copied from [todayAnalytics].
-  TodayAnalyticsProvider(String truckId)
-    : this._internal(
-        (ref) => todayAnalytics(ref as TodayAnalyticsRef, truckId),
-        from: todayAnalyticsProvider,
+final class TodayAnalyticsFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<TruckAnalytics>, String> {
+  TodayAnalyticsFamily._()
+    : super(
+        retry: null,
         name: r'todayAnalyticsProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$todayAnalyticsHash,
-        dependencies: TodayAnalyticsFamily._dependencies,
-        allTransitiveDependencies:
-            TodayAnalyticsFamily._allTransitiveDependencies,
-        truckId: truckId,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  TodayAnalyticsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.truckId,
-  }) : super.internal();
+  /// Provider for today's analytics
 
-  final String truckId;
+  TodayAnalyticsProvider call(String truckId) =>
+      TodayAnalyticsProvider._(argument: truckId, from: this);
 
   @override
-  Override overrideWith(
-    FutureOr<TruckAnalytics> Function(TodayAnalyticsRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: TodayAnalyticsProvider._internal(
-        (ref) => create(ref as TodayAnalyticsRef),
-        from: from,
-        name: null,
+  String toString() => r'todayAnalyticsProvider';
+}
+
+/// Date range state notifier
+
+@ProviderFor(AnalyticsDateRangeNotifier)
+final analyticsDateRangeProvider = AnalyticsDateRangeNotifierProvider._();
+
+/// Date range state notifier
+final class AnalyticsDateRangeNotifierProvider
+    extends
+        $NotifierProvider<AnalyticsDateRangeNotifier, DateTimeRange<DateTime>> {
+  /// Date range state notifier
+  AnalyticsDateRangeNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'analyticsDateRangeProvider',
+        isAutoDispose: true,
         dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        truckId: truckId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<TruckAnalytics> createElement() {
-    return _TodayAnalyticsProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is TodayAnalyticsProvider && other.truckId == truckId;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, truckId.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin TodayAnalyticsRef on AutoDisposeFutureProviderRef<TruckAnalytics> {
-  /// The parameter `truckId` of this provider.
-  String get truckId;
-}
-
-class _TodayAnalyticsProviderElement
-    extends AutoDisposeFutureProviderElement<TruckAnalytics>
-    with TodayAnalyticsRef {
-  _TodayAnalyticsProviderElement(super.provider);
-
-  @override
-  String get truckId => (origin as TodayAnalyticsProvider).truckId;
-}
-
-String _$analyticsRangeHash() => r'7b0763362dd03bb2d51415ae2ff49f66c9468e61';
-
-/// Provider for analytics range
-///
-/// Copied from [analyticsRange].
-@ProviderFor(analyticsRange)
-const analyticsRangeProvider = AnalyticsRangeFamily();
-
-/// Provider for analytics range
-///
-/// Copied from [analyticsRange].
-class AnalyticsRangeFamily extends Family<AsyncValue<TruckAnalyticsRange>> {
-  /// Provider for analytics range
-  ///
-  /// Copied from [analyticsRange].
-  const AnalyticsRangeFamily();
-
-  /// Provider for analytics range
-  ///
-  /// Copied from [analyticsRange].
-  AnalyticsRangeProvider call(
-    String truckId,
-    DateTimeRange<DateTime> dateRange,
-  ) {
-    return AnalyticsRangeProvider(truckId, dateRange);
-  }
-
-  @override
-  AnalyticsRangeProvider getProviderOverride(
-    covariant AnalyticsRangeProvider provider,
-  ) {
-    return call(provider.truckId, provider.dateRange);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'analyticsRangeProvider';
-}
-
-/// Provider for analytics range
-///
-/// Copied from [analyticsRange].
-class AnalyticsRangeProvider
-    extends AutoDisposeFutureProvider<TruckAnalyticsRange> {
-  /// Provider for analytics range
-  ///
-  /// Copied from [analyticsRange].
-  AnalyticsRangeProvider(String truckId, DateTimeRange<DateTime> dateRange)
-    : this._internal(
-        (ref) => analyticsRange(ref as AnalyticsRangeRef, truckId, dateRange),
-        from: analyticsRangeProvider,
-        name: r'analyticsRangeProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$analyticsRangeHash,
-        dependencies: AnalyticsRangeFamily._dependencies,
-        allTransitiveDependencies:
-            AnalyticsRangeFamily._allTransitiveDependencies,
-        truckId: truckId,
-        dateRange: dateRange,
+        $allTransitiveDependencies: null,
       );
 
-  AnalyticsRangeProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.truckId,
-    required this.dateRange,
-  }) : super.internal();
-
-  final String truckId;
-  final DateTimeRange<DateTime> dateRange;
-
   @override
-  Override overrideWith(
-    FutureOr<TruckAnalyticsRange> Function(AnalyticsRangeRef provider) create,
-  ) {
-    return ProviderOverride(
+  String debugGetCreateSourceHash() => _$analyticsDateRangeNotifierHash();
+
+  @$internal
+  @override
+  AnalyticsDateRangeNotifier create() => AnalyticsDateRangeNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DateTimeRange<DateTime> value) {
+    return $ProviderOverride(
       origin: this,
-      override: AnalyticsRangeProvider._internal(
-        (ref) => create(ref as AnalyticsRangeRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        truckId: truckId,
-        dateRange: dateRange,
-      ),
+      providerOverride: $SyncValueProvider<DateTimeRange<DateTime>>(value),
     );
   }
-
-  @override
-  AutoDisposeFutureProviderElement<TruckAnalyticsRange> createElement() {
-    return _AnalyticsRangeProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is AnalyticsRangeProvider &&
-        other.truckId == truckId &&
-        other.dateRange == dateRange;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, truckId.hashCode);
-    hash = _SystemHash.combine(hash, dateRange.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin AnalyticsRangeRef on AutoDisposeFutureProviderRef<TruckAnalyticsRange> {
-  /// The parameter `truckId` of this provider.
-  String get truckId;
-
-  /// The parameter `dateRange` of this provider.
-  DateTimeRange<DateTime> get dateRange;
-}
-
-class _AnalyticsRangeProviderElement
-    extends AutoDisposeFutureProviderElement<TruckAnalyticsRange>
-    with AnalyticsRangeRef {
-  _AnalyticsRangeProviderElement(super.provider);
-
-  @override
-  String get truckId => (origin as AnalyticsRangeProvider).truckId;
-  @override
-  DateTimeRange<DateTime> get dateRange =>
-      (origin as AnalyticsRangeProvider).dateRange;
 }
 
 String _$analyticsDateRangeNotifierHash() =>
     r'deef71cc7346a89c0fdeee8e2d3275c526e7c9f9';
 
 /// Date range state notifier
-///
-/// Copied from [AnalyticsDateRangeNotifier].
-@ProviderFor(AnalyticsDateRangeNotifier)
-final analyticsDateRangeNotifierProvider =
-    AutoDisposeNotifierProvider<
-      AnalyticsDateRangeNotifier,
-      DateTimeRange
-    >.internal(
-      AnalyticsDateRangeNotifier.new,
-      name: r'analyticsDateRangeNotifierProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$analyticsDateRangeNotifierHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
 
-typedef _$AnalyticsDateRangeNotifier = AutoDisposeNotifier<DateTimeRange>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$AnalyticsDateRangeNotifier
+    extends $Notifier<DateTimeRange<DateTime>> {
+  DateTimeRange<DateTime> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref =
+        this.ref as $Ref<DateTimeRange<DateTime>, DateTimeRange<DateTime>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<DateTimeRange<DateTime>, DateTimeRange<DateTime>>,
+              DateTimeRange<DateTime>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+/// Provider for analytics range
+
+@ProviderFor(analyticsRange)
+final analyticsRangeProvider = AnalyticsRangeFamily._();
+
+/// Provider for analytics range
+
+final class AnalyticsRangeProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<TruckAnalyticsRange>,
+          TruckAnalyticsRange,
+          FutureOr<TruckAnalyticsRange>
+        >
+    with
+        $FutureModifier<TruckAnalyticsRange>,
+        $FutureProvider<TruckAnalyticsRange> {
+  /// Provider for analytics range
+  AnalyticsRangeProvider._({
+    required AnalyticsRangeFamily super.from,
+    required (String, DateTimeRange<DateTime>) super.argument,
+  }) : super(
+         retry: null,
+         name: r'analyticsRangeProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$analyticsRangeHash();
+
+  @override
+  String toString() {
+    return r'analyticsRangeProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<TruckAnalyticsRange> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<TruckAnalyticsRange> create(Ref ref) {
+    final argument = this.argument as (String, DateTimeRange<DateTime>);
+    return analyticsRange(ref, argument.$1, argument.$2);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is AnalyticsRangeProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$analyticsRangeHash() => r'7b0763362dd03bb2d51415ae2ff49f66c9468e61';
+
+/// Provider for analytics range
+
+final class AnalyticsRangeFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<TruckAnalyticsRange>,
+          (String, DateTimeRange<DateTime>)
+        > {
+  AnalyticsRangeFamily._()
+    : super(
+        retry: null,
+        name: r'analyticsRangeProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Provider for analytics range
+
+  AnalyticsRangeProvider call(
+    String truckId,
+    DateTimeRange<DateTime> dateRange,
+  ) => AnalyticsRangeProvider._(argument: (truckId, dateRange), from: this);
+
+  @override
+  String toString() => r'analyticsRangeProvider';
+}

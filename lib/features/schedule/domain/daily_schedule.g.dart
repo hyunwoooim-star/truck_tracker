@@ -6,8 +6,8 @@ part of 'daily_schedule.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$DailyScheduleImpl _$$DailyScheduleImplFromJson(Map<String, dynamic> json) =>
-    _$DailyScheduleImpl(
+_DailySchedule _$DailyScheduleFromJson(Map<String, dynamic> json) =>
+    _DailySchedule(
       isOpen: json['isOpen'] as bool? ?? false,
       location: json['location'] as String? ?? '',
       startTime: json['startTime'] as String?,
@@ -16,7 +16,7 @@ _$DailyScheduleImpl _$$DailyScheduleImplFromJson(Map<String, dynamic> json) =>
       longitude: (json['longitude'] as num?)?.toDouble(),
     );
 
-Map<String, dynamic> _$$DailyScheduleImplToJson(_$DailyScheduleImpl instance) =>
+Map<String, dynamic> _$DailyScheduleToJson(_DailySchedule instance) =>
     <String, dynamic>{
       'isOpen': instance.isOpen,
       'location': instance.location,

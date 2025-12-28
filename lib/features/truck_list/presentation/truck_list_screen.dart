@@ -393,7 +393,7 @@ class _FilterBar extends ConsumerWidget {
               tooltip: '고급 필터',
               style: IconButton.styleFrom(
                 backgroundColor: filterState.hasActiveFilters
-                    ? AppTheme.electricBlue.withOpacity(0.2)
+                    ? AppTheme.mustardYellow20
                     : AppTheme.charcoalMedium,
                 foregroundColor: filterState.hasActiveFilters
                     ? AppTheme.electricBlue

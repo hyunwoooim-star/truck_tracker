@@ -6,302 +6,214 @@ part of 'notification_preferences_repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$notificationPreferencesRepositoryHash() =>
-    r'b5ab8e3423c68e453a1031c5dfdec6bdafca7d8c';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [notificationPreferencesRepository].
 @ProviderFor(notificationPreferencesRepository)
 final notificationPreferencesRepositoryProvider =
-    AutoDisposeProvider<NotificationPreferencesRepository>.internal(
-      notificationPreferencesRepository,
-      name: r'notificationPreferencesRepositoryProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$notificationPreferencesRepositoryHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+    NotificationPreferencesRepositoryProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef NotificationPreferencesRepositoryRef =
-    AutoDisposeProviderRef<NotificationPreferencesRepository>;
-String _$notificationSettingsHash() =>
-    r'76eab21b60230376187a34af3d599df8d88cd410';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [notificationSettings].
-@ProviderFor(notificationSettings)
-const notificationSettingsProvider = NotificationSettingsFamily();
-
-/// See also [notificationSettings].
-class NotificationSettingsFamily
-    extends Family<AsyncValue<NotificationSettings>> {
-  /// See also [notificationSettings].
-  const NotificationSettingsFamily();
-
-  /// See also [notificationSettings].
-  NotificationSettingsProvider call(String userId) {
-    return NotificationSettingsProvider(userId);
-  }
-
-  @override
-  NotificationSettingsProvider getProviderOverride(
-    covariant NotificationSettingsProvider provider,
-  ) {
-    return call(provider.userId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'notificationSettingsProvider';
-}
-
-/// See also [notificationSettings].
-class NotificationSettingsProvider
-    extends AutoDisposeFutureProvider<NotificationSettings> {
-  /// See also [notificationSettings].
-  NotificationSettingsProvider(String userId)
-    : this._internal(
-        (ref) => notificationSettings(ref as NotificationSettingsRef, userId),
-        from: notificationSettingsProvider,
-        name: r'notificationSettingsProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$notificationSettingsHash,
-        dependencies: NotificationSettingsFamily._dependencies,
-        allTransitiveDependencies:
-            NotificationSettingsFamily._allTransitiveDependencies,
-        userId: userId,
+final class NotificationPreferencesRepositoryProvider
+    extends
+        $FunctionalProvider<
+          NotificationPreferencesRepository,
+          NotificationPreferencesRepository,
+          NotificationPreferencesRepository
+        >
+    with $Provider<NotificationPreferencesRepository> {
+  NotificationPreferencesRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'notificationPreferencesRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
       );
 
-  NotificationSettingsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.userId,
-  }) : super.internal();
+  @override
+  String debugGetCreateSourceHash() =>
+      _$notificationPreferencesRepositoryHash();
 
-  final String userId;
+  @$internal
+  @override
+  $ProviderElement<NotificationPreferencesRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
-  Override overrideWith(
-    FutureOr<NotificationSettings> Function(NotificationSettingsRef provider)
-    create,
-  ) {
-    return ProviderOverride(
+  NotificationPreferencesRepository create(Ref ref) {
+    return notificationPreferencesRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(NotificationPreferencesRepository value) {
+    return $ProviderOverride(
       origin: this,
-      override: NotificationSettingsProvider._internal(
-        (ref) => create(ref as NotificationSettingsRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        userId: userId,
+      providerOverride: $SyncValueProvider<NotificationPreferencesRepository>(
+        value,
       ),
     );
   }
+}
+
+String _$notificationPreferencesRepositoryHash() =>
+    r'b5ab8e3423c68e453a1031c5dfdec6bdafca7d8c';
+
+@ProviderFor(notificationSettings)
+final notificationSettingsProvider = NotificationSettingsFamily._();
+
+final class NotificationSettingsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<NotificationSettings>,
+          NotificationSettings,
+          FutureOr<NotificationSettings>
+        >
+    with
+        $FutureModifier<NotificationSettings>,
+        $FutureProvider<NotificationSettings> {
+  NotificationSettingsProvider._({
+    required NotificationSettingsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'notificationSettingsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
-  AutoDisposeFutureProviderElement<NotificationSettings> createElement() {
-    return _NotificationSettingsProviderElement(this);
+  String debugGetCreateSourceHash() => _$notificationSettingsHash();
+
+  @override
+  String toString() {
+    return r'notificationSettingsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<NotificationSettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<NotificationSettings> create(Ref ref) {
+    final argument = this.argument as String;
+    return notificationSettings(ref, argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is NotificationSettingsProvider && other.userId == userId;
+    return other is NotificationSettingsProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, userId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin NotificationSettingsRef
-    on AutoDisposeFutureProviderRef<NotificationSettings> {
-  /// The parameter `userId` of this provider.
-  String get userId;
-}
+String _$notificationSettingsHash() =>
+    r'76eab21b60230376187a34af3d599df8d88cd410';
 
-class _NotificationSettingsProviderElement
-    extends AutoDisposeFutureProviderElement<NotificationSettings>
-    with NotificationSettingsRef {
-  _NotificationSettingsProviderElement(super.provider);
-
-  @override
-  String get userId => (origin as NotificationSettingsProvider).userId;
-}
-
-String _$notificationSettingsStreamHash() =>
-    r'8cbd8bf9b434e8b46dbf857c47c3afdbb51879ce';
-
-/// See also [notificationSettingsStream].
-@ProviderFor(notificationSettingsStream)
-const notificationSettingsStreamProvider = NotificationSettingsStreamFamily();
-
-/// See also [notificationSettingsStream].
-class NotificationSettingsStreamFamily
-    extends Family<AsyncValue<NotificationSettings>> {
-  /// See also [notificationSettingsStream].
-  const NotificationSettingsStreamFamily();
-
-  /// See also [notificationSettingsStream].
-  NotificationSettingsStreamProvider call(String userId) {
-    return NotificationSettingsStreamProvider(userId);
-  }
-
-  @override
-  NotificationSettingsStreamProvider getProviderOverride(
-    covariant NotificationSettingsStreamProvider provider,
-  ) {
-    return call(provider.userId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'notificationSettingsStreamProvider';
-}
-
-/// See also [notificationSettingsStream].
-class NotificationSettingsStreamProvider
-    extends AutoDisposeStreamProvider<NotificationSettings> {
-  /// See also [notificationSettingsStream].
-  NotificationSettingsStreamProvider(String userId)
-    : this._internal(
-        (ref) => notificationSettingsStream(
-          ref as NotificationSettingsStreamRef,
-          userId,
-        ),
-        from: notificationSettingsStreamProvider,
-        name: r'notificationSettingsStreamProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$notificationSettingsStreamHash,
-        dependencies: NotificationSettingsStreamFamily._dependencies,
-        allTransitiveDependencies:
-            NotificationSettingsStreamFamily._allTransitiveDependencies,
-        userId: userId,
+final class NotificationSettingsFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<NotificationSettings>, String> {
+  NotificationSettingsFamily._()
+    : super(
+        retry: null,
+        name: r'notificationSettingsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  NotificationSettingsStreamProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.userId,
-  }) : super.internal();
-
-  final String userId;
+  NotificationSettingsProvider call(String userId) =>
+      NotificationSettingsProvider._(argument: userId, from: this);
 
   @override
-  Override overrideWith(
-    Stream<NotificationSettings> Function(
-      NotificationSettingsStreamRef provider,
-    )
-    create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: NotificationSettingsStreamProvider._internal(
-        (ref) => create(ref as NotificationSettingsStreamRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        userId: userId,
-      ),
-    );
+  String toString() => r'notificationSettingsProvider';
+}
+
+@ProviderFor(notificationSettingsStream)
+final notificationSettingsStreamProvider = NotificationSettingsStreamFamily._();
+
+final class NotificationSettingsStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<NotificationSettings>,
+          NotificationSettings,
+          Stream<NotificationSettings>
+        >
+    with
+        $FutureModifier<NotificationSettings>,
+        $StreamProvider<NotificationSettings> {
+  NotificationSettingsStreamProvider._({
+    required NotificationSettingsStreamFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'notificationSettingsStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$notificationSettingsStreamHash();
+
+  @override
+  String toString() {
+    return r'notificationSettingsStreamProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  AutoDisposeStreamProviderElement<NotificationSettings> createElement() {
-    return _NotificationSettingsStreamProviderElement(this);
+  $StreamProviderElement<NotificationSettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<NotificationSettings> create(Ref ref) {
+    final argument = this.argument as String;
+    return notificationSettingsStream(ref, argument);
   }
 
   @override
   bool operator ==(Object other) {
     return other is NotificationSettingsStreamProvider &&
-        other.userId == userId;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, userId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin NotificationSettingsStreamRef
-    on AutoDisposeStreamProviderRef<NotificationSettings> {
-  /// The parameter `userId` of this provider.
-  String get userId;
-}
+String _$notificationSettingsStreamHash() =>
+    r'8cbd8bf9b434e8b46dbf857c47c3afdbb51879ce';
 
-class _NotificationSettingsStreamProviderElement
-    extends AutoDisposeStreamProviderElement<NotificationSettings>
-    with NotificationSettingsStreamRef {
-  _NotificationSettingsStreamProviderElement(super.provider);
+final class NotificationSettingsStreamFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<NotificationSettings>, String> {
+  NotificationSettingsStreamFamily._()
+    : super(
+        retry: null,
+        name: r'notificationSettingsStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  NotificationSettingsStreamProvider call(String userId) =>
+      NotificationSettingsStreamProvider._(argument: userId, from: this);
 
   @override
-  String get userId => (origin as NotificationSettingsStreamProvider).userId;
+  String toString() => r'notificationSettingsStreamProvider';
 }
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

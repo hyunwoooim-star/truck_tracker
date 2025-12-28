@@ -6,7 +6,7 @@ part of 'coupon.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$CouponImpl _$$CouponImplFromJson(Map<String, dynamic> json) => _$CouponImpl(
+_Coupon _$CouponFromJson(Map<String, dynamic> json) => _Coupon(
   id: json['id'] as String,
   truckId: json['truckId'] as String,
   code: json['code'] as String,
@@ -25,23 +25,22 @@ _$CouponImpl _$$CouponImplFromJson(Map<String, dynamic> json) => _$CouponImpl(
   description: json['description'] as String?,
 );
 
-Map<String, dynamic> _$$CouponImplToJson(_$CouponImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'truckId': instance.truckId,
-      'code': instance.code,
-      'type': _$CouponTypeEnumMap[instance.type]!,
-      'discountPercent': instance.discountPercent,
-      'discountAmount': instance.discountAmount,
-      'freeItemName': instance.freeItemName,
-      'validFrom': instance.validFrom.toIso8601String(),
-      'validUntil': instance.validUntil.toIso8601String(),
-      'maxUses': instance.maxUses,
-      'currentUses': instance.currentUses,
-      'usedBy': instance.usedBy,
-      'isActive': instance.isActive,
-      'description': instance.description,
-    };
+Map<String, dynamic> _$CouponToJson(_Coupon instance) => <String, dynamic>{
+  'id': instance.id,
+  'truckId': instance.truckId,
+  'code': instance.code,
+  'type': _$CouponTypeEnumMap[instance.type]!,
+  'discountPercent': instance.discountPercent,
+  'discountAmount': instance.discountAmount,
+  'freeItemName': instance.freeItemName,
+  'validFrom': instance.validFrom.toIso8601String(),
+  'validUntil': instance.validUntil.toIso8601String(),
+  'maxUses': instance.maxUses,
+  'currentUses': instance.currentUses,
+  'usedBy': instance.usedBy,
+  'isActive': instance.isActive,
+  'description': instance.description,
+};
 
 const _$CouponTypeEnumMap = {
   CouponType.percentage: 'percentage',

@@ -6,7 +6,7 @@ part of 'truck.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$TruckImpl _$$TruckImplFromJson(Map<String, dynamic> json) => _$TruckImpl(
+_Truck _$TruckFromJson(Map<String, dynamic> json) => _Truck(
   id: json['id'] as String,
   truckNumber: json['truckNumber'] as String,
   driverName: json['driverName'] as String,
@@ -27,27 +27,26 @@ _$TruckImpl _$$TruckImplFromJson(Map<String, dynamic> json) => _$TruckImpl(
   weeklySchedule: json['weeklySchedule'] as Map<String, dynamic>?,
 );
 
-Map<String, dynamic> _$$TruckImplToJson(_$TruckImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'truckNumber': instance.truckNumber,
-      'driverName': instance.driverName,
-      'status': _$TruckStatusEnumMap[instance.status]!,
-      'foodType': instance.foodType,
-      'locationDescription': instance.locationDescription,
-      'latitude': instance.latitude,
-      'longitude': instance.longitude,
-      'isFavorite': instance.isFavorite,
-      'imageUrl': instance.imageUrl,
-      'ownerEmail': instance.ownerEmail,
-      'bankAccount': instance.bankAccount,
-      'announcement': instance.announcement,
-      'favoriteCount': instance.favoriteCount,
-      'avgRating': instance.avgRating,
-      'totalReviews': instance.totalReviews,
-      'isOpen': instance.isOpen,
-      'weeklySchedule': instance.weeklySchedule,
-    };
+Map<String, dynamic> _$TruckToJson(_Truck instance) => <String, dynamic>{
+  'id': instance.id,
+  'truckNumber': instance.truckNumber,
+  'driverName': instance.driverName,
+  'status': _$TruckStatusEnumMap[instance.status]!,
+  'foodType': instance.foodType,
+  'locationDescription': instance.locationDescription,
+  'latitude': instance.latitude,
+  'longitude': instance.longitude,
+  'isFavorite': instance.isFavorite,
+  'imageUrl': instance.imageUrl,
+  'ownerEmail': instance.ownerEmail,
+  'bankAccount': instance.bankAccount,
+  'announcement': instance.announcement,
+  'favoriteCount': instance.favoriteCount,
+  'avgRating': instance.avgRating,
+  'totalReviews': instance.totalReviews,
+  'isOpen': instance.isOpen,
+  'weeklySchedule': instance.weeklySchedule,
+};
 
 const _$TruckStatusEnumMap = {
   TruckStatus.onRoute: 'onRoute',

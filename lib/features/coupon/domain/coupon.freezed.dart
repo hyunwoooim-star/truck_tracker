@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,468 +9,322 @@ part of 'coupon.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
-
-Coupon _$CouponFromJson(Map<String, dynamic> json) {
-  return _Coupon.fromJson(json);
-}
 
 /// @nodoc
 mixin _$Coupon {
-  String get id => throw _privateConstructorUsedError;
-  String get truckId => throw _privateConstructorUsedError;
-  String get code => throw _privateConstructorUsedError;
-  CouponType get type => throw _privateConstructorUsedError;
-  int? get discountPercent =>
-      throw _privateConstructorUsedError; // % 할인 (type == percentage)
-  int? get discountAmount =>
-      throw _privateConstructorUsedError; // 고정 금액 할인 (type == fixed)
-  String? get freeItemName =>
-      throw _privateConstructorUsedError; // 무료 아이템 이름 (type == freeItem)
-  DateTime get validFrom => throw _privateConstructorUsedError;
-  DateTime get validUntil => throw _privateConstructorUsedError;
-  int get maxUses => throw _privateConstructorUsedError;
-  int get currentUses => throw _privateConstructorUsedError;
-  List<String> get usedBy => throw _privateConstructorUsedError; // userId 목록
-  bool get isActive => throw _privateConstructorUsedError;
-  String? get description => throw _privateConstructorUsedError;
+
+ String get id; String get truckId; String get code; CouponType get type; int? get discountPercent;// % 할인 (type == percentage)
+ int? get discountAmount;// 고정 금액 할인 (type == fixed)
+ String? get freeItemName;// 무료 아이템 이름 (type == freeItem)
+ DateTime get validFrom; DateTime get validUntil; int get maxUses; int get currentUses; List<String> get usedBy;// userId 목록
+ bool get isActive; String? get description;
+/// Create a copy of Coupon
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CouponCopyWith<Coupon> get copyWith => _$CouponCopyWithImpl<Coupon>(this as Coupon, _$identity);
 
   /// Serializes this Coupon to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of Coupon
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $CouponCopyWith<Coupon> get copyWith => throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Coupon&&(identical(other.id, id) || other.id == id)&&(identical(other.truckId, truckId) || other.truckId == truckId)&&(identical(other.code, code) || other.code == code)&&(identical(other.type, type) || other.type == type)&&(identical(other.discountPercent, discountPercent) || other.discountPercent == discountPercent)&&(identical(other.discountAmount, discountAmount) || other.discountAmount == discountAmount)&&(identical(other.freeItemName, freeItemName) || other.freeItemName == freeItemName)&&(identical(other.validFrom, validFrom) || other.validFrom == validFrom)&&(identical(other.validUntil, validUntil) || other.validUntil == validUntil)&&(identical(other.maxUses, maxUses) || other.maxUses == maxUses)&&(identical(other.currentUses, currentUses) || other.currentUses == currentUses)&&const DeepCollectionEquality().equals(other.usedBy, usedBy)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.description, description) || other.description == description));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,truckId,code,type,discountPercent,discountAmount,freeItemName,validFrom,validUntil,maxUses,currentUses,const DeepCollectionEquality().hash(usedBy),isActive,description);
+
+@override
+String toString() {
+  return 'Coupon(id: $id, truckId: $truckId, code: $code, type: $type, discountPercent: $discountPercent, discountAmount: $discountAmount, freeItemName: $freeItemName, validFrom: $validFrom, validUntil: $validUntil, maxUses: $maxUses, currentUses: $currentUses, usedBy: $usedBy, isActive: $isActive, description: $description)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $CouponCopyWith<$Res> {
-  factory $CouponCopyWith(Coupon value, $Res Function(Coupon) then) =
-      _$CouponCopyWithImpl<$Res, Coupon>;
-  @useResult
-  $Res call({
-    String id,
-    String truckId,
-    String code,
-    CouponType type,
-    int? discountPercent,
-    int? discountAmount,
-    String? freeItemName,
-    DateTime validFrom,
-    DateTime validUntil,
-    int maxUses,
-    int currentUses,
-    List<String> usedBy,
-    bool isActive,
-    String? description,
-  });
-}
+abstract mixin class $CouponCopyWith<$Res>  {
+  factory $CouponCopyWith(Coupon value, $Res Function(Coupon) _then) = _$CouponCopyWithImpl;
+@useResult
+$Res call({
+ String id, String truckId, String code, CouponType type, int? discountPercent, int? discountAmount, String? freeItemName, DateTime validFrom, DateTime validUntil, int maxUses, int currentUses, List<String> usedBy, bool isActive, String? description
+});
 
+
+
+
+}
 /// @nodoc
-class _$CouponCopyWithImpl<$Res, $Val extends Coupon>
+class _$CouponCopyWithImpl<$Res>
     implements $CouponCopyWith<$Res> {
-  _$CouponCopyWithImpl(this._value, this._then);
+  _$CouponCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final Coupon _self;
+  final $Res Function(Coupon) _then;
 
-  /// Create a copy of Coupon
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? truckId = null,
-    Object? code = null,
-    Object? type = null,
-    Object? discountPercent = freezed,
-    Object? discountAmount = freezed,
-    Object? freeItemName = freezed,
-    Object? validFrom = null,
-    Object? validUntil = null,
-    Object? maxUses = null,
-    Object? currentUses = null,
-    Object? usedBy = null,
-    Object? isActive = null,
-    Object? description = freezed,
-  }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            truckId: null == truckId
-                ? _value.truckId
-                : truckId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            code: null == code
-                ? _value.code
-                : code // ignore: cast_nullable_to_non_nullable
-                      as String,
-            type: null == type
-                ? _value.type
-                : type // ignore: cast_nullable_to_non_nullable
-                      as CouponType,
-            discountPercent: freezed == discountPercent
-                ? _value.discountPercent
-                : discountPercent // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            discountAmount: freezed == discountAmount
-                ? _value.discountAmount
-                : discountAmount // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            freeItemName: freezed == freeItemName
-                ? _value.freeItemName
-                : freeItemName // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            validFrom: null == validFrom
-                ? _value.validFrom
-                : validFrom // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
-            validUntil: null == validUntil
-                ? _value.validUntil
-                : validUntil // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
-            maxUses: null == maxUses
-                ? _value.maxUses
-                : maxUses // ignore: cast_nullable_to_non_nullable
-                      as int,
-            currentUses: null == currentUses
-                ? _value.currentUses
-                : currentUses // ignore: cast_nullable_to_non_nullable
-                      as int,
-            usedBy: null == usedBy
-                ? _value.usedBy
-                : usedBy // ignore: cast_nullable_to_non_nullable
-                      as List<String>,
-            isActive: null == isActive
-                ? _value.isActive
-                : isActive // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            description: freezed == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String?,
-          )
-          as $Val,
-    );
-  }
+/// Create a copy of Coupon
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? truckId = null,Object? code = null,Object? type = null,Object? discountPercent = freezed,Object? discountAmount = freezed,Object? freeItemName = freezed,Object? validFrom = null,Object? validUntil = null,Object? maxUses = null,Object? currentUses = null,Object? usedBy = null,Object? isActive = null,Object? description = freezed,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,truckId: null == truckId ? _self.truckId : truckId // ignore: cast_nullable_to_non_nullable
+as String,code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as CouponType,discountPercent: freezed == discountPercent ? _self.discountPercent : discountPercent // ignore: cast_nullable_to_non_nullable
+as int?,discountAmount: freezed == discountAmount ? _self.discountAmount : discountAmount // ignore: cast_nullable_to_non_nullable
+as int?,freeItemName: freezed == freeItemName ? _self.freeItemName : freeItemName // ignore: cast_nullable_to_non_nullable
+as String?,validFrom: null == validFrom ? _self.validFrom : validFrom // ignore: cast_nullable_to_non_nullable
+as DateTime,validUntil: null == validUntil ? _self.validUntil : validUntil // ignore: cast_nullable_to_non_nullable
+as DateTime,maxUses: null == maxUses ? _self.maxUses : maxUses // ignore: cast_nullable_to_non_nullable
+as int,currentUses: null == currentUses ? _self.currentUses : currentUses // ignore: cast_nullable_to_non_nullable
+as int,usedBy: null == usedBy ? _self.usedBy : usedBy // ignore: cast_nullable_to_non_nullable
+as List<String>,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
 }
 
-/// @nodoc
-abstract class _$$CouponImplCopyWith<$Res> implements $CouponCopyWith<$Res> {
-  factory _$$CouponImplCopyWith(
-    _$CouponImpl value,
-    $Res Function(_$CouponImpl) then,
-  ) = __$$CouponImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({
-    String id,
-    String truckId,
-    String code,
-    CouponType type,
-    int? discountPercent,
-    int? discountAmount,
-    String? freeItemName,
-    DateTime validFrom,
-    DateTime validUntil,
-    int maxUses,
-    int currentUses,
-    List<String> usedBy,
-    bool isActive,
-    String? description,
-  });
 }
 
-/// @nodoc
-class __$$CouponImplCopyWithImpl<$Res>
-    extends _$CouponCopyWithImpl<$Res, _$CouponImpl>
-    implements _$$CouponImplCopyWith<$Res> {
-  __$$CouponImplCopyWithImpl(
-    _$CouponImpl _value,
-    $Res Function(_$CouponImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of Coupon
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? truckId = null,
-    Object? code = null,
-    Object? type = null,
-    Object? discountPercent = freezed,
-    Object? discountAmount = freezed,
-    Object? freeItemName = freezed,
-    Object? validFrom = null,
-    Object? validUntil = null,
-    Object? maxUses = null,
-    Object? currentUses = null,
-    Object? usedBy = null,
-    Object? isActive = null,
-    Object? description = freezed,
-  }) {
-    return _then(
-      _$CouponImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        truckId: null == truckId
-            ? _value.truckId
-            : truckId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        code: null == code
-            ? _value.code
-            : code // ignore: cast_nullable_to_non_nullable
-                  as String,
-        type: null == type
-            ? _value.type
-            : type // ignore: cast_nullable_to_non_nullable
-                  as CouponType,
-        discountPercent: freezed == discountPercent
-            ? _value.discountPercent
-            : discountPercent // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        discountAmount: freezed == discountAmount
-            ? _value.discountAmount
-            : discountAmount // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        freeItemName: freezed == freeItemName
-            ? _value.freeItemName
-            : freeItemName // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        validFrom: null == validFrom
-            ? _value.validFrom
-            : validFrom // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
-        validUntil: null == validUntil
-            ? _value.validUntil
-            : validUntil // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
-        maxUses: null == maxUses
-            ? _value.maxUses
-            : maxUses // ignore: cast_nullable_to_non_nullable
-                  as int,
-        currentUses: null == currentUses
-            ? _value.currentUses
-            : currentUses // ignore: cast_nullable_to_non_nullable
-                  as int,
-        usedBy: null == usedBy
-            ? _value._usedBy
-            : usedBy // ignore: cast_nullable_to_non_nullable
-                  as List<String>,
-        isActive: null == isActive
-            ? _value.isActive
-            : isActive // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        description: freezed == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String?,
-      ),
-    );
-  }
+/// Adds pattern-matching-related methods to [Coupon].
+extension CouponPatterns on Coupon {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Coupon value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _Coupon() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Coupon value)  $default,){
+final _that = this;
+switch (_that) {
+case _Coupon():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Coupon value)?  $default,){
+final _that = this;
+switch (_that) {
+case _Coupon() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String truckId,  String code,  CouponType type,  int? discountPercent,  int? discountAmount,  String? freeItemName,  DateTime validFrom,  DateTime validUntil,  int maxUses,  int currentUses,  List<String> usedBy,  bool isActive,  String? description)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _Coupon() when $default != null:
+return $default(_that.id,_that.truckId,_that.code,_that.type,_that.discountPercent,_that.discountAmount,_that.freeItemName,_that.validFrom,_that.validUntil,_that.maxUses,_that.currentUses,_that.usedBy,_that.isActive,_that.description);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String truckId,  String code,  CouponType type,  int? discountPercent,  int? discountAmount,  String? freeItemName,  DateTime validFrom,  DateTime validUntil,  int maxUses,  int currentUses,  List<String> usedBy,  bool isActive,  String? description)  $default,) {final _that = this;
+switch (_that) {
+case _Coupon():
+return $default(_that.id,_that.truckId,_that.code,_that.type,_that.discountPercent,_that.discountAmount,_that.freeItemName,_that.validFrom,_that.validUntil,_that.maxUses,_that.currentUses,_that.usedBy,_that.isActive,_that.description);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String truckId,  String code,  CouponType type,  int? discountPercent,  int? discountAmount,  String? freeItemName,  DateTime validFrom,  DateTime validUntil,  int maxUses,  int currentUses,  List<String> usedBy,  bool isActive,  String? description)?  $default,) {final _that = this;
+switch (_that) {
+case _Coupon() when $default != null:
+return $default(_that.id,_that.truckId,_that.code,_that.type,_that.discountPercent,_that.discountAmount,_that.freeItemName,_that.validFrom,_that.validUntil,_that.maxUses,_that.currentUses,_that.usedBy,_that.isActive,_that.description);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$CouponImpl extends _Coupon {
-  const _$CouponImpl({
-    required this.id,
-    required this.truckId,
-    required this.code,
-    required this.type,
-    this.discountPercent,
-    this.discountAmount,
-    this.freeItemName,
-    required this.validFrom,
-    required this.validUntil,
-    required this.maxUses,
-    this.currentUses = 0,
-    final List<String> usedBy = const [],
-    this.isActive = true,
-    this.description,
-  }) : _usedBy = usedBy,
-       super._();
 
-  factory _$CouponImpl.fromJson(Map<String, dynamic> json) =>
-      _$$CouponImplFromJson(json);
+class _Coupon extends Coupon {
+  const _Coupon({required this.id, required this.truckId, required this.code, required this.type, this.discountPercent, this.discountAmount, this.freeItemName, required this.validFrom, required this.validUntil, required this.maxUses, this.currentUses = 0, final  List<String> usedBy = const [], this.isActive = true, this.description}): _usedBy = usedBy,super._();
+  factory _Coupon.fromJson(Map<String, dynamic> json) => _$CouponFromJson(json);
 
-  @override
-  final String id;
-  @override
-  final String truckId;
-  @override
-  final String code;
-  @override
-  final CouponType type;
-  @override
-  final int? discountPercent;
-  // % 할인 (type == percentage)
-  @override
-  final int? discountAmount;
-  // 고정 금액 할인 (type == fixed)
-  @override
-  final String? freeItemName;
-  // 무료 아이템 이름 (type == freeItem)
-  @override
-  final DateTime validFrom;
-  @override
-  final DateTime validUntil;
-  @override
-  final int maxUses;
-  @override
-  @JsonKey()
-  final int currentUses;
-  final List<String> _usedBy;
-  @override
-  @JsonKey()
-  List<String> get usedBy {
-    if (_usedBy is EqualUnmodifiableListView) return _usedBy;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_usedBy);
-  }
-
-  // userId 목록
-  @override
-  @JsonKey()
-  final bool isActive;
-  @override
-  final String? description;
-
-  @override
-  String toString() {
-    return 'Coupon(id: $id, truckId: $truckId, code: $code, type: $type, discountPercent: $discountPercent, discountAmount: $discountAmount, freeItemName: $freeItemName, validFrom: $validFrom, validUntil: $validUntil, maxUses: $maxUses, currentUses: $currentUses, usedBy: $usedBy, isActive: $isActive, description: $description)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$CouponImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.truckId, truckId) || other.truckId == truckId) &&
-            (identical(other.code, code) || other.code == code) &&
-            (identical(other.type, type) || other.type == type) &&
-            (identical(other.discountPercent, discountPercent) ||
-                other.discountPercent == discountPercent) &&
-            (identical(other.discountAmount, discountAmount) ||
-                other.discountAmount == discountAmount) &&
-            (identical(other.freeItemName, freeItemName) ||
-                other.freeItemName == freeItemName) &&
-            (identical(other.validFrom, validFrom) ||
-                other.validFrom == validFrom) &&
-            (identical(other.validUntil, validUntil) ||
-                other.validUntil == validUntil) &&
-            (identical(other.maxUses, maxUses) || other.maxUses == maxUses) &&
-            (identical(other.currentUses, currentUses) ||
-                other.currentUses == currentUses) &&
-            const DeepCollectionEquality().equals(other._usedBy, _usedBy) &&
-            (identical(other.isActive, isActive) ||
-                other.isActive == isActive) &&
-            (identical(other.description, description) ||
-                other.description == description));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    id,
-    truckId,
-    code,
-    type,
-    discountPercent,
-    discountAmount,
-    freeItemName,
-    validFrom,
-    validUntil,
-    maxUses,
-    currentUses,
-    const DeepCollectionEquality().hash(_usedBy),
-    isActive,
-    description,
-  );
-
-  /// Create a copy of Coupon
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$CouponImplCopyWith<_$CouponImpl> get copyWith =>
-      __$$CouponImplCopyWithImpl<_$CouponImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$CouponImplToJson(this);
-  }
+@override final  String id;
+@override final  String truckId;
+@override final  String code;
+@override final  CouponType type;
+@override final  int? discountPercent;
+// % 할인 (type == percentage)
+@override final  int? discountAmount;
+// 고정 금액 할인 (type == fixed)
+@override final  String? freeItemName;
+// 무료 아이템 이름 (type == freeItem)
+@override final  DateTime validFrom;
+@override final  DateTime validUntil;
+@override final  int maxUses;
+@override@JsonKey() final  int currentUses;
+ final  List<String> _usedBy;
+@override@JsonKey() List<String> get usedBy {
+  if (_usedBy is EqualUnmodifiableListView) return _usedBy;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_usedBy);
 }
 
-abstract class _Coupon extends Coupon {
-  const factory _Coupon({
-    required final String id,
-    required final String truckId,
-    required final String code,
-    required final CouponType type,
-    final int? discountPercent,
-    final int? discountAmount,
-    final String? freeItemName,
-    required final DateTime validFrom,
-    required final DateTime validUntil,
-    required final int maxUses,
-    final int currentUses,
-    final List<String> usedBy,
-    final bool isActive,
-    final String? description,
-  }) = _$CouponImpl;
-  const _Coupon._() : super._();
+// userId 목록
+@override@JsonKey() final  bool isActive;
+@override final  String? description;
 
-  factory _Coupon.fromJson(Map<String, dynamic> json) = _$CouponImpl.fromJson;
+/// Create a copy of Coupon
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$CouponCopyWith<_Coupon> get copyWith => __$CouponCopyWithImpl<_Coupon>(this, _$identity);
 
-  @override
-  String get id;
-  @override
-  String get truckId;
-  @override
-  String get code;
-  @override
-  CouponType get type;
-  @override
-  int? get discountPercent; // % 할인 (type == percentage)
-  @override
-  int? get discountAmount; // 고정 금액 할인 (type == fixed)
-  @override
-  String? get freeItemName; // 무료 아이템 이름 (type == freeItem)
-  @override
-  DateTime get validFrom;
-  @override
-  DateTime get validUntil;
-  @override
-  int get maxUses;
-  @override
-  int get currentUses;
-  @override
-  List<String> get usedBy; // userId 목록
-  @override
-  bool get isActive;
-  @override
-  String? get description;
-
-  /// Create a copy of Coupon
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$CouponImplCopyWith<_$CouponImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+Map<String, dynamic> toJson() {
+  return _$CouponToJson(this, );
 }
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Coupon&&(identical(other.id, id) || other.id == id)&&(identical(other.truckId, truckId) || other.truckId == truckId)&&(identical(other.code, code) || other.code == code)&&(identical(other.type, type) || other.type == type)&&(identical(other.discountPercent, discountPercent) || other.discountPercent == discountPercent)&&(identical(other.discountAmount, discountAmount) || other.discountAmount == discountAmount)&&(identical(other.freeItemName, freeItemName) || other.freeItemName == freeItemName)&&(identical(other.validFrom, validFrom) || other.validFrom == validFrom)&&(identical(other.validUntil, validUntil) || other.validUntil == validUntil)&&(identical(other.maxUses, maxUses) || other.maxUses == maxUses)&&(identical(other.currentUses, currentUses) || other.currentUses == currentUses)&&const DeepCollectionEquality().equals(other._usedBy, _usedBy)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.description, description) || other.description == description));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,truckId,code,type,discountPercent,discountAmount,freeItemName,validFrom,validUntil,maxUses,currentUses,const DeepCollectionEquality().hash(_usedBy),isActive,description);
+
+@override
+String toString() {
+  return 'Coupon(id: $id, truckId: $truckId, code: $code, type: $type, discountPercent: $discountPercent, discountAmount: $discountAmount, freeItemName: $freeItemName, validFrom: $validFrom, validUntil: $validUntil, maxUses: $maxUses, currentUses: $currentUses, usedBy: $usedBy, isActive: $isActive, description: $description)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$CouponCopyWith<$Res> implements $CouponCopyWith<$Res> {
+  factory _$CouponCopyWith(_Coupon value, $Res Function(_Coupon) _then) = __$CouponCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String truckId, String code, CouponType type, int? discountPercent, int? discountAmount, String? freeItemName, DateTime validFrom, DateTime validUntil, int maxUses, int currentUses, List<String> usedBy, bool isActive, String? description
+});
+
+
+
+
+}
+/// @nodoc
+class __$CouponCopyWithImpl<$Res>
+    implements _$CouponCopyWith<$Res> {
+  __$CouponCopyWithImpl(this._self, this._then);
+
+  final _Coupon _self;
+  final $Res Function(_Coupon) _then;
+
+/// Create a copy of Coupon
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? truckId = null,Object? code = null,Object? type = null,Object? discountPercent = freezed,Object? discountAmount = freezed,Object? freeItemName = freezed,Object? validFrom = null,Object? validUntil = null,Object? maxUses = null,Object? currentUses = null,Object? usedBy = null,Object? isActive = null,Object? description = freezed,}) {
+  return _then(_Coupon(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,truckId: null == truckId ? _self.truckId : truckId // ignore: cast_nullable_to_non_nullable
+as String,code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as CouponType,discountPercent: freezed == discountPercent ? _self.discountPercent : discountPercent // ignore: cast_nullable_to_non_nullable
+as int?,discountAmount: freezed == discountAmount ? _self.discountAmount : discountAmount // ignore: cast_nullable_to_non_nullable
+as int?,freeItemName: freezed == freeItemName ? _self.freeItemName : freeItemName // ignore: cast_nullable_to_non_nullable
+as String?,validFrom: null == validFrom ? _self.validFrom : validFrom // ignore: cast_nullable_to_non_nullable
+as DateTime,validUntil: null == validUntil ? _self.validUntil : validUntil // ignore: cast_nullable_to_non_nullable
+as DateTime,maxUses: null == maxUses ? _self.maxUses : maxUses // ignore: cast_nullable_to_non_nullable
+as int,currentUses: null == currentUses ? _self.currentUses : currentUses // ignore: cast_nullable_to_non_nullable
+as int,usedBy: null == usedBy ? _self._usedBy : usedBy // ignore: cast_nullable_to_non_nullable
+as List<String>,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+// dart format on

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/app_logger.dart';
+import '../../../core/utils/password_validator.dart';
 import '../../notifications/fcm_service.dart';
 import '../../truck_list/presentation/truck_list_screen.dart';
 import '../../owner_dashboard/presentation/owner_dashboard_screen.dart';
@@ -291,7 +293,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     decoration: InputDecoration(
                       labelText: '비밀번호',
                       labelStyle: const TextStyle(color: Color(0xFFB0B0B0)),
-                      hintText: '6자 이상 입력',
+                      hintText: _isLogin ? '6자 이상 입력' : '8자 이상, 대소문자+숫자+특수문자',
                       hintStyle: const TextStyle(color: Color(0xFF808080)),
                       prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFFB0B0B0)),
                       suffixIcon: IconButton(
@@ -326,18 +328,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '비밀번호를 입력해주세요';
-                      }
-                      if (value.length < 6) {
-                        return '비밀번호는 최소 6자 이상이어야 합니다';
-                      }
-                      // TODO: For production, add stronger validation for sign-up mode:
-                      // - At least one uppercase letter
-                      // - At least one lowercase letter
-                      // - At least one number
-                      // - At least one special character
-                      return null;
+                      return PasswordValidator.validate(
+                        value ?? '',
+                        isSignUp: !_isLogin,
+                      );
                     },
                   ),
                   const SizedBox(height: 16),
@@ -620,59 +614,57 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Owner Login Button (테스트용 - 직접 사장님 대시보드로 이동)
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppTheme.electricBlue.withValues(alpha: 0.5),
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ElevatedButton(
-                      onPressed: _isLoading
-                          ? null
-                          : () async {
-                              AppLogger.debug('Owner test login button pressed', tag: 'LoginScreen');
-                              AppLogger.debug('_isLoading: $_isLoading', tag: 'LoginScreen');
-                              AppLogger.debug('Navigating to OwnerDashboardScreen...', tag: 'LoginScreen');
-                              // 테스트용: 이메일로 로그인 후 Firestore에서 ownedTruckId가 있으면 사장님 대시보드로 이동
-                              // 실제로는 위의 이메일 로그인을 사용하고 Firestore에 ownedTruckId를 설정해야 함
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (_) => const OwnerDashboardScreen(),
-                                ),
-                              );
-                              AppLogger.debug('Navigation initiated', tag: 'LoginScreen');
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        foregroundColor: AppTheme.electricBlue,
-                        shadowColor: Colors.transparent,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                  // Owner Login Button (DEBUG ONLY - bypasses auth in debug mode)
+                  if (kDebugMode) ...[
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: AppTheme.electricBlue.withValues(alpha: 0.5),
+                          width: 2,
                         ),
-                        elevation: 0,
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.store, color: AppTheme.electricBlue),
-                          const SizedBox(width: 12),
-                          Text(
-                            '사장님으로 시작하기 (테스트)',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.electricBlue,
-                            ),
+                      child: ElevatedButton(
+                        onPressed: _isLoading
+                            ? null
+                            : () async {
+                                AppLogger.debug('[DEBUG ONLY] Owner test login button pressed', tag: 'LoginScreen');
+                                AppLogger.debug('[DEBUG ONLY] Bypassing authentication - navigating to OwnerDashboardScreen', tag: 'LoginScreen');
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (_) => const OwnerDashboardScreen(),
+                                  ),
+                                );
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: AppTheme.electricBlue,
+                          shadowColor: Colors.transparent,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                        ],
+                          elevation: 0,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.store, color: AppTheme.electricBlue),
+                            const SizedBox(width: 12),
+                            Text(
+                              '[DEBUG ONLY] 사장님 모드 바로가기',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.electricBlue,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
+                  ],
 
                   // Skip to main screen (guest mode)
                   TextButton(

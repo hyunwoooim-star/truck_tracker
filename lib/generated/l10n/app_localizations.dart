@@ -1429,6 +1429,258 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'트럭을 둘러보고 팔로우해보세요!'**
   String get browseAndFollowTrucks;
+
+  /// No description provided for @chat.
+  ///
+  /// In ko, this message translates to:
+  /// **'채팅'**
+  String get chat;
+
+  /// No description provided for @chatList.
+  ///
+  /// In ko, this message translates to:
+  /// **'채팅 목록'**
+  String get chatList;
+
+  /// No description provided for @sendMessage.
+  ///
+  /// In ko, this message translates to:
+  /// **'메시지 전송'**
+  String get sendMessage;
+
+  /// No description provided for @typeMessage.
+  ///
+  /// In ko, this message translates to:
+  /// **'메시지를 입력하세요...'**
+  String get typeMessage;
+
+  /// No description provided for @noChatHistory.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 채팅 내역이 없습니다'**
+  String get noChatHistory;
+
+  /// No description provided for @startChatFromTruck.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭 상세 페이지에서 채팅을 시작해보세요'**
+  String get startChatFromTruck;
+
+  /// No description provided for @cannotLoadChat.
+  ///
+  /// In ko, this message translates to:
+  /// **'채팅 목록을 불러올 수 없습니다'**
+  String get cannotLoadChat;
+
+  /// No description provided for @cannotLoadMessages.
+  ///
+  /// In ko, this message translates to:
+  /// **'메시지를 불러올 수 없습니다'**
+  String get cannotLoadMessages;
+
+  /// No description provided for @startChat.
+  ///
+  /// In ko, this message translates to:
+  /// **'채팅을 시작해보세요'**
+  String get startChat;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In ko, this message translates to:
+  /// **'어제'**
+  String get yesterday;
+
+  /// No description provided for @imageSendFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미지 전송에 실패했습니다'**
+  String get imageSendFailed;
+
+  /// No description provided for @read.
+  ///
+  /// In ko, this message translates to:
+  /// **'읽음'**
+  String get read;
+
+  /// No description provided for @notificationSettings.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림 설정'**
+  String get notificationSettings;
+
+  /// No description provided for @enabledNotifications.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}개 알림 활성화'**
+  String enabledNotifications(Object count);
+
+  /// No description provided for @enableAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 켜기'**
+  String get enableAll;
+
+  /// No description provided for @disableAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 끄기'**
+  String get disableAll;
+
+  /// No description provided for @basicNotifications.
+  ///
+  /// In ko, this message translates to:
+  /// **'기본 알림'**
+  String get basicNotifications;
+
+  /// No description provided for @socialNotifications.
+  ///
+  /// In ko, this message translates to:
+  /// **'소셜 알림'**
+  String get socialNotifications;
+
+  /// No description provided for @marketingNotifications.
+  ///
+  /// In ko, this message translates to:
+  /// **'마케팅'**
+  String get marketingNotifications;
+
+  /// No description provided for @locationBasedNotifications.
+  ///
+  /// In ko, this message translates to:
+  /// **'위치 기반 알림'**
+  String get locationBasedNotifications;
+
+  /// No description provided for @truckOpeningNotification.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭 영업 시작'**
+  String get truckOpeningNotification;
+
+  /// No description provided for @truckOpeningDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'팔로우한 트럭이 영업을 시작하면 알림'**
+  String get truckOpeningDesc;
+
+  /// No description provided for @orderUpdatesNotification.
+  ///
+  /// In ko, this message translates to:
+  /// **'주문 상태 변경'**
+  String get orderUpdatesNotification;
+
+  /// No description provided for @orderUpdatesDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'주문이 준비되면 알림'**
+  String get orderUpdatesDesc;
+
+  /// No description provided for @newCouponsNotification.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 쿠폰'**
+  String get newCouponsNotification;
+
+  /// No description provided for @newCouponsDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'팔로우한 트럭이 새 쿠폰을 발행하면 알림'**
+  String get newCouponsDesc;
+
+  /// No description provided for @reviewsNotification.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 답글'**
+  String get reviewsNotification;
+
+  /// No description provided for @reviewsDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'작성한 리뷰에 사장님이 답글을 달면 알림'**
+  String get reviewsDesc;
+
+  /// No description provided for @followedTrucksNotification.
+  ///
+  /// In ko, this message translates to:
+  /// **'팔로우한 트럭 활동'**
+  String get followedTrucksNotification;
+
+  /// No description provided for @followedTrucksDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'팔로우한 트럭의 새로운 소식 알림'**
+  String get followedTrucksDesc;
+
+  /// No description provided for @chatMessagesNotification.
+  ///
+  /// In ko, this message translates to:
+  /// **'채팅 메시지'**
+  String get chatMessagesNotification;
+
+  /// No description provided for @chatMessagesDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 채팅 메시지를 받으면 알림'**
+  String get chatMessagesDesc;
+
+  /// No description provided for @promotionsNotification.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로모션'**
+  String get promotionsNotification;
+
+  /// No description provided for @promotionsDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'특별 이벤트 및 프로모션 알림'**
+  String get promotionsDesc;
+
+  /// No description provided for @nearbyTrucksNotification.
+  ///
+  /// In ko, this message translates to:
+  /// **'근처 트럭 알림'**
+  String get nearbyTrucksNotification;
+
+  /// No description provided for @nearbyTrucksDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'근처에서 트럭이 영업을 시작하면 알림'**
+  String get nearbyTrucksDesc;
+
+  /// No description provided for @notificationRadius.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림 반경: {radius} km'**
+  String notificationRadius(Object radius);
+
+  /// No description provided for @nearbyRadiusDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 위치로부터 {radius}km 이내의 트럭이 영업을 시작하면 알림을 받습니다.'**
+  String nearbyRadiusDesc(Object radius);
+
+  /// No description provided for @resetSettings.
+  ///
+  /// In ko, this message translates to:
+  /// **'설정 초기화'**
+  String get resetSettings;
+
+  /// No description provided for @resetSettingsConfirm.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림 설정을 기본값으로 되돌립니다.\n계속하시겠습니까?'**
+  String get resetSettingsConfirm;
+
+  /// No description provided for @settingsReset.
+  ///
+  /// In ko, this message translates to:
+  /// **'설정이 초기화되었습니다'**
+  String get settingsReset;
+
+  /// No description provided for @cannotLoadSettings.
+  ///
+  /// In ko, this message translates to:
+  /// **'설정을 불러올 수 없습니다'**
+  String get cannotLoadSettings;
 }
 
 class _AppLocalizationsDelegate

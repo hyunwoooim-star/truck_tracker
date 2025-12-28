@@ -6,306 +6,215 @@ part of 'order_repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$orderRepositoryHash() => r'9253d73f04ce8fb2e624da9bd81ad25a644540cd';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [orderRepository].
 @ProviderFor(orderRepository)
-final orderRepositoryProvider = AutoDisposeProvider<OrderRepository>.internal(
-  orderRepository,
-  name: r'orderRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$orderRepositoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final orderRepositoryProvider = OrderRepositoryProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef OrderRepositoryRef = AutoDisposeProviderRef<OrderRepository>;
-String _$userOrdersHash() => r'fad867b94a6045b524701a79f1b91c313e218fb3';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// Provider for watching user orders
-///
-/// Copied from [userOrders].
-@ProviderFor(userOrders)
-const userOrdersProvider = UserOrdersFamily();
-
-/// Provider for watching user orders
-///
-/// Copied from [userOrders].
-class UserOrdersFamily extends Family<AsyncValue<List<domain.Order>>> {
-  /// Provider for watching user orders
-  ///
-  /// Copied from [userOrders].
-  const UserOrdersFamily();
-
-  /// Provider for watching user orders
-  ///
-  /// Copied from [userOrders].
-  UserOrdersProvider call(String userId) {
-    return UserOrdersProvider(userId);
-  }
-
-  @override
-  UserOrdersProvider getProviderOverride(
-    covariant UserOrdersProvider provider,
-  ) {
-    return call(provider.userId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'userOrdersProvider';
-}
-
-/// Provider for watching user orders
-///
-/// Copied from [userOrders].
-class UserOrdersProvider extends AutoDisposeStreamProvider<List<domain.Order>> {
-  /// Provider for watching user orders
-  ///
-  /// Copied from [userOrders].
-  UserOrdersProvider(String userId)
-    : this._internal(
-        (ref) => userOrders(ref as UserOrdersRef, userId),
-        from: userOrdersProvider,
-        name: r'userOrdersProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$userOrdersHash,
-        dependencies: UserOrdersFamily._dependencies,
-        allTransitiveDependencies: UserOrdersFamily._allTransitiveDependencies,
-        userId: userId,
+final class OrderRepositoryProvider
+    extends
+        $FunctionalProvider<OrderRepository, OrderRepository, OrderRepository>
+    with $Provider<OrderRepository> {
+  OrderRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'orderRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
       );
 
-  UserOrdersProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.userId,
-  }) : super.internal();
+  @override
+  String debugGetCreateSourceHash() => _$orderRepositoryHash();
 
-  final String userId;
+  @$internal
+  @override
+  $ProviderElement<OrderRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  Override overrideWith(
-    Stream<List<domain.Order>> Function(UserOrdersRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: UserOrdersProvider._internal(
-        (ref) => create(ref as UserOrdersRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        userId: userId,
-      ),
-    );
+  OrderRepository create(Ref ref) {
+    return orderRepository(ref);
   }
 
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(OrderRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<OrderRepository>(value),
+    );
+  }
+}
+
+String _$orderRepositoryHash() => r'9253d73f04ce8fb2e624da9bd81ad25a644540cd';
+
+/// Provider for watching user orders
+
+@ProviderFor(userOrders)
+final userOrdersProvider = UserOrdersFamily._();
+
+/// Provider for watching user orders
+
+final class UserOrdersProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Order>>,
+          List<Order>,
+          Stream<List<Order>>
+        >
+    with $FutureModifier<List<Order>>, $StreamProvider<List<Order>> {
+  /// Provider for watching user orders
+  UserOrdersProvider._({
+    required UserOrdersFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'userOrdersProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
   @override
-  AutoDisposeStreamProviderElement<List<domain.Order>> createElement() {
-    return _UserOrdersProviderElement(this);
+  String debugGetCreateSourceHash() => _$userOrdersHash();
+
+  @override
+  String toString() {
+    return r'userOrdersProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<List<Order>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Order>> create(Ref ref) {
+    final argument = this.argument as String;
+    return userOrders(ref, argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is UserOrdersProvider && other.userId == userId;
+    return other is UserOrdersProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, userId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin UserOrdersRef on AutoDisposeStreamProviderRef<List<domain.Order>> {
-  /// The parameter `userId` of this provider.
-  String get userId;
-}
+String _$userOrdersHash() => r'fad867b94a6045b524701a79f1b91c313e218fb3';
 
-class _UserOrdersProviderElement
-    extends AutoDisposeStreamProviderElement<List<domain.Order>>
-    with UserOrdersRef {
-  _UserOrdersProviderElement(super.provider);
+/// Provider for watching user orders
+
+final class UserOrdersFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<Order>>, String> {
+  UserOrdersFamily._()
+    : super(
+        retry: null,
+        name: r'userOrdersProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Provider for watching user orders
+
+  UserOrdersProvider call(String userId) =>
+      UserOrdersProvider._(argument: userId, from: this);
 
   @override
-  String get userId => (origin as UserOrdersProvider).userId;
+  String toString() => r'userOrdersProvider';
+}
+
+/// Provider for watching truck orders
+
+@ProviderFor(truckOrders)
+final truckOrdersProvider = TruckOrdersFamily._();
+
+/// Provider for watching truck orders
+
+final class TruckOrdersProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Order>>,
+          List<Order>,
+          Stream<List<Order>>
+        >
+    with $FutureModifier<List<Order>>, $StreamProvider<List<Order>> {
+  /// Provider for watching truck orders
+  TruckOrdersProvider._({
+    required TruckOrdersFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'truckOrdersProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$truckOrdersHash();
+
+  @override
+  String toString() {
+    return r'truckOrdersProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<List<Order>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Order>> create(Ref ref) {
+    final argument = this.argument as String;
+    return truckOrders(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is TruckOrdersProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$truckOrdersHash() => r'b76284d25f7e6ad1ccabdbebbd8c0ab9e5758eef';
 
 /// Provider for watching truck orders
-///
-/// Copied from [truckOrders].
-@ProviderFor(truckOrders)
-const truckOrdersProvider = TruckOrdersFamily();
 
-/// Provider for watching truck orders
-///
-/// Copied from [truckOrders].
-class TruckOrdersFamily extends Family<AsyncValue<List<domain.Order>>> {
-  /// Provider for watching truck orders
-  ///
-  /// Copied from [truckOrders].
-  const TruckOrdersFamily();
-
-  /// Provider for watching truck orders
-  ///
-  /// Copied from [truckOrders].
-  TruckOrdersProvider call(String truckId) {
-    return TruckOrdersProvider(truckId);
-  }
-
-  @override
-  TruckOrdersProvider getProviderOverride(
-    covariant TruckOrdersProvider provider,
-  ) {
-    return call(provider.truckId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'truckOrdersProvider';
-}
-
-/// Provider for watching truck orders
-///
-/// Copied from [truckOrders].
-class TruckOrdersProvider
-    extends AutoDisposeStreamProvider<List<domain.Order>> {
-  /// Provider for watching truck orders
-  ///
-  /// Copied from [truckOrders].
-  TruckOrdersProvider(String truckId)
-    : this._internal(
-        (ref) => truckOrders(ref as TruckOrdersRef, truckId),
-        from: truckOrdersProvider,
+final class TruckOrdersFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<Order>>, String> {
+  TruckOrdersFamily._()
+    : super(
+        retry: null,
         name: r'truckOrdersProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$truckOrdersHash,
-        dependencies: TruckOrdersFamily._dependencies,
-        allTransitiveDependencies: TruckOrdersFamily._allTransitiveDependencies,
-        truckId: truckId,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  TruckOrdersProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.truckId,
-  }) : super.internal();
+  /// Provider for watching truck orders
 
-  final String truckId;
+  TruckOrdersProvider call(String truckId) =>
+      TruckOrdersProvider._(argument: truckId, from: this);
 
   @override
-  Override overrideWith(
-    Stream<List<domain.Order>> Function(TruckOrdersRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: TruckOrdersProvider._internal(
-        (ref) => create(ref as TruckOrdersRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        truckId: truckId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeStreamProviderElement<List<domain.Order>> createElement() {
-    return _TruckOrdersProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is TruckOrdersProvider && other.truckId == truckId;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, truckId.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'truckOrdersProvider';
 }
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin TruckOrdersRef on AutoDisposeStreamProviderRef<List<domain.Order>> {
-  /// The parameter `truckId` of this provider.
-  String get truckId;
-}
-
-class _TruckOrdersProviderElement
-    extends AutoDisposeStreamProviderElement<List<domain.Order>>
-    with TruckOrdersRef {
-  _TruckOrdersProviderElement(super.provider);
-
-  @override
-  String get truckId => (origin as TruckOrdersProvider).truckId;
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

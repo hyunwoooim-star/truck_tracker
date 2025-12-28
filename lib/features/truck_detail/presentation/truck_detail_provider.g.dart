@@ -6,311 +6,218 @@ part of 'truck_detail_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(truckDetailRepository)
+final truckDetailRepositoryProvider = TruckDetailRepositoryProvider._();
+
+final class TruckDetailRepositoryProvider
+    extends
+        $FunctionalProvider<
+          TruckDetailRepository,
+          TruckDetailRepository,
+          TruckDetailRepository
+        >
+    with $Provider<TruckDetailRepository> {
+  TruckDetailRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'truckDetailRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$truckDetailRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<TruckDetailRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  TruckDetailRepository create(Ref ref) {
+    return truckDetailRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(TruckDetailRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<TruckDetailRepository>(value),
+    );
+  }
+}
+
 String _$truckDetailRepositoryHash() =>
     r'938a9dfb4753e5c3e58858e2e8b7e9846ae2c131';
 
-/// See also [truckDetailRepository].
-@ProviderFor(truckDetailRepository)
-final truckDetailRepositoryProvider =
-    AutoDisposeProvider<TruckDetailRepository>.internal(
-      truckDetailRepository,
-      name: r'truckDetailRepositoryProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$truckDetailRepositoryHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef TruckDetailRepositoryRef =
-    AutoDisposeProviderRef<TruckDetailRepository>;
-String _$truckDetailStreamHash() => r'85cd681bce732150c714725d4ecd9c9eeb7acf75';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [truckDetailStream].
 @ProviderFor(truckDetailStream)
-const truckDetailStreamProvider = TruckDetailStreamFamily();
+final truckDetailStreamProvider = TruckDetailStreamFamily._();
 
-/// See also [truckDetailStream].
-class TruckDetailStreamFamily extends Family<AsyncValue<TruckDetail?>> {
-  /// See also [truckDetailStream].
-  const TruckDetailStreamFamily();
+final class TruckDetailStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<TruckDetail?>,
+          TruckDetail?,
+          Stream<TruckDetail?>
+        >
+    with $FutureModifier<TruckDetail?>, $StreamProvider<TruckDetail?> {
+  TruckDetailStreamProvider._({
+    required TruckDetailStreamFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'truckDetailStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [truckDetailStream].
-  TruckDetailStreamProvider call(String truckId) {
-    return TruckDetailStreamProvider(truckId);
+  @override
+  String debugGetCreateSourceHash() => _$truckDetailStreamHash();
+
+  @override
+  String toString() {
+    return r'truckDetailStreamProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  TruckDetailStreamProvider getProviderOverride(
-    covariant TruckDetailStreamProvider provider,
-  ) {
-    return call(provider.truckId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
+  $StreamProviderElement<TruckDetail?> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'truckDetailStreamProvider';
-}
-
-/// See also [truckDetailStream].
-class TruckDetailStreamProvider
-    extends AutoDisposeStreamProvider<TruckDetail?> {
-  /// See also [truckDetailStream].
-  TruckDetailStreamProvider(String truckId)
-    : this._internal(
-        (ref) => truckDetailStream(ref as TruckDetailStreamRef, truckId),
-        from: truckDetailStreamProvider,
-        name: r'truckDetailStreamProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$truckDetailStreamHash,
-        dependencies: TruckDetailStreamFamily._dependencies,
-        allTransitiveDependencies:
-            TruckDetailStreamFamily._allTransitiveDependencies,
-        truckId: truckId,
-      );
-
-  TruckDetailStreamProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.truckId,
-  }) : super.internal();
-
-  final String truckId;
-
-  @override
-  Override overrideWith(
-    Stream<TruckDetail?> Function(TruckDetailStreamRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: TruckDetailStreamProvider._internal(
-        (ref) => create(ref as TruckDetailStreamRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        truckId: truckId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeStreamProviderElement<TruckDetail?> createElement() {
-    return _TruckDetailStreamProviderElement(this);
+  Stream<TruckDetail?> create(Ref ref) {
+    final argument = this.argument as String;
+    return truckDetailStream(ref, argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is TruckDetailStreamProvider && other.truckId == truckId;
+    return other is TruckDetailStreamProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, truckId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin TruckDetailStreamRef on AutoDisposeStreamProviderRef<TruckDetail?> {
-  /// The parameter `truckId` of this provider.
-  String get truckId;
-}
+String _$truckDetailStreamHash() => r'85cd681bce732150c714725d4ecd9c9eeb7acf75';
 
-class _TruckDetailStreamProviderElement
-    extends AutoDisposeStreamProviderElement<TruckDetail?>
-    with TruckDetailStreamRef {
-  _TruckDetailStreamProviderElement(super.provider);
+final class TruckDetailStreamFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<TruckDetail?>, String> {
+  TruckDetailStreamFamily._()
+    : super(
+        retry: null,
+        name: r'truckDetailStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  TruckDetailStreamProvider call(String truckId) =>
+      TruckDetailStreamProvider._(argument: truckId, from: this);
 
   @override
-  String get truckId => (origin as TruckDetailStreamProvider).truckId;
+  String toString() => r'truckDetailStreamProvider';
+}
+
+@ProviderFor(TruckDetailNotifier)
+final truckDetailProvider = TruckDetailNotifierFamily._();
+
+final class TruckDetailNotifierProvider
+    extends $StreamNotifierProvider<TruckDetailNotifier, TruckDetail?> {
+  TruckDetailNotifierProvider._({
+    required TruckDetailNotifierFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'truckDetailProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$truckDetailNotifierHash();
+
+  @override
+  String toString() {
+    return r'truckDetailProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  TruckDetailNotifier create() => TruckDetailNotifier();
+
+  @override
+  bool operator ==(Object other) {
+    return other is TruckDetailNotifierProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$truckDetailNotifierHash() =>
     r'e1a387b23f94f06f1109d2d25a7f3fe42a5a6fd8';
 
-abstract class _$TruckDetailNotifier
-    extends BuildlessAutoDisposeStreamNotifier<TruckDetail?> {
-  late final String truckId;
-
-  Stream<TruckDetail?> build(String truckId);
-}
-
-/// See also [TruckDetailNotifier].
-@ProviderFor(TruckDetailNotifier)
-const truckDetailNotifierProvider = TruckDetailNotifierFamily();
-
-/// See also [TruckDetailNotifier].
-class TruckDetailNotifierFamily extends Family<AsyncValue<TruckDetail?>> {
-  /// See also [TruckDetailNotifier].
-  const TruckDetailNotifierFamily();
-
-  /// See also [TruckDetailNotifier].
-  TruckDetailNotifierProvider call(String truckId) {
-    return TruckDetailNotifierProvider(truckId);
-  }
-
-  @override
-  TruckDetailNotifierProvider getProviderOverride(
-    covariant TruckDetailNotifierProvider provider,
-  ) {
-    return call(provider.truckId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'truckDetailNotifierProvider';
-}
-
-/// See also [TruckDetailNotifier].
-class TruckDetailNotifierProvider
-    extends
-        AutoDisposeStreamNotifierProviderImpl<
+final class TruckDetailNotifierFamily extends $Family
+    with
+        $ClassFamilyOverride<
           TruckDetailNotifier,
-          TruckDetail?
+          AsyncValue<TruckDetail?>,
+          TruckDetail?,
+          Stream<TruckDetail?>,
+          String
         > {
-  /// See also [TruckDetailNotifier].
-  TruckDetailNotifierProvider(String truckId)
-    : this._internal(
-        () => TruckDetailNotifier()..truckId = truckId,
-        from: truckDetailNotifierProvider,
-        name: r'truckDetailNotifierProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$truckDetailNotifierHash,
-        dependencies: TruckDetailNotifierFamily._dependencies,
-        allTransitiveDependencies:
-            TruckDetailNotifierFamily._allTransitiveDependencies,
-        truckId: truckId,
+  TruckDetailNotifierFamily._()
+    : super(
+        retry: null,
+        name: r'truckDetailProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  TruckDetailNotifierProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.truckId,
-  }) : super.internal();
-
-  final String truckId;
+  TruckDetailNotifierProvider call(String truckId) =>
+      TruckDetailNotifierProvider._(argument: truckId, from: this);
 
   @override
-  Stream<TruckDetail?> runNotifierBuild(
-    covariant TruckDetailNotifier notifier,
-  ) {
-    return notifier.build(truckId);
-  }
-
-  @override
-  Override overrideWith(TruckDetailNotifier Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: TruckDetailNotifierProvider._internal(
-        () => create()..truckId = truckId,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        truckId: truckId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeStreamNotifierProviderElement<TruckDetailNotifier, TruckDetail?>
-  createElement() {
-    return _TruckDetailNotifierProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is TruckDetailNotifierProvider && other.truckId == truckId;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, truckId.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'truckDetailProvider';
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin TruckDetailNotifierRef
-    on AutoDisposeStreamNotifierProviderRef<TruckDetail?> {
-  /// The parameter `truckId` of this provider.
-  String get truckId;
-}
+abstract class _$TruckDetailNotifier extends $StreamNotifier<TruckDetail?> {
+  late final _$args = ref.$arg as String;
+  String get truckId => _$args;
 
-class _TruckDetailNotifierProviderElement
-    extends
-        AutoDisposeStreamNotifierProviderElement<
-          TruckDetailNotifier,
-          TruckDetail?
-        >
-    with TruckDetailNotifierRef {
-  _TruckDetailNotifierProviderElement(super.provider);
-
+  Stream<TruckDetail?> build(String truckId);
+  @$mustCallSuper
   @override
-  String get truckId => (origin as TruckDetailNotifierProvider).truckId;
+  void runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<TruckDetail?>, TruckDetail?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<TruckDetail?>, TruckDetail?>,
+              AsyncValue<TruckDetail?>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, () => build(_$args));
+  }
 }
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -6,458 +6,307 @@ part of 'follow_repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$followRepositoryHash() => r'1534e9ed4d6c553f39db200bfac98591376072e2';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [followRepository].
 @ProviderFor(followRepository)
-final followRepositoryProvider = AutoDisposeProvider<FollowRepository>.internal(
-  followRepository,
-  name: r'followRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$followRepositoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final followRepositoryProvider = FollowRepositoryProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef FollowRepositoryRef = AutoDisposeProviderRef<FollowRepository>;
-String _$userFollowsHash() => r'98d2d9feb4518b2807a9a753accd1cf96597e52d';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// Provider for watching user's followed trucks
-///
-/// Copied from [userFollows].
-@ProviderFor(userFollows)
-const userFollowsProvider = UserFollowsFamily();
-
-/// Provider for watching user's followed trucks
-///
-/// Copied from [userFollows].
-class UserFollowsFamily extends Family<AsyncValue<List<TruckFollow>>> {
-  /// Provider for watching user's followed trucks
-  ///
-  /// Copied from [userFollows].
-  const UserFollowsFamily();
-
-  /// Provider for watching user's followed trucks
-  ///
-  /// Copied from [userFollows].
-  UserFollowsProvider call(String userId) {
-    return UserFollowsProvider(userId);
-  }
-
-  @override
-  UserFollowsProvider getProviderOverride(
-    covariant UserFollowsProvider provider,
-  ) {
-    return call(provider.userId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'userFollowsProvider';
-}
-
-/// Provider for watching user's followed trucks
-///
-/// Copied from [userFollows].
-class UserFollowsProvider extends AutoDisposeStreamProvider<List<TruckFollow>> {
-  /// Provider for watching user's followed trucks
-  ///
-  /// Copied from [userFollows].
-  UserFollowsProvider(String userId)
-    : this._internal(
-        (ref) => userFollows(ref as UserFollowsRef, userId),
-        from: userFollowsProvider,
-        name: r'userFollowsProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$userFollowsHash,
-        dependencies: UserFollowsFamily._dependencies,
-        allTransitiveDependencies: UserFollowsFamily._allTransitiveDependencies,
-        userId: userId,
+final class FollowRepositoryProvider
+    extends
+        $FunctionalProvider<
+          FollowRepository,
+          FollowRepository,
+          FollowRepository
+        >
+    with $Provider<FollowRepository> {
+  FollowRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'followRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
       );
 
-  UserFollowsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.userId,
-  }) : super.internal();
+  @override
+  String debugGetCreateSourceHash() => _$followRepositoryHash();
 
-  final String userId;
+  @$internal
+  @override
+  $ProviderElement<FollowRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  Override overrideWith(
-    Stream<List<TruckFollow>> Function(UserFollowsRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: UserFollowsProvider._internal(
-        (ref) => create(ref as UserFollowsRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        userId: userId,
-      ),
-    );
+  FollowRepository create(Ref ref) {
+    return followRepository(ref);
   }
 
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FollowRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FollowRepository>(value),
+    );
+  }
+}
+
+String _$followRepositoryHash() => r'1534e9ed4d6c553f39db200bfac98591376072e2';
+
+/// Provider for watching user's followed trucks
+
+@ProviderFor(userFollows)
+final userFollowsProvider = UserFollowsFamily._();
+
+/// Provider for watching user's followed trucks
+
+final class UserFollowsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<TruckFollow>>,
+          List<TruckFollow>,
+          Stream<List<TruckFollow>>
+        >
+    with
+        $FutureModifier<List<TruckFollow>>,
+        $StreamProvider<List<TruckFollow>> {
+  /// Provider for watching user's followed trucks
+  UserFollowsProvider._({
+    required UserFollowsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'userFollowsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
   @override
-  AutoDisposeStreamProviderElement<List<TruckFollow>> createElement() {
-    return _UserFollowsProviderElement(this);
+  String debugGetCreateSourceHash() => _$userFollowsHash();
+
+  @override
+  String toString() {
+    return r'userFollowsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<List<TruckFollow>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<TruckFollow>> create(Ref ref) {
+    final argument = this.argument as String;
+    return userFollows(ref, argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is UserFollowsProvider && other.userId == userId;
+    return other is UserFollowsProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, userId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin UserFollowsRef on AutoDisposeStreamProviderRef<List<TruckFollow>> {
-  /// The parameter `userId` of this provider.
-  String get userId;
-}
+String _$userFollowsHash() => r'98d2d9feb4518b2807a9a753accd1cf96597e52d';
 
-class _UserFollowsProviderElement
-    extends AutoDisposeStreamProviderElement<List<TruckFollow>>
-    with UserFollowsRef {
-  _UserFollowsProviderElement(super.provider);
+/// Provider for watching user's followed trucks
+
+final class UserFollowsFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<TruckFollow>>, String> {
+  UserFollowsFamily._()
+    : super(
+        retry: null,
+        name: r'userFollowsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Provider for watching user's followed trucks
+
+  UserFollowsProvider call(String userId) =>
+      UserFollowsProvider._(argument: userId, from: this);
 
   @override
-  String get userId => (origin as UserFollowsProvider).userId;
+  String toString() => r'userFollowsProvider';
+}
+
+/// Provider for checking if user is following a truck
+
+@ProviderFor(isFollowingTruck)
+final isFollowingTruckProvider = IsFollowingTruckFamily._();
+
+/// Provider for checking if user is following a truck
+
+final class IsFollowingTruckProvider
+    extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
+    with $FutureModifier<bool>, $FutureProvider<bool> {
+  /// Provider for checking if user is following a truck
+  IsFollowingTruckProvider._({
+    required IsFollowingTruckFamily super.from,
+    required ({String userId, String truckId}) super.argument,
+  }) : super(
+         retry: null,
+         name: r'isFollowingTruckProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$isFollowingTruckHash();
+
+  @override
+  String toString() {
+    return r'isFollowingTruckProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<bool> create(Ref ref) {
+    final argument = this.argument as ({String userId, String truckId});
+    return isFollowingTruck(
+      ref,
+      userId: argument.userId,
+      truckId: argument.truckId,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is IsFollowingTruckProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$isFollowingTruckHash() => r'45f8ae3de1d99ad3da28391d853419e0e706c014';
 
 /// Provider for checking if user is following a truck
-///
-/// Copied from [isFollowingTruck].
-@ProviderFor(isFollowingTruck)
-const isFollowingTruckProvider = IsFollowingTruckFamily();
 
-/// Provider for checking if user is following a truck
-///
-/// Copied from [isFollowingTruck].
-class IsFollowingTruckFamily extends Family<AsyncValue<bool>> {
-  /// Provider for checking if user is following a truck
-  ///
-  /// Copied from [isFollowingTruck].
-  const IsFollowingTruckFamily();
+final class IsFollowingTruckFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<bool>,
+          ({String userId, String truckId})
+        > {
+  IsFollowingTruckFamily._()
+    : super(
+        retry: null,
+        name: r'isFollowingTruckProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider for checking if user is following a truck
-  ///
-  /// Copied from [isFollowingTruck].
+
   IsFollowingTruckProvider call({
     required String userId,
     required String truckId,
-  }) {
-    return IsFollowingTruckProvider(userId: userId, truckId: truckId);
-  }
+  }) => IsFollowingTruckProvider._(
+    argument: (userId: userId, truckId: truckId),
+    from: this,
+  );
 
   @override
-  IsFollowingTruckProvider getProviderOverride(
-    covariant IsFollowingTruckProvider provider,
-  ) {
-    return call(userId: provider.userId, truckId: provider.truckId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'isFollowingTruckProvider';
+  String toString() => r'isFollowingTruckProvider';
 }
 
-/// Provider for checking if user is following a truck
-///
-/// Copied from [isFollowingTruck].
-class IsFollowingTruckProvider extends AutoDisposeFutureProvider<bool> {
-  /// Provider for checking if user is following a truck
-  ///
-  /// Copied from [isFollowingTruck].
-  IsFollowingTruckProvider({required String userId, required String truckId})
-    : this._internal(
-        (ref) => isFollowingTruck(
-          ref as IsFollowingTruckRef,
-          userId: userId,
-          truckId: truckId,
-        ),
-        from: isFollowingTruckProvider,
-        name: r'isFollowingTruckProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$isFollowingTruckHash,
-        dependencies: IsFollowingTruckFamily._dependencies,
-        allTransitiveDependencies:
-            IsFollowingTruckFamily._allTransitiveDependencies,
-        userId: userId,
-        truckId: truckId,
-      );
+/// Provider for truck follower count
 
-  IsFollowingTruckProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.userId,
-    required this.truckId,
-  }) : super.internal();
+@ProviderFor(truckFollowerCount)
+final truckFollowerCountProvider = TruckFollowerCountFamily._();
 
-  final String userId;
-  final String truckId;
+/// Provider for truck follower count
+
+final class TruckFollowerCountProvider
+    extends $FunctionalProvider<AsyncValue<int>, int, FutureOr<int>>
+    with $FutureModifier<int>, $FutureProvider<int> {
+  /// Provider for truck follower count
+  TruckFollowerCountProvider._({
+    required TruckFollowerCountFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'truckFollowerCountProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
-  Override overrideWith(
-    FutureOr<bool> Function(IsFollowingTruckRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: IsFollowingTruckProvider._internal(
-        (ref) => create(ref as IsFollowingTruckRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        userId: userId,
-        truckId: truckId,
-      ),
-    );
+  String debugGetCreateSourceHash() => _$truckFollowerCountHash();
+
+  @override
+  String toString() {
+    return r'truckFollowerCountProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  AutoDisposeFutureProviderElement<bool> createElement() {
-    return _IsFollowingTruckProviderElement(this);
+  $FutureProviderElement<int> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<int> create(Ref ref) {
+    final argument = this.argument as String;
+    return truckFollowerCount(ref, argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is IsFollowingTruckProvider &&
-        other.userId == userId &&
-        other.truckId == truckId;
+    return other is TruckFollowerCountProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, userId.hashCode);
-    hash = _SystemHash.combine(hash, truckId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin IsFollowingTruckRef on AutoDisposeFutureProviderRef<bool> {
-  /// The parameter `userId` of this provider.
-  String get userId;
-
-  /// The parameter `truckId` of this provider.
-  String get truckId;
-}
-
-class _IsFollowingTruckProviderElement
-    extends AutoDisposeFutureProviderElement<bool>
-    with IsFollowingTruckRef {
-  _IsFollowingTruckProviderElement(super.provider);
-
-  @override
-  String get userId => (origin as IsFollowingTruckProvider).userId;
-  @override
-  String get truckId => (origin as IsFollowingTruckProvider).truckId;
 }
 
 String _$truckFollowerCountHash() =>
     r'542ebd638ecd5fddc0d19905026944e4383fd09a';
 
 /// Provider for truck follower count
-///
-/// Copied from [truckFollowerCount].
-@ProviderFor(truckFollowerCount)
-const truckFollowerCountProvider = TruckFollowerCountFamily();
 
-/// Provider for truck follower count
-///
-/// Copied from [truckFollowerCount].
-class TruckFollowerCountFamily extends Family<AsyncValue<int>> {
-  /// Provider for truck follower count
-  ///
-  /// Copied from [truckFollowerCount].
-  const TruckFollowerCountFamily();
-
-  /// Provider for truck follower count
-  ///
-  /// Copied from [truckFollowerCount].
-  TruckFollowerCountProvider call(String truckId) {
-    return TruckFollowerCountProvider(truckId);
-  }
-
-  @override
-  TruckFollowerCountProvider getProviderOverride(
-    covariant TruckFollowerCountProvider provider,
-  ) {
-    return call(provider.truckId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'truckFollowerCountProvider';
-}
-
-/// Provider for truck follower count
-///
-/// Copied from [truckFollowerCount].
-class TruckFollowerCountProvider extends AutoDisposeFutureProvider<int> {
-  /// Provider for truck follower count
-  ///
-  /// Copied from [truckFollowerCount].
-  TruckFollowerCountProvider(String truckId)
-    : this._internal(
-        (ref) => truckFollowerCount(ref as TruckFollowerCountRef, truckId),
-        from: truckFollowerCountProvider,
+final class TruckFollowerCountFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<int>, String> {
+  TruckFollowerCountFamily._()
+    : super(
+        retry: null,
         name: r'truckFollowerCountProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$truckFollowerCountHash,
-        dependencies: TruckFollowerCountFamily._dependencies,
-        allTransitiveDependencies:
-            TruckFollowerCountFamily._allTransitiveDependencies,
-        truckId: truckId,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  TruckFollowerCountProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.truckId,
-  }) : super.internal();
+  /// Provider for truck follower count
 
-  final String truckId;
+  TruckFollowerCountProvider call(String truckId) =>
+      TruckFollowerCountProvider._(argument: truckId, from: this);
 
   @override
-  Override overrideWith(
-    FutureOr<int> Function(TruckFollowerCountRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: TruckFollowerCountProvider._internal(
-        (ref) => create(ref as TruckFollowerCountRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        truckId: truckId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<int> createElement() {
-    return _TruckFollowerCountProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is TruckFollowerCountProvider && other.truckId == truckId;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, truckId.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'truckFollowerCountProvider';
 }
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin TruckFollowerCountRef on AutoDisposeFutureProviderRef<int> {
-  /// The parameter `truckId` of this provider.
-  String get truckId;
-}
-
-class _TruckFollowerCountProviderElement
-    extends AutoDisposeFutureProviderElement<int>
-    with TruckFollowerCountRef {
-  _TruckFollowerCountProviderElement(super.provider);
-
-  @override
-  String get truckId => (origin as TruckFollowerCountProvider).truckId;
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

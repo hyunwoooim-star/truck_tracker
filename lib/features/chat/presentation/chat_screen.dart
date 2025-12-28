@@ -236,7 +236,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: AppTheme.black10,
                   blurRadius: 4,
                   offset: const Offset(0, -2),
                 ),

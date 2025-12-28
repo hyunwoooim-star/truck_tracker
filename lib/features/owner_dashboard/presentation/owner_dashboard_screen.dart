@@ -530,7 +530,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
           end: Alignment.bottomRight,
           colors: [
             AppTheme.mustardYellow15,
-            AppTheme.electricBlue.withOpacity(0.1),
+            AppTheme.mustardYellow10,
           ],
         ),
         borderRadius: BorderRadius.circular(16),

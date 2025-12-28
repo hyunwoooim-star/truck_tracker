@@ -6,9 +6,9 @@ part of 'notification_settings.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$NotificationSettingsImpl _$$NotificationSettingsImplFromJson(
+_NotificationSettings _$NotificationSettingsFromJson(
   Map<String, dynamic> json,
-) => _$NotificationSettingsImpl(
+) => _NotificationSettings(
   userId: json['userId'] as String,
   truckOpenings: json['truckOpenings'] as bool? ?? true,
   orderUpdates: json['orderUpdates'] as bool? ?? true,
@@ -24,8 +24,8 @@ _$NotificationSettingsImpl _$$NotificationSettingsImplFromJson(
       : DateTime.parse(json['lastUpdated'] as String),
 );
 
-Map<String, dynamic> _$$NotificationSettingsImplToJson(
-  _$NotificationSettingsImpl instance,
+Map<String, dynamic> _$NotificationSettingsToJson(
+  _NotificationSettings instance,
 ) => <String, dynamic>{
   'userId': instance.userId,
   'truckOpenings': instance.truckOpenings,
