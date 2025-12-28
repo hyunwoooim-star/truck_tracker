@@ -33,3 +33,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           channelId: live
           projectId: truck-tracker-fa0b0
+# Trigger CI/CD build - 2025년 12월 29일 월 오전 12:28:23
