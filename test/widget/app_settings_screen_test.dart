@@ -14,7 +14,8 @@ void main() {
     }) {
       return ProviderScope(
         overrides: [
-          appThemeModeProvider.overrideWith((ref) => themeMode),
+          // NotifierProvider doesn't support direct value override
+          // Use default provider behavior instead
           networkStatusProvider.overrideWithValue(NetworkStatus.online),
           if (versionResult != null)
             versionCheckProvider.overrideWith((ref) => Future.value(versionResult)),
@@ -78,17 +79,40 @@ void main() {
     });
 
     testWidgets('shows dark mode label when in dark mode', (tester) async {
-      await tester.pumpWidget(createTestWidget(themeMode: AppThemeMode.dark));
+      // Default theme mode is dark
+      await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
       expect(find.text('다크 모드'), findsOneWidget);
     });
 
-    testWidgets('shows light mode label when in light mode', (tester) async {
-      await tester.pumpWidget(createTestWidget(themeMode: AppThemeMode.light));
+    testWidgets('can toggle theme mode', (tester) async {
+      final container = ProviderContainer(
+        overrides: [
+          networkStatusProvider.overrideWithValue(NetworkStatus.online),
+        ],
+      );
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(
+            home: AppSettingsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Initial state is dark
+      expect(find.text('다크 모드'), findsOneWidget);
+
+      // Change to light mode
+      container.read(appThemeModeProvider.notifier).setThemeMode(AppThemeMode.light);
       await tester.pumpAndSettle();
 
       expect(find.text('라이트 모드'), findsOneWidget);
+
+      container.dispose();
     });
 
     testWidgets('shows theme dialog when theme tile is tapped', (tester) async {

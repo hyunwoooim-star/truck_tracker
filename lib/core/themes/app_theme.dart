@@ -193,6 +193,51 @@ class AppTheme {
         labelMedium: GoogleFonts.notoSansKr(color: textSecondary),
         labelSmall: GoogleFonts.notoSansKr(color: textTertiary),
       ),
+      // PopupMenu 테마 - 다크 배경 + 노랑 포인트
+      popupMenuTheme: PopupMenuThemeData(
+        color: charcoalMedium,
+        surfaceTintColor: Colors.transparent,
+        elevation: 8,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        textStyle: GoogleFonts.notoSansKr(color: textPrimary),
+        iconColor: mustardYellow,
+      ),
+      // Dialog 테마 - 다크 배경
+      dialogTheme: DialogThemeData(
+        backgroundColor: charcoalMedium,
+        surfaceTintColor: Colors.transparent,
+        elevation: 16,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        titleTextStyle: GoogleFonts.notoSansKr(
+          color: textPrimary,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        contentTextStyle: GoogleFonts.notoSansKr(
+          color: textSecondary,
+          fontSize: 14,
+        ),
+      ),
+      // BottomSheet 테마 - 다크 배경
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: charcoalMedium,
+        surfaceTintColor: Colors.transparent,
+        elevation: 16,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+      ),
+      // ListTile 테마
+      listTileTheme: ListTileThemeData(
+        iconColor: mustardYellow,
+        textColor: textPrimary,
+        tileColor: Colors.transparent,
+        selectedTileColor: mustardYellow10,
+      ),
     );
   }
 
