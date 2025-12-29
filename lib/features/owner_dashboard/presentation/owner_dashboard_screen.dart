@@ -802,7 +802,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                         Switch(
                           value: !item.isSoldOut,
                           onChanged: (value) => _toggleSoldOut(item, truck.id, ref),
-                          activeColor: _mustard,
+                          activeTrackColor: _mustard.withAlpha(128),
                           inactiveThumbColor: Colors.red,
                         ),
                       ],

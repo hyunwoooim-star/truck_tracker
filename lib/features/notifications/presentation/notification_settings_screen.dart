@@ -115,7 +115,8 @@ class NotificationSettingsScreen extends ConsumerWidget {
               title: const Text('트럭 영업 시작'),
               subtitle: const Text('팔로우한 트럭이 영업을 시작하면 알림'),
               value: settings.truckOpenings,
-              activeColor: AppTheme.baeminMint,
+              activeTrackColor: AppTheme.baeminMint.withAlpha(128),
+              inactiveTrackColor: Colors.grey.withAlpha(77),
               onChanged: (value) async {
                 final repo = ref.read(notificationPreferencesRepositoryProvider);
                 await repo.toggleNotification(
@@ -129,7 +130,8 @@ class NotificationSettingsScreen extends ConsumerWidget {
               title: const Text('주문 상태 변경'),
               subtitle: const Text('주문이 준비되면 알림'),
               value: settings.orderUpdates,
-              activeColor: AppTheme.baeminMint,
+              activeTrackColor: AppTheme.baeminMint.withAlpha(128),
+              inactiveTrackColor: Colors.grey.withAlpha(77),
               onChanged: (value) async {
                 final repo = ref.read(notificationPreferencesRepositoryProvider);
                 await repo.toggleNotification(
@@ -143,7 +145,8 @@ class NotificationSettingsScreen extends ConsumerWidget {
               title: const Text('새 쿠폰'),
               subtitle: const Text('팔로우한 트럭이 새 쿠폰을 발행하면 알림'),
               value: settings.newCoupons,
-              activeColor: AppTheme.baeminMint,
+              activeTrackColor: AppTheme.baeminMint.withAlpha(128),
+              inactiveTrackColor: Colors.grey.withAlpha(77),
               onChanged: (value) async {
                 final repo = ref.read(notificationPreferencesRepositoryProvider);
                 await repo.toggleNotification(
@@ -157,7 +160,8 @@ class NotificationSettingsScreen extends ConsumerWidget {
               title: const Text('리뷰 답글'),
               subtitle: const Text('작성한 리뷰에 사장님이 답글을 달면 알림'),
               value: settings.reviews,
-              activeColor: AppTheme.baeminMint,
+              activeTrackColor: AppTheme.baeminMint.withAlpha(128),
+              inactiveTrackColor: Colors.grey.withAlpha(77),
               onChanged: (value) async {
                 final repo = ref.read(notificationPreferencesRepositoryProvider);
                 await repo.toggleNotification(
@@ -175,7 +179,8 @@ class NotificationSettingsScreen extends ConsumerWidget {
               title: const Text('팔로우한 트럭 활동'),
               subtitle: const Text('팔로우한 트럭의 새로운 소식 알림'),
               value: settings.followedTrucks,
-              activeColor: AppTheme.baeminMint,
+              activeTrackColor: AppTheme.baeminMint.withAlpha(128),
+              inactiveTrackColor: Colors.grey.withAlpha(77),
               onChanged: (value) async {
                 final repo = ref.read(notificationPreferencesRepositoryProvider);
                 await repo.toggleNotification(
@@ -189,7 +194,8 @@ class NotificationSettingsScreen extends ConsumerWidget {
               title: const Text('채팅 메시지'),
               subtitle: const Text('새 채팅 메시지를 받으면 알림'),
               value: settings.chatMessages,
-              activeColor: AppTheme.baeminMint,
+              activeTrackColor: AppTheme.baeminMint.withAlpha(128),
+              inactiveTrackColor: Colors.grey.withAlpha(77),
               onChanged: (value) async {
                 final repo = ref.read(notificationPreferencesRepositoryProvider);
                 await repo.toggleNotification(
@@ -207,7 +213,8 @@ class NotificationSettingsScreen extends ConsumerWidget {
               title: const Text('프로모션'),
               subtitle: const Text('특별 이벤트 및 프로모션 알림'),
               value: settings.promotions,
-              activeColor: AppTheme.baeminMint,
+              activeTrackColor: AppTheme.baeminMint.withAlpha(128),
+              inactiveTrackColor: Colors.grey.withAlpha(77),
               onChanged: (value) async {
                 final repo = ref.read(notificationPreferencesRepositoryProvider);
                 await repo.toggleNotification(
@@ -225,7 +232,8 @@ class NotificationSettingsScreen extends ConsumerWidget {
               title: const Text('근처 트럭 알림'),
               subtitle: const Text('근처에서 트럭이 영업을 시작하면 알림'),
               value: settings.nearbyTrucks,
-              activeColor: AppTheme.baeminMint,
+              activeTrackColor: AppTheme.baeminMint.withAlpha(128),
+              inactiveTrackColor: Colors.grey.withAlpha(77),
               onChanged: (value) async {
                 final repo = ref.read(notificationPreferencesRepositoryProvider);
                 await repo.toggleNotification(
@@ -256,6 +264,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
                       divisions: 9,
                       label: '${settings.nearbyRadiusKm.toStringAsFixed(1)} km',
                       activeColor: AppTheme.baeminMint,
+                      inactiveColor: Colors.grey.withAlpha(77),
                       onChanged: (value) async {
                         final repo = ref.read(notificationPreferencesRepositoryProvider);
                         await repo.updateNearbyRadius(

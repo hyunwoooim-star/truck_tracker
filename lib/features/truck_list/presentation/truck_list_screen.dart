@@ -892,7 +892,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
                 onChanged: (value) {
                   ref.read(truckFilterProvider.notifier).setOpenOnly(value);
                 },
-                activeColor: AppTheme.electricBlue,
+                activeTrackColor: AppTheme.electricBlue.withAlpha(128),
                 contentPadding: EdgeInsets.zero,
               ),
             ],

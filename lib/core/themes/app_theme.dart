@@ -89,13 +89,12 @@ class AppTheme {
       colorScheme: const ColorScheme.dark(
         primary: mustardYellow,
         secondary: mustardYellowLight,
-        surface: charcoalMedium,
-        background: midnightCharcoal,
+        surface: midnightCharcoal,
+        surfaceContainerHighest: charcoalMedium,
         error: Color(0xFFE53935),
         onPrimary: Colors.black,
         onSecondary: Colors.black,
         onSurface: textPrimary,
-        onBackground: textPrimary,
         onError: Colors.white,
       ),
       appBarTheme: const AppBarTheme(
