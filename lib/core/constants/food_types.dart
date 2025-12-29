@@ -19,8 +19,24 @@ class FoodTypes {
     '옛날통닭',
   ];
 
+  /// 음식 종류별 이모지 아이콘
+  static const Map<String, String> foodEmojis = {
+    '전체': '🍽️',
+    '닭꼬치': '🍢',
+    '호떡': '🥞',
+    '어묵': '🍥',
+    '붕어빵': '🐟',
+    '심야라멘': '🍜',
+    '불막창': '🔥',
+    '크레페퀸': '🥐',
+    '옛날통닭': '🍗',
+  };
+
   /// 기본 필터 (전체)
   static const String defaultFilter = '전체';
+
+  /// 음식 종류에 해당하는 이모지 반환
+  static String getEmoji(String foodType) => foodEmojis[foodType] ?? '🍴';
 
   /// '전체' 필터인지 확인
   ///

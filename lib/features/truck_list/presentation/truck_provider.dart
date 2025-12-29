@@ -342,11 +342,11 @@ class TruckListNotifier extends _$TruckListNotifier {
   static const _seedData = [
     Truck(
       id: '1',
-      truckNumber: 'BM-001',
-      driverName: '배민 라이더 박빠름',
+      truckNumber: '서울 12가 3456',
+      driverName: '골목식당 닭꼬치',
       status: TruckStatus.onRoute,
       foodType: '닭꼬치',
-      locationDescription: '2번 출구 앞',
+      locationDescription: '시청역 2번 출구',
       latitude: 37.5665,
       longitude: 126.9780, // 시청
       imageUrl:
@@ -354,11 +354,11 @@ class TruckListNotifier extends _$TruckListNotifier {
     ),
     Truck(
       id: '2',
-      truckNumber: 'BM-002',
-      driverName: '배민 트럭 김든든',
+      truckNumber: '서울 34나 7890',
+      driverName: '할매손 호떡집',
       status: TruckStatus.resting,
       foodType: '호떡',
-      locationDescription: '공원 분수대 옆',
+      locationDescription: '광화문 분수대',
       latitude: 37.5700,
       longitude: 126.9820, // 광화문 인근
       imageUrl:
@@ -366,11 +366,11 @@ class TruckListNotifier extends _$TruckListNotifier {
     ),
     Truck(
       id: '3',
-      truckNumber: 'BM-003',
-      driverName: '배민 기사 이꼼꼼',
+      truckNumber: '서울 56다 1234',
+      driverName: '부산어묵 본점',
       status: TruckStatus.maintenance,
       foodType: '어묵',
-      locationDescription: '시청 광장',
+      locationDescription: '명동 중앙로',
       latitude: 37.5610,
       longitude: 126.9930, // 명동 쪽
       imageUrl:
@@ -378,11 +378,11 @@ class TruckListNotifier extends _$TruckListNotifier {
     ),
     Truck(
       id: '4',
-      truckNumber: 'BM-004',
-      driverName: '배민 라이더 최쾌속',
+      truckNumber: '서울 78라 5678',
+      driverName: '심야식당 라멘야',
       status: TruckStatus.onRoute,
       foodType: '심야라멘',
-      locationDescription: '3번 출구 앞',
+      locationDescription: '신촌역 3번 출구',
       latitude: 37.5580,
       longitude: 126.9368, // 신촌역
       imageUrl:
@@ -390,11 +390,11 @@ class TruckListNotifier extends _$TruckListNotifier {
     ),
     Truck(
       id: '5',
-      truckNumber: 'BM-005',
-      driverName: '배민 트럭 정정시',
+      truckNumber: '서울 90마 9012',
+      driverName: '겨울밤 붕어빵',
       status: TruckStatus.resting,
       foodType: '붕어빵',
-      locationDescription: '학교 후문',
+      locationDescription: '잠실 학원가',
       latitude: 37.5125,
       longitude: 127.1028, // 잠실
       imageUrl:
@@ -402,8 +402,8 @@ class TruckListNotifier extends _$TruckListNotifier {
     ),
     Truck(
       id: '6',
-      truckNumber: 'BM-006',
-      driverName: '배민 라이더 조맛나',
+      truckNumber: '서울 23바 3456',
+      driverName: '청춘막창',
       status: TruckStatus.onRoute,
       foodType: '불막창',
       locationDescription: '강남역 10번 출구',
@@ -414,11 +414,11 @@ class TruckListNotifier extends _$TruckListNotifier {
     ),
     Truck(
       id: '7',
-      truckNumber: 'BM-007',
-      driverName: '배민 트럭 윤달콤',
+      truckNumber: '서울 45사 7890',
+      driverName: '파리지앵 크레페',
       status: TruckStatus.onRoute,
       foodType: '크레페퀸',
-      locationDescription: '홍대 놀이터 앞',
+      locationDescription: '홍대 놀이터',
       latitude: 37.5563,
       longitude: 126.9237, // 홍대입구역
       imageUrl:
@@ -426,8 +426,8 @@ class TruckListNotifier extends _$TruckListNotifier {
     ),
     Truck(
       id: '8',
-      truckNumber: 'BM-008',
-      driverName: '배민 기사 강바삭',
+      truckNumber: '서울 67아 1234',
+      driverName: '옛날통닭 원조집',
       status: TruckStatus.resting,
       foodType: '옛날통닭',
       locationDescription: '건대 로데오거리',

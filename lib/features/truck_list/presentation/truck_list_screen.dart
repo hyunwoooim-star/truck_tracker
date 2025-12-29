@@ -459,7 +459,7 @@ class TruckListScreen extends ConsumerWidget {
   }
 }
 
-/// Horizontal scrolling filter bar with food type tags
+/// Premium filter bar with food type tags and icons
 class _FilterBar extends ConsumerWidget {
   const _FilterBar();
 
@@ -467,104 +467,233 @@ class _FilterBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedTag = ref.watch(truckFilterProvider).selectedTag;
     final filterState = ref.watch(truckFilterProvider);
+    final activeFilterCount = _countActiveFilters(filterState);
 
     return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Advanced Filter Button
+          // Filter buttons row
           Padding(
-            padding: const EdgeInsets.only(left: 16, right: 8),
-            child: IconButton(
-              icon: Badge(
-                isLabelVisible: filterState.hasActiveFilters,
-                child: const Icon(Icons.filter_list),
-              ),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => const _AdvancedFilterDialog(),
-                );
-              },
-              tooltip: AppLocalizations.of(context).searchTrucks,
-              style: IconButton.styleFrom(
-                backgroundColor: filterState.hasActiveFilters
-                    ? AppTheme.mustardYellow20
-                    : AppTheme.charcoalMedium,
-                foregroundColor: filterState.hasActiveFilters
-                    ? AppTheme.electricBlue
-                    : AppTheme.textPrimary,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                // Advanced Filter Button
+                _FilterButton(
+                  icon: Icons.tune,
+                  label: '필터',
+                  badgeCount: activeFilterCount,
+                  isActive: filterState.hasActiveFilters,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => const _AdvancedFilterDialog(),
+                    );
+                  },
+                ),
+                const SizedBox(width: 8),
+                // Sort Button
+                _FilterButton(
+                  icon: Icons.swap_vert,
+                  label: '정렬',
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => const _SortOptionsDialog(),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Category section header
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              '카테고리',
+              style: TextStyle(
+                color: AppTheme.textTertiary,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
               ),
             ),
           ),
-          // Sort Button
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: IconButton(
-              icon: const Icon(Icons.sort),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => const _SortOptionsDialog(),
-                );
-              },
-              tooltip: AppLocalizations.of(context).rating,
-              style: IconButton.styleFrom(
-                backgroundColor: AppTheme.charcoalMedium,
-                foregroundColor: AppTheme.textPrimary,
-              ),
-            ),
-          ),
-          // Food Type Chips
-          Expanded(
-            child: SingleChildScrollView(
+
+          const SizedBox(height: 8),
+
+          // Food Type Chips with emoji
+          SizedBox(
+            height: 44,
+            child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              child: Row(
-                children: FoodTypes.filterTags.map((tag) {
-            final isSelected = tag == selectedTag;
-            
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ChoiceChip(
-                label: Text(
-                  tag,
-                  style: TextStyle(
-                    color: isSelected ? Colors.black : AppTheme.textPrimary,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                    fontSize: 14,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: FoodTypes.filterTags.length,
+              itemBuilder: (context, index) {
+                final tag = FoodTypes.filterTags[index];
+                final isSelected = tag == selectedTag;
+                final emoji = FoodTypes.getEmoji(tag);
+
+                return Padding(
+                  padding: EdgeInsets.only(right: index < FoodTypes.filterTags.length - 1 ? 8 : 0),
+                  child: _FoodCategoryChip(
+                    label: tag,
+                    emoji: emoji,
+                    isSelected: isSelected,
+                    onTap: () {
+                      ref.read(truckFilterProvider.notifier).setSelectedTag(tag);
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  int _countActiveFilters(TruckFilterState state) {
+    int count = 0;
+    if (state.selectedStatuses.isNotEmpty) count++;
+    if (state.maxDistance != null) count++;
+    if (state.minRating != null) count++;
+    if (state.openOnly) count++;
+    return count;
+  }
+}
+
+// Premium filter button with badge
+class _FilterButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final int badgeCount;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _FilterButton({
+    required this.icon,
+    required this.label,
+    this.badgeCount = 0,
+    this.isActive = false,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: isActive ? AppTheme.mustardYellow15 : AppTheme.charcoalMedium,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isActive ? AppTheme.mustardYellow : AppTheme.charcoalLight,
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 18,
+                color: isActive ? AppTheme.mustardYellow : AppTheme.textSecondary,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isActive ? AppTheme.mustardYellow : AppTheme.textPrimary,
+                  fontSize: 13,
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                ),
+              ),
+              if (badgeCount > 0) ...[
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppTheme.mustardYellow,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '$badgeCount',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                selected: isSelected,
-                onSelected: (selected) {
-                  if (selected) {
-                    ref.read(truckFilterProvider.notifier)
-                        .setSelectedTag(tag);
-                  }
-                },
-                selectedColor: AppTheme.electricBlue,
-                backgroundColor: AppTheme.charcoalMedium,
-                side: BorderSide(
-                  color: isSelected
-                      ? AppTheme.electricBlue
-                      : AppTheme.charcoalLight,
-                  width: 1.5,
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                labelPadding: const EdgeInsets.symmetric(horizontal: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                elevation: 0,
-                pressElevation: 0,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-            );
-          }).toList(),
-                ),
-              ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Premium food category chip with emoji
+class _FoodCategoryChip extends StatelessWidget {
+  final String label;
+  final String emoji;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _FoodCategoryChip({
+    required this.label,
+    required this.emoji,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: isSelected ? AppTheme.mustardYellow : AppTheme.charcoalMedium,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(
+              color: isSelected ? AppTheme.mustardYellow : AppTheme.charcoalLight,
+              width: 1.5,
             ),
-        ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                emoji,
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? Colors.black : AppTheme.textPrimary,
+                  fontSize: 13,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -669,58 +798,103 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
   }
 }
 
-// App Drawer with Boss Mode
+// App Drawer with Premium Design
 class _AppDrawer extends ConsumerWidget {
   const _AppDrawer();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Drawer(
+      backgroundColor: AppTheme.midnightCharcoal,
       child: Column(
         children: [
-          DrawerHeader(
+          // Premium DrawerHeader with gradient
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
             decoration: const BoxDecoration(
-              color: AppTheme.midnightCharcoal,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppTheme.charcoalMedium,
+                  AppTheme.midnightCharcoal,
+                ],
+              ),
+              border: Border(
+                bottom: BorderSide(
+                  color: AppTheme.mustardYellow,
+                  width: 2,
+                ),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const Icon(
-                  Icons.local_shipping,
-                  size: 40,
-                  color: AppTheme.electricBlue,
+                // Logo with glow effect
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppTheme.mustardYellow20,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(
+                    Icons.local_shipping,
+                    size: 48,
+                    color: AppTheme.mustardYellow,
+                  ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 const Text(
                   '트럭아저씨',
                   style: TextStyle(
                     color: AppTheme.textPrimary,
-                    fontSize: 24,
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
+                Text(
                   'Food Truck Tracker',
                   style: TextStyle(
-                    color: AppTheme.textSecondary,
+                    color: AppTheme.mustardYellow.withOpacity(0.8),
                     fontSize: 14,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.list),
-            title: Text(AppLocalizations.of(context).truckList),
-            onTap: () {
-              Navigator.pop(context);
-            },
+
+          const SizedBox(height: 8),
+
+          // Navigation Section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              '내비게이션',
+              style: TextStyle(
+                color: AppTheme.textTertiary,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.2,
+              ),
+            ),
           ),
-          ListTile(
-            leading: const Icon(Icons.map),
-            title: Text(AppLocalizations.of(context).viewMap),
+
+          // Truck List (Selected)
+          _DrawerMenuItem(
+            icon: Icons.restaurant_menu,
+            title: AppLocalizations.of(context).truckList,
+            isSelected: true,
+            onTap: () => Navigator.pop(context),
+          ),
+
+          // Map View
+          _DrawerMenuItem(
+            icon: Icons.map_outlined,
+            title: AppLocalizations.of(context).viewMap,
             onTap: () {
               Navigator.pop(context);
               Navigator.of(context).push(
@@ -728,9 +902,11 @@ class _AppDrawer extends ConsumerWidget {
               );
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.favorite, color: Colors.red),
-            title: Text(AppLocalizations.of(context).myFavorites),
+
+          // Favorites
+          _DrawerMenuItem(
+            icon: Icons.favorite_outline,
+            title: AppLocalizations.of(context).myFavorites,
             onTap: () {
               Navigator.pop(context);
               Navigator.of(context).push(
@@ -738,10 +914,28 @@ class _AppDrawer extends ConsumerWidget {
               );
             },
           ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: Text(AppLocalizations.of(context).appInfo),
+
+          const SizedBox(height: 16),
+          const Divider(color: AppTheme.charcoalLight, height: 1),
+          const SizedBox(height: 8),
+
+          // Info Section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              '정보',
+              style: TextStyle(
+                color: AppTheme.textTertiary,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ),
+
+          _DrawerMenuItem(
+            icon: Icons.info_outline,
+            title: AppLocalizations.of(context).appInfo,
             onTap: () {
               final l10n = AppLocalizations.of(context);
               Navigator.pop(context);
@@ -762,9 +956,10 @@ class _AppDrawer extends ConsumerWidget {
               );
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.privacy_tip_outlined),
-            title: Text(AppLocalizations.of(context).privacyPolicy),
+
+          _DrawerMenuItem(
+            icon: Icons.privacy_tip_outlined,
+            title: AppLocalizations.of(context).privacyPolicy,
             onTap: () {
               final l10n = AppLocalizations.of(context);
               Navigator.pop(context);
@@ -788,49 +983,119 @@ class _AppDrawer extends ConsumerWidget {
               );
             },
           ),
+
           const Spacer(),
-          const Divider(),
-          // Logout Button
-          ListTile(
-            leading: const Icon(
-              Icons.logout,
-              color: Colors.red,
-            ),
-            title: Text(
-              AppLocalizations.of(context).logout,
-              style: const TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.w600,
+
+          const Divider(color: AppTheme.charcoalLight, height: 1),
+
+          // Logout Button with danger style
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await ref.read(authServiceProvider).signOut();
+                  ref.invalidate(currentUserTruckIdProvider);
+                  ref.invalidate(currentUserProvider);
+                  ref.invalidate(currentUserIdProvider);
+                  ref.invalidate(currentUserEmailProvider);
+                  if (context.mounted) {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      (route) => false,
+                    );
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.red.withOpacity(0.3)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.logout, color: Colors.red, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        AppLocalizations.of(context).logout,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-            trailing: const Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: Colors.red,
-            ),
-            onTap: () async {
-              Navigator.pop(context);
-
-              // Sign out from Firebase
-              await ref.read(authServiceProvider).signOut();
-
-              // CRITICAL: Invalidate all user-specific providers to clear cached data
-              ref.invalidate(currentUserTruckIdProvider);
-              ref.invalidate(currentUserProvider);
-              ref.invalidate(currentUserIdProvider);
-              ref.invalidate(currentUserEmailProvider);
-
-              // Navigate back to LoginScreen
-              if (context.mounted) {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                  (route) => false,
-                );
-              }
-            },
           ),
-          const SizedBox(height: 16),
         ],
+      ),
+    );
+  }
+}
+
+// Reusable Drawer Menu Item
+class _DrawerMenuItem extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+  final bool isSelected;
+
+  const _DrawerMenuItem({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+    this.isSelected = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      child: Material(
+        color: isSelected ? AppTheme.mustardYellow15 : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  color: isSelected ? AppTheme.mustardYellow : AppTheme.textSecondary,
+                  size: 22,
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: isSelected ? AppTheme.mustardYellow : AppTheme.textPrimary,
+                    fontSize: 15,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  ),
+                ),
+                if (isSelected) ...[
+                  const Spacer(),
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: AppTheme.mustardYellow,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
