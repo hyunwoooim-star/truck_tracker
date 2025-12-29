@@ -132,7 +132,8 @@ Stream<TruckStatus?> ownerTruckStatus(Ref ref) async* {
   final repository = ref.watch(truckRepositoryProvider);
   
   // Get truck ID from current user
-  final ownedTruckId = ref.watch(currentUserTruckIdProvider);
+  final truckIdAsync = ref.watch(currentUserTruckIdProvider);
+  final ownedTruckId = truckIdAsync.value;
   
   if (ownedTruckId == null) {
     yield null; // No owned truck
