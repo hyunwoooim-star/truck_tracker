@@ -1,0 +1,131 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:truck_tracker/core/services/app_version_service.dart';
+import 'package:truck_tracker/core/themes/theme_provider.dart';
+import 'package:truck_tracker/core/widgets/network_status_banner.dart';
+import 'package:truck_tracker/features/settings/presentation/app_settings_screen.dart';
+
+void main() {
+  group('AppSettingsScreen Widget', () {
+    Widget createTestWidget({
+      AppThemeMode themeMode = AppThemeMode.dark,
+      VersionCheckResult? versionResult,
+    }) {
+      return ProviderScope(
+        overrides: [
+          appThemeModeProvider.overrideWith((ref) => themeMode),
+          networkStatusProvider.overrideWithValue(NetworkStatus.online),
+          if (versionResult != null)
+            versionCheckProvider.overrideWith((ref) => Future.value(versionResult)),
+        ],
+        child: MaterialApp(
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeMode: themeMode == AppThemeMode.dark ? ThemeMode.dark : ThemeMode.light,
+          home: const AppSettingsScreen(),
+        ),
+      );
+    }
+
+    testWidgets('displays settings title', (tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('설정'), findsOneWidget);
+    });
+
+    testWidgets('displays theme section', (tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('화면'), findsOneWidget);
+      expect(find.text('테마'), findsOneWidget);
+    });
+
+    testWidgets('displays notification section', (tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('알림'), findsOneWidget);
+      expect(find.text('알림 설정'), findsOneWidget);
+    });
+
+    testWidgets('displays app info section', (tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('앱 정보'), findsOneWidget);
+      expect(find.text('버전'), findsOneWidget);
+      expect(find.text('v$kCurrentAppVersion'), findsOneWidget);
+    });
+
+    testWidgets('displays support section', (tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('지원'), findsOneWidget);
+      expect(find.text('도움말'), findsOneWidget);
+      expect(find.text('피드백 보내기'), findsOneWidget);
+    });
+
+    testWidgets('displays app branding', (tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('트럭아저씨'), findsOneWidget);
+      expect(find.byIcon(Icons.local_shipping), findsOneWidget);
+    });
+
+    testWidgets('shows dark mode label when in dark mode', (tester) async {
+      await tester.pumpWidget(createTestWidget(themeMode: AppThemeMode.dark));
+      await tester.pumpAndSettle();
+
+      expect(find.text('다크 모드'), findsOneWidget);
+    });
+
+    testWidgets('shows light mode label when in light mode', (tester) async {
+      await tester.pumpWidget(createTestWidget(themeMode: AppThemeMode.light));
+      await tester.pumpAndSettle();
+
+      expect(find.text('라이트 모드'), findsOneWidget);
+    });
+
+    testWidgets('shows theme dialog when theme tile is tapped', (tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find and tap the theme tile
+      await tester.tap(find.text('테마'));
+      await tester.pumpAndSettle();
+
+      // Dialog should appear
+      expect(find.text('테마 선택'), findsOneWidget);
+      expect(find.text('다크 모드'), findsWidgets); // In both tile and dialog
+      expect(find.text('라이트 모드'), findsOneWidget);
+      expect(find.text('시스템 설정'), findsOneWidget);
+    });
+
+    testWidgets('shows latest version when no update needed', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        versionResult: VersionCheckResult.noUpdateNeeded,
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('최신 버전'), findsOneWidget);
+    });
+
+    testWidgets('shows update available when update needed', (tester) async {
+      await tester.pumpWidget(createTestWidget(
+        versionResult: const VersionCheckResult(
+          needsUpdate: true,
+          forceUpdate: false,
+          latestVersion: '2.0.0',
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('업데이트 가능'), findsOneWidget);
+    });
+  });
+}
