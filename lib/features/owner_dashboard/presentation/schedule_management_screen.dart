@@ -86,7 +86,7 @@ class _ScheduleManagementScreenState
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: _saveSchedule,
-            tooltip: '저장',
+            tooltip: l10n.save,
           ),
         ],
       ),
@@ -133,6 +133,8 @@ class _DayScheduleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Card(
       color: AppTheme.charcoalMedium,
       margin: const EdgeInsets.only(bottom: 12),
@@ -163,9 +165,9 @@ class _DayScheduleCard extends StatelessWidget {
             if (schedule.isOpen) ...[
               const SizedBox(height: 12),
               TextField(
-                decoration: const InputDecoration(
-                  labelText: '영업 장소',
-                  hintText: '예: 강남역 2번 출구',
+                decoration: InputDecoration(
+                  labelText: l10n.businessLocation,
+                  hintText: l10n.businessLocationHint,
                 ),
                 style: const TextStyle(color: AppTheme.textPrimary),
                 controller: TextEditingController(text: schedule.location),
@@ -178,8 +180,8 @@ class _DayScheduleCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextField(
-                      decoration: const InputDecoration(
-                        labelText: '시작 시간',
+                      decoration: InputDecoration(
+                        labelText: l10n.startTime,
                         hintText: '18:00',
                       ),
                       style: const TextStyle(color: AppTheme.textPrimary),
@@ -194,8 +196,8 @@ class _DayScheduleCard extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: TextField(
-                      decoration: const InputDecoration(
-                        labelText: '종료 시간',
+                      decoration: InputDecoration(
+                        labelText: l10n.endTime,
                         hintText: '23:00',
                       ),
                       style: const TextStyle(color: AppTheme.textPrimary),

@@ -297,5 +297,52 @@
   "resetSettings": "설정 초기화",
   "resetSettingsConfirm": "알림 설정을 기본값으로 되돌립니다.\n계속하시겠습니까?",
   "settingsReset": "설정이 초기화되었습니다",
-  "cannotLoadSettings": "설정을 불러올 수 없습니다"
+  "cannotLoadSettings": "설정을 불러올 수 없습니다",
+
+  "closeBusiness": "영업 종료",
+  "confirmCloseBusiness": "정말 영업을 종료하시겠습니까?",
+  "businessClosed": "영업이 종료되었습니다.",
+  "todaysOrderStatus": "오늘의 주문 현황",
+  "totalOrders": "총 주문",
+  "completed": "완료",
+  "revenue": "매출",
+  "cash": "현금",
+  "online": "온라인",
+  "firestoreMigration": "Firestore 데이터 마이그레이션",
+  "confirmMigration": "8개의 트럭 데이터를 Firestore에 업로드하시겠습니까?",
+  "migrationSuccess": "8개 트럭 데이터가 성공적으로 업로드되었습니다!",
+  "uploadFailed": "업로드 실패: {error}",
+  "@uploadFailed": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "distanceKm": "{distance} km",
+  "@distanceKm": {
+    "placeholders": {
+      "distance": {
+        "type": "Object"
+      }
+    }
+  },
+  "openNow": "영업 중",
+  "closed": "휴업 중",
+  "myFavorites": "내 즐겨찾기",
+  "noFavoriteTrucksYet": "아직 즐겨찾기한 트럭이 없습니다",
+  "addFavoritesHint": "트럭 목록에서 ♥를 눌러 추가하세요",
+  "favoriteTrucksNotFound": "즐겨찾기한 트럭을 찾을 수 없습니다",
+  "errorWithMessage": "오류: {message}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "Object"
+      }
+    }
+  },
+  "businessLocation": "영업 장소",
+  "businessLocationHint": "예: 강남역 2번 출구",
+  "startTime": "시작 시간",
+  "endTime": "종료 시간"
 }

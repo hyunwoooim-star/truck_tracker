@@ -1681,6 +1681,156 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'설정을 불러올 수 없습니다'**
   String get cannotLoadSettings;
+
+  /// No description provided for @closeBusiness.
+  ///
+  /// In ko, this message translates to:
+  /// **'영업 종료'**
+  String get closeBusiness;
+
+  /// No description provided for @confirmCloseBusiness.
+  ///
+  /// In ko, this message translates to:
+  /// **'정말 영업을 종료하시겠습니까?'**
+  String get confirmCloseBusiness;
+
+  /// No description provided for @businessClosed.
+  ///
+  /// In ko, this message translates to:
+  /// **'영업이 종료되었습니다.'**
+  String get businessClosed;
+
+  /// No description provided for @todaysOrderStatus.
+  ///
+  /// In ko, this message translates to:
+  /// **'오늘의 주문 현황'**
+  String get todaysOrderStatus;
+
+  /// No description provided for @totalOrders.
+  ///
+  /// In ko, this message translates to:
+  /// **'총 주문'**
+  String get totalOrders;
+
+  /// No description provided for @completed.
+  ///
+  /// In ko, this message translates to:
+  /// **'완료'**
+  String get completed;
+
+  /// No description provided for @revenue.
+  ///
+  /// In ko, this message translates to:
+  /// **'매출'**
+  String get revenue;
+
+  /// No description provided for @cash.
+  ///
+  /// In ko, this message translates to:
+  /// **'현금'**
+  String get cash;
+
+  /// No description provided for @online.
+  ///
+  /// In ko, this message translates to:
+  /// **'온라인'**
+  String get online;
+
+  /// No description provided for @firestoreMigration.
+  ///
+  /// In ko, this message translates to:
+  /// **'Firestore 데이터 마이그레이션'**
+  String get firestoreMigration;
+
+  /// No description provided for @confirmMigration.
+  ///
+  /// In ko, this message translates to:
+  /// **'8개의 트럭 데이터를 Firestore에 업로드하시겠습니까?'**
+  String get confirmMigration;
+
+  /// No description provided for @migrationSuccess.
+  ///
+  /// In ko, this message translates to:
+  /// **'8개 트럭 데이터가 성공적으로 업로드되었습니다!'**
+  String get migrationSuccess;
+
+  /// No description provided for @uploadFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'업로드 실패: {error}'**
+  String uploadFailed(Object error);
+
+  /// No description provided for @distanceKm.
+  ///
+  /// In ko, this message translates to:
+  /// **'{distance} km'**
+  String distanceKm(Object distance);
+
+  /// No description provided for @openNow.
+  ///
+  /// In ko, this message translates to:
+  /// **'영업 중'**
+  String get openNow;
+
+  /// No description provided for @closed.
+  ///
+  /// In ko, this message translates to:
+  /// **'휴업 중'**
+  String get closed;
+
+  /// No description provided for @myFavorites.
+  ///
+  /// In ko, this message translates to:
+  /// **'내 즐겨찾기'**
+  String get myFavorites;
+
+  /// No description provided for @noFavoriteTrucksYet.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 즐겨찾기한 트럭이 없습니다'**
+  String get noFavoriteTrucksYet;
+
+  /// No description provided for @addFavoritesHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭 목록에서 ♥를 눌러 추가하세요'**
+  String get addFavoritesHint;
+
+  /// No description provided for @favoriteTrucksNotFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'즐겨찾기한 트럭을 찾을 수 없습니다'**
+  String get favoriteTrucksNotFound;
+
+  /// No description provided for @errorWithMessage.
+  ///
+  /// In ko, this message translates to:
+  /// **'오류: {message}'**
+  String errorWithMessage(Object message);
+
+  /// No description provided for @businessLocation.
+  ///
+  /// In ko, this message translates to:
+  /// **'영업 장소'**
+  String get businessLocation;
+
+  /// No description provided for @businessLocationHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 강남역 2번 출구'**
+  String get businessLocationHint;
+
+  /// No description provided for @startTime.
+  ///
+  /// In ko, this message translates to:
+  /// **'시작 시간'**
+  String get startTime;
+
+  /// No description provided for @endTime.
+  ///
+  /// In ko, this message translates to:
+  /// **'종료 시간'**
+  String get endTime;
 }
 
 class _AppLocalizationsDelegate

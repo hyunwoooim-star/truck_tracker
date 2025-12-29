@@ -91,7 +91,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: '로그아웃',
+            tooltip: l10n.logout,
             onPressed: () => _showLogoutDialog(context, ref),
           ),
         ],
@@ -227,9 +227,9 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppTheme.charcoalMedium,
-        title: const Text('영업 종료', style: TextStyle(color: Colors.white)),
-        content: const Text('정말 영업을 종료하시겠습니까?',
-            style: TextStyle(color: Colors.white70)),
+        title: Text(l10n.closeBusiness, style: const TextStyle(color: Colors.white)),
+        content: Text(l10n.confirmCloseBusiness,
+            style: const TextStyle(color: Colors.white70)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -246,11 +246,11 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                     .read(ownerOperatingStatusProvider.notifier)
                     .setStatus(false);
                 if (context.mounted) {
-                  SnackBarHelper.showInfo(context, '영업이 종료되었습니다.');
+                  SnackBarHelper.showInfo(context, l10n.businessClosed);
                 }
               } catch (e) {
                 if (context.mounted) {
-                  SnackBarHelper.showError(context, '오류: $e');
+                  SnackBarHelper.showError(context, '${l10n.error}: $e');
                 }
               }
             },
@@ -258,7 +258,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
             ),
-            child: const Text('영업 종료'),
+            child: Text(l10n.closeBusiness),
           ),
         ],
       ),
@@ -548,9 +548,9 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             children: [
               const Icon(Icons.today, color: AppTheme.mustardYellow, size: 28),
               const SizedBox(width: 12),
-              const Text(
-                '오늘의 주문 현황',
-                style: TextStyle(
+              Text(
+                l10n.todaysOrderStatus,
+                style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: AppTheme.mustardYellow,
@@ -564,7 +564,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
               Expanded(
                 child: _OrderStatTile(
                   icon: Icons.receipt_long,
-                  label: '총 주문',
+                  label: l10n.totalOrders,
                   value: '$totalOrders',
                   color: AppTheme.electricBlue,
                 ),
@@ -573,7 +573,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
               Expanded(
                 child: _OrderStatTile(
                   icon: Icons.check_circle,
-                  label: '완료',
+                  label: l10n.completed,
                   value: '$completedOrders',
                   color: Colors.green,
                 ),
@@ -586,7 +586,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
               Expanded(
                 child: _OrderStatTile(
                   icon: Icons.pending,
-                  label: '대기',
+                  label: l10n.pending,
                   value: '$pendingOrders',
                   color: Colors.orange,
                 ),
@@ -595,7 +595,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
               Expanded(
                 child: _OrderStatTile(
                   icon: Icons.attach_money,
-                  label: '매출',
+                  label: l10n.revenue,
                   value: '₩${numberFormat.format(totalRevenue)}',
                   color: AppTheme.mustardYellow,
                 ),
@@ -603,7 +603,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          // 현금 vs 온라인 매출 분류
+          // Cash vs Online revenue breakdown
           Builder(
             builder: (context) {
               final cashOrders = todayOrders.where(
@@ -620,7 +620,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                   Expanded(
                     child: _OrderStatTile(
                       icon: Icons.payments,
-                      label: '현금',
+                      label: l10n.cash,
                       value: '₩${numberFormat.format(cashRevenue)}',
                       color: Colors.orange,
                     ),
@@ -629,7 +629,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                   Expanded(
                     child: _OrderStatTile(
                       icon: Icons.credit_card,
-                      label: '온라인',
+                      label: l10n.online,
                       value: '₩${numberFormat.format(onlineRevenue)}',
                       color: Colors.blue,
                     ),
@@ -951,9 +951,9 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Firestore 데이터 마이그레이션'),
+        title: Text(l10n.firestoreMigration),
         content: Text(
-          '8개의 트럭 데이터를 Firestore에 업로드하시겠습니까?\n\n'
+          '${l10n.confirmMigration}\n\n'
           '${l10n.uploadDataWarning}',
         ),
         actions: [
@@ -989,11 +989,11 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
       await runMockDataMigration(repository);
 
       if (context.mounted) {
-        SnackBarHelper.showSuccess(context, '8개 트럭 데이터가 성공적으로 업로드되었습니다!');
+        SnackBarHelper.showSuccess(context, l10n.migrationSuccess);
       }
     } catch (e) {
       if (context.mounted) {
-        SnackBarHelper.showError(context, '업로드 실패: $e');
+        SnackBarHelper.showError(context, l10n.uploadFailed(e));
       }
     }
   }

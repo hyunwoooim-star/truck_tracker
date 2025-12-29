@@ -10,6 +10,7 @@ import 'package:rxdart/rxdart.dart';
 
 import '../../../core/constants/food_types.dart';
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../../../shared/widgets/status_tag.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
@@ -23,8 +24,9 @@ class TruckListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final trucksAsync = ref.watch(filteredTruckListProvider);
+    final trucksWithDistanceAsync = ref.watch(filteredTrucksWithDistanceProvider);
     final topRankedAsync = ref.watch(topRankedTrucksProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -64,24 +66,25 @@ class TruckListScreen extends ConsumerWidget {
               },
               color: AppTheme.mustardYellow,
               backgroundColor: AppTheme.charcoalMedium,
-              child: trucksAsync.when(
+              child: trucksWithDistanceAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (e, stackTrace) => Center(
                   child: Text(
-                    AppLocalizations.of(context).loadDataFailed,
+                    l10n.loadDataFailed,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
-                data: (trucks) {
+                data: (trucksWithDistance) {
                   // Get top ranked trucks (sync or empty list if loading)
                   final topRanked = topRankedAsync.value ?? [];
 
                   return ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  itemCount: trucks.length,
+                  itemCount: trucksWithDistance.length,
                   itemExtent: 180.0,  // Approximate card height for better scroll performance
                   itemBuilder: (context, index) {
-                    final truck = trucks[index];
+                    final truckWithDistance = trucksWithDistance[index];
+                    final truck = truckWithDistance.truck;
 
                     // Check if this truck is in Top 3
                     final rankIndex = topRanked.indexWhere((t) => t.id == truck.id);
@@ -248,7 +251,7 @@ class TruckListScreen extends ConsumerWidget {
                                               Icons.location_on,
                                               color: AppTheme.electricBlue,
                                             ),
-                                            tooltip: '지도에서 보기',
+                                            tooltip: l10n.viewOnMap,
                                           ),
                                           IconButton(
                                             onPressed: () async {
@@ -258,18 +261,7 @@ class TruckListScreen extends ConsumerWidget {
                                                 await notifier.toggleFavorite(truck.id);
                                               } catch (_) {
                                                 if (!context.mounted) return;
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    backgroundColor: AppTheme.electricBlue,
-                                                    content: Text(
-                                                      AppLocalizations.of(context).favoriteFailed,
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
+                                                SnackBarHelper.showError(context, l10n.favoriteFailed);
                                               }
                                             },
                                             icon: Icon(
@@ -280,7 +272,7 @@ class TruckListScreen extends ConsumerWidget {
                                                   ? AppTheme.electricBlue
                                                   : AppTheme.textTertiary,
                                             ),
-                                            tooltip: '즐겨찾기',
+                                            tooltip: l10n.favorite,
                                           ),
                                         ],
                                       ),
@@ -292,7 +284,7 @@ class TruckListScreen extends ConsumerWidget {
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  '메뉴',
+                                                  l10n.menu,
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .labelMedium
@@ -315,6 +307,40 @@ class TruckListScreen extends ConsumerWidget {
                                             ),
                                           ),
                                           const SizedBox(width: 12),
+                                          // Distance display
+                                          if (truckWithDistance.distanceInMeters != double.infinity)
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 8,
+                                                vertical: 4,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: AppTheme.electricBlue.withValues(alpha: 0.15),
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  const Icon(
+                                                    Icons.near_me,
+                                                    size: 14,
+                                                    color: AppTheme.electricBlue,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    truckWithDistance.distanceText,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .labelMedium
+                                                        ?.copyWith(
+                                                          fontWeight: FontWeight.w600,
+                                                          color: AppTheme.electricBlue,
+                                                        ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          const SizedBox(width: 8),
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.end,
                                             children: [
@@ -330,7 +356,7 @@ class TruckListScreen extends ConsumerWidget {
                                               ),
                                               const SizedBox(height: 4),
                                               Text(
-                                                '위치',
+                                                l10n.location,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .labelSmall
@@ -401,7 +427,7 @@ class _FilterBar extends ConsumerWidget {
                   builder: (_) => const _AdvancedFilterDialog(),
                 );
               },
-              tooltip: '고급 필터',
+              tooltip: AppLocalizations.of(context).searchTrucks,
               style: IconButton.styleFrom(
                 backgroundColor: filterState.hasActiveFilters
                     ? AppTheme.mustardYellow20
@@ -423,7 +449,7 @@ class _FilterBar extends ConsumerWidget {
                   builder: (_) => const _SortOptionsDialog(),
                 );
               },
-              tooltip: '정렬',
+              tooltip: AppLocalizations.of(context).rating,
               style: IconButton.styleFrom(
                 backgroundColor: AppTheme.charcoalMedium,
                 foregroundColor: AppTheme.textPrimary,
@@ -550,7 +576,7 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
         controller: _controller,
         style: const TextStyle(color: AppTheme.textPrimary),
         decoration: InputDecoration(
-          hintText: '트럭 번호, 기사명, 메뉴, 위치로 검색',
+          hintText: AppLocalizations.of(context).searchPlaceholder,
           hintStyle: const TextStyle(color: AppTheme.textTertiary),
           prefixIcon: const Icon(Icons.search, color: AppTheme.textTertiary),
           suffixIcon: searchKeyword.isNotEmpty
@@ -642,7 +668,16 @@ class _AppDrawer extends ConsumerWidget {
               );
             },
           ),
-ListTile(            leading: const Icon(Icons.favorite, color: Colors.red),            title: const Text('내 즐겨찾기'),            onTap: () {              Navigator.pop(context);              Navigator.of(context).push(                MaterialPageRoute(builder: (_) => const FavoritesScreen()),              );            },          ),
+          ListTile(
+            leading: const Icon(Icons.favorite, color: Colors.red),
+            title: Text(AppLocalizations.of(context).myFavorites),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+              );
+            },
+          ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.info_outline),
@@ -701,9 +736,9 @@ ListTile(            leading: const Icon(Icons.favorite, color: Colors.red),    
               Icons.logout,
               color: Colors.red,
             ),
-            title: const Text(
-              '로그아웃',
-              style: TextStyle(
+            title: Text(
+              AppLocalizations.of(context).logout,
+              style: const TextStyle(
                 color: Colors.red,
                 fontWeight: FontWeight.w600,
               ),
@@ -719,7 +754,7 @@ ListTile(            leading: const Icon(Icons.favorite, color: Colors.red),    
               // Sign out from Firebase
               await ref.read(authServiceProvider).signOut();
 
-              // 🔄 CRITICAL: Invalidate all user-specific providers to clear cached data
+              // CRITICAL: Invalidate all user-specific providers to clear cached data
               ref.invalidate(currentUserTruckIdProvider);
               ref.invalidate(currentUserProvider);
               ref.invalidate(currentUserIdProvider);

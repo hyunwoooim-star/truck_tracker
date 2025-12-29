@@ -852,4 +852,85 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cannotLoadSettings => 'Cannot load settings';
+
+  @override
+  String get closeBusiness => 'Close Business';
+
+  @override
+  String get confirmCloseBusiness => 'Are you sure you want to close business?';
+
+  @override
+  String get businessClosed => 'Business has been closed.';
+
+  @override
+  String get todaysOrderStatus => 'Today\'s Order Status';
+
+  @override
+  String get totalOrders => 'Total Orders';
+
+  @override
+  String get completed => 'Completed';
+
+  @override
+  String get revenue => 'Revenue';
+
+  @override
+  String get cash => 'Cash';
+
+  @override
+  String get online => 'Online';
+
+  @override
+  String get firestoreMigration => 'Firestore Data Migration';
+
+  @override
+  String get confirmMigration => 'Upload 8 truck data to Firestore?';
+
+  @override
+  String get migrationSuccess => '8 truck data successfully uploaded!';
+
+  @override
+  String uploadFailed(Object error) {
+    return 'Upload failed: $error';
+  }
+
+  @override
+  String distanceKm(Object distance) {
+    return '$distance km';
+  }
+
+  @override
+  String get openNow => 'Open Now';
+
+  @override
+  String get closed => 'Closed';
+
+  @override
+  String get myFavorites => 'My Favorites';
+
+  @override
+  String get noFavoriteTrucksYet => 'You haven\'t favorited any trucks yet';
+
+  @override
+  String get addFavoritesHint => 'Tap ♥ in the truck list to add favorites';
+
+  @override
+  String get favoriteTrucksNotFound => 'Favorited trucks not found';
+
+  @override
+  String errorWithMessage(Object message) {
+    return 'Error: $message';
+  }
+
+  @override
+  String get businessLocation => 'Business Location';
+
+  @override
+  String get businessLocationHint => 'e.g., Gangnam Station Exit 2';
+
+  @override
+  String get startTime => 'Start Time';
+
+  @override
+  String get endTime => 'End Time';
 }

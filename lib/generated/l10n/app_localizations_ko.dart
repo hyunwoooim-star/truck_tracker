@@ -839,4 +839,85 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get cannotLoadSettings => '설정을 불러올 수 없습니다';
+
+  @override
+  String get closeBusiness => '영업 종료';
+
+  @override
+  String get confirmCloseBusiness => '정말 영업을 종료하시겠습니까?';
+
+  @override
+  String get businessClosed => '영업이 종료되었습니다.';
+
+  @override
+  String get todaysOrderStatus => '오늘의 주문 현황';
+
+  @override
+  String get totalOrders => '총 주문';
+
+  @override
+  String get completed => '완료';
+
+  @override
+  String get revenue => '매출';
+
+  @override
+  String get cash => '현금';
+
+  @override
+  String get online => '온라인';
+
+  @override
+  String get firestoreMigration => 'Firestore 데이터 마이그레이션';
+
+  @override
+  String get confirmMigration => '8개의 트럭 데이터를 Firestore에 업로드하시겠습니까?';
+
+  @override
+  String get migrationSuccess => '8개 트럭 데이터가 성공적으로 업로드되었습니다!';
+
+  @override
+  String uploadFailed(Object error) {
+    return '업로드 실패: $error';
+  }
+
+  @override
+  String distanceKm(Object distance) {
+    return '$distance km';
+  }
+
+  @override
+  String get openNow => '영업 중';
+
+  @override
+  String get closed => '휴업 중';
+
+  @override
+  String get myFavorites => '내 즐겨찾기';
+
+  @override
+  String get noFavoriteTrucksYet => '아직 즐겨찾기한 트럭이 없습니다';
+
+  @override
+  String get addFavoritesHint => '트럭 목록에서 ♥를 눌러 추가하세요';
+
+  @override
+  String get favoriteTrucksNotFound => '즐겨찾기한 트럭을 찾을 수 없습니다';
+
+  @override
+  String errorWithMessage(Object message) {
+    return '오류: $message';
+  }
+
+  @override
+  String get businessLocation => '영업 장소';
+
+  @override
+  String get businessLocationHint => '예: 강남역 2번 출구';
+
+  @override
+  String get startTime => '시작 시간';
+
+  @override
+  String get endTime => '종료 시간';
 }

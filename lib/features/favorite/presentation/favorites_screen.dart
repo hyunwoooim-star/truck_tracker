@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../generated/l10n/app_localizations.dart';
 import '../../../shared/widgets/status_tag.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
@@ -10,19 +11,20 @@ import '../../truck_list/domain/truck.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../data/favorite_repository.dart';
 
-/// 즐겨찾기한 트럭 목록 화면
+/// Favorites screen showing list of favorited trucks
 class FavoritesScreen extends ConsumerWidget {
   const FavoritesScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final userId = ref.watch(currentUserIdProvider);
 
     if (userId == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('내 즐겨찾기')),
-        body: const Center(
-          child: Text('로그인이 필요합니다', style: TextStyle(color: Colors.white70)),
+        appBar: AppBar(title: Text(l10n.myFavorites)),
+        body: Center(
+          child: Text(l10n.loginRequired, style: const TextStyle(color: Colors.white70)),
         ),
       );
     }
@@ -33,14 +35,14 @@ class FavoritesScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppTheme.midnightCharcoal,
       appBar: AppBar(
-        title: const Text('내 즐겨찾기'),
+        title: Text(l10n.myFavorites),
         backgroundColor: AppTheme.midnightCharcoal,
         foregroundColor: AppTheme.electricBlue,
       ),
       body: favoriteTruckIdsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
-          child: Text('오류: $e', style: const TextStyle(color: Colors.red)),
+          child: Text(l10n.errorWithMessage(e), style: const TextStyle(color: Colors.red)),
         ),
         data: (favoriteIds) {
           if (favoriteIds.isEmpty) {
@@ -51,12 +53,12 @@ class FavoritesScreen extends ConsumerWidget {
                   Icon(Icons.favorite_border, size: 64, color: Colors.grey[600]),
                   const SizedBox(height: 16),
                   Text(
-                    '아직 즐겨찾기한 트럭이 없습니다',
+                    l10n.noFavoriteTrucksYet,
                     style: TextStyle(color: Colors.grey[400], fontSize: 16),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '트럭 목록에서 ♥를 눌러 추가하세요',
+                    l10n.addFavoritesHint,
                     style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),
                 ],
@@ -67,7 +69,7 @@ class FavoritesScreen extends ConsumerWidget {
           return allTrucksAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Center(
-              child: Text('오류: $e', style: const TextStyle(color: Colors.red)),
+              child: Text(l10n.errorWithMessage(e), style: const TextStyle(color: Colors.red)),
             ),
             data: (allTrucks) {
               final favoriteTrucks = allTrucks
@@ -82,7 +84,7 @@ class FavoritesScreen extends ConsumerWidget {
                       Icon(Icons.favorite_border, size: 64, color: Colors.grey[600]),
                       const SizedBox(height: 16),
                       Text(
-                        '즐겨찾기한 트럭을 찾을 수 없습니다',
+                        l10n.favoriteTrucksNotFound,
                         style: TextStyle(color: Colors.grey[400], fontSize: 16),
                       ),
                     ],

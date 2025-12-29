@@ -399,5 +399,52 @@
   "resetSettings": "Reset Settings",
   "resetSettingsConfirm": "Reset notification settings to default.\nContinue?",
   "settingsReset": "Settings have been reset",
-  "cannotLoadSettings": "Cannot load settings"
+  "cannotLoadSettings": "Cannot load settings",
+
+  "closeBusiness": "Close Business",
+  "confirmCloseBusiness": "Are you sure you want to close business?",
+  "businessClosed": "Business has been closed.",
+  "todaysOrderStatus": "Today''s Order Status",
+  "totalOrders": "Total Orders",
+  "completed": "Completed",
+  "revenue": "Revenue",
+  "cash": "Cash",
+  "online": "Online",
+  "firestoreMigration": "Firestore Data Migration",
+  "confirmMigration": "Upload 8 truck data to Firestore?",
+  "migrationSuccess": "8 truck data successfully uploaded!",
+  "uploadFailed": "Upload failed: {error}",
+  "@uploadFailed": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "distanceKm": "{distance} km",
+  "@distanceKm": {
+    "placeholders": {
+      "distance": {
+        "type": "Object"
+      }
+    }
+  },
+  "openNow": "Open Now",
+  "closed": "Closed",
+  "myFavorites": "My Favorites",
+  "noFavoriteTrucksYet": "You haven''t favorited any trucks yet",
+  "addFavoritesHint": "Tap ♥ in the truck list to add favorites",
+  "favoriteTrucksNotFound": "Favorited trucks not found",
+  "errorWithMessage": "Error: {message}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "Object"
+      }
+    }
+  },
+  "businessLocation": "Business Location",
+  "businessLocationHint": "e.g., Gangnam Station Exit 2",
+  "startTime": "Start Time",
+  "endTime": "End Time"
 }
