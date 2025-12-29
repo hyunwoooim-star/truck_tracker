@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -30,20 +31,76 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
   final ImagePicker _imagePicker = ImagePicker();
 
+  // Typing indicator
+  Timer? _typingTimer;
+  bool _isTyping = false;
+  StreamSubscription? _typingSubscription;
+  Map<String, dynamic> _typingUsers = {};
+
   @override
   void initState() {
     super.initState();
     // Mark messages as read when entering the chat
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _markAsRead();
+      _listenToTypingStatus();
     });
+
+    // Listen to text changes for typing indicator
+    _messageController.addListener(_onTextChanged);
   }
 
   @override
   void dispose() {
+    _typingTimer?.cancel();
+    _typingSubscription?.cancel();
+    _setTypingStatus(false); // Clear typing status on exit
+    _messageController.removeListener(_onTextChanged);
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onTextChanged() {
+    if (_messageController.text.isNotEmpty && !_isTyping) {
+      _setTypingStatus(true);
+    }
+
+    // Reset the timer
+    _typingTimer?.cancel();
+    _typingTimer = Timer(const Duration(seconds: 3), () {
+      _setTypingStatus(false);
+    });
+  }
+
+  void _setTypingStatus(bool isTyping) {
+    if (_isTyping == isTyping) return;
+    _isTyping = isTyping;
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    ref.read(chatRepositoryProvider).setTypingStatus(
+      chatRoomId: widget.chatRoomId,
+      userId: user.uid,
+      isTyping: isTyping,
+    );
+  }
+
+  void _listenToTypingStatus() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    _typingSubscription = ref.read(chatRepositoryProvider)
+        .watchTypingStatus(widget.chatRoomId)
+        .listen((typingUsers) {
+      if (mounted) {
+        setState(() {
+          // Remove current user from typing users
+          _typingUsers = Map.from(typingUsers)..remove(user.uid);
+        });
+      }
+    });
   }
 
   Future<void> _markAsRead() async {
@@ -313,6 +370,31 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
           ),
 
+          // Typing indicator
+          if (_typingUsers.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: Colors.grey[100],
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 24,
+                    height: 16,
+                    child: _TypingDots(),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '상대방이 입력 중...',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[600],
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
           // Message input
           Container(
             padding: const EdgeInsets.all(8),
@@ -559,6 +641,59 @@ class _MessageBubble extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Animated typing dots widget
+class _TypingDots extends StatefulWidget {
+  @override
+  State<_TypingDots> createState() => _TypingDotsState();
+}
+
+class _TypingDotsState extends State<_TypingDots>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(3, (index) {
+            final delay = index * 0.2;
+            final value = ((_controller.value - delay) % 1.0).clamp(0.0, 1.0);
+            final opacity = value < 0.5 ? value * 2 : (1 - value) * 2;
+
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 2),
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color: Colors.grey[600]!.withValues(alpha: 0.4 + opacity * 0.6),
+                shape: BoxShape.circle,
+              ),
+            );
+          }),
+        );
+      },
     );
   }
 }

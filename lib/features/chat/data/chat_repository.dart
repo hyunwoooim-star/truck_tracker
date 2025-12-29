@@ -319,6 +319,35 @@ class ChatRepository {
   }
 
   // ═══════════════════════════════════════════════════════════
+  // TYPING INDICATOR
+  // ═══════════════════════════════════════════════════════════
+
+  /// Set typing status for a user in a chat room
+  Future<void> setTypingStatus({
+    required String chatRoomId,
+    required String userId,
+    required bool isTyping,
+  }) async {
+    try {
+      await _chatRoomsCollection.doc(chatRoomId).update({
+        'typingUsers.$userId': isTyping ? FieldValue.serverTimestamp() : FieldValue.delete(),
+      });
+    } catch (e) {
+      // Silently fail for typing indicator
+      AppLogger.debug('Typing status update failed: $e', tag: 'ChatRepository');
+    }
+  }
+
+  /// Watch typing status in a chat room
+  Stream<Map<String, dynamic>> watchTypingStatus(String chatRoomId) {
+    return _chatRoomsCollection.doc(chatRoomId).snapshots().map((doc) {
+      if (!doc.exists) return {};
+      final data = doc.data() as Map<String, dynamic>;
+      return data['typingUsers'] as Map<String, dynamic>? ?? {};
+    });
+  }
+
+  // ═══════════════════════════════════════════════════════════
   // UTILITY
   // ═══════════════════════════════════════════════════════════
 
