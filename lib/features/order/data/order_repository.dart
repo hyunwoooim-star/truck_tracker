@@ -180,6 +180,27 @@ class OrderRepository {
       return null;
     }
   }
+
+  /// Check if user has completed order at truck (for review/talk verification)
+  Future<bool> hasCompletedOrder(String userId, String truckId) async {
+    AppLogger.debug('Checking completed order: user=$userId, truck=$truckId', tag: 'OrderRepository');
+
+    try {
+      final snapshot = await _ordersCollection
+          .where('userId', isEqualTo: userId)
+          .where('truckId', isEqualTo: truckId)
+          .where('status', isEqualTo: 'completed')
+          .limit(1)
+          .get();
+
+      final hasOrder = snapshot.docs.isNotEmpty;
+      AppLogger.debug('Has completed order: $hasOrder', tag: 'OrderRepository');
+      return hasOrder;
+    } catch (e, stackTrace) {
+      AppLogger.error('Error checking completed order', error: e, stackTrace: stackTrace, tag: 'OrderRepository');
+      return false;
+    }
+  }
 }
 
 @riverpod

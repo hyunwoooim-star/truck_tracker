@@ -363,6 +363,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get talkWithOwner => '사장님과 대화';
 
   @override
+  String get talkWithCustomers => '고객과 대화';
+
+  @override
+  String get noMessagesYet => '아직 메시지가 없습니다. 대화를 시작하세요!';
+
+  @override
+  String get errorLoadingMessages => '메시지 로딩 실패';
+
+  @override
   String get navigation => '길찾기';
 
   @override
@@ -451,6 +460,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String reviewSubmissionFailed(Object error) {
     return '리뷰 등록 실패: $error';
   }
+
+  @override
+  String get purchaseRequiredForReview => '주문 후 리뷰를 작성할 수 있습니다';
+
+  @override
+  String get purchaseRequiredForTalk => '주문 후 댓글을 작성할 수 있습니다';
+
+  @override
+  String get verifyingPurchase => '구매 이력 확인 중...';
 
   @override
   String get starRating => '별점';

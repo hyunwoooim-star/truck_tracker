@@ -625,11 +625,30 @@ class TruckDetailScreen extends ConsumerWidget {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) => ReviewFormDialog(truckId: truck.id),
-          );
+        onPressed: () async {
+          final user = FirebaseAuth.instance.currentUser;
+          if (user == null) {
+            SnackBarHelper.showWarning(context, l10n.loginRequired);
+            return;
+          }
+
+          // Verify purchase before allowing review
+          final orderRepo = ref.read(orderRepositoryProvider);
+          final hasPurchased = await orderRepo.hasCompletedOrder(user.uid, truck.id);
+
+          if (!hasPurchased) {
+            if (context.mounted) {
+              SnackBarHelper.showWarning(context, l10n.purchaseRequiredForReview);
+            }
+            return;
+          }
+
+          if (context.mounted) {
+            showDialog(
+              context: context,
+              builder: (context) => ReviewFormDialog(truckId: truck.id),
+            );
+          }
         },
         backgroundColor: AppTheme.electricBlue,
         foregroundColor: Colors.black,

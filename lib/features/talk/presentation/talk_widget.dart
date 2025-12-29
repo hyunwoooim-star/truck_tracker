@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/themes/app_theme.dart';
-import '../../auth/presentation/auth_provider.dart';
-import '../data/talk_repository.dart';
 import '../../../core/utils/snackbar_helper.dart';
+import '../../../generated/l10n/app_localizations.dart';
+import '../../auth/presentation/auth_provider.dart';
+import '../../order/data/order_repository.dart';
+import '../data/talk_repository.dart';
 import '../domain/talk_message.dart';
 
 const Color _mustard = AppTheme.mustardYellow;
@@ -48,13 +50,26 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
   }
 
   Future<void> _sendMessage() async {
+    final l10n = AppLocalizations.of(context);
     final messageText = _messageController.text.trim();
     if (messageText.isEmpty) return;
 
     final currentUser = ref.read(currentUserProvider);
     if (currentUser == null) {
-      SnackBarHelper.showWarning(context, 'Please log in to send messages');
+      SnackBarHelper.showWarning(context, l10n.loginRequired);
       return;
+    }
+
+    // Verify purchase before allowing comment (owner is always allowed)
+    if (!widget.isOwner) {
+      final orderRepo = ref.read(orderRepositoryProvider);
+      final hasPurchased = await orderRepo.hasCompletedOrder(currentUser.uid, widget.truckId);
+      if (!hasPurchased) {
+        if (mounted) {
+          SnackBarHelper.showWarning(context, l10n.purchaseRequiredForTalk);
+        }
+        return;
+      }
     }
 
     final message = TalkMessage(
@@ -76,13 +91,14 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
       Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
     } catch (e) {
       if (mounted) {
-        SnackBarHelper.showError(context, 'Error sending message: $e');
+        SnackBarHelper.showError(context, l10n.errorOccurred);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final talkAsync = ref.watch(truckTalkProvider(widget.truckId));
 
     return Container(
@@ -106,7 +122,7 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
                 const Icon(Icons.chat_bubble, color: _mustard),
                 const SizedBox(width: 8),
                 Text(
-                  widget.isOwner ? 'Talk with Customers' : 'Talk with Owner',
+                  widget.isOwner ? l10n.talkWithCustomers : l10n.talkWithOwner,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -122,10 +138,10 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
             child: talkAsync.when(
               data: (messages) {
                 if (messages.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text(
-                      'No messages yet. Start the conversation!',
-                      style: TextStyle(color: Colors.white54),
+                      l10n.noMessagesYet,
+                      style: const TextStyle(color: Colors.white54),
                     ),
                   );
                 }
@@ -151,7 +167,7 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
               ),
               error: (error, _) => Center(
                 child: Text(
-                  'Error loading messages',
+                  l10n.errorLoadingMessages,
                   style: TextStyle(color: Colors.red[300]),
                 ),
               ),
@@ -174,7 +190,7 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
                     controller: _messageController,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      hintText: 'Type a message...',
+                      hintText: l10n.typeMessage,
                       hintStyle: const TextStyle(color: Colors.white54),
                       filled: true,
                       fillColor: _charcoal,

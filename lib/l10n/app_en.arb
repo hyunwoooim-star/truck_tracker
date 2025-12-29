@@ -174,6 +174,9 @@
   "reviewsTitle": "Reviews",
   "noReviewsYet": "No reviews yet",
   "talkWithOwner": "Talk with Owner",
+  "talkWithCustomers": "Talk with Customers",
+  "noMessagesYet": "No messages yet. Start the conversation!",
+  "errorLoadingMessages": "Error loading messages",
   "navigation": "Navigation",
   "totalItems": "Total {count} items",
   "@totalItems": {
@@ -243,6 +246,9 @@
       }
     }
   },
+  "purchaseRequiredForReview": "You can write a review after placing an order",
+  "purchaseRequiredForTalk": "You can leave a comment after placing an order",
+  "verifyingPurchase": "Verifying purchase...",
   "starRating": "Star Rating",
   "reviewContent": "Review Content",
   "reviewPlaceholder": "Please write a review for this truck",

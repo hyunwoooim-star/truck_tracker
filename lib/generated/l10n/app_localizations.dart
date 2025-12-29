@@ -776,6 +776,24 @@ abstract class AppLocalizations {
   /// **'사장님과 대화'**
   String get talkWithOwner;
 
+  /// No description provided for @talkWithCustomers.
+  ///
+  /// In ko, this message translates to:
+  /// **'고객과 대화'**
+  String get talkWithCustomers;
+
+  /// No description provided for @noMessagesYet.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 메시지가 없습니다. 대화를 시작하세요!'**
+  String get noMessagesYet;
+
+  /// No description provided for @errorLoadingMessages.
+  ///
+  /// In ko, this message translates to:
+  /// **'메시지 로딩 실패'**
+  String get errorLoadingMessages;
+
   /// No description provided for @navigation.
   ///
   /// In ko, this message translates to:
@@ -931,6 +949,24 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'리뷰 등록 실패: {error}'**
   String reviewSubmissionFailed(Object error);
+
+  /// No description provided for @purchaseRequiredForReview.
+  ///
+  /// In ko, this message translates to:
+  /// **'주문 후 리뷰를 작성할 수 있습니다'**
+  String get purchaseRequiredForReview;
+
+  /// No description provided for @purchaseRequiredForTalk.
+  ///
+  /// In ko, this message translates to:
+  /// **'주문 후 댓글을 작성할 수 있습니다'**
+  String get purchaseRequiredForTalk;
+
+  /// No description provided for @verifyingPurchase.
+  ///
+  /// In ko, this message translates to:
+  /// **'구매 이력 확인 중...'**
+  String get verifyingPurchase;
 
   /// No description provided for @starRating.
   ///

@@ -368,6 +368,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get talkWithOwner => 'Talk with Owner';
 
   @override
+  String get talkWithCustomers => 'Talk with Customers';
+
+  @override
+  String get noMessagesYet => 'No messages yet. Start the conversation!';
+
+  @override
+  String get errorLoadingMessages => 'Error loading messages';
+
+  @override
   String get navigation => 'Navigation';
 
   @override
@@ -456,6 +465,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String reviewSubmissionFailed(Object error) {
     return 'Review submission failed: $error';
   }
+
+  @override
+  String get purchaseRequiredForReview =>
+      'You can write a review after placing an order';
+
+  @override
+  String get purchaseRequiredForTalk =>
+      'You can leave a comment after placing an order';
+
+  @override
+  String get verifyingPurchase => 'Verifying purchase...';
 
   @override
   String get starRating => 'Star Rating';
