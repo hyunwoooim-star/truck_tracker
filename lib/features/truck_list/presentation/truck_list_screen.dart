@@ -1,3 +1,4 @@
+import '../../favorite/presentation/favorites_screen.dart';
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -56,7 +57,7 @@ class TruckListScreen extends ConsumerWidget {
           Expanded(
             child: trucksAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, __) => Center(
+              error: (e, stackTrace) => Center(
                 child: Text(
                   AppLocalizations.of(context).loadDataFailed,
                   style: Theme.of(context).textTheme.bodyMedium,
@@ -630,6 +631,7 @@ class _AppDrawer extends ConsumerWidget {
               );
             },
           ),
+ListTile(            leading: const Icon(Icons.favorite, color: Colors.red),            title: const Text('내 즐겨찾기'),            onTap: () {              Navigator.pop(context);              Navigator.of(context).push(                MaterialPageRoute(builder: (_) => const FavoritesScreen()),              );            },          ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.info_outline),
