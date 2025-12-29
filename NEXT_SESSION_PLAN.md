@@ -5,7 +5,7 @@
 > **이 문서를 읽으면**: 어디서든 바로 작업 시작 가능
 
 **작성일**: 2025-12-29
-**현재 상태**: Cloud Functions 배포 완료, 테스트/빌드 대기
+**현재 상태**: UX 개선 완료, 테스트 대기
 
 ---
 
@@ -26,32 +26,35 @@ flutter build web
 ```bash
 flutter analyze
 ```
-현재 86개 경고 남음 (대부분 unused imports)
+현재 37개 경고 남음
 
 ---
 
 ## ✅ 이번 세션에서 완료한 작업
 
-### 1. Cloud Functions 배포 완료 (6개 함수)
-- `notifyOrderStatus` - 주문 상태 알림
-- `notifyChatMessage` - 채팅 메시지 알림
-- `notifyCouponCreated` - 쿠폰 생성 알림
-- `notifyNearbyTrucks` - 근처 트럭 알림
-- `notifyTruckOpening` - 트럭 영업 시작 알림
-- `createCustomToken` - 커스텀 토큰 생성
+### 1. UX 개선 - 사장님 대시보드
+- 영업 종료 버튼 및 확인 다이얼로그 추가
+- 현금/온라인 매출 분류 위젯 추가
+- 코드 포맷 정리 및 경고 수정
 
-### 2. flutter analyze 경고 감소
-- **107개 → 86개** (21개 감소)
-- 제거한 것들:
-  - 미사용 imports (flutter/foundation.dart, google_sign_in 등)
-  - 미사용 함수 (_getMockTruckDetail, _handleGoogleSignIn, _getReviewCountForDate)
-  - 미사용 catch stackTrace 파라미터
+### 2. UX 개선 - 고객 화면
+- 즐겨찾기 전용 화면 추가 (`favorites_screen.dart`)
+- 트럭 리스트에 Pull-to-refresh 추가
+- 영업 중인 트럭을 상단에 표시 (Open-first sorting)
+- 휴업 중인 트럭 시각적 표시 (회색 테두리)
 
-### 3. Firebase CLI 설정 완료
-- Node.js 20.10.0 설치됨 (C:\nvm4w\node-v20.10.0-win-x64)
-- Firebase CLI 15.1.0 설치됨
-- Firebase 로그인 완료
-- service-account-key.json 저장됨 (gitignore 대상)
+### 3. 코드 품질 개선
+- flutter analyze 경고: 44개 → 37개 (7개 감소)
+- 불필요한 언더스코어 수정
+- deprecated withOpacity → withValues 변경
+- 타입 어노테이션 추가
+
+### 4. Git 커밋 내역
+```
+- feat: Add dedicated favorites screen
+- refactor: Clean up owner_dashboard_screen.dart
+- feat: Add pull-to-refresh and open-first sorting
+```
 
 ---
 
@@ -64,8 +67,9 @@ flutter analyze
 | Phase 18 (코드 품질) | ✅ 완료 | 100% |
 | Phase 19 (테스트) | ⏸️ 재시작 후 실행 | 50% |
 | Phase 20 (문서화) | ✅ 완료 | 100% |
+| UX 개선 | ✅ 완료 | 100% |
 
-**전체 진행률**: 약 95%
+**전체 진행률**: 약 98%
 
 ---
 
@@ -96,4 +100,4 @@ node "C:\nvm4w\node-v20.10.0-win-x64\node_modules\firebase-tools\lib\bin\firebas
 
 ---
 
-**마지막 업데이트**: 2025-12-29 (Cloud Functions 배포 완료)
+**마지막 업데이트**: 2025-12-29 (UX 개선 완료)
