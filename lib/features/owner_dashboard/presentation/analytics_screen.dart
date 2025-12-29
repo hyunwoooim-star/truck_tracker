@@ -1,7 +1,5 @@
-import 'dart:convert';
-import 'dart:html' as html;
-
 import 'package:csv/csv.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +7,7 @@ import 'package:intl/intl.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
+import '../../../core/utils/web_download.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../analytics/data/analytics_repository.dart';
 import '../../auth/presentation/auth_provider.dart';
@@ -500,18 +499,15 @@ class AnalyticsScreen extends ConsumerWidget {
 
       String csv = const ListToCsvConverter().convert(csvData);
 
-      // Download for Web
-      final bytes = utf8.encode(csv);
-      final blob = html.Blob([bytes]);
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.AnchorElement(href: url)
-        ..setAttribute(
-          'download',
-          'revenue_${DateFormat('yyyy-MM-dd').format(analytics.dateRange.start)}_'
-          '${DateFormat('yyyy-MM-dd').format(analytics.dateRange.end)}.csv',
-        )
-        ..click();
-      html.Url.revokeObjectUrl(url);
+      // Download for Web only
+      if (!kIsWeb) {
+        SnackBarHelper.showError(context, 'CSV download is only available on web');
+        return;
+      }
+
+      final filename = 'revenue_${DateFormat('yyyy-MM-dd').format(analytics.dateRange.start)}_'
+          '${DateFormat('yyyy-MM-dd').format(analytics.dateRange.end)}.csv';
+      downloadCsvWeb(csv, filename);
 
       SnackBarHelper.showSuccess(context, l10n.csvDownloadSuccess);
     } catch (e) {
