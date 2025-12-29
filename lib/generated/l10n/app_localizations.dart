@@ -488,6 +488,18 @@ abstract class AppLocalizations {
   /// **'주문 로딩 실패'**
   String get errorLoadingOrders;
 
+  /// No description provided for @noOrdersYet.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 주문이 없습니다'**
+  String get noOrdersYet;
+
+  /// No description provided for @noOrdersInColumn.
+  ///
+  /// In ko, this message translates to:
+  /// **'주문 없음'**
+  String get noOrdersInColumn;
+
   /// No description provided for @menuItems.
   ///
   /// In ko, this message translates to:

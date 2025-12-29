@@ -206,6 +206,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get errorLoadingOrders => '주문 로딩 실패';
 
   @override
+  String get noOrdersYet => '아직 주문이 없습니다';
+
+  @override
+  String get noOrdersInColumn => '주문 없음';
+
+  @override
   String get menuItems => '메뉴 항목';
 
   @override

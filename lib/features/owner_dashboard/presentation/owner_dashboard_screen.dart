@@ -683,15 +683,15 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: _buildKanbanColumn(l10n.pending, pending, AppTheme.mustardYellow30, ref),
+                      child: _buildKanbanColumn(l10n.pending, pending, AppTheme.mustardYellow30, ref, l10n),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: _buildKanbanColumn(l10n.preparing, preparing, AppTheme.orange30, ref),
+                      child: _buildKanbanColumn(l10n.preparing, preparing, AppTheme.orange30, ref, l10n),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: _buildKanbanColumn(l10n.ready, ready, AppTheme.green30, ref),
+                      child: _buildKanbanColumn(l10n.ready, ready, AppTheme.green30, ref, l10n),
                     ),
                   ],
                 ),
@@ -712,7 +712,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     );
   }
 
-  Widget _buildKanbanColumn(String title, List<Order> orders, Color color, WidgetRef ref) {
+  Widget _buildKanbanColumn(String title, List<Order> orders, Color color, WidgetRef ref, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -753,13 +753,23 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
           ),
           const SizedBox(height: 12),
           Expanded(
-            child: ListView.builder(
-              itemCount: orders.length,
-              itemBuilder: (context, index) {
-                final order = orders[index];
-                return _buildOrderCard(order, ref);
-              },
-            ),
+            child: orders.isEmpty
+                ? Center(
+                    child: Text(
+                      l10n.noOrdersInColumn,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: orders.length,
+                    itemBuilder: (context, index) {
+                      final order = orders[index];
+                      return _buildOrderCard(order, ref);
+                    },
+                  ),
           ),
         ],
       ),

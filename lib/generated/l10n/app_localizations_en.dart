@@ -209,6 +209,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorLoadingOrders => 'Error loading orders';
 
   @override
+  String get noOrdersYet => 'No orders yet';
+
+  @override
+  String get noOrdersInColumn => 'No orders';
+
+  @override
   String get menuItems => 'Menu Items';
 
   @override

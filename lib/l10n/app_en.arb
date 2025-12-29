@@ -77,6 +77,8 @@
   "preparing": "Preparing",
   "ready": "Ready",
   "errorLoadingOrders": "Error loading orders",
+  "noOrdersYet": "No orders yet",
+  "noOrdersInColumn": "No orders",
   "menuItems": "Menu Items",
   "noMenuItems": "No menu items",
   "errorLoadingMenu": "Error loading menu",
