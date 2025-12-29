@@ -61,6 +61,8 @@ import '../domain/order.dart';
 **커밋**:
 - `41f8259` refactor: Partial Riverpod 4.x migration (*Ref → Ref)
 - `d0fe9ee` refactor: Complete Riverpod 4.x and Freezed 4.x migration
+- `5ccedee` fix: Replace dart:html with cross-platform web download
+- `a0524d0` refactor: Fix deprecated APIs and reduce analyzer warnings
 
 ---
 
@@ -68,12 +70,11 @@ import '../domain/order.dart';
 
 ### flutter analyze 결과
 - **에러: 0개**
-- **경고/정보: 122개** (대부분 deprecated API 사용 경고)
+- **경고/정보: 107개** (대부분 unused imports, unnecessary ! assertions)
 
 ### 남은 작업 (선택적)
-1. deprecated API 경고 수정 (activeColor → activeThumbColor 등)
-2. Windows shader 컴파일 이슈로 flutter test 실행 불가 (Flutter 버그)
-3. Cloud Functions 배포 (firebase deploy --only functions)
+1. Cloud Functions 배포 (Node.js + firebase-tools 필요)
+2. 나머지 경고 정리 (불필요한 import 삭제 등)
 
 ---
 
@@ -105,7 +106,7 @@ git push origin main
 | Phase 19 (테스트) | Flutter 버그로 대기 | 50% |
 | Phase 20 (문서화) | 완료 | 100% |
 
-**전체 진행률**: 약 95% (Riverpod/Freezed 마이그레이션 완료)
+**전체 진행률**: 약 98% (마이그레이션 + deprecated API 수정 완료)
 
 ---
 
