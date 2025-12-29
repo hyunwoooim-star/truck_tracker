@@ -1309,45 +1309,47 @@ class _SortOptionsDialog extends ConsumerWidget {
 
     return AlertDialog(
       title: const Text('정렬'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: SortOption.values.map((option) {
-          String label;
-          IconData icon;
-          switch (option) {
-            case SortOption.distance:
-              label = '가까운 순';
-              icon = Icons.near_me;
-              break;
-            case SortOption.name:
-              label = '이름 순';
-              icon = Icons.sort_by_alpha;
-              break;
-            case SortOption.rating:
-              label = '평점 순';
-              icon = Icons.star;
-              break;
+      content: RadioGroup<SortOption>(
+        groupValue: currentSort,
+        onChanged: (value) {
+          if (value != null) {
+            ref.read(sortOptionProvider.notifier).setSortOption(value);
+            Navigator.pop(context);
           }
-          return RadioListTile<SortOption>(
-            title: Row(
-              children: [
-                Icon(icon, size: 20, color: AppTheme.electricBlue),
-                const SizedBox(width: 8),
-                Text(label),
-              ],
-            ),
-            value: option,
-            groupValue: currentSort,
-            onChanged: (value) {
-              if (value != null) {
-                ref.read(sortOptionProvider.notifier).setSortOption(value);
-                Navigator.pop(context);
-              }
-            },
-            activeColor: AppTheme.electricBlue,
-            contentPadding: EdgeInsets.zero,
-          );
-        }).toList(),
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: SortOption.values.map((option) {
+            String label;
+            IconData icon;
+            switch (option) {
+              case SortOption.distance:
+                label = '가까운 순';
+                icon = Icons.near_me;
+                break;
+              case SortOption.name:
+                label = '이름 순';
+                icon = Icons.sort_by_alpha;
+                break;
+              case SortOption.rating:
+                label = '평점 순';
+                icon = Icons.star;
+                break;
+            }
+            return RadioListTile<SortOption>(
+              title: Row(
+                children: [
+                  Icon(icon, size: 20, color: AppTheme.electricBlue),
+                  const SizedBox(width: 8),
+                  Text(label),
+                ],
+              ),
+              value: option,
+              activeColor: AppTheme.electricBlue,
+              contentPadding: EdgeInsets.zero,
+            );
+          }).toList(),
+        ),
       ),
       actions: [
         TextButton(

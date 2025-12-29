@@ -172,40 +172,34 @@ class AppSettingsScreen extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('테마 선택'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RadioListTile<AppThemeMode>(
-              title: const Text('다크 모드'),
-              subtitle: const Text('어두운 배경'),
-              value: AppThemeMode.dark,
-              groupValue: currentMode,
-              onChanged: (value) {
-                ref.read(appThemeModeProvider.notifier).setThemeMode(value!);
-                Navigator.pop(context);
-              },
-            ),
-            RadioListTile<AppThemeMode>(
-              title: const Text('라이트 모드'),
-              subtitle: const Text('밝은 배경'),
-              value: AppThemeMode.light,
-              groupValue: currentMode,
-              onChanged: (value) {
-                ref.read(appThemeModeProvider.notifier).setThemeMode(value!);
-                Navigator.pop(context);
-              },
-            ),
-            RadioListTile<AppThemeMode>(
-              title: const Text('시스템 설정'),
-              subtitle: const Text('시스템 설정을 따름'),
-              value: AppThemeMode.system,
-              groupValue: currentMode,
-              onChanged: (value) {
-                ref.read(appThemeModeProvider.notifier).setThemeMode(value!);
-                Navigator.pop(context);
-              },
-            ),
-          ],
+        content: RadioGroup<AppThemeMode>(
+          groupValue: currentMode,
+          onChanged: (value) {
+            if (value != null) {
+              ref.read(appThemeModeProvider.notifier).setThemeMode(value);
+              Navigator.pop(context);
+            }
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RadioListTile<AppThemeMode>(
+                title: const Text('다크 모드'),
+                subtitle: const Text('어두운 배경'),
+                value: AppThemeMode.dark,
+              ),
+              RadioListTile<AppThemeMode>(
+                title: const Text('라이트 모드'),
+                subtitle: const Text('밝은 배경'),
+                value: AppThemeMode.light,
+              ),
+              RadioListTile<AppThemeMode>(
+                title: const Text('시스템 설정'),
+                subtitle: const Text('시스템 설정을 따름'),
+                value: AppThemeMode.system,
+              ),
+            ],
+          ),
         ),
       ),
     );
