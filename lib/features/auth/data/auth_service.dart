@@ -366,5 +366,59 @@ class AuthService {
             .map((doc) => {'id': doc.id, ...doc.data()})
             .toList());
   }
+
+  // ═══════════════════════════════════════════════════════════
+  // ADMIN ACCESS CONTROL
+  // ═══════════════════════════════════════════════════════════
+
+  /// List of admin email addresses
+  static const List<String> _adminEmails = [
+    'admin@trucktracker.com',
+    'hyunwoooim@gmail.com', // 개발자
+  ];
+
+  /// Check if current user is an admin
+  Future<bool> isCurrentUserAdmin() async {
+    final user = currentUser;
+    if (user == null) return false;
+
+    // Check email-based admin list
+    if (user.email != null && _adminEmails.contains(user.email!.toLowerCase())) {
+      return true;
+    }
+
+    // Check Firestore role
+    try {
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      final role = userDoc.data()?['role'] as String?;
+      return role == 'admin';
+    } catch (e) {
+      AppLogger.error('Error checking admin status', error: e, tag: 'AuthService');
+      return false;
+    }
+  }
+
+  /// Check if a specific user ID is an admin
+  Future<bool> isUserAdmin(String userId) async {
+    try {
+      final userDoc = await _firestore.collection('users').doc(userId).get();
+      if (!userDoc.exists) return false;
+
+      final data = userDoc.data();
+      final email = data?['email'] as String?;
+      final role = data?['role'] as String?;
+
+      // Check email-based admin list
+      if (email != null && _adminEmails.contains(email.toLowerCase())) {
+        return true;
+      }
+
+      // Check role
+      return role == 'admin';
+    } catch (e) {
+      AppLogger.error('Error checking admin status', error: e, tag: 'AuthService');
+      return false;
+    }
+  }
 }
 

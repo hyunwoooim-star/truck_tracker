@@ -16,6 +16,25 @@ class AdminScreen extends ConsumerStatefulWidget {
 
 class _AdminScreenState extends ConsumerState<AdminScreen> {
   final _truckIdController = TextEditingController();
+  bool? _isAdmin;
+  bool _isCheckingAdmin = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAdminAccess();
+  }
+
+  Future<void> _checkAdminAccess() async {
+    final authService = ref.read(authServiceProvider);
+    final isAdmin = await authService.isCurrentUserAdmin();
+    if (mounted) {
+      setState(() {
+        _isAdmin = isAdmin;
+        _isCheckingAdmin = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -25,6 +44,70 @@ class _AdminScreenState extends ConsumerState<AdminScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Show loading while checking admin status
+    if (_isCheckingAdmin) {
+      return Scaffold(
+        backgroundColor: AppTheme.charcoalDark,
+        appBar: AppBar(
+          title: const Text('관리자 페이지'),
+          backgroundColor: AppTheme.charcoalMedium,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(color: AppTheme.mustardYellow),
+        ),
+      );
+    }
+
+    // Access denied if not admin
+    if (_isAdmin != true) {
+      return Scaffold(
+        backgroundColor: AppTheme.charcoalDark,
+        appBar: AppBar(
+          title: const Text('관리자 페이지'),
+          backgroundColor: AppTheme.charcoalMedium,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.lock_outline,
+                size: 80,
+                color: Colors.red,
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                '접근 권한이 없습니다',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                '관리자만 접근할 수 있는 페이지입니다',
+                style: TextStyle(
+                  color: AppTheme.textSecondary,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back),
+                label: const Text('돌아가기'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.mustardYellow,
+                  foregroundColor: Colors.black,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     final authService = ref.watch(authServiceProvider);
 
     return Scaffold(

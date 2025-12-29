@@ -66,3 +66,16 @@ Future<int?> currentUserTruckId(Ref ref) async {
   return authService.getOwnedTruckId(userId);
 }
 
+/// Owner request status provider (queries Firestore for owner_requests)
+@riverpod
+Future<Map<String, dynamic>?> ownerRequestStatus(Ref ref) async {
+  final userId = ref.watch(currentUserIdProvider);
+
+  if (userId == null) {
+    return null;
+  }
+
+  final authService = ref.watch(authServiceProvider);
+  return authService.getOwnerRequestStatus(userId);
+}
+

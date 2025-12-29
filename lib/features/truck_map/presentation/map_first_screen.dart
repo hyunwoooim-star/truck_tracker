@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 
 import '../../../core/constants/food_types.dart';
@@ -172,6 +173,9 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
               );
             },
           ),
+
+          // Owner Verification Status Banner
+          _OwnerVerificationBanner(),
 
           // 3-Tier DraggableScrollableSheet
           DraggableScrollableSheet(
@@ -722,6 +726,351 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
         onChanged: (value) {
           ref.read(truckFilterProvider.notifier).setSearchKeyword(value);
         },
+      ),
+    );
+  }
+}
+
+/// Owner Verification Status Banner
+/// Shows pending/rejected status for users who applied for owner verification
+class _OwnerVerificationBanner extends ConsumerWidget {
+  const _OwnerVerificationBanner();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
+    if (!isAuthenticated) return const SizedBox.shrink();
+
+    final requestStatusAsync = ref.watch(ownerRequestStatusProvider);
+
+    return requestStatusAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (requestData) {
+        if (requestData == null) return const SizedBox.shrink();
+
+        final status = requestData['status'] as String?;
+        if (status == null || status == 'approved') return const SizedBox.shrink();
+
+        return Positioned(
+          top: MediaQuery.of(context).padding.top + 8,
+          left: 16,
+          right: 16,
+          child: _buildBanner(context, ref, status, requestData),
+        );
+      },
+    );
+  }
+
+  Widget _buildBanner(
+    BuildContext context,
+    WidgetRef ref,
+    String status,
+    Map<String, dynamic> requestData,
+  ) {
+    final isPending = status == 'pending';
+    final rejectionReason = requestData['rejectionReason'] as String?;
+
+    return Material(
+      elevation: 4,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isPending
+              ? Colors.orange.withValues(alpha: 0.9)
+              : Colors.red.withValues(alpha: 0.9),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isPending ? Icons.hourglass_empty : Icons.cancel_outlined,
+              color: Colors.white,
+              size: 24,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    isPending ? '사장님 인증 대기 중' : '사장님 인증 거절됨',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    isPending
+                        ? '승인 후 사장님 기능을 사용할 수 있습니다'
+                        : rejectionReason ?? '사유 미기재',
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            if (!isPending)
+              TextButton(
+                onPressed: () => _showReapplyDialog(context, ref),
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.white.withValues(alpha: 0.2),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+                child: const Text('재신청'),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showReapplyDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.charcoalMedium,
+        title: const Text(
+          '사장님 인증 재신청',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: const Text(
+          '새로운 사업자등록증을 업로드하여 인증을 다시 신청하시겠습니까?',
+          style: TextStyle(color: AppTheme.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              '취소',
+              style: TextStyle(color: AppTheme.textSecondary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _navigateToReapply(context, ref);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.mustardYellow,
+              foregroundColor: Colors.black,
+            ),
+            child: const Text('재신청하기'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _navigateToReapply(BuildContext context, WidgetRef ref) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const _ReapplyScreen(),
+      ),
+    );
+  }
+}
+
+/// Re-apply screen for rejected owner requests
+class _ReapplyScreen extends ConsumerStatefulWidget {
+  const _ReapplyScreen();
+
+  @override
+  ConsumerState<_ReapplyScreen> createState() => _ReapplyScreenState();
+}
+
+class _ReapplyScreenState extends ConsumerState<_ReapplyScreen> {
+  String? _businessLicenseImagePath;
+  bool _isLoading = false;
+
+  Future<void> _pickImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1920,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        setState(() {
+          _businessLicenseImagePath = image.path;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('이미지 선택에 실패했습니다')),
+        );
+      }
+    }
+  }
+
+  Future<void> _submitReapply() async {
+    if (_businessLicenseImagePath == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('사업자등록증을 업로드해주세요')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final authService = ref.read(authServiceProvider);
+      final userId = authService.currentUserId;
+
+      if (userId == null) {
+        throw Exception('로그인이 필요합니다');
+      }
+
+      await authService.submitOwnerRequest(userId, _businessLicenseImagePath!);
+
+      // Refresh the status
+      ref.invalidate(ownerRequestStatusProvider);
+
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('재신청이 접수되었습니다'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('재신청 실패: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.charcoalDark,
+      appBar: AppBar(
+        title: const Text('사장님 인증 재신청'),
+        backgroundColor: AppTheme.charcoalMedium,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              '새로운 사업자등록증을 업로드해주세요',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              '관리자 검토 후 승인 여부가 결정됩니다',
+              style: TextStyle(
+                color: AppTheme.textSecondary,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // Image upload area
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                color: const Color(0xFF1A1A1A),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: _businessLicenseImagePath != null
+                      ? Colors.green
+                      : const Color(0xFF1E1E1E),
+                  width: 2,
+                ),
+              ),
+              child: InkWell(
+                onTap: _pickImage,
+                borderRadius: BorderRadius.circular(12),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      _businessLicenseImagePath != null
+                          ? Icons.check_circle
+                          : Icons.upload_file,
+                      color: _businessLicenseImagePath != null
+                          ? Colors.green
+                          : const Color(0xFFB0B0B0),
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      _businessLicenseImagePath != null
+                          ? '사업자등록증 선택됨'
+                          : '탭하여 이미지 선택',
+                      style: TextStyle(
+                        color: _businessLicenseImagePath != null
+                            ? Colors.green
+                            : const Color(0xFFB0B0B0),
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Spacer(),
+
+            // Submit button
+            ElevatedButton(
+              onPressed: _isLoading ? null : _submitReapply,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.mustardYellow,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: _isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation(Colors.black),
+                      ),
+                    )
+                  : const Text(
+                      '재신청 제출',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

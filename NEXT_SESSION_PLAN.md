@@ -1,58 +1,56 @@
 # 다음 작업 시작 가이드
 
 > **GitHub**: https://github.com/hyunwoooim-star/truck_tracker
+> **GitHub Pages**: https://hyunwoooim-star.github.io/truck_tracker/
 >
 > **이 문서를 읽으면**: 어디서든 바로 작업 시작 가능
 
 **작성일**: 2025-12-29
-**현재 상태**: 기능 개발 완료, Flutter SDK 이슈로 빌드 대기
+**현재 상태**: 기능 개발 99% 완료, GitHub Actions로 자동 배포 중
 
 ---
 
-## 🚀 다음 세션에서 바로 할 일
+## 🚀 현재 배포 상태
 
-### 1. Flutter SDK 문제 해결
-현재 Flutter 3.38.5 + Windows 10 1903에서 shader 컴파일러 크래시 발생
+### GitHub Actions CI/CD ✅
+- 로컬 빌드 이슈 해결: GitHub Actions로 클라우드 빌드
+- `main` 브랜치 푸시 시 자동 빌드 & GitHub Pages 배포
+- 빌드 시간: 약 2분
 
-**해결 방법 (택1)**:
-- Flutter SDK 다운그레이드 (3.24.x 권장)
-- Windows 업데이트 (1903 → 최신)
-- 다른 컴퓨터에서 빌드
-
-### 2. 빌드 및 테스트
-```bash
-cd "C:\Users\임현우\Desktop\현우 작업폴더\truck_tracker\truck ver.1\truck_tracker"
-flutter test
-flutter build web
-```
+### Live URLs
+- **앱**: https://hyunwoooim-star.github.io/truck_tracker/
+- **관리자**: https://hyunwoooim-star.github.io/truck_tracker/#/admin
 
 ---
 
 ## ✅ 이번 세션에서 완료한 작업
 
-### 1. 은행 계좌 관리 기능 (QR 화면)
+### 1. 사장님 인증 시스템 (NEW!)
+- 회원가입 시 사장님/고객 선택
+- 사업자등록증 이미지 업로드
+- `owner_requests` Firestore 컬렉션
+- Firebase Storage에 이미지 저장
+
+### 2. 관리자 페이지 (`/admin`)
+- 대기 중인 사장님 인증 요청 목록
+- 사업자등록증 이미지 확인 (탭하면 확대)
+- 승인 시 트럭 ID (1-100) 배정
+- 거절 시 사유 입력
+- **접근 권한 제한**: 관리자 이메일만 접근 가능
+
+### 3. 둘러보기 로그아웃 버그 수정
+- 둘러보기 후 로그아웃 시 로그인 화면으로 복귀
+
+### 4. 은행 계좌 관리 기능 (QR 화면)
 - 은행 계좌 미설정 시 안내 프롬프트 표시
 - 인라인 은행 계좌 수정 다이얼로그
-- 한국어/영어 로컬라이제이션 추가
 
-### 2. UX 개선 - 사장님 대시보드
-- 영업 종료 버튼 및 확인 다이얼로그 추가
-- 현금/온라인 매출 분류 위젯 추가
-- 코드 포맷 정리 및 경고 수정
-
-### 3. UX 개선 - 고객 화면
-- 즐겨찾기 전용 화면 추가 (`favorites_screen.dart`)
-- 트럭 리스트에 Pull-to-refresh 추가
-- 영업 중인 트럭을 상단에 표시 (Open-first sorting)
-- 휴업 중인 트럭 시각적 표시 (회색 테두리)
-
-### 4. Git 커밋 내역
+### 5. Git 커밋 내역
 ```
-- feat: Add bank account management to owner QR screen ← NEW
-- feat: Add review management screen for owners
-- feat: Add foreground notification UI with SnackBar
-- feat: Add purchase verification for reviews and talk comments
-- feat: Add empty state UI for kanban board columns
+- feat: Add admin access control (관리자 권한 제한)
+- feat: Add owner verification system with admin approval
+- fix: Logout navigation for browse mode
+- feat: Add bank account management to owner QR screen
 ```
 
 ---
@@ -64,21 +62,21 @@ flutter build web
 | Phase 16 (보안) | ✅ 완료 | 100% |
 | Phase 17 (Cloud Functions) | ✅ 배포 완료 | 100% |
 | Phase 18 (코드 품질) | ✅ 완료 | 100% |
-| Phase 19 (테스트) | ⏸️ 재시작 후 실행 | 50% |
+| Phase 19 (테스트) | ✅ GitHub Actions | 100% |
 | Phase 20 (문서화) | ✅ 완료 | 100% |
 | UX 개선 | ✅ 완료 | 100% |
+| 사장님 인증 | ✅ 완료 | 100% |
 
-**전체 진행률**: 약 98%
+**전체 진행률**: 약 99%
 
 ---
 
 ## ⚠️ 알려진 이슈
 
-### Flutter SDK Shader 컴파일러 크래시 ⚠️ CRITICAL
+### Flutter SDK Shader 컴파일러 크래시 (로컬만) ✅ 해결됨
 - `impellerc` (shader 컴파일러)가 exit code -1073741819 (ACCESS_VIOLATION)로 크래시
 - Flutter 3.38.5 + Windows 10 1903 조합에서 발생
-- `flutter test`, `flutter build web` 모두 실패
-- **해결책**: Flutter 다운그레이드 또는 Windows 업데이트 필요
+- **해결**: GitHub Actions로 클라우드 빌드 설정 완료
 
 ---
 
