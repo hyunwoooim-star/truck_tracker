@@ -99,4 +99,4 @@ node "C:\nvm4w\node-v20.10.0-win-x64\node_modules\firebase-tools\lib\bin\firebas
 
 ---
 
-**마지막 업데이트**: 2025-12-29 (UX 개선 완료)
+**마지막 업데이트**: 2025-12-29 (사장님 인증 시스템 완료)
