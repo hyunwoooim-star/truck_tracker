@@ -7,6 +7,7 @@ import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../truck_list/presentation/truck_provider.dart';
+import '../../truck_list/domain/truck.dart';
 import '../../location/location_service.dart';
 import '../../order/domain/order.dart';
 import '../../order/data/order_repository.dart';
@@ -160,7 +161,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
       child: ElevatedButton(
         onPressed: () async {
           if (isOperating) {
-            SnackBarHelper.showWarning(context, l10n.alreadyOpenForBusiness);
+            _showCloseBusinessDialog(context, ref, truck, l10n);
             return;
           }
 
@@ -219,6 +220,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     );
   }
 
+void _showCloseBusinessDialog(BuildContext context, WidgetRef ref, truck, AppLocalizations l10n) {    showDialog(      context: context,      builder: (context) => AlertDialog(        backgroundColor: AppTheme.charcoalMedium,        title: const Text('영업 종료', style: TextStyle(color: Colors.white)),        content: const Text('정말 영업을 종료하시겠습니까?', style: TextStyle(color: Colors.white70)),        actions: [          TextButton(            onPressed: () => Navigator.pop(context),            child: Text(l10n.cancel, style: const TextStyle(color: Colors.white54)),          ),          ElevatedButton(            onPressed: () async {              Navigator.pop(context);              try {                final repository = ref.read(truckRepositoryProvider);                await repository.updateStatus(truck.id, TruckStatus.maintenance);                await ref.read(ownerOperatingStatusProvider.notifier).setStatus(false);                if (context.mounted) {                  SnackBarHelper.showInfo(context, '영업이 종료되었습니다.');                }              } catch (e) {                if (context.mounted) {                  SnackBarHelper.showError(context, '오류: ');                }              }            },            style: ElevatedButton.styleFrom(              backgroundColor: Colors.red,              foregroundColor: Colors.white,            ),            child: const Text('영업 종료'),          ),        ],      ),    );  }
   Widget _buildAnnouncementSection(BuildContext context, WidgetRef ref, truck, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.all(16),
