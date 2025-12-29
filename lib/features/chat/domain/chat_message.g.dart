@@ -14,6 +14,7 @@ _ChatMessage _$ChatMessageFromJson(Map<String, dynamic> json) => _ChatMessage(
   message: json['message'] as String,
   timestamp: DateTime.parse(json['timestamp'] as String),
   isRead: json['isRead'] as bool? ?? false,
+  isEdited: json['isEdited'] as bool? ?? false,
   imageUrl: json['imageUrl'] as String?,
 );
 
@@ -26,5 +27,6 @@ Map<String, dynamic> _$ChatMessageToJson(_ChatMessage instance) =>
       'message': instance.message,
       'timestamp': instance.timestamp.toIso8601String(),
       'isRead': instance.isRead,
+      'isEdited': instance.isEdited,
       'imageUrl': instance.imageUrl,
     };

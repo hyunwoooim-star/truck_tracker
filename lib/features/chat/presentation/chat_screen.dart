@@ -85,6 +85,89 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     }
   }
 
+  /// Show edit message dialog
+  Future<void> _showEditDialog(ChatMessage message) async {
+    final editController = TextEditingController(text: message.message);
+
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('메시지 수정'),
+        content: TextField(
+          controller: editController,
+          decoration: const InputDecoration(
+            hintText: '메시지를 입력하세요',
+          ),
+          maxLines: null,
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('취소'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, editController.text.trim()),
+            child: const Text('수정'),
+          ),
+        ],
+      ),
+    );
+
+    if (result != null && result.isNotEmpty && result != message.message) {
+      final repository = ref.read(chatRepositoryProvider);
+      final success = await repository.editMessage(
+        chatRoomId: widget.chatRoomId,
+        messageId: message.id,
+        newMessage: result,
+      );
+
+      if (!mounted) return;
+      if (success) {
+        SnackBarHelper.showSuccess(context, '메시지가 수정되었습니다');
+      } else {
+        SnackBarHelper.showError(context, '메시지 수정에 실패했습니다');
+      }
+    }
+  }
+
+  /// Show delete confirmation dialog
+  Future<void> _showDeleteConfirmation(ChatMessage message) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('메시지 삭제'),
+        content: const Text('이 메시지를 삭제하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('취소'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('삭제'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      final repository = ref.read(chatRepositoryProvider);
+      final success = await repository.deleteMessage(
+        chatRoomId: widget.chatRoomId,
+        messageId: message.id,
+      );
+
+      if (!mounted) return;
+      if (success) {
+        SnackBarHelper.showSuccess(context, '메시지가 삭제되었습니다');
+      } else {
+        SnackBarHelper.showError(context, '메시지 삭제에 실패했습니다');
+      }
+    }
+  }
+
   Future<void> _sendImageMessage() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -198,6 +281,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     return _MessageBubble(
                       message: message,
                       isMe: isMe,
+                      onEdit: isMe ? () => _showEditDialog(message) : null,
+                      onDelete: isMe ? () => _showDeleteConfirmation(message) : null,
                     );
                   },
                 );
@@ -289,110 +374,189 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 class _MessageBubble extends StatelessWidget {
   final ChatMessage message;
   final bool isMe;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const _MessageBubble({
     required this.message,
     required this.isMe,
+    this.onEdit,
+    this.onDelete,
   });
+
+  void _showOptionsMenu(BuildContext context) {
+    if (!isMe) return;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Edit option (only for text messages)
+              if (message.imageUrl == null)
+                ListTile(
+                  leading: const Icon(Icons.edit, color: Colors.blue),
+                  title: const Text('메시지 수정'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    onEdit?.call();
+                  },
+                ),
+              // Delete option
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text('메시지 삭제'),
+                onTap: () {
+                  Navigator.pop(context);
+                  onDelete?.call();
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
-        ),
-        child: Column(
-          crossAxisAlignment:
-              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            if (!isMe)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4, left: 8),
-                child: Text(
-                  message.senderName,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
+    return GestureDetector(
+      onLongPress: isMe ? () => _showOptionsMenu(context) : null,
+      child: Align(
+        alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.75,
+          ),
+          child: Column(
+            crossAxisAlignment:
+                isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              if (!isMe)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4, left: 8),
+                  child: Text(
+                    message.senderName,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
                   ),
                 ),
-              ),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isMe ? AppTheme.baeminMint : Colors.grey[300],
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Image if exists
-                  if (message.imageUrl != null) ...[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
-                        imageUrl: message.imageUrl!,
-                        width: 200,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isMe ? AppTheme.baeminMint : Colors.grey[300],
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Image if exists
+                    if (message.imageUrl != null) ...[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: CachedNetworkImage(
+                          imageUrl: message.imageUrl!,
                           width: 200,
-                          height: 200,
-                          color: Colors.grey[300],
-                          child: const Center(
-                            child: CircularProgressIndicator(),
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            width: 200,
+                            height: 200,
+                            color: Colors.grey[300],
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            width: 200,
+                            height: 200,
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.error),
                           ),
                         ),
-                        errorWidget: (context, url, error) => Container(
-                          width: 200,
-                          height: 200,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.error),
-                        ),
                       ),
-                    ),
-                    if (message.message.isNotEmpty) const SizedBox(height: 8),
-                  ],
+                      if (message.message.isNotEmpty) const SizedBox(height: 8),
+                    ],
 
-                  // Message text
-                  if (message.message.isNotEmpty)
-                    Text(
-                      message.message,
-                      style: TextStyle(
-                        color: isMe ? Colors.white : Colors.black87,
-                        fontSize: 15,
-                      ),
-                    ),
-
-                  // Timestamp
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
+                    // Message text
+                    if (message.message.isNotEmpty)
                       Text(
-                        DateFormat('HH:mm').format(message.timestamp),
+                        message.message,
                         style: TextStyle(
-                          fontSize: 11,
-                          color: isMe ? Colors.white70 : Colors.grey[600],
+                          color: isMe ? Colors.white : Colors.black87,
+                          fontSize: 15,
                         ),
                       ),
-                      if (isMe && message.isRead) ...[
-                        const SizedBox(width: 4),
+
+                    // Timestamp and status
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Edited indicator
+                        if (message.isEdited) ...[
+                          Text(
+                            '수정됨',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontStyle: FontStyle.italic,
+                              color: isMe ? Colors.white70 : Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '·',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isMe ? Colors.white70 : Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                        ],
                         Text(
-                          '읽음',
+                          DateFormat('HH:mm').format(message.timestamp),
                           style: TextStyle(
                             fontSize: 11,
                             color: isMe ? Colors.white70 : Colors.grey[600],
                           ),
                         ),
+                        if (isMe && message.isRead) ...[
+                          const SizedBox(width: 4),
+                          Text(
+                            '읽음',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isMe ? Colors.white70 : Colors.grey[600],
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

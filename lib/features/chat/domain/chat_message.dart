@@ -17,6 +17,7 @@ sealed class ChatMessage with _$ChatMessage {
     required String message,
     required DateTime timestamp,
     @Default(false) bool isRead,
+    @Default(false) bool isEdited,
     String? imageUrl,
   }) = _ChatMessage;
 
@@ -33,6 +34,7 @@ sealed class ChatMessage with _$ChatMessage {
       message: data['message'] as String,
       timestamp: (data['timestamp'] as Timestamp).toDate(),
       isRead: data['isRead'] as bool? ?? false,
+      isEdited: data['isEdited'] as bool? ?? false,
       imageUrl: data['imageUrl'] as String?,
     );
   }

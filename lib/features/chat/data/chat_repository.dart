@@ -246,6 +246,51 @@ class ChatRepository {
     }
   }
 
+  /// Edit a message
+  Future<bool> editMessage({
+    required String chatRoomId,
+    required String messageId,
+    required String newMessage,
+  }) async {
+    try {
+      await _chatRoomsCollection
+          .doc(chatRoomId)
+          .collection('messages')
+          .doc(messageId)
+          .update({
+        'message': newMessage,
+        'isEdited': true,
+        'editedAt': FieldValue.serverTimestamp(),
+      });
+
+      AppLogger.info('Message edited successfully: $messageId');
+      return true;
+    } catch (e, stackTrace) {
+      AppLogger.error('Error editing message', error: e, stackTrace: stackTrace);
+      return false;
+    }
+  }
+
+  /// Delete a message
+  Future<bool> deleteMessage({
+    required String chatRoomId,
+    required String messageId,
+  }) async {
+    try {
+      await _chatRoomsCollection
+          .doc(chatRoomId)
+          .collection('messages')
+          .doc(messageId)
+          .delete();
+
+      AppLogger.info('Message deleted successfully: $messageId');
+      return true;
+    } catch (e, stackTrace) {
+      AppLogger.error('Error deleting message', error: e, stackTrace: stackTrace);
+      return false;
+    }
+  }
+
   /// Delete a chat room and all its messages
   Future<bool> deleteChatRoom(String chatRoomId) async {
     try {
