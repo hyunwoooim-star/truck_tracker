@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../../../core/utils/app_logger.dart';
 
 /// Unified Authentication Service
@@ -243,6 +246,125 @@ class AuthService {
       AppLogger.error('Send password reset email failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
       rethrow;
     }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // OWNER VERIFICATION
+  // ═══════════════════════════════════════════════════════════
+
+  /// Submit owner verification request with business license
+  Future<void> submitOwnerRequest(String userId, String imagePath) async {
+    AppLogger.debug('Submitting owner request for user: $userId', tag: 'AuthService');
+
+    try {
+      // Upload business license image to Firebase Storage
+      final file = File(imagePath);
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('owner_requests')
+          .child('$userId.jpg');
+
+      await storageRef.putFile(file);
+      final imageUrl = await storageRef.getDownloadURL();
+
+      AppLogger.debug('Business license uploaded: $imageUrl', tag: 'AuthService');
+
+      // Create owner request document
+      await _firestore.collection('owner_requests').doc(userId).set({
+        'userId': userId,
+        'email': _auth.currentUser?.email ?? '',
+        'displayName': _auth.currentUser?.displayName ?? '',
+        'businessLicenseUrl': imageUrl,
+        'status': 'pending', // pending, approved, rejected
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'reviewedBy': null,
+        'reviewedAt': null,
+        'rejectionReason': null,
+      });
+
+      AppLogger.success('Owner request submitted', tag: 'AuthService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Owner request submission failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
+  }
+
+  /// Get owner request status
+  Future<Map<String, dynamic>?> getOwnerRequestStatus(String userId) async {
+    try {
+      final doc = await _firestore.collection('owner_requests').doc(userId).get();
+      return doc.data();
+    } catch (e, stackTrace) {
+      AppLogger.error('Failed to get owner request status', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      return null;
+    }
+  }
+
+  /// Approve owner request (admin only)
+  Future<void> approveOwnerRequest(String userId, int truckId, String adminId) async {
+    AppLogger.debug('Approving owner request for user: $userId with truck: $truckId', tag: 'AuthService');
+
+    try {
+      final batch = _firestore.batch();
+
+      // Update owner request status
+      final requestRef = _firestore.collection('owner_requests').doc(userId);
+      batch.update(requestRef, {
+        'status': 'approved',
+        'reviewedBy': adminId,
+        'reviewedAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'assignedTruckId': truckId,
+      });
+
+      // Update user document with owner role
+      final userRef = _firestore.collection('users').doc(userId);
+      batch.update(userRef, {
+        'role': 'owner',
+        'ownedTruckId': truckId,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      await batch.commit();
+
+      AppLogger.success('Owner request approved', tag: 'AuthService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Owner request approval failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
+  }
+
+  /// Reject owner request (admin only)
+  Future<void> rejectOwnerRequest(String userId, String adminId, String reason) async {
+    AppLogger.debug('Rejecting owner request for user: $userId', tag: 'AuthService');
+
+    try {
+      await _firestore.collection('owner_requests').doc(userId).update({
+        'status': 'rejected',
+        'reviewedBy': adminId,
+        'reviewedAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'rejectionReason': reason,
+      });
+
+      AppLogger.success('Owner request rejected', tag: 'AuthService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Owner request rejection failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
+  }
+
+  /// Get all pending owner requests (admin only)
+  Stream<List<Map<String, dynamic>>> getPendingOwnerRequests() {
+    return _firestore
+        .collection('owner_requests')
+        .where('status', isEqualTo: 'pending')
+        .orderBy('createdAt', descending: false)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => {'id': doc.id, ...doc.data()})
+            .toList());
   }
 }
 

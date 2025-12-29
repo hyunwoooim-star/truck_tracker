@@ -21,6 +21,7 @@ import 'features/owner_dashboard/presentation/owner_dashboard_screen.dart';
 import 'features/truck_map/presentation/map_first_screen.dart';
 import 'features/checkin/presentation/customer_checkin_screen.dart';
 import 'features/checkin/presentation/owner_qr_screen.dart';
+import 'features/admin/presentation/admin_screen.dart';
 import 'features/notifications/fcm_service.dart';
 import 'firebase_options.dart';
 
@@ -101,6 +102,10 @@ class MyApp extends ConsumerWidget {
         GoRoute(
           path: '/qr-code/:truckId',
           builder: (context, state) => const OwnerQRScreen(),
+        ),
+        GoRoute(
+          path: '/admin',
+          builder: (context, state) => const AdminScreen(),
         ),
       ],
     );

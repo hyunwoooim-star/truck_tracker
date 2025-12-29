@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 import '../../../core/themes/app_theme.dart';
@@ -30,6 +31,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _obscurePassword = true;
   bool _agreedToTerms = false;
   bool _agreedToPrivacy = false;
+  bool _isOwnerSignup = false; // true: 사장님 가입, false: 고객 가입
+  String? _businessLicenseImagePath; // 사업자등록증 이미지 경로
 
   @override
   void initState() {
@@ -68,6 +71,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       return;
     }
 
+    // Validate business license for owner signup
+    if (!_isLogin && _isOwnerSignup && _businessLicenseImagePath == null) {
+      AppLogger.warning('Business license not uploaded', tag: 'LoginScreen');
+      SnackBarHelper.showError(context, '사업자등록증을 업로드해주세요');
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
@@ -84,11 +94,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       } else {
         AppLogger.debug('Attempting email sign up...', tag: 'LoginScreen');
         // Sign up
-        await authService.signUpWithEmail(
+        final userCredential = await authService.signUpWithEmail(
           _emailController.text.trim(),
           _passwordController.text,
         );
         AppLogger.success('Email sign up successful', tag: 'LoginScreen');
+
+        // If owner signup, submit verification request
+        if (_isOwnerSignup && _businessLicenseImagePath != null && userCredential.user != null) {
+          AppLogger.debug('Submitting owner verification request...', tag: 'LoginScreen');
+          await authService.submitOwnerRequest(
+            userCredential.user!.uid,
+            _businessLicenseImagePath!,
+          );
+          AppLogger.success('Owner verification request submitted', tag: 'LoginScreen');
+
+          if (mounted) {
+            SnackBarHelper.showSuccess(
+              context,
+              '사장님 인증 요청이 접수되었습니다. 승인 후 사장님 기능을 사용할 수 있습니다.',
+            );
+          }
+        }
       }
 
       // Save FCM token for push notifications
@@ -160,6 +187,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       return '로그인이 취소되었습니다';
     }
     return '로그인 중 오류가 발생했습니다';
+  }
+
+  Future<void> _pickBusinessLicenseImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1920,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        setState(() {
+          _businessLicenseImagePath = image.path;
+        });
+        AppLogger.debug('Business license image selected: ${image.path}', tag: 'LoginScreen');
+      }
+    } catch (e, stackTrace) {
+      AppLogger.error('Failed to pick image', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
+      if (mounted) {
+        SnackBarHelper.showError(context, '이미지 선택에 실패했습니다');
+      }
+    }
   }
 
   @override
@@ -299,6 +350,180 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 16),
 
+                  // Owner/Customer Selection (only show for sign-up)
+                  if (!_isLogin) ...[
+                    const Text(
+                      '가입 유형',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isOwnerSignup = false;
+                                _businessLicenseImagePath = null;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              decoration: BoxDecoration(
+                                color: !_isOwnerSignup
+                                    ? AppTheme.mustardYellow.withValues(alpha: 0.2)
+                                    : const Color(0xFF1A1A1A),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: !_isOwnerSignup
+                                      ? AppTheme.mustardYellow
+                                      : const Color(0xFF1E1E1E),
+                                  width: 2,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.person,
+                                    color: !_isOwnerSignup
+                                        ? AppTheme.mustardYellow
+                                        : const Color(0xFFB0B0B0),
+                                    size: 32,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    '일반 고객',
+                                    style: TextStyle(
+                                      color: !_isOwnerSignup
+                                          ? Colors.white
+                                          : const Color(0xFFB0B0B0),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isOwnerSignup = true;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              decoration: BoxDecoration(
+                                color: _isOwnerSignup
+                                    ? AppTheme.electricBlue.withValues(alpha: 0.2)
+                                    : const Color(0xFF1A1A1A),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: _isOwnerSignup
+                                      ? AppTheme.electricBlue
+                                      : const Color(0xFF1E1E1E),
+                                  width: 2,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.store,
+                                    color: _isOwnerSignup
+                                        ? AppTheme.electricBlue
+                                        : const Color(0xFFB0B0B0),
+                                    size: 32,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    '사장님',
+                                    style: TextStyle(
+                                      color: _isOwnerSignup
+                                          ? Colors.white
+                                          : const Color(0xFFB0B0B0),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Business License Upload (only for owner signup)
+                    if (_isOwnerSignup) ...[
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1A1A1A),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: _businessLicenseImagePath != null
+                                ? Colors.green
+                                : const Color(0xFF1E1E1E),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              _businessLicenseImagePath != null
+                                  ? Icons.check_circle
+                                  : Icons.upload_file,
+                              color: _businessLicenseImagePath != null
+                                  ? Colors.green
+                                  : const Color(0xFFB0B0B0),
+                              size: 48,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              _businessLicenseImagePath != null
+                                  ? '사업자등록증 업로드 완료'
+                                  : '사업자등록증을 업로드해주세요',
+                              style: TextStyle(
+                                color: _businessLicenseImagePath != null
+                                    ? Colors.green
+                                    : const Color(0xFFB0B0B0),
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            ElevatedButton.icon(
+                              onPressed: _pickBusinessLicenseImage,
+                              icon: const Icon(Icons.camera_alt),
+                              label: Text(
+                                _businessLicenseImagePath != null
+                                    ? '다시 선택'
+                                    : '사진 선택',
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.electricBlue,
+                                foregroundColor: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '* 승인 후 사장님 기능을 사용할 수 있습니다',
+                        style: TextStyle(
+                          color: Colors.grey[500],
+                          fontSize: 12,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ],
+
                   // Legal Checkboxes (only show for sign-up)
                   if (!_isLogin) ...[
                     Row(
@@ -405,9 +630,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             AppLogger.debug('New _isLogin: ${!_isLogin}', tag: 'LoginScreen');
                             setState(() {
                               _isLogin = !_isLogin;
-                              // Reset checkboxes when switching
+                              // Reset checkboxes and owner signup when switching
                               _agreedToTerms = false;
                               _agreedToPrivacy = false;
+                              _isOwnerSignup = false;
+                              _businessLicenseImagePath = null;
                             });
                             AppLogger.debug('Mode switched to ${_isLogin ? "로그인" : "회원가입"}', tag: 'LoginScreen');
                           },
