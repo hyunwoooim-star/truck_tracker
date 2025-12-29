@@ -1,0 +1,42 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shadow/Base -->
+  <ellipse cx="48" cy="88" rx="24" ry="6" fill="#000000" opacity="0.2"/>
+
+  <!-- Pin body -->
+  <path d="M48 92 L28 60 Q16 44 16 32 Q16 8 48 8 Q80 8 80 32 Q80 44 68 60 Z" fill="#FFC107"/>
+  <path d="M48 92 L28 60 Q16 44 16 32 Q16 8 48 8 Q80 8 80 32 Q80 44 68 60 Z" stroke="#E6A800" stroke-width="2"/>
+
+  <!-- Inner circle -->
+  <circle cx="48" cy="36" r="26" fill="#121212"/>
+
+  <!-- Food truck icon inside -->
+  <g transform="translate(24, 20)">
+    <!-- Truck body -->
+    <rect x="6" y="16" width="36" height="18" rx="3" fill="#FFC107"/>
+
+    <!-- Cabin -->
+    <path d="M6 20 L6 34 L14 34 L14 20 C14 17 12 14 9 14 L6 14 Z" fill="#FFD54F"/>
+
+    <!-- Window -->
+    <rect x="7" y="17" width="5" height="5" rx="1" fill="#121212"/>
+
+    <!-- Serving window -->
+    <rect x="18" y="18" width="20" height="10" rx="2" fill="#1A1A1A"/>
+
+    <!-- Awning -->
+    <rect x="16" y="12" width="26" height="5" rx="1" fill="#FFA000"/>
+    <rect x="18" y="12" width="3" height="5" fill="#FFD54F"/>
+    <rect x="24" y="12" width="3" height="5" fill="#FFD54F"/>
+    <rect x="30" y="12" width="3" height="5" fill="#FFD54F"/>
+    <rect x="36" y="12" width="3" height="5" fill="#FFD54F"/>
+
+    <!-- Wheels -->
+    <circle cx="12" cy="36" r="5" fill="#333333"/>
+    <circle cx="12" cy="36" r="3" fill="#1A1A1A"/>
+    <circle cx="12" cy="36" r="1.5" fill="#FFC107"/>
+
+    <circle cx="36" cy="36" r="5" fill="#333333"/>
+    <circle cx="36" cy="36" r="3" fill="#1A1A1A"/>
+    <circle cx="36" cy="36" r="1.5" fill="#FFC107"/>
+  </g>
+</svg>

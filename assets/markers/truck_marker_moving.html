@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { margin: 0; padding: 0; background: white; width: 128px; height: 128px; }
+    svg { display: block; }
+  </style>
+</head>
+<body>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shadow/Base -->
+  <ellipse cx="64" cy="118" rx="32" ry="8" fill="#000000" opacity="0.3"/>
+
+  <!-- Pin body - Blue for moving -->
+  <path d="M64 124 L38 80 Q22 60 22 44 Q22 12 64 12 Q106 12 106 44 Q106 60 90 80 Z" fill="#2196F3"/>
+  <path d="M64 124 L38 80 Q22 60 22 44 Q22 12 64 12 Q106 12 106 44 Q106 60 90 80 Z" stroke="#1976D2" stroke-width="3"/>
+
+  <!-- Inner circle -->
+  <circle cx="64" cy="48" r="34" fill="#121212"/>
+
+  <!-- Food truck icon inside -->
+  <g transform="translate(30, 24)">
+    <!-- Truck body -->
+    <rect x="8" y="22" width="52" height="24" rx="4" fill="#2196F3"/>
+
+    <!-- Cabin -->
+    <path d="M8 28 L8 46 L20 46 L20 28 C20 24 17 20 13 20 L8 20 Z" fill="#64B5F6"/>
+
+    <!-- Window -->
+    <rect x="10" y="24" width="7" height="7" rx="1.5" fill="#121212"/>
+
+    <!-- Serving window -->
+    <rect x="26" y="26" width="28" height="14" rx="2" fill="#1A1A1A"/>
+
+    <!-- Awning -->
+    <rect x="22" y="16" width="38" height="7" rx="2" fill="#1976D2"/>
+    <rect x="26" y="16" width="4" height="7" fill="#64B5F6"/>
+    <rect x="34" y="16" width="4" height="7" fill="#64B5F6"/>
+    <rect x="42" y="16" width="4" height="7" fill="#64B5F6"/>
+    <rect x="50" y="16" width="4" height="7" fill="#64B5F6"/>
+
+    <!-- Wheels -->
+    <circle cx="18" cy="50" r="7" fill="#424242"/>
+    <circle cx="18" cy="50" r="4" fill="#1A1A1A"/>
+    <circle cx="18" cy="50" r="2" fill="#2196F3"/>
+
+    <circle cx="50" cy="50" r="7" fill="#424242"/>
+    <circle cx="50" cy="50" r="4" fill="#1A1A1A"/>
+    <circle cx="50" cy="50" r="2" fill="#2196F3"/>
+  </g>
+
+  <!-- Motion lines -->
+  <line x1="10" y1="40" x2="20" y2="40" stroke="#64B5F6" stroke-width="3" stroke-linecap="round"/>
+  <line x1="8" y1="52" x2="18" y2="52" stroke="#64B5F6" stroke-width="3" stroke-linecap="round"/>
+</svg>
+</body>
+</html>

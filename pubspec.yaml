@@ -105,6 +105,9 @@ flutter:
   # App assets
   assets:
     - assets/app_icon.png
+    - assets/markers/truck_marker.png
+    - assets/markers/truck_marker_moving.png
+    - assets/markers/truck_marker_closed.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

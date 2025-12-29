@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 
-import '../../../core/constants/marker_colors.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../truck_list/domain/truck.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
+import '../services/marker_service.dart';
 
 class TruckMapScreen extends ConsumerStatefulWidget {
   const TruckMapScreen({
@@ -27,13 +27,27 @@ class TruckMapScreen extends ConsumerStatefulWidget {
 
 class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
   final Completer<GoogleMapController> _mapController = Completer();
+  final MarkerService _markerService = MarkerService();
 
   // ✅ OPTIMIZATION: Cache markers to prevent rebuilding on every frame
   Set<Marker>? _cachedMarkers;
   List<dynamic>? _lastTruckList;
+  bool _markersInitialized = false;
 
-  // Get marker color from centralized MarkerColors
-  static double _getMarkerHue(String foodType) => MarkerColors.getHue(foodType);
+  @override
+  void initState() {
+    super.initState();
+    _initializeMarkers();
+  }
+
+  Future<void> _initializeMarkers() async {
+    await _markerService.initialize();
+    if (mounted) {
+      setState(() {
+        _markersInitialized = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,23 +167,36 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
             );
           }
 
-          // ✅ OPTIMIZATION: Only rebuild markers if truck list changed
-          if (_lastTruckList != validTrucks) {
+          // ✅ OPTIMIZATION: Only rebuild markers if truck list changed or markers just initialized
+          if (_lastTruckList != validTrucks || (_markersInitialized && _cachedMarkers == null)) {
             _cachedMarkers = validTrucks.map((truck) {
               final position = LatLng(truck.latitude, truck.longitude);
 
-              // Determine marker appearance based on status
-              final markerAlpha = truck.status == TruckStatus.maintenance ? 0.3 : 1.0;
+              // Get custom truck marker based on status
+              final markerIcon = _markerService.getMarkerForTruck(truck);
+
+              // Determine status text for info window
+              String statusText = '';
+              switch (truck.status) {
+                case TruckStatus.onRoute:
+                  statusText = ' 🚚 이동중';
+                  break;
+                case TruckStatus.resting:
+                  statusText = ' ✨ 영업중';
+                  break;
+                case TruckStatus.maintenance:
+                  statusText = ' 🔧 정비중';
+                  break;
+              }
 
               AppLogger.debug('Creating marker for ${truck.id} (${truck.foodType}) at ${truck.latitude}, ${truck.longitude}, status: ${truck.status}', tag: 'TruckMapScreen');
 
               return Marker(
                 markerId: MarkerId(truck.id),
                 position: position,
-                icon: BitmapDescriptor.defaultMarkerWithHue(_getMarkerHue(truck.foodType)),
-                alpha: markerAlpha, // Dim maintenance trucks
+                icon: markerIcon,
                 infoWindow: InfoWindow(
-                  title: '${truck.foodType} ${truck.status == TruckStatus.maintenance ? '(정비중)' : ''}',
+                  title: '${truck.foodType}$statusText',
                   snippet: truck.locationDescription,
                 ),
                 onTap: () {
@@ -182,7 +209,7 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
               );
             }).toSet();
             _lastTruckList = validTrucks;
-            AppLogger.debug('Markers rebuilt: ${_cachedMarkers!.length}', tag: 'TruckMapScreen');
+            AppLogger.debug('Markers rebuilt with custom icons: ${_cachedMarkers!.length}', tag: 'TruckMapScreen');
           } else {
             AppLogger.debug('Using cached markers: ${_cachedMarkers!.length}', tag: 'TruckMapScreen');
           }

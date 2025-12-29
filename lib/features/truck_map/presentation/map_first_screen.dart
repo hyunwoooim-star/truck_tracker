@@ -9,8 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 
 import '../../../core/constants/food_types.dart';
-import '../../../core/constants/marker_colors.dart';
 import '../../../core/themes/app_theme.dart';
+import '../services/marker_service.dart';
 import '../../../shared/widgets/status_tag.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../auth/presentation/login_screen.dart';
@@ -34,6 +34,7 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
   final Completer<GoogleMapController> _mapController = Completer();
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
+  final MarkerService _markerService = MarkerService();
 
   static const double _minSheetSize = 0.1; // Collapsed: 10%
   static const double _halfSheetSize = 0.4; // Half: 40%
@@ -44,11 +45,22 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
   // ✅ OPTIMIZATION: Cache markers to prevent rebuilding on every frame
   Set<Marker>? _cachedMarkers;
   List<dynamic>? _lastTruckList;
+  bool _markersInitialized = false;
 
   @override
   void initState() {
     super.initState();
     _sheetController.addListener(_onSheetChanged);
+    _initializeMarkers();
+  }
+
+  Future<void> _initializeMarkers() async {
+    await _markerService.initialize();
+    if (mounted) {
+      setState(() {
+        _markersInitialized = true;
+      });
+    }
   }
 
   @override
@@ -118,17 +130,32 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                 );
               }
 
-              // ✅ OPTIMIZATION: Only rebuild markers if truck list changed
-              if (_lastTruckList != validTrucks) {
+              // ✅ OPTIMIZATION: Only rebuild markers if truck list changed or markers initialized
+              if (_lastTruckList != validTrucks || (_markersInitialized && _cachedMarkers == null)) {
                 _cachedMarkers = validTrucks.map((truck) {
+                  // Get custom truck marker based on status
+                  final markerIcon = _markerService.getMarkerForTruck(truck);
+
+                  // Status text for info window
+                  String statusText = '';
+                  switch (truck.status) {
+                    case TruckStatus.onRoute:
+                      statusText = ' 🚚 이동중';
+                      break;
+                    case TruckStatus.resting:
+                      statusText = ' ✨ 영업중';
+                      break;
+                    case TruckStatus.maintenance:
+                      statusText = ' 🔧 정비중';
+                      break;
+                  }
+
                   return Marker(
                     markerId: MarkerId(truck.id),
                     position: LatLng(truck.latitude, truck.longitude),
-                    icon: BitmapDescriptor.defaultMarkerWithHue(
-                        MarkerColors.getHue(truck.foodType)),
-                    alpha: truck.status == TruckStatus.maintenance ? 0.3 : 1.0,
+                    icon: markerIcon,
                     infoWindow: InfoWindow(
-                      title: truck.foodType,
+                      title: '${truck.foodType}$statusText',
                       snippet: truck.locationDescription,
                     ),
                     onTap: () {
