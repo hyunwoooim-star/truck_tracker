@@ -1,0 +1,51 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with rounded corners -->
+  <rect width="1024" height="1024" rx="224" fill="#121212"/>
+
+  <!-- Inner glow circle -->
+  <circle cx="512" cy="512" r="380" fill="#1A1A1A"/>
+
+  <!-- Yellow accent ring -->
+  <circle cx="512" cy="512" r="340" stroke="#FFC107" stroke-width="8" fill="none" opacity="0.3"/>
+
+  <!-- Food Truck Icon -->
+  <g transform="translate(256, 320)">
+    <!-- Truck body -->
+    <rect x="80" y="120" width="352" height="200" rx="24" fill="#FFC107"/>
+
+    <!-- Truck cabin -->
+    <path d="M80 180 L80 320 L180 320 L180 180 C180 152 156 120 120 120 L80 120 L80 180Z" fill="#FFD54F"/>
+
+    <!-- Window -->
+    <rect x="100" y="140" width="60" height="50" rx="8" fill="#121212"/>
+
+    <!-- Serving window -->
+    <rect x="220" y="150" width="180" height="100" rx="12" fill="#121212"/>
+    <rect x="230" y="160" width="160" height="80" rx="8" fill="#1A1A1A"/>
+
+    <!-- Awning stripes -->
+    <rect x="200" y="100" width="240" height="40" rx="8" fill="#FFA000"/>
+    <rect x="220" y="100" width="20" height="40" fill="#FFD54F"/>
+    <rect x="260" y="100" width="20" height="40" fill="#FFD54F"/>
+    <rect x="300" y="100" width="20" height="40" fill="#FFD54F"/>
+    <rect x="340" y="100" width="20" height="40" fill="#FFD54F"/>
+    <rect x="380" y="100" width="20" height="40" fill="#FFD54F"/>
+
+    <!-- Wheels -->
+    <circle cx="160" cy="340" r="50" fill="#333333"/>
+    <circle cx="160" cy="340" r="30" fill="#1A1A1A"/>
+    <circle cx="160" cy="340" r="10" fill="#FFC107"/>
+
+    <circle cx="380" cy="340" r="50" fill="#333333"/>
+    <circle cx="380" cy="340" r="30" fill="#1A1A1A"/>
+    <circle cx="380" cy="340" r="10" fill="#FFC107"/>
+
+    <!-- Smoke/steam -->
+    <circle cx="460" cy="80" r="20" fill="#FFC107" opacity="0.4"/>
+    <circle cx="480" cy="50" r="15" fill="#FFC107" opacity="0.3"/>
+    <circle cx="495" cy="30" r="10" fill="#FFC107" opacity="0.2"/>
+  </g>
+
+  <!-- App name hint - small text -->
+  <text x="512" y="900" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="#FFC107" opacity="0.8">트럭아저씨</text>
+</svg>

@@ -831,17 +831,26 @@ class _AppDrawer extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Logo with glow effect
+                // App logo
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  width: 72,
+                  height: 72,
                   decoration: BoxDecoration(
-                    color: AppTheme.mustardYellow20,
                     borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.mustardYellow30,
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                      ),
+                    ],
                   ),
-                  child: const Icon(
-                    Icons.local_shipping,
-                    size: 48,
-                    color: AppTheme.mustardYellow,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset(
+                      'assets/app_icon.png',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
