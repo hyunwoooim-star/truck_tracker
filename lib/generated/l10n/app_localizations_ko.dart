@@ -920,4 +920,46 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get endTime => '종료 시간';
+
+  @override
+  String get menuManagement => '메뉴 관리';
+
+  @override
+  String get addMenuItem => '메뉴 추가';
+
+  @override
+  String get editMenuItem => '메뉴 수정';
+
+  @override
+  String get deleteMenuItem => '메뉴 삭제';
+
+  @override
+  String get menuItemName => '메뉴 이름';
+
+  @override
+  String get menuItemNameHint => '예: 닭꼬치';
+
+  @override
+  String get menuItemPrice => '가격';
+
+  @override
+  String get menuItemDescription => '설명 (선택사항)';
+
+  @override
+  String get confirmDeleteMenuItem => '이 메뉴를 삭제하시겠습니까?';
+
+  @override
+  String get menuItemAdded => '메뉴가 추가되었습니다';
+
+  @override
+  String get menuItemUpdated => '메뉴가 수정되었습니다';
+
+  @override
+  String get menuItemDeleted => '메뉴가 삭제되었습니다';
+
+  @override
+  String get available => '판매 중';
+
+  @override
+  String get delete => '삭제';
 }

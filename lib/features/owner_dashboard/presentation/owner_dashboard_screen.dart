@@ -14,6 +14,7 @@ import '../../order/data/order_repository.dart';
 import '../../truck_detail/domain/menu_item.dart';
 import '../../truck_detail/presentation/truck_detail_provider.dart';
 import 'analytics_screen.dart';
+import 'menu_management_screen.dart';
 import 'owner_status_provider.dart';
 import 'schedule_management_screen.dart';
 import '../../checkin/presentation/owner_qr_screen.dart';
@@ -69,6 +70,17 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (_) => const ScheduleManagementScreen(),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.restaurant_menu),
+            tooltip: l10n.menuManagement,
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const MenuManagementScreen(),
                 ),
               );
             },

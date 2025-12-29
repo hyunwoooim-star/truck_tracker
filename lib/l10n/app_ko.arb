@@ -344,5 +344,19 @@
   "businessLocation": "영업 장소",
   "businessLocationHint": "예: 강남역 2번 출구",
   "startTime": "시작 시간",
-  "endTime": "종료 시간"
+  "endTime": "종료 시간",
+  "menuManagement": "메뉴 관리",
+  "addMenuItem": "메뉴 추가",
+  "editMenuItem": "메뉴 수정",
+  "deleteMenuItem": "메뉴 삭제",
+  "menuItemName": "메뉴 이름",
+  "menuItemNameHint": "예: 닭꼬치",
+  "menuItemPrice": "가격",
+  "menuItemDescription": "설명 (선택사항)",
+  "confirmDeleteMenuItem": "이 메뉴를 삭제하시겠습니까?",
+  "menuItemAdded": "메뉴가 추가되었습니다",
+  "menuItemUpdated": "메뉴가 수정되었습니다",
+  "menuItemDeleted": "메뉴가 삭제되었습니다",
+  "available": "판매 중",
+  "delete": "삭제"
 }

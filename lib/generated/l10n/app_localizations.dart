@@ -1831,6 +1831,90 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'종료 시간'**
   String get endTime;
+
+  /// No description provided for @menuManagement.
+  ///
+  /// In ko, this message translates to:
+  /// **'메뉴 관리'**
+  String get menuManagement;
+
+  /// No description provided for @addMenuItem.
+  ///
+  /// In ko, this message translates to:
+  /// **'메뉴 추가'**
+  String get addMenuItem;
+
+  /// No description provided for @editMenuItem.
+  ///
+  /// In ko, this message translates to:
+  /// **'메뉴 수정'**
+  String get editMenuItem;
+
+  /// No description provided for @deleteMenuItem.
+  ///
+  /// In ko, this message translates to:
+  /// **'메뉴 삭제'**
+  String get deleteMenuItem;
+
+  /// No description provided for @menuItemName.
+  ///
+  /// In ko, this message translates to:
+  /// **'메뉴 이름'**
+  String get menuItemName;
+
+  /// No description provided for @menuItemNameHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 닭꼬치'**
+  String get menuItemNameHint;
+
+  /// No description provided for @menuItemPrice.
+  ///
+  /// In ko, this message translates to:
+  /// **'가격'**
+  String get menuItemPrice;
+
+  /// No description provided for @menuItemDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'설명 (선택사항)'**
+  String get menuItemDescription;
+
+  /// No description provided for @confirmDeleteMenuItem.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 메뉴를 삭제하시겠습니까?'**
+  String get confirmDeleteMenuItem;
+
+  /// No description provided for @menuItemAdded.
+  ///
+  /// In ko, this message translates to:
+  /// **'메뉴가 추가되었습니다'**
+  String get menuItemAdded;
+
+  /// No description provided for @menuItemUpdated.
+  ///
+  /// In ko, this message translates to:
+  /// **'메뉴가 수정되었습니다'**
+  String get menuItemUpdated;
+
+  /// No description provided for @menuItemDeleted.
+  ///
+  /// In ko, this message translates to:
+  /// **'메뉴가 삭제되었습니다'**
+  String get menuItemDeleted;
+
+  /// No description provided for @available.
+  ///
+  /// In ko, this message translates to:
+  /// **'판매 중'**
+  String get available;
+
+  /// No description provided for @delete.
+  ///
+  /// In ko, this message translates to:
+  /// **'삭제'**
+  String get delete;
 }
 
 class _AppLocalizationsDelegate

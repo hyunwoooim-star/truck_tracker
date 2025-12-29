@@ -933,4 +933,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get endTime => 'End Time';
+
+  @override
+  String get menuManagement => 'Menu Management';
+
+  @override
+  String get addMenuItem => 'Add Menu Item';
+
+  @override
+  String get editMenuItem => 'Edit Menu Item';
+
+  @override
+  String get deleteMenuItem => 'Delete Menu Item';
+
+  @override
+  String get menuItemName => 'Menu Item Name';
+
+  @override
+  String get menuItemNameHint => 'e.g., Chicken Skewer';
+
+  @override
+  String get menuItemPrice => 'Price';
+
+  @override
+  String get menuItemDescription => 'Description (optional)';
+
+  @override
+  String get confirmDeleteMenuItem =>
+      'Are you sure you want to delete this menu item?';
+
+  @override
+  String get menuItemAdded => 'Menu item added';
+
+  @override
+  String get menuItemUpdated => 'Menu item updated';
+
+  @override
+  String get menuItemDeleted => 'Menu item deleted';
+
+  @override
+  String get available => 'Available';
+
+  @override
+  String get delete => 'Delete';
 }

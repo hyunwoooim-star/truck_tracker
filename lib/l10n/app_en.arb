@@ -446,5 +446,19 @@
   "businessLocation": "Business Location",
   "businessLocationHint": "e.g., Gangnam Station Exit 2",
   "startTime": "Start Time",
-  "endTime": "End Time"
+  "endTime": "End Time",
+  "menuManagement": "Menu Management",
+  "addMenuItem": "Add Menu Item",
+  "editMenuItem": "Edit Menu Item",
+  "deleteMenuItem": "Delete Menu Item",
+  "menuItemName": "Menu Item Name",
+  "menuItemNameHint": "e.g., Chicken Skewer",
+  "menuItemPrice": "Price",
+  "menuItemDescription": "Description (optional)",
+  "confirmDeleteMenuItem": "Are you sure you want to delete this menu item?",
+  "menuItemAdded": "Menu item added",
+  "menuItemUpdated": "Menu item updated",
+  "menuItemDeleted": "Menu item deleted",
+  "available": "Available",
+  "delete": "Delete"
 }
