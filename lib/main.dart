@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter/material.dart';
@@ -22,6 +23,9 @@ import 'features/checkin/presentation/customer_checkin_screen.dart';
 import 'features/checkin/presentation/owner_qr_screen.dart';
 import 'features/notifications/fcm_service.dart';
 import 'firebase_options.dart';
+
+/// Global key for showing foreground notifications
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 void main() async {
   // Wrap entire app in error zone for Crashlytics
@@ -55,6 +59,11 @@ void main() async {
     // Initialize FCM (Firebase Cloud Messaging)
     final fcmService = FcmService();
     await fcmService.initialize();
+
+    // Set up foreground message handler to show in-app notifications
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      _showForegroundNotification(message);
+    });
 
     // 🧹 OPTIMIZATION: Clean old image cache (7 days+) to free storage
     _cleanOldImageCache();
@@ -101,6 +110,7 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
       routerConfig: router,
+      scaffoldMessengerKey: scaffoldMessengerKey,
       // 🌏 LOCALIZATION: Support Korean and English
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -200,4 +210,48 @@ Future<void> _cleanOldImageCache() async {
     AppLogger.warning('Failed to clean image cache', tag: 'Main');
     // Non-critical error, continue app startup
   }
+}
+
+/// 🔔 Show in-app notification when message received in foreground
+void _showForegroundNotification(RemoteMessage message) {
+  final notification = message.notification;
+  if (notification == null) return;
+
+  AppLogger.debug('Showing foreground notification: ${notification.title}', tag: 'Main');
+
+  final snackBar = SnackBar(
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (notification.title != null)
+          Text(
+            notification.title!,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        if (notification.body != null)
+          Text(
+            notification.body!,
+            style: const TextStyle(color: Colors.black87),
+          ),
+      ],
+    ),
+    backgroundColor: AppTheme.mustardYellow,
+    behavior: SnackBarBehavior.floating,
+    margin: const EdgeInsets.all(16),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    duration: const Duration(seconds: 4),
+    action: SnackBarAction(
+      label: '확인',
+      textColor: Colors.black,
+      onPressed: () {
+        // Dismiss snackbar
+      },
+    ),
+  );
+
+  scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
 }
