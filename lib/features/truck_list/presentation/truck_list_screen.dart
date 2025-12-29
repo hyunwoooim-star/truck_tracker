@@ -13,6 +13,7 @@ import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../shared/widgets/status_tag.dart';
 import '../../auth/presentation/auth_provider.dart';
+import '../../auth/presentation/login_screen.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../truck_map/presentation/truck_map_screen.dart';
 import '../../checkin/presentation/customer_checkin_screen.dart';
@@ -759,6 +760,14 @@ class _AppDrawer extends ConsumerWidget {
               ref.invalidate(currentUserProvider);
               ref.invalidate(currentUserIdProvider);
               ref.invalidate(currentUserEmailProvider);
+
+              // Navigate back to LoginScreen
+              if (context.mounted) {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (route) => false,
+                );
+              }
             },
           ),
           const SizedBox(height: 16),

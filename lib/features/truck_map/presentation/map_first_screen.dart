@@ -12,6 +12,7 @@ import '../../../core/constants/marker_colors.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../shared/widgets/status_tag.dart';
 import '../../auth/presentation/auth_provider.dart';
+import '../../auth/presentation/login_screen.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../truck_list/domain/truck.dart';
 import '../../truck_list/presentation/truck_provider.dart';
@@ -452,6 +453,14 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
               ref.invalidate(currentUserProvider);
               ref.invalidate(currentUserIdProvider);
               ref.invalidate(currentUserEmailProvider);
+
+              // Navigate back to LoginScreen
+              if (context.mounted) {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (route) => false,
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
