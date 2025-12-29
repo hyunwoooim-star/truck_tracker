@@ -1,0 +1,75 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.5'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: v1.0.0-${{ github.run_number }}
+          name: Release v1.0.0 Build ${{ github.run_number }}
+          body: |
+            ## 트럭아저씨 Android APK
+
+            **빌드 날짜**: ${{ steps.date.outputs.date }}
+            **빌드 번호**: ${{ github.run_number }}
+
+            ### 설치 방법
+            1. 아래 `app-release.apk` 다운로드
+            2. Android 폰에서 APK 파일 열기
+            3. "알 수 없는 소스" 허용 후 설치
+
+            ### 주요 기능
+            - 🗺️ 실시간 푸드트럭 지도
+            - 🔔 근처 트럭 알림
+            - 📱 QR 코드 주문
+            - ⭐ 리뷰 및 즐겨찾기
+          files: build/app/outputs/flutter-apk/app-release.apk
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
