@@ -1002,4 +1002,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get delete => 'Delete';
+
+  @override
+  String get reviewManagement => 'Review Management';
+
+  @override
+  String get reviewStats => 'Review Statistics';
+
+  @override
+  String get totalReviews => 'Total Reviews';
+
+  @override
+  String get averageRating => 'Average Rating';
+
+  @override
+  String get ratingDistribution => 'Rating Distribution';
+
+  @override
+  String get recentReviews => 'Recent Reviews';
+
+  @override
+  String get allReviews => 'All Reviews';
+
+  @override
+  String get replyToReview => 'Reply';
+
+  @override
+  String get editReply => 'Edit Reply';
+
+  @override
+  String get deleteReply => 'Delete Reply';
+
+  @override
+  String get replyPlaceholder => 'Write a reply to the customer review';
+
+  @override
+  String get replySent => 'Reply sent';
+
+  @override
+  String get replyDeleted => 'Reply deleted';
+
+  @override
+  String get confirmDeleteReply =>
+      'Are you sure you want to delete this reply?';
+
+  @override
+  String get noReviewsForTruck => 'No reviews yet';
+
+  @override
+  String get viewAllReviews => 'View All Reviews';
+
+  @override
+  String starsCount(Object count) {
+    return '$count';
+  }
 }

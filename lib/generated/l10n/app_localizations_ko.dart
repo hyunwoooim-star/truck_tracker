@@ -986,4 +986,57 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get delete => '삭제';
+
+  @override
+  String get reviewManagement => '리뷰 관리';
+
+  @override
+  String get reviewStats => '리뷰 통계';
+
+  @override
+  String get totalReviews => '총 리뷰';
+
+  @override
+  String get averageRating => '평균 평점';
+
+  @override
+  String get ratingDistribution => '평점 분포';
+
+  @override
+  String get recentReviews => '최근 리뷰';
+
+  @override
+  String get allReviews => '전체 리뷰';
+
+  @override
+  String get replyToReview => '답글 달기';
+
+  @override
+  String get editReply => '답글 수정';
+
+  @override
+  String get deleteReply => '답글 삭제';
+
+  @override
+  String get replyPlaceholder => '고객 리뷰에 답글을 작성하세요';
+
+  @override
+  String get replySent => '답글이 등록되었습니다';
+
+  @override
+  String get replyDeleted => '답글이 삭제되었습니다';
+
+  @override
+  String get confirmDeleteReply => '정말 답글을 삭제하시겠습니까?';
+
+  @override
+  String get noReviewsForTruck => '아직 받은 리뷰가 없습니다';
+
+  @override
+  String get viewAllReviews => '전체 리뷰 보기';
+
+  @override
+  String starsCount(Object count) {
+    return '$count개';
+  }
 }

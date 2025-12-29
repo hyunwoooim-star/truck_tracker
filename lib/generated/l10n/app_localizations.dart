@@ -1963,6 +1963,108 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'삭제'**
   String get delete;
+
+  /// No description provided for @reviewManagement.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 관리'**
+  String get reviewManagement;
+
+  /// No description provided for @reviewStats.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 통계'**
+  String get reviewStats;
+
+  /// No description provided for @totalReviews.
+  ///
+  /// In ko, this message translates to:
+  /// **'총 리뷰'**
+  String get totalReviews;
+
+  /// No description provided for @averageRating.
+  ///
+  /// In ko, this message translates to:
+  /// **'평균 평점'**
+  String get averageRating;
+
+  /// No description provided for @ratingDistribution.
+  ///
+  /// In ko, this message translates to:
+  /// **'평점 분포'**
+  String get ratingDistribution;
+
+  /// No description provided for @recentReviews.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 리뷰'**
+  String get recentReviews;
+
+  /// No description provided for @allReviews.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 리뷰'**
+  String get allReviews;
+
+  /// No description provided for @replyToReview.
+  ///
+  /// In ko, this message translates to:
+  /// **'답글 달기'**
+  String get replyToReview;
+
+  /// No description provided for @editReply.
+  ///
+  /// In ko, this message translates to:
+  /// **'답글 수정'**
+  String get editReply;
+
+  /// No description provided for @deleteReply.
+  ///
+  /// In ko, this message translates to:
+  /// **'답글 삭제'**
+  String get deleteReply;
+
+  /// No description provided for @replyPlaceholder.
+  ///
+  /// In ko, this message translates to:
+  /// **'고객 리뷰에 답글을 작성하세요'**
+  String get replyPlaceholder;
+
+  /// No description provided for @replySent.
+  ///
+  /// In ko, this message translates to:
+  /// **'답글이 등록되었습니다'**
+  String get replySent;
+
+  /// No description provided for @replyDeleted.
+  ///
+  /// In ko, this message translates to:
+  /// **'답글이 삭제되었습니다'**
+  String get replyDeleted;
+
+  /// No description provided for @confirmDeleteReply.
+  ///
+  /// In ko, this message translates to:
+  /// **'정말 답글을 삭제하시겠습니까?'**
+  String get confirmDeleteReply;
+
+  /// No description provided for @noReviewsForTruck.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 받은 리뷰가 없습니다'**
+  String get noReviewsForTruck;
+
+  /// No description provided for @viewAllReviews.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 리뷰 보기'**
+  String get viewAllReviews;
+
+  /// No description provided for @starsCount.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}개'**
+  String starsCount(Object count);
 }
 
 class _AppLocalizationsDelegate

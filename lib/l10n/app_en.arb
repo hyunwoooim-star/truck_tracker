@@ -468,5 +468,23 @@
   "menuItemUpdated": "Menu item updated",
   "menuItemDeleted": "Menu item deleted",
   "available": "Available",
-  "delete": "Delete"
+  "delete": "Delete",
+
+  "reviewManagement": "Review Management",
+  "reviewStats": "Review Statistics",
+  "totalReviews": "Total Reviews",
+  "averageRating": "Average Rating",
+  "ratingDistribution": "Rating Distribution",
+  "recentReviews": "Recent Reviews",
+  "allReviews": "All Reviews",
+  "replyToReview": "Reply",
+  "editReply": "Edit Reply",
+  "deleteReply": "Delete Reply",
+  "replyPlaceholder": "Write a reply to the customer review",
+  "replySent": "Reply sent",
+  "replyDeleted": "Reply deleted",
+  "confirmDeleteReply": "Are you sure you want to delete this reply?",
+  "noReviewsForTruck": "No reviews yet",
+  "viewAllReviews": "View All Reviews",
+  "starsCount": "{count}"
 }

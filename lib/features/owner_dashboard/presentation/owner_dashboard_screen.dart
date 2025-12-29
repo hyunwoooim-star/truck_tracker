@@ -16,6 +16,7 @@ import '../../truck_detail/presentation/truck_detail_provider.dart';
 import 'analytics_screen.dart';
 import 'menu_management_screen.dart';
 import 'owner_status_provider.dart';
+import 'review_management_screen.dart';
 import 'schedule_management_screen.dart';
 import '../../checkin/presentation/owner_qr_screen.dart';
 import '../../talk/presentation/talk_widget.dart';
@@ -83,6 +84,20 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                   builder: (_) => const MenuManagementScreen(),
                 ),
               );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.rate_review),
+            tooltip: l10n.manageReviews,
+            onPressed: () {
+              final ownerTruck = ref.read(ownerTruckProvider).value;
+              if (ownerTruck != null) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ReviewManagementScreen(truckId: ownerTruck.id),
+                  ),
+                );
+              }
             },
           ),
           IconButton(
