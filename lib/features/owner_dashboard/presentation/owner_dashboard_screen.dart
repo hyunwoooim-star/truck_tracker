@@ -117,6 +117,11 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             onPressed: () => _showMigrationDialog(context, ref),
           ),
           IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: '설정',
+            onPressed: () => _showSettingsDialog(context, ref),
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
             tooltip: l10n.logout,
             onPressed: () => _showLogoutDialog(context, ref),
@@ -943,6 +948,134 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
   Future<void> _toggleSoldOut(MenuItem item, String truckId, WidgetRef ref) async {
     final detailProvider = ref.read(truckDetailProvider(truckId).notifier);
     await detailProvider.toggleMenuItemSoldOut(item.id);
+  }
+
+  /// Show settings dialog for owner profile
+  void _showSettingsDialog(BuildContext context, WidgetRef ref) {
+    final ownerTruck = ref.read(ownerTruckProvider).value;
+    if (ownerTruck == null) return;
+
+    final truckNameController = TextEditingController(text: ownerTruck.truckNumber);
+    final driverNameController = TextEditingController(text: ownerTruck.driverName);
+    final phoneController = TextEditingController(text: ownerTruck.contactPhone);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.charcoalMedium,
+        title: const Text(
+          '트럭 정보 수정',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: truckNameController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: '트럭 이름',
+                  labelStyle: const TextStyle(color: AppTheme.textSecondary),
+                  filled: true,
+                  fillColor: AppTheme.charcoalDark,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: driverNameController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: '사장님 이름',
+                  labelStyle: const TextStyle(color: AppTheme.textSecondary),
+                  filled: true,
+                  fillColor: AppTheme.charcoalDark,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: phoneController,
+                style: const TextStyle(color: Colors.white),
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  labelText: '연락처',
+                  labelStyle: const TextStyle(color: AppTheme.textSecondary),
+                  filled: true,
+                  fillColor: AppTheme.charcoalDark,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              '취소',
+              style: TextStyle(color: AppTheme.textSecondary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _updateTruckProfile(
+                context,
+                ref,
+                ownerTruck.id,
+                truckNameController.text.trim(),
+                driverNameController.text.trim(),
+                phoneController.text.trim(),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.mustardYellow,
+              foregroundColor: Colors.black,
+            ),
+            child: const Text('저장'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Update truck profile
+  Future<void> _updateTruckProfile(
+    BuildContext context,
+    WidgetRef ref,
+    String truckId,
+    String truckName,
+    String driverName,
+    String phone,
+  ) async {
+    try {
+      final truckRepository = ref.read(truckRepositoryProvider);
+      await truckRepository.updateTruckProfile(
+        truckId: truckId,
+        truckNumber: truckName,
+        driverName: driverName,
+        contactPhone: phone,
+      );
+
+      if (context.mounted) {
+        SnackBarHelper.showSuccess(context, '프로필이 저장되었습니다');
+      }
+
+      // Refresh truck data
+      ref.invalidate(ownerTruckProvider);
+    } catch (e) {
+      if (context.mounted) {
+        SnackBarHelper.showError(context, '저장 실패: $e');
+      }
+    }
   }
 
   /// Show logout confirmation dialog

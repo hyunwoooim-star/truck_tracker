@@ -326,6 +326,17 @@ class AuthService {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
+      // Create notification for user
+      final notificationRef = _firestore.collection('notifications').doc();
+      batch.set(notificationRef, {
+        'userId': userId,
+        'type': 'owner_approved',
+        'title': '사장님 인증 승인',
+        'body': '축하합니다! 사장님 인증이 승인되었습니다. 트럭 #$truckId가 배정되었습니다.',
+        'isRead': false,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
       await batch.commit();
 
       AppLogger.success('Owner request approved', tag: 'AuthService');
@@ -340,13 +351,30 @@ class AuthService {
     AppLogger.debug('Rejecting owner request for user: $userId', tag: 'AuthService');
 
     try {
-      await _firestore.collection('owner_requests').doc(userId).update({
+      final batch = _firestore.batch();
+
+      // Update owner request status
+      final requestRef = _firestore.collection('owner_requests').doc(userId);
+      batch.update(requestRef, {
         'status': 'rejected',
         'reviewedBy': adminId,
         'reviewedAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
         'rejectionReason': reason,
       });
+
+      // Create notification for user
+      final notificationRef = _firestore.collection('notifications').doc();
+      batch.set(notificationRef, {
+        'userId': userId,
+        'type': 'owner_rejected',
+        'title': '사장님 인증 거절',
+        'body': '사장님 인증이 거절되었습니다. 사유: $reason',
+        'isRead': false,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      await batch.commit();
 
       AppLogger.success('Owner request rejected', tag: 'AuthService');
     } catch (e, stackTrace) {

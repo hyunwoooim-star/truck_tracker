@@ -13,6 +13,12 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/trucks/$(truckId)).data.ownerId == request.auth.uid;
     }
 
+    // Helper function: Check if user is admin
+    function isAdmin() {
+      return isAuthenticated()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
     // ═══════════════════════════════════════════════════════════
     // TRUCKS
     // ═══════════════════════════════════════════════════════════
@@ -186,6 +192,45 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       allow create, update: if isAuthenticated()
         && request.auth.uid == userId;
+      allow delete: if false;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // NOTIFICATIONS
+    // ═══════════════════════════════════════════════════════════
+    match /notifications/{notificationId} {
+      // Read: User can only read their own notifications
+      allow read: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+
+      // Create: Only system/admin (via Cloud Functions or admin SDK)
+      allow create: if isAuthenticated() && isAdmin();
+
+      // Update: User can mark as read
+      allow update: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+
+      // Delete: User can delete their own notifications
+      allow delete: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // OWNER REQUESTS (Owner verification system)
+    // ═══════════════════════════════════════════════════════════
+    match /owner_requests/{requestId} {
+      // Read: User can read their own request, admins can read all
+      allow read: if isAuthenticated()
+        && (request.auth.uid == requestId || isAdmin());
+
+      // Create: User can submit their own request
+      allow create: if isAuthenticated()
+        && request.auth.uid == requestId;
+
+      // Update: Only admins can approve/reject
+      allow update: if isAuthenticated() && isAdmin();
+
+      // Delete: Not allowed
       allow delete: if false;
     }
   }

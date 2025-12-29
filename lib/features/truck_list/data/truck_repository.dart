@@ -258,5 +258,29 @@ class TruckRepository {
       rethrow;
     }
   }
+
+  /// Update truck profile (name, driver, phone)
+  Future<void> updateTruckProfile({
+    required String truckId,
+    required String truckNumber,
+    required String driverName,
+    required String contactPhone,
+  }) async {
+    AppLogger.debug('Updating profile for truck $truckId', tag: 'TruckRepository');
+
+    try {
+      await _trucksCollection.doc(truckId).update({
+        'truckNumber': truckNumber,
+        'driverName': driverName,
+        'contactPhone': contactPhone,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      AppLogger.success('Profile updated: trucks/$truckId', tag: 'TruckRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Profile update failed for truck $truckId', error: e, stackTrace: stackTrace, tag: 'TruckRepository');
+      rethrow;
+    }
+  }
 }
 
