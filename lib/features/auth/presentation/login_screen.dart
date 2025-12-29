@@ -63,7 +63,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // Validate legal agreements for sign-up
     if (!_isLogin && (!_agreedToTerms || !_agreedToPrivacy)) {
       AppLogger.warning('Legal agreements not accepted', tag: 'LoginScreen');
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       SnackBarHelper.showError(context, l10n.agreeToTermsRequired);
       return;
     }

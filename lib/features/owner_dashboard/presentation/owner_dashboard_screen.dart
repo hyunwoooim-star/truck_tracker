@@ -39,7 +39,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
   Widget build(BuildContext context) {
     final ownerTruckAsync = ref.watch(ownerTruckProvider);
     final numberFormat = NumberFormat('#,###');
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: _charcoal,
@@ -828,7 +828,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
 
   /// Show logout confirmation dialog
   void _showLogoutDialog(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -865,7 +865,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
 
   /// Show migration dialog to upload data to Firestore
   void _showMigrationDialog(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -896,7 +896,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
 
   /// Run the migration
   Future<void> _runMigration(BuildContext context, WidgetRef ref) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     // Show loading
     if (context.mounted) {
       SnackBarHelper.showInfo(context, l10n.uploadingData);

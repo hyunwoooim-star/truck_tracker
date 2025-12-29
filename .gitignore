@@ -52,3 +52,4 @@ functions/package-lock.json
 
 # Build outputs
 build/
+service-account-key.json

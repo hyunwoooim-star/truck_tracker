@@ -19,7 +19,7 @@ class AnalyticsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final truckIdAsync = ref.watch(currentUserTruckIdProvider);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // Watch the date range state
     final dateRange = ref.watch(analyticsDateRangeProvider);
@@ -367,7 +367,7 @@ class AnalyticsScreen extends ConsumerWidget {
 
   /// Table header
   Widget _buildTableHeader(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         Expanded(

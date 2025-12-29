@@ -32,7 +32,7 @@ class TruckDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     // 🔄 FIXED: Use real Firestore stream instead of mock data
     final detailAsync = ref.watch(truckDetailProvider(truck.id));
 
@@ -655,7 +655,7 @@ class _MenuItemCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final formatter = NumberFormat('#,###');
     final cart = ref.watch(cartProvider);
 
@@ -838,7 +838,7 @@ class _ReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final dateFormat = DateFormat('yyyy.MM.dd');
     
     return Padding(

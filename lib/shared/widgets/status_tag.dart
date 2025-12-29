@@ -20,7 +20,7 @@ class StatusTag extends StatelessWidget {
   final TruckStatus status;
 
   String _getLabel(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (status) {
       case TruckStatus.onRoute:
         return l10n.statusOnRoute;

@@ -48,7 +48,7 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
       error: (e, s) => AppLogger.error('AsyncValue error', error: e, tag: 'TruckMapScreen'),
     );
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(

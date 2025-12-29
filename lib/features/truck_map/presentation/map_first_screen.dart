@@ -75,7 +75,7 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
   @override
   Widget build(BuildContext context) {
     final trucksAsync = ref.watch(filteredTruckListProvider);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: Stack(
@@ -428,7 +428,7 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
 
   /// Show logout confirmation dialog
   void _showLogoutDialog(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -671,7 +671,7 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
   @override
   Widget build(BuildContext context) {
     final searchKeyword = ref.watch(truckFilterProvider).searchKeyword;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     if (_controller.text != searchKeyword) {
       _controller.text = searchKeyword;

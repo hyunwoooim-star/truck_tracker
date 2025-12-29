@@ -22,7 +22,7 @@ class _OwnerQRScreenState extends ConsumerState<OwnerQRScreen> {
   @override
   Widget build(BuildContext context) {
     final ownerTruckAsync = ref.watch(ownerTruckProvider);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: _charcoal,

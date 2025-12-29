@@ -27,7 +27,7 @@ class TruckListScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.truckList),
+        title: Text(AppLocalizations.of(context).truckList),
         actions: [
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
@@ -58,7 +58,7 @@ class TruckListScreen extends ConsumerWidget {
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, __) => Center(
                 child: Text(
-                  AppLocalizations.of(context)!.loadDataFailed,
+                  AppLocalizations.of(context).loadDataFailed,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
@@ -251,7 +251,7 @@ class TruckListScreen extends ConsumerWidget {
                                                   SnackBar(
                                                     backgroundColor: AppTheme.electricBlue,
                                                     content: Text(
-                                                      AppLocalizations.of(context)!.favoriteFailed,
+                                                      AppLocalizations.of(context).favoriteFailed,
                                                       style: const TextStyle(
                                                         color: Colors.black,
                                                       ),
@@ -614,14 +614,14 @@ class _AppDrawer extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.list),
-            title: Text(AppLocalizations.of(context)!.truckList),
+            title: Text(AppLocalizations.of(context).truckList),
             onTap: () {
               Navigator.pop(context);
             },
           ),
           ListTile(
             leading: const Icon(Icons.map),
-            title: Text(AppLocalizations.of(context)!.viewMap),
+            title: Text(AppLocalizations.of(context).viewMap),
             onTap: () {
               Navigator.pop(context);
               Navigator.of(context).push(
@@ -632,9 +632,9 @@ class _AppDrawer extends ConsumerWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: Text(AppLocalizations.of(context)!.appInfo),
+            title: Text(AppLocalizations.of(context).appInfo),
             onTap: () {
-              final l10n = AppLocalizations.of(context)!;
+              final l10n = AppLocalizations.of(context);
               Navigator.pop(context);
               showDialog(
                 context: context,
@@ -655,9 +655,9 @@ class _AppDrawer extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.privacy_tip_outlined),
-            title: Text(AppLocalizations.of(context)!.privacyPolicy),
+            title: Text(AppLocalizations.of(context).privacyPolicy),
             onTap: () {
-              final l10n = AppLocalizations.of(context)!;
+              final l10n = AppLocalizations.of(context);
               Navigator.pop(context);
               showDialog(
                 context: context,
@@ -726,7 +726,7 @@ class _AdvancedFilterDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filterState = ref.watch(truckFilterProvider);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return AlertDialog(
       title: Row(
@@ -914,7 +914,7 @@ class _SortOptionsDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentSort = ref.watch(sortOptionProvider);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return AlertDialog(
       title: const Text('정렬'),

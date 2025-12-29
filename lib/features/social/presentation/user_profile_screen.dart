@@ -16,7 +16,7 @@ class UserProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
@@ -224,7 +224,7 @@ class _FollowedTruckCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final truckAsync = ref.watch(singleTruckProvider(follow.truckId));
 
     return truckAsync.when(

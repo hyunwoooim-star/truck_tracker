@@ -56,12 +56,12 @@ class _ScheduleManagementScreenState
       await repository.updateWeeklySchedule(truckId.toString(), _schedule!);
 
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         SnackBarHelper.showSuccess(context, l10n.scheduleSaved);
       }
     } catch (e) {
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         SnackBarHelper.showError(context, l10n.saveFailed(e));
       }
     }
@@ -79,7 +79,7 @@ class _ScheduleManagementScreenState
       _schedule = _getEmptySchedule();
     }
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(

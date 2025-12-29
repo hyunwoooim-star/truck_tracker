@@ -26,7 +26,7 @@ class _CustomerCheckinScreenState extends ConsumerState<CustomerCheckinScreen> {
   }
 
   Future<void> _processCheckIn(String truckId) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     if (truckId.isEmpty) {
       _showError(l10n.pleaseEnterTruckID);
@@ -91,13 +91,13 @@ class _CustomerCheckinScreenState extends ConsumerState<CustomerCheckinScreen> {
   }
 
   void _showSuccess(String truckName) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     SnackBarHelper.showSuccess(context, '${l10n.checkInSuccessful} - ${l10n.loyaltyPoints(truckName)}');
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppTheme.midnightCharcoal,
       appBar: AppBar(

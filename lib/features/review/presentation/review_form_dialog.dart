@@ -54,7 +54,7 @@ class _ReviewFormDialogState extends ConsumerState<ReviewFormDialog> {
   Future<void> _submitReview() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       SnackBarHelper.showWarning(context, l10n.loginRequired);
@@ -91,13 +91,13 @@ class _ReviewFormDialogState extends ConsumerState<ReviewFormDialog> {
       }
 
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         Navigator.of(context).pop();
         SnackBarHelper.showSuccess(context, l10n.reviewSubmitted);
       }
     } catch (e) {
       if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
         SnackBarHelper.showError(context, l10n.reviewSubmissionFailed('$e'));
       }
     } finally {
@@ -109,7 +109,7 @@ class _ReviewFormDialogState extends ConsumerState<ReviewFormDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
