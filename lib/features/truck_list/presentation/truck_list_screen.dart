@@ -77,6 +77,7 @@ class TruckListScreen extends ConsumerWidget {
                     final rankIndex = topRanked.indexWhere((t) => t.id == truck.id);
                     final rank = rankIndex >= 0 ? rankIndex + 1 : null;
 
+                    final isClosed = truck.status == TruckStatus.maintenance;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: InkWell(
@@ -93,7 +94,7 @@ class TruckListScreen extends ConsumerWidget {
                             color: AppTheme.charcoalMedium,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: AppTheme.charcoalLight,
+                              color: isClosed ? Colors.grey : AppTheme.charcoalLight,
                               width: 1,
                             ),
                           ),
@@ -119,7 +120,7 @@ class TruckListScreen extends ConsumerWidget {
                                         placeholder: (context, url) => Container(
                                           width: 72,
                                           height: 72,
-                                          color: AppTheme.charcoalLight,
+                                          color: isClosed ? Colors.grey : AppTheme.charcoalLight,
                                           alignment: Alignment.center,
                                           child: const SizedBox(
                                             width: 16,
@@ -133,7 +134,7 @@ class TruckListScreen extends ConsumerWidget {
                                         errorWidget: (context, url, error) => Container(
                                           width: 72,
                                           height: 72,
-                                          color: AppTheme.charcoalLight,
+                                          color: isClosed ? Colors.grey : AppTheme.charcoalLight,
                                           alignment: Alignment.center,
                                           child: const Icon(
                                             Icons.local_shipping_outlined,
