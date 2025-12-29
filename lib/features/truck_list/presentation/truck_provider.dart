@@ -79,8 +79,6 @@ class TruckFilterState {
         minRating != null ||
         openOnly;
   }
-
-  void clearAll() {}
 }
 
 /// Filter state provider

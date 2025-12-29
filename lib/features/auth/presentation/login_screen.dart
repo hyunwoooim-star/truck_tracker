@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,7 +10,6 @@ import '../../../core/utils/password_validator.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../notifications/fcm_service.dart';
 import '../../truck_list/presentation/truck_list_screen.dart';
-import '../../owner_dashboard/presentation/owner_dashboard_screen.dart';
 import 'auth_provider.dart';
 
 /// Login Screen with Email and Google Sign-In
@@ -142,36 +140,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  Future<void> _handleKakaoSignIn() async {
-    setState(() => _isLoading = true);
-    try {
-      final authService = ref.read(authServiceProvider);
-      await authService.signInWithKakao();
-      // Don't manually navigate - let AuthWrapper handle it
-    } catch (e) {
-      if (mounted) {
-        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _handleNaverSignIn() async {
-    setState(() => _isLoading = true);
-    try {
-      final authService = ref.read(authServiceProvider);
-      await authService.signInWithNaver();
-      // Don't manually navigate - let AuthWrapper handle it
-    } catch (e) {
-      if (mounted) {
-        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
   String _getErrorMessage(String error) {
     if (error.contains('user-not-found')) {
       return '등록되지 않은 이메일입니다';
@@ -187,6 +155,95 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       return '로그인이 취소되었습니다';
     }
     return '로그인 중 오류가 발생했습니다';
+  }
+
+  Future<void> _showForgotPasswordDialog() async {
+    final resetEmailController = TextEditingController();
+
+    return showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text(
+          '비밀번호 재설정',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '가입하신 이메일 주소를 입력하시면\n비밀번호 재설정 링크를 보내드립니다.',
+              style: TextStyle(color: Color(0xFFB0B0B0), fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: resetEmailController,
+              keyboardType: TextInputType.emailAddress,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'example@email.com',
+                hintStyle: const TextStyle(color: Color(0xFF808080)),
+                prefixIcon: const Icon(Icons.email_outlined, color: Color(0xFFB0B0B0)),
+                filled: true,
+                fillColor: const Color(0xFF121212),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Color(0xFF1E1E1E)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Color(0xFF1E1E1E)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppTheme.mustardYellow, width: 2),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('취소', style: TextStyle(color: Color(0xFFB0B0B0))),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final email = resetEmailController.text.trim();
+              if (email.isEmpty) {
+                SnackBarHelper.showWarning(context, '이메일을 입력해주세요');
+                return;
+              }
+
+              Navigator.pop(ctx);
+              setState(() => _isLoading = true);
+
+              try {
+                final authService = ref.read(authServiceProvider);
+                await authService.sendPasswordResetEmail(email);
+                if (mounted) {
+                  SnackBarHelper.showSuccess(context, '비밀번호 재설정 이메일을 발송했습니다');
+                }
+              } catch (e) {
+                if (mounted) {
+                  SnackBarHelper.showError(context, '이메일 발송에 실패했습니다: ${_getErrorMessage(e.toString())}');
+                }
+              } finally {
+                if (mounted) setState(() => _isLoading = false);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.mustardYellow,
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: const Text('전송'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _pickBusinessLicenseImage() async {
@@ -348,7 +405,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       );
                     },
                   ),
-                  const SizedBox(height: 16),
+
+                  // Forgot Password (only show for login)
+                  if (_isLogin) ...[
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: _showForgotPasswordDialog,
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                        ),
+                        child: const Text(
+                          '비밀번호 찾기',
+                          style: TextStyle(
+                            color: AppTheme.mustardYellow,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    const SizedBox(height: 16),
+                  ],
 
                   // Owner/Customer Selection (only show for sign-up)
                   if (!_isLogin) ...[
@@ -849,58 +927,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ],
                   ),
                   const SizedBox(height: 24),
-
-                  // Owner Login Button (DEBUG ONLY - bypasses auth in debug mode)
-                  if (kDebugMode) ...[
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppTheme.electricBlue.withValues(alpha: 0.5),
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ElevatedButton(
-                        onPressed: _isLoading
-                            ? null
-                            : () async {
-                                AppLogger.debug('[DEBUG ONLY] Owner test login button pressed', tag: 'LoginScreen');
-                                AppLogger.debug('[DEBUG ONLY] Bypassing authentication - navigating to OwnerDashboardScreen', tag: 'LoginScreen');
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (_) => const OwnerDashboardScreen(),
-                                  ),
-                                );
-                              },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          foregroundColor: AppTheme.electricBlue,
-                          shadowColor: Colors.transparent,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.store, color: AppTheme.electricBlue),
-                            const SizedBox(width: 12),
-                            Text(
-                              '[DEBUG ONLY] 사장님 모드 바로가기',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.electricBlue,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
 
                   // Skip to main screen (guest mode)
                   TextButton(

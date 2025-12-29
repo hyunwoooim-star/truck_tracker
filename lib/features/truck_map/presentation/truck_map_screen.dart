@@ -38,16 +38,6 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
   @override
   Widget build(BuildContext context) {
     final trucksAsync = ref.watch(filteredTruckListProvider);
-
-    AppLogger.debug('TruckMapScreen REBUILD at ${DateTime.now()}', tag: 'TruckMapScreen');
-    AppLogger.debug('AsyncValue State: ${trucksAsync.runtimeType}', tag: 'TruckMapScreen');
-
-    trucksAsync.when(
-      data: (trucks) => AppLogger.debug('Data received: ${trucks.length} trucks', tag: 'TruckMapScreen'),
-      loading: () => AppLogger.debug('Loading...', tag: 'TruckMapScreen'),
-      error: (e, s) => AppLogger.error('AsyncValue error', error: e, tag: 'TruckMapScreen'),
-    );
-
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
@@ -93,13 +83,6 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
           );
         },
         data: (trucks) {
-          AppLogger.debug('Received ${trucks.length} trucks from Firestore', tag: 'TruckMapScreen');
-
-          // Log all trucks and their status
-          for (final truck in trucks) {
-            AppLogger.debug('Truck ${truck.id}: ${truck.foodType} - Status: ${truck.status.name} - Lat: ${truck.latitude}, Lng: ${truck.longitude}', tag: 'TruckMapScreen');
-          }
-
           // Handle empty data
           if (trucks.isEmpty) {
             AppLogger.warning('No trucks received from Firestore!', tag: 'TruckMapScreen');

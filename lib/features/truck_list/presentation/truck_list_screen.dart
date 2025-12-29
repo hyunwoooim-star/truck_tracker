@@ -109,7 +109,7 @@ class TruckListScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            l10n.noTrucksFound,
+                            l10n.noTrucks,
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               color: AppTheme.textSecondary,
                             ),

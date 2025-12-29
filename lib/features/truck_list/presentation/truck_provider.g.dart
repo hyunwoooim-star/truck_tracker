@@ -201,7 +201,7 @@ final class FilteredTruckListProvider
   }
 }
 
-String _$filteredTruckListHash() => r'aedfb86f89954c6b74256e53ec440eb5833caf8c';
+String _$filteredTruckListHash() => r'cd97b2e32e002f53ebd62995521a5120636c14e8';
 
 /// Sort state provider
 
@@ -308,7 +308,7 @@ final class FilteredTrucksWithDistanceProvider
 }
 
 String _$filteredTrucksWithDistanceHash() =>
-    r'178c0aeb685bbf6f6a0f24ef5010bb44f057ebb0';
+    r'7f177208176c3b3c7b63e8eefb3a3ee575ce7c73';
 
 /// LEGACY: Mock data filtered list (kept for reference/fallback)
 

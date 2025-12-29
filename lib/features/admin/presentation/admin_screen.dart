@@ -177,7 +177,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen> {
     final email = request['email'] as String? ?? '';
     final displayName = request['displayName'] as String? ?? '';
     final businessLicenseUrl = request['businessLicenseUrl'] as String? ?? '';
-    final createdAt = request['createdAt'];
+    final _ = request['createdAt']; // Reserved for future use
 
     return Card(
       color: AppTheme.charcoalMedium,

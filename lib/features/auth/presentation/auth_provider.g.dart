@@ -135,7 +135,7 @@ final class CurrentUserProvider extends $FunctionalProvider<User?, User?, User?>
   }
 }
 
-String _$currentUserHash() => r'4860fc878d28fab0020b28e64a9598e5d8d6ad18';
+String _$currentUserHash() => r'fe1237642e58860e118cf6307a870c8cc3c60d63';
 
 /// Current user ID provider (kept alive to maintain auth state)
 
@@ -313,3 +313,50 @@ final class CurrentUserTruckIdProvider
 
 String _$currentUserTruckIdHash() =>
     r'ddb30fcbfcd51fc634e65e6fbb717bf1c2172761';
+
+/// Owner request status provider (queries Firestore for owner_requests)
+
+@ProviderFor(ownerRequestStatus)
+final ownerRequestStatusProvider = OwnerRequestStatusProvider._();
+
+/// Owner request status provider (queries Firestore for owner_requests)
+
+final class OwnerRequestStatusProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Map<String, dynamic>?>,
+          Map<String, dynamic>?,
+          FutureOr<Map<String, dynamic>?>
+        >
+    with
+        $FutureModifier<Map<String, dynamic>?>,
+        $FutureProvider<Map<String, dynamic>?> {
+  /// Owner request status provider (queries Firestore for owner_requests)
+  OwnerRequestStatusProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ownerRequestStatusProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ownerRequestStatusHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<Map<String, dynamic>?> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Map<String, dynamic>?> create(Ref ref) {
+    return ownerRequestStatus(ref);
+  }
+}
+
+String _$ownerRequestStatusHash() =>
+    r'335a862ceff52e7a23eb85f3081d403540a752aa';

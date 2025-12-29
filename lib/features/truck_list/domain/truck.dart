@@ -22,6 +22,7 @@ sealed class Truck with _$Truck {
     @Default(false) bool isFavorite,
     required String imageUrl,
     @Default('') String ownerEmail, // 사장님 이메일 (인증용)
+    @Default('') String contactPhone, // 연락처
     String? bankAccount, // 은행 계좌번호 (송금용 QR)
     @Default('') String announcement, // 오늘의 특별 공지
     @Default(0) int favoriteCount, // 즐겨찾기 카운트 (전체 사용자)
@@ -49,6 +50,7 @@ sealed class Truck with _$Truck {
       isFavorite: data['isFavorite'] as bool? ?? false,
       imageUrl: data['imageUrl'] as String? ?? '',
       ownerEmail: data['ownerEmail'] as String? ?? '',
+      contactPhone: data['contactPhone'] as String? ?? '',
       bankAccount: data['bankAccount'] as String?,
       announcement: data['announcement'] as String? ?? '',
       favoriteCount: (data['favoriteCount'] as num?)?.toInt() ?? 0,
@@ -71,6 +73,7 @@ sealed class Truck with _$Truck {
       'isFavorite': isFavorite,
       'imageUrl': imageUrl,
       'ownerEmail': ownerEmail,
+      'contactPhone': contactPhone,
       'bankAccount': bankAccount,
       'announcement': announcement,
       'favoriteCount': favoriteCount,

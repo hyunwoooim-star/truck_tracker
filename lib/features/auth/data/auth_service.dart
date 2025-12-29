@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../../core/utils/app_logger.dart';
 
 /// Unified Authentication Service
@@ -90,34 +91,66 @@ class AuthService {
 
   /// Sign in with Google
   Future<UserCredential> signInWithGoogle() async {
-    AppLogger.debug('Google sign in - DISABLED FOR BUILD', tag: 'AuthService');
-    AppLogger.warning('Google Sign-In implementation needs google_sign_in_web configuration', tag: 'AuthService');
+    AppLogger.debug('Starting Google Sign In', tag: 'AuthService');
 
-    throw UnimplementedError('Google Sign-In temporarily disabled - requires web platform configuration');
+    try {
+      // 1. Create GoogleSignIn instance
+      final googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
+
+      // 2. Trigger Google Sign In flow
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        AppLogger.warning('Google Sign-In was cancelled by user', tag: 'AuthService');
+        throw Exception('Google 로그인이 취소되었습니다');
+      }
+
+      AppLogger.debug('Google user obtained: ${googleUser.email}', tag: 'AuthService');
+
+      // 3. Get authentication details
+      final googleAuth = await googleUser.authentication;
+
+      // 4. Create Firebase credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // 5. Sign in to Firebase
+      final userCredential = await _auth.signInWithCredential(credential);
+
+      AppLogger.success('Google Sign In successful!', tag: 'AuthService');
+      AppLogger.debug('User ID: ${userCredential.user?.uid}', tag: 'AuthService');
+      AppLogger.debug('Email: ${userCredential.user?.email}', tag: 'AuthService');
+
+      // 6. Update user info in Firestore
+      await _updateUserInfo(userCredential.user!, 'google');
+
+      return userCredential;
+    } catch (e, stackTrace) {
+      AppLogger.error('Google Sign In failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
   }
 
   // ═══════════════════════════════════════════════════════════
-  // KAKAO AUTHENTICATION (Prepared structure)
+  // KAKAO AUTHENTICATION (Coming Soon)
   // ═══════════════════════════════════════════════════════════
 
-  /// Sign in with Kakao (requires kakao_flutter_sdk setup)
+  /// Sign in with Kakao (coming soon)
   Future<UserCredential?> signInWithKakao() async {
-    AppLogger.debug('Kakao sign in - NOT AVAILABLE', tag: 'AuthService');
-    AppLogger.warning('Requires: kakao_flutter_sdk_user dependency', tag: 'AuthService');
-
-    throw UnimplementedError('Kakao login requires kakao_flutter_sdk_user dependency');
+    AppLogger.info('Kakao sign in - Coming soon', tag: 'AuthService');
+    throw UnsupportedError('카카오 로그인은 준비 중입니다');
   }
 
   // ═══════════════════════════════════════════════════════════
-  // NAVER AUTHENTICATION (Prepared structure)
+  // NAVER AUTHENTICATION (Coming Soon)
   // ═══════════════════════════════════════════════════════════
 
-  /// Sign in with Naver (requires flutter_naver_login setup)
+  /// Sign in with Naver (coming soon)
   Future<UserCredential?> signInWithNaver() async {
-    AppLogger.debug('Naver sign in - NOT AVAILABLE', tag: 'AuthService');
-    AppLogger.warning('Requires: flutter_naver_login dependency', tag: 'AuthService');
-
-    throw UnimplementedError('Naver login requires flutter_naver_login dependency');
+    AppLogger.info('Naver sign in - Coming soon', tag: 'AuthService');
+    throw UnsupportedError('네이버 로그인은 준비 중입니다');
   }
 
   // ═══════════════════════════════════════════════════════════

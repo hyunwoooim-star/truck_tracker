@@ -17,12 +17,96 @@ class CustomerCheckinScreen extends ConsumerStatefulWidget {
 
 class _CustomerCheckinScreenState extends ConsumerState<CustomerCheckinScreen> {
   final TextEditingController _truckIdController = TextEditingController();
+  final MobileScannerController _scannerController = MobileScannerController(
+    detectionSpeed: DetectionSpeed.normal,
+    facing: CameraFacing.back,
+    torchEnabled: false,
+  );
   bool _isProcessing = false;
+  bool _hasError = false;
+  String? _errorMessage;
+  bool _torchOn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen for scanner errors
+    _scannerController.start().catchError((error) {
+      if (error is MobileScannerException) {
+        _handleScannerError(error);
+      }
+    });
+  }
 
   @override
   void dispose() {
     _truckIdController.dispose();
+    _scannerController.dispose();
     super.dispose();
+  }
+
+  void _handleScannerError(MobileScannerException error) {
+    setState(() {
+      _hasError = true;
+      switch (error.errorCode) {
+        case MobileScannerErrorCode.permissionDenied:
+          _errorMessage = '카메라 권한이 필요합니다';
+          break;
+        case MobileScannerErrorCode.unsupported:
+          _errorMessage = '이 기기에서 카메라를 사용할 수 없습니다';
+          break;
+        default:
+          _errorMessage = '카메라를 시작할 수 없습니다';
+      }
+    });
+  }
+
+  Future<void> _restartScanner() async {
+    setState(() {
+      _hasError = false;
+      _errorMessage = null;
+    });
+    await _scannerController.start();
+  }
+
+  Widget _buildScannerError() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.camera_alt_outlined,
+              size: 48,
+              color: Colors.grey[600],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _errorMessage ?? '카메라 오류',
+              style: TextStyle(
+                color: Colors.grey[400],
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: _restartScanner,
+              icon: const Icon(Icons.refresh),
+              label: const Text('다시 시도'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.electricBlue,
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _processCheckIn(String truckId) async {
@@ -171,19 +255,59 @@ class _CustomerCheckinScreenState extends ConsumerState<CustomerCheckinScreen> {
                 ),
               ),
               clipBehavior: Clip.hardEdge,
-              child: MobileScanner(
-                onDetect: (capture) {
-                  final barcodes = capture.barcodes;
-                  for (final barcode in barcodes) {
-                    if (barcode.rawValue != null && !_isProcessing) {
-                      final truckId = barcode.rawValue!;
-                      _truckIdController.text = truckId;
-                      _processCheckIn(truckId);
-                      break;
-                    }
-                  }
-                },
-              ),
+              child: _hasError
+                  ? _buildScannerError()
+                  : Stack(
+                      children: [
+                        MobileScanner(
+                          controller: _scannerController,
+                          onDetect: (capture) {
+                            final barcodes = capture.barcodes;
+                            for (final barcode in barcodes) {
+                              if (barcode.rawValue != null && !_isProcessing) {
+                                final truckId = barcode.rawValue!;
+                                _truckIdController.text = truckId;
+                                _processCheckIn(truckId);
+                                break;
+                              }
+                            }
+                          },
+                        ),
+                        // Scan overlay
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: AppTheme.electricBlue.withValues(alpha: 0.5),
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Torch toggle button
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: IconButton(
+                            onPressed: () async {
+                              await _scannerController.toggleTorch();
+                              setState(() {
+                                _torchOn = !_torchOn;
+                              });
+                            },
+                            icon: Icon(
+                              _torchOn ? Icons.flash_on : Icons.flash_off,
+                              color: _torchOn
+                                  ? AppTheme.mustardYellow
+                                  : Colors.white,
+                            ),
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.black54,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
             ),
 
             const SizedBox(height: 24),

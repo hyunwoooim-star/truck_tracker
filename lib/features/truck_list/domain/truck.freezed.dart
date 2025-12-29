@@ -16,6 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$Truck {
 
  String get id; String get truckNumber; String get driverName; TruckStatus get status; String get foodType; String get locationDescription; double get latitude; double get longitude; bool get isFavorite; String get imageUrl; String get ownerEmail;// 사장님 이메일 (인증용)
+ String get contactPhone;// 연락처
  String? get bankAccount;// 은행 계좌번호 (송금용 QR)
  String get announcement;// 오늘의 특별 공지
  int get favoriteCount;// 즐겨찾기 카운트 (전체 사용자)
@@ -35,16 +36,16 @@ $TruckCopyWith<Truck> get copyWith => _$TruckCopyWithImpl<Truck>(this as Truck, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Truck&&(identical(other.id, id) || other.id == id)&&(identical(other.truckNumber, truckNumber) || other.truckNumber == truckNumber)&&(identical(other.driverName, driverName) || other.driverName == driverName)&&(identical(other.status, status) || other.status == status)&&(identical(other.foodType, foodType) || other.foodType == foodType)&&(identical(other.locationDescription, locationDescription) || other.locationDescription == locationDescription)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.ownerEmail, ownerEmail) || other.ownerEmail == ownerEmail)&&(identical(other.bankAccount, bankAccount) || other.bankAccount == bankAccount)&&(identical(other.announcement, announcement) || other.announcement == announcement)&&(identical(other.favoriteCount, favoriteCount) || other.favoriteCount == favoriteCount)&&(identical(other.avgRating, avgRating) || other.avgRating == avgRating)&&(identical(other.totalReviews, totalReviews) || other.totalReviews == totalReviews)&&(identical(other.isOpen, isOpen) || other.isOpen == isOpen)&&const DeepCollectionEquality().equals(other.weeklySchedule, weeklySchedule));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Truck&&(identical(other.id, id) || other.id == id)&&(identical(other.truckNumber, truckNumber) || other.truckNumber == truckNumber)&&(identical(other.driverName, driverName) || other.driverName == driverName)&&(identical(other.status, status) || other.status == status)&&(identical(other.foodType, foodType) || other.foodType == foodType)&&(identical(other.locationDescription, locationDescription) || other.locationDescription == locationDescription)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.ownerEmail, ownerEmail) || other.ownerEmail == ownerEmail)&&(identical(other.contactPhone, contactPhone) || other.contactPhone == contactPhone)&&(identical(other.bankAccount, bankAccount) || other.bankAccount == bankAccount)&&(identical(other.announcement, announcement) || other.announcement == announcement)&&(identical(other.favoriteCount, favoriteCount) || other.favoriteCount == favoriteCount)&&(identical(other.avgRating, avgRating) || other.avgRating == avgRating)&&(identical(other.totalReviews, totalReviews) || other.totalReviews == totalReviews)&&(identical(other.isOpen, isOpen) || other.isOpen == isOpen)&&const DeepCollectionEquality().equals(other.weeklySchedule, weeklySchedule));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,truckNumber,driverName,status,foodType,locationDescription,latitude,longitude,isFavorite,imageUrl,ownerEmail,bankAccount,announcement,favoriteCount,avgRating,totalReviews,isOpen,const DeepCollectionEquality().hash(weeklySchedule));
+int get hashCode => Object.hashAll([runtimeType,id,truckNumber,driverName,status,foodType,locationDescription,latitude,longitude,isFavorite,imageUrl,ownerEmail,contactPhone,bankAccount,announcement,favoriteCount,avgRating,totalReviews,isOpen,const DeepCollectionEquality().hash(weeklySchedule)]);
 
 @override
 String toString() {
-  return 'Truck(id: $id, truckNumber: $truckNumber, driverName: $driverName, status: $status, foodType: $foodType, locationDescription: $locationDescription, latitude: $latitude, longitude: $longitude, isFavorite: $isFavorite, imageUrl: $imageUrl, ownerEmail: $ownerEmail, bankAccount: $bankAccount, announcement: $announcement, favoriteCount: $favoriteCount, avgRating: $avgRating, totalReviews: $totalReviews, isOpen: $isOpen, weeklySchedule: $weeklySchedule)';
+  return 'Truck(id: $id, truckNumber: $truckNumber, driverName: $driverName, status: $status, foodType: $foodType, locationDescription: $locationDescription, latitude: $latitude, longitude: $longitude, isFavorite: $isFavorite, imageUrl: $imageUrl, ownerEmail: $ownerEmail, contactPhone: $contactPhone, bankAccount: $bankAccount, announcement: $announcement, favoriteCount: $favoriteCount, avgRating: $avgRating, totalReviews: $totalReviews, isOpen: $isOpen, weeklySchedule: $weeklySchedule)';
 }
 
 
@@ -55,7 +56,7 @@ abstract mixin class $TruckCopyWith<$Res>  {
   factory $TruckCopyWith(Truck value, $Res Function(Truck) _then) = _$TruckCopyWithImpl;
 @useResult
 $Res call({
- String id, String truckNumber, String driverName, TruckStatus status, String foodType, String locationDescription, double latitude, double longitude, bool isFavorite, String imageUrl, String ownerEmail, String? bankAccount, String announcement, int favoriteCount, double avgRating, int totalReviews, bool isOpen, Map<String, dynamic>? weeklySchedule
+ String id, String truckNumber, String driverName, TruckStatus status, String foodType, String locationDescription, double latitude, double longitude, bool isFavorite, String imageUrl, String ownerEmail, String contactPhone, String? bankAccount, String announcement, int favoriteCount, double avgRating, int totalReviews, bool isOpen, Map<String, dynamic>? weeklySchedule
 });
 
 
@@ -72,7 +73,7 @@ class _$TruckCopyWithImpl<$Res>
 
 /// Create a copy of Truck
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? truckNumber = null,Object? driverName = null,Object? status = null,Object? foodType = null,Object? locationDescription = null,Object? latitude = null,Object? longitude = null,Object? isFavorite = null,Object? imageUrl = null,Object? ownerEmail = null,Object? bankAccount = freezed,Object? announcement = null,Object? favoriteCount = null,Object? avgRating = null,Object? totalReviews = null,Object? isOpen = null,Object? weeklySchedule = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? truckNumber = null,Object? driverName = null,Object? status = null,Object? foodType = null,Object? locationDescription = null,Object? latitude = null,Object? longitude = null,Object? isFavorite = null,Object? imageUrl = null,Object? ownerEmail = null,Object? contactPhone = null,Object? bankAccount = freezed,Object? announcement = null,Object? favoriteCount = null,Object? avgRating = null,Object? totalReviews = null,Object? isOpen = null,Object? weeklySchedule = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,truckNumber: null == truckNumber ? _self.truckNumber : truckNumber // ignore: cast_nullable_to_non_nullable
@@ -85,6 +86,7 @@ as double,longitude: null == longitude ? _self.longitude : longitude // ignore: 
 as double,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
 as bool,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String,ownerEmail: null == ownerEmail ? _self.ownerEmail : ownerEmail // ignore: cast_nullable_to_non_nullable
+as String,contactPhone: null == contactPhone ? _self.contactPhone : contactPhone // ignore: cast_nullable_to_non_nullable
 as String,bankAccount: freezed == bankAccount ? _self.bankAccount : bankAccount // ignore: cast_nullable_to_non_nullable
 as String?,announcement: null == announcement ? _self.announcement : announcement // ignore: cast_nullable_to_non_nullable
 as String,favoriteCount: null == favoriteCount ? _self.favoriteCount : favoriteCount // ignore: cast_nullable_to_non_nullable
@@ -174,10 +176,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String truckNumber,  String driverName,  TruckStatus status,  String foodType,  String locationDescription,  double latitude,  double longitude,  bool isFavorite,  String imageUrl,  String ownerEmail,  String? bankAccount,  String announcement,  int favoriteCount,  double avgRating,  int totalReviews,  bool isOpen,  Map<String, dynamic>? weeklySchedule)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String truckNumber,  String driverName,  TruckStatus status,  String foodType,  String locationDescription,  double latitude,  double longitude,  bool isFavorite,  String imageUrl,  String ownerEmail,  String contactPhone,  String? bankAccount,  String announcement,  int favoriteCount,  double avgRating,  int totalReviews,  bool isOpen,  Map<String, dynamic>? weeklySchedule)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Truck() when $default != null:
-return $default(_that.id,_that.truckNumber,_that.driverName,_that.status,_that.foodType,_that.locationDescription,_that.latitude,_that.longitude,_that.isFavorite,_that.imageUrl,_that.ownerEmail,_that.bankAccount,_that.announcement,_that.favoriteCount,_that.avgRating,_that.totalReviews,_that.isOpen,_that.weeklySchedule);case _:
+return $default(_that.id,_that.truckNumber,_that.driverName,_that.status,_that.foodType,_that.locationDescription,_that.latitude,_that.longitude,_that.isFavorite,_that.imageUrl,_that.ownerEmail,_that.contactPhone,_that.bankAccount,_that.announcement,_that.favoriteCount,_that.avgRating,_that.totalReviews,_that.isOpen,_that.weeklySchedule);case _:
   return orElse();
 
 }
@@ -195,10 +197,10 @@ return $default(_that.id,_that.truckNumber,_that.driverName,_that.status,_that.f
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String truckNumber,  String driverName,  TruckStatus status,  String foodType,  String locationDescription,  double latitude,  double longitude,  bool isFavorite,  String imageUrl,  String ownerEmail,  String? bankAccount,  String announcement,  int favoriteCount,  double avgRating,  int totalReviews,  bool isOpen,  Map<String, dynamic>? weeklySchedule)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String truckNumber,  String driverName,  TruckStatus status,  String foodType,  String locationDescription,  double latitude,  double longitude,  bool isFavorite,  String imageUrl,  String ownerEmail,  String contactPhone,  String? bankAccount,  String announcement,  int favoriteCount,  double avgRating,  int totalReviews,  bool isOpen,  Map<String, dynamic>? weeklySchedule)  $default,) {final _that = this;
 switch (_that) {
 case _Truck():
-return $default(_that.id,_that.truckNumber,_that.driverName,_that.status,_that.foodType,_that.locationDescription,_that.latitude,_that.longitude,_that.isFavorite,_that.imageUrl,_that.ownerEmail,_that.bankAccount,_that.announcement,_that.favoriteCount,_that.avgRating,_that.totalReviews,_that.isOpen,_that.weeklySchedule);}
+return $default(_that.id,_that.truckNumber,_that.driverName,_that.status,_that.foodType,_that.locationDescription,_that.latitude,_that.longitude,_that.isFavorite,_that.imageUrl,_that.ownerEmail,_that.contactPhone,_that.bankAccount,_that.announcement,_that.favoriteCount,_that.avgRating,_that.totalReviews,_that.isOpen,_that.weeklySchedule);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -212,10 +214,10 @@ return $default(_that.id,_that.truckNumber,_that.driverName,_that.status,_that.f
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String truckNumber,  String driverName,  TruckStatus status,  String foodType,  String locationDescription,  double latitude,  double longitude,  bool isFavorite,  String imageUrl,  String ownerEmail,  String? bankAccount,  String announcement,  int favoriteCount,  double avgRating,  int totalReviews,  bool isOpen,  Map<String, dynamic>? weeklySchedule)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String truckNumber,  String driverName,  TruckStatus status,  String foodType,  String locationDescription,  double latitude,  double longitude,  bool isFavorite,  String imageUrl,  String ownerEmail,  String contactPhone,  String? bankAccount,  String announcement,  int favoriteCount,  double avgRating,  int totalReviews,  bool isOpen,  Map<String, dynamic>? weeklySchedule)?  $default,) {final _that = this;
 switch (_that) {
 case _Truck() when $default != null:
-return $default(_that.id,_that.truckNumber,_that.driverName,_that.status,_that.foodType,_that.locationDescription,_that.latitude,_that.longitude,_that.isFavorite,_that.imageUrl,_that.ownerEmail,_that.bankAccount,_that.announcement,_that.favoriteCount,_that.avgRating,_that.totalReviews,_that.isOpen,_that.weeklySchedule);case _:
+return $default(_that.id,_that.truckNumber,_that.driverName,_that.status,_that.foodType,_that.locationDescription,_that.latitude,_that.longitude,_that.isFavorite,_that.imageUrl,_that.ownerEmail,_that.contactPhone,_that.bankAccount,_that.announcement,_that.favoriteCount,_that.avgRating,_that.totalReviews,_that.isOpen,_that.weeklySchedule);case _:
   return null;
 
 }
@@ -227,7 +229,7 @@ return $default(_that.id,_that.truckNumber,_that.driverName,_that.status,_that.f
 @JsonSerializable()
 
 class _Truck extends Truck {
-  const _Truck({required this.id, required this.truckNumber, required this.driverName, required this.status, required this.foodType, required this.locationDescription, required this.latitude, required this.longitude, this.isFavorite = false, required this.imageUrl, this.ownerEmail = '', this.bankAccount, this.announcement = '', this.favoriteCount = 0, this.avgRating = 0.0, this.totalReviews = 0, this.isOpen = false, final  Map<String, dynamic>? weeklySchedule}): _weeklySchedule = weeklySchedule,super._();
+  const _Truck({required this.id, required this.truckNumber, required this.driverName, required this.status, required this.foodType, required this.locationDescription, required this.latitude, required this.longitude, this.isFavorite = false, required this.imageUrl, this.ownerEmail = '', this.contactPhone = '', this.bankAccount, this.announcement = '', this.favoriteCount = 0, this.avgRating = 0.0, this.totalReviews = 0, this.isOpen = false, final  Map<String, dynamic>? weeklySchedule}): _weeklySchedule = weeklySchedule,super._();
   factory _Truck.fromJson(Map<String, dynamic> json) => _$TruckFromJson(json);
 
 @override final  String id;
@@ -242,6 +244,8 @@ class _Truck extends Truck {
 @override final  String imageUrl;
 @override@JsonKey() final  String ownerEmail;
 // 사장님 이메일 (인증용)
+@override@JsonKey() final  String contactPhone;
+// 연락처
 @override final  String? bankAccount;
 // 은행 계좌번호 (송금용 QR)
 @override@JsonKey() final  String announcement;
@@ -278,16 +282,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Truck&&(identical(other.id, id) || other.id == id)&&(identical(other.truckNumber, truckNumber) || other.truckNumber == truckNumber)&&(identical(other.driverName, driverName) || other.driverName == driverName)&&(identical(other.status, status) || other.status == status)&&(identical(other.foodType, foodType) || other.foodType == foodType)&&(identical(other.locationDescription, locationDescription) || other.locationDescription == locationDescription)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.ownerEmail, ownerEmail) || other.ownerEmail == ownerEmail)&&(identical(other.bankAccount, bankAccount) || other.bankAccount == bankAccount)&&(identical(other.announcement, announcement) || other.announcement == announcement)&&(identical(other.favoriteCount, favoriteCount) || other.favoriteCount == favoriteCount)&&(identical(other.avgRating, avgRating) || other.avgRating == avgRating)&&(identical(other.totalReviews, totalReviews) || other.totalReviews == totalReviews)&&(identical(other.isOpen, isOpen) || other.isOpen == isOpen)&&const DeepCollectionEquality().equals(other._weeklySchedule, _weeklySchedule));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Truck&&(identical(other.id, id) || other.id == id)&&(identical(other.truckNumber, truckNumber) || other.truckNumber == truckNumber)&&(identical(other.driverName, driverName) || other.driverName == driverName)&&(identical(other.status, status) || other.status == status)&&(identical(other.foodType, foodType) || other.foodType == foodType)&&(identical(other.locationDescription, locationDescription) || other.locationDescription == locationDescription)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.ownerEmail, ownerEmail) || other.ownerEmail == ownerEmail)&&(identical(other.contactPhone, contactPhone) || other.contactPhone == contactPhone)&&(identical(other.bankAccount, bankAccount) || other.bankAccount == bankAccount)&&(identical(other.announcement, announcement) || other.announcement == announcement)&&(identical(other.favoriteCount, favoriteCount) || other.favoriteCount == favoriteCount)&&(identical(other.avgRating, avgRating) || other.avgRating == avgRating)&&(identical(other.totalReviews, totalReviews) || other.totalReviews == totalReviews)&&(identical(other.isOpen, isOpen) || other.isOpen == isOpen)&&const DeepCollectionEquality().equals(other._weeklySchedule, _weeklySchedule));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,truckNumber,driverName,status,foodType,locationDescription,latitude,longitude,isFavorite,imageUrl,ownerEmail,bankAccount,announcement,favoriteCount,avgRating,totalReviews,isOpen,const DeepCollectionEquality().hash(_weeklySchedule));
+int get hashCode => Object.hashAll([runtimeType,id,truckNumber,driverName,status,foodType,locationDescription,latitude,longitude,isFavorite,imageUrl,ownerEmail,contactPhone,bankAccount,announcement,favoriteCount,avgRating,totalReviews,isOpen,const DeepCollectionEquality().hash(_weeklySchedule)]);
 
 @override
 String toString() {
-  return 'Truck(id: $id, truckNumber: $truckNumber, driverName: $driverName, status: $status, foodType: $foodType, locationDescription: $locationDescription, latitude: $latitude, longitude: $longitude, isFavorite: $isFavorite, imageUrl: $imageUrl, ownerEmail: $ownerEmail, bankAccount: $bankAccount, announcement: $announcement, favoriteCount: $favoriteCount, avgRating: $avgRating, totalReviews: $totalReviews, isOpen: $isOpen, weeklySchedule: $weeklySchedule)';
+  return 'Truck(id: $id, truckNumber: $truckNumber, driverName: $driverName, status: $status, foodType: $foodType, locationDescription: $locationDescription, latitude: $latitude, longitude: $longitude, isFavorite: $isFavorite, imageUrl: $imageUrl, ownerEmail: $ownerEmail, contactPhone: $contactPhone, bankAccount: $bankAccount, announcement: $announcement, favoriteCount: $favoriteCount, avgRating: $avgRating, totalReviews: $totalReviews, isOpen: $isOpen, weeklySchedule: $weeklySchedule)';
 }
 
 
@@ -298,7 +302,7 @@ abstract mixin class _$TruckCopyWith<$Res> implements $TruckCopyWith<$Res> {
   factory _$TruckCopyWith(_Truck value, $Res Function(_Truck) _then) = __$TruckCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String truckNumber, String driverName, TruckStatus status, String foodType, String locationDescription, double latitude, double longitude, bool isFavorite, String imageUrl, String ownerEmail, String? bankAccount, String announcement, int favoriteCount, double avgRating, int totalReviews, bool isOpen, Map<String, dynamic>? weeklySchedule
+ String id, String truckNumber, String driverName, TruckStatus status, String foodType, String locationDescription, double latitude, double longitude, bool isFavorite, String imageUrl, String ownerEmail, String contactPhone, String? bankAccount, String announcement, int favoriteCount, double avgRating, int totalReviews, bool isOpen, Map<String, dynamic>? weeklySchedule
 });
 
 
@@ -315,7 +319,7 @@ class __$TruckCopyWithImpl<$Res>
 
 /// Create a copy of Truck
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? truckNumber = null,Object? driverName = null,Object? status = null,Object? foodType = null,Object? locationDescription = null,Object? latitude = null,Object? longitude = null,Object? isFavorite = null,Object? imageUrl = null,Object? ownerEmail = null,Object? bankAccount = freezed,Object? announcement = null,Object? favoriteCount = null,Object? avgRating = null,Object? totalReviews = null,Object? isOpen = null,Object? weeklySchedule = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? truckNumber = null,Object? driverName = null,Object? status = null,Object? foodType = null,Object? locationDescription = null,Object? latitude = null,Object? longitude = null,Object? isFavorite = null,Object? imageUrl = null,Object? ownerEmail = null,Object? contactPhone = null,Object? bankAccount = freezed,Object? announcement = null,Object? favoriteCount = null,Object? avgRating = null,Object? totalReviews = null,Object? isOpen = null,Object? weeklySchedule = freezed,}) {
   return _then(_Truck(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,truckNumber: null == truckNumber ? _self.truckNumber : truckNumber // ignore: cast_nullable_to_non_nullable
@@ -328,6 +332,7 @@ as double,longitude: null == longitude ? _self.longitude : longitude // ignore: 
 as double,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
 as bool,imageUrl: null == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String,ownerEmail: null == ownerEmail ? _self.ownerEmail : ownerEmail // ignore: cast_nullable_to_non_nullable
+as String,contactPhone: null == contactPhone ? _self.contactPhone : contactPhone // ignore: cast_nullable_to_non_nullable
 as String,bankAccount: freezed == bankAccount ? _self.bankAccount : bankAccount // ignore: cast_nullable_to_non_nullable
 as String?,announcement: null == announcement ? _self.announcement : announcement // ignore: cast_nullable_to_non_nullable
 as String,favoriteCount: null == favoriteCount ? _self.favoriteCount : favoriteCount // ignore: cast_nullable_to_non_nullable
