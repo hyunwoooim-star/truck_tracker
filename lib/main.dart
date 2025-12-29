@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/themes/app_theme.dart';
+import 'core/themes/theme_provider.dart';
 import 'core/utils/app_logger.dart';
 import 'generated/l10n/app_localizations.dart';
 import 'features/auth/presentation/auth_provider.dart';
@@ -74,6 +75,17 @@ void main() async {
       _showForegroundNotification(message);
     });
 
+    // Handle notification tap when app is in background
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      _handleNotificationTap(message);
+    });
+
+    // Handle notification tap when app was terminated
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      _handleNotificationTap(initialMessage);
+    }
+
     // 🧹 OPTIMIZATION: Clean old image cache (7 days+) to free storage
     _cleanOldImageCache();
 
@@ -121,7 +133,9 @@ class MyApp extends ConsumerWidget {
     return MaterialApp.router(
       title: '트럭아저씨',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ref.watch(appThemeModeForMaterialProvider),
       routerConfig: router,
       scaffoldMessengerKey: scaffoldMessengerKey,
       // 🌏 LOCALIZATION: Support Korean and English
@@ -267,4 +281,40 @@ void _showForegroundNotification(RemoteMessage message) {
   );
 
   scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+}
+
+/// 🔗 Handle notification tap - navigate to relevant screen
+void _handleNotificationTap(RemoteMessage message) {
+  final data = message.data;
+  AppLogger.debug('Notification tapped with data: $data', tag: 'Main');
+
+  // Extract navigation parameters from notification data
+  final type = data['type'] as String?;
+  final truckId = data['truckId'] as String?;
+  final orderId = data['orderId'] as String?;
+  final chatRoomId = data['chatRoomId'] as String?;
+
+  // Note: Navigation is handled by the app's GoRouter
+  // The data is logged here for debugging.
+  // In a full implementation, you would use a global navigator key
+  // or a state management solution to trigger navigation.
+
+  AppLogger.debug(
+    'Notification navigation: type=$type, truckId=$truckId, orderId=$orderId, chatRoomId=$chatRoomId',
+    tag: 'Main',
+  );
+
+  // For now, we store the pending navigation in a global variable
+  // that can be checked by screens when they initialize
+  _pendingNotificationData = data;
+}
+
+/// Global variable to store pending notification data for deep linking
+Map<String, dynamic>? _pendingNotificationData;
+
+/// Get and clear pending notification data
+Map<String, dynamic>? consumePendingNotification() {
+  final data = _pendingNotificationData;
+  _pendingNotificationData = null;
+  return data;
 }

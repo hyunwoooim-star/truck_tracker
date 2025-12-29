@@ -196,6 +196,120 @@ class AppTheme {
     );
   }
 
-  // 레거시 호환성
-  static ThemeData get light => dark;
+  // Light Theme - 밝은 테마
+  static ThemeData get light {
+    return ThemeData(
+      useMaterial3: false,
+      splashFactory: NoSplash.splashFactory,
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: Colors.grey[50],
+      colorScheme: ColorScheme.light(
+        primary: mustardYellowDark,
+        secondary: mustardYellow,
+        surface: Colors.white,
+        surfaceContainerHighest: Colors.grey[100]!,
+        error: const Color(0xFFE53935),
+        onPrimary: Colors.white,
+        onSecondary: Colors.black,
+        onSurface: Colors.grey[900]!,
+        onError: Colors.white,
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.grey[900],
+        elevation: 1,
+        centerTitle: true,
+        surfaceTintColor: Colors.transparent,
+      ),
+      cardTheme: CardThemeData(
+        color: Colors.white,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.grey[100],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: mustardYellowDark, width: 2),
+        ),
+        hintStyle: TextStyle(color: Colors.grey[500]),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: mustardYellowDark,
+          foregroundColor: Colors.white,
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: mustardYellowDark,
+          side: const BorderSide(color: mustardYellowDark, width: 1.5),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: mustardYellowDark,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
+      dividerTheme: DividerThemeData(
+        color: Colors.grey[300],
+        thickness: 1,
+        space: 1,
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: Colors.grey[100],
+        selectedColor: mustardYellow,
+        labelStyle: TextStyle(color: Colors.grey[900]),
+        secondaryLabelStyle: const TextStyle(color: Colors.black),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      iconTheme: IconThemeData(
+        color: Colors.grey[800],
+        size: 24,
+      ),
+      textTheme: TextTheme(
+        displayLarge: GoogleFonts.notoSansKr(color: Colors.grey[900], fontWeight: FontWeight.bold),
+        displayMedium: GoogleFonts.notoSansKr(color: Colors.grey[900], fontWeight: FontWeight.bold),
+        displaySmall: GoogleFonts.notoSansKr(color: Colors.grey[900], fontWeight: FontWeight.bold),
+        headlineLarge: GoogleFonts.notoSansKr(color: Colors.grey[900], fontWeight: FontWeight.w600),
+        headlineMedium: GoogleFonts.notoSansKr(color: Colors.grey[900], fontWeight: FontWeight.w600),
+        headlineSmall: GoogleFonts.notoSansKr(color: Colors.grey[900], fontWeight: FontWeight.w600),
+        titleLarge: GoogleFonts.notoSansKr(color: Colors.grey[900], fontWeight: FontWeight.w500),
+        titleMedium: GoogleFonts.notoSansKr(color: Colors.grey[900], fontWeight: FontWeight.w500),
+        titleSmall: GoogleFonts.notoSansKr(color: Colors.grey[900], fontWeight: FontWeight.w500),
+        bodyLarge: GoogleFonts.notoSansKr(color: Colors.grey[900]),
+        bodyMedium: GoogleFonts.notoSansKr(color: Colors.grey[900]),
+        bodySmall: GoogleFonts.notoSansKr(color: Colors.grey[600]),
+        labelLarge: GoogleFonts.notoSansKr(color: Colors.grey[900]),
+        labelMedium: GoogleFonts.notoSansKr(color: Colors.grey[600]),
+        labelSmall: GoogleFonts.notoSansKr(color: Colors.grey[500]),
+      ),
+    );
+  }
 }
