@@ -68,7 +68,24 @@ class TruckListScreen extends ConsumerWidget {
               color: AppTheme.mustardYellow,
               backgroundColor: AppTheme.charcoalMedium,
               child: trucksWithDistanceAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const CircularProgressIndicator(
+                        color: AppTheme.electricBlue,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        '트럭 정보를 불러오는 중...',
+                        style: TextStyle(
+                          color: AppTheme.textSecondary,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 error: (e, stackTrace) => Center(
                   child: Text(
                     l10n.loadDataFailed,
@@ -78,6 +95,48 @@ class TruckListScreen extends ConsumerWidget {
                 data: (trucksWithDistance) {
                   // Get top ranked trucks (sync or empty list if loading)
                   final topRanked = topRankedAsync.value ?? [];
+
+                  // Empty State
+                  if (trucksWithDistance.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.local_shipping_outlined,
+                            size: 80,
+                            color: AppTheme.textTertiary,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            l10n.noTrucksFound,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '검색 조건을 변경해 보세요',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: AppTheme.textTertiary,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              ref.read(truckFilterProvider.notifier).clearAllFilters();
+                            },
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('필터 초기화'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.electricBlue,
+                              foregroundColor: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
 
                   return ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
