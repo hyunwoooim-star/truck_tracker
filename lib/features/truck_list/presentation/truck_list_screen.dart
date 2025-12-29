@@ -1021,18 +1021,18 @@ class _AppDrawer extends ConsumerWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.red.withOpacity(0.3)),
+                    border: Border.all(color: AppTheme.error30),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.logout, color: Colors.red, size: 20),
+                      const Icon(Icons.logout, color: AppTheme.error, size: 20),
                       const SizedBox(width: 8),
                       Text(
                         AppLocalizations.of(context).logout,
                         style: const TextStyle(
-                          color: Colors.red,
+                          color: AppTheme.error,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

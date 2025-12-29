@@ -57,6 +57,12 @@ class AppTheme {
   static const Color white60 = Color(0x99FFFFFF);  // 60% opacity
   static const Color white80 = Color(0xCCFFFFFF);  // 80% opacity
 
+  // Semantic colors
+  static const Color error = Color(0xFFE53935);      // Red for errors and danger actions
+  static const Color error30 = Color(0x4DE53935);   // 30% opacity
+  static const Color success = Color(0xFF4CAF50);    // Green for success states
+  static const Color warning = Color(0xFFFF9800);    // Orange for warnings
+
   // Text color opacity variants
   static const Color textTertiary15 = Color(0x26808080);  // textTertiary (0xFF808080) with 15% opacity
   static const Color textSecondary10 = Color(0x1AB0B0B0);  // textSecondary (0xFFB0B0B0) with 10% opacity
