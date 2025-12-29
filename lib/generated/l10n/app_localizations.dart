@@ -2065,6 +2065,84 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'{count}개'**
   String starsCount(Object count);
+
+  /// No description provided for @bankAccountSettings.
+  ///
+  /// In ko, this message translates to:
+  /// **'계좌 정보 설정'**
+  String get bankAccountSettings;
+
+  /// No description provided for @bankAccountNotSet.
+  ///
+  /// In ko, this message translates to:
+  /// **'계좌 정보가 설정되지 않았습니다'**
+  String get bankAccountNotSet;
+
+  /// No description provided for @setBankAccount.
+  ///
+  /// In ko, this message translates to:
+  /// **'계좌 설정하기'**
+  String get setBankAccount;
+
+  /// No description provided for @editBankAccount.
+  ///
+  /// In ko, this message translates to:
+  /// **'계좌 수정'**
+  String get editBankAccount;
+
+  /// No description provided for @bankName.
+  ///
+  /// In ko, this message translates to:
+  /// **'은행명'**
+  String get bankName;
+
+  /// No description provided for @bankNameHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 카카오뱅크'**
+  String get bankNameHint;
+
+  /// No description provided for @accountNumber.
+  ///
+  /// In ko, this message translates to:
+  /// **'계좌번호'**
+  String get accountNumber;
+
+  /// No description provided for @accountNumberHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 3333-12-1234567'**
+  String get accountNumberHint;
+
+  /// No description provided for @accountHolder.
+  ///
+  /// In ko, this message translates to:
+  /// **'예금주'**
+  String get accountHolder;
+
+  /// No description provided for @accountHolderHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 홍길동'**
+  String get accountHolderHint;
+
+  /// No description provided for @bankAccountSaved.
+  ///
+  /// In ko, this message translates to:
+  /// **'계좌 정보가 저장되었습니다'**
+  String get bankAccountSaved;
+
+  /// No description provided for @bankAccountFormat.
+  ///
+  /// In ko, this message translates to:
+  /// **'{bank} {number} ({holder})'**
+  String bankAccountFormat(Object bank, Object holder, Object number);
+
+  /// No description provided for @pleaseFillAllFields.
+  ///
+  /// In ko, this message translates to:
+  /// **'모든 항목을 입력해주세요'**
+  String get pleaseFillAllFields;
 }
 
 class _AppLocalizationsDelegate

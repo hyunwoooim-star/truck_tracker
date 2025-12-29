@@ -1056,4 +1056,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String starsCount(Object count) {
     return '$count';
   }
+
+  @override
+  String get bankAccountSettings => 'Bank Account Settings';
+
+  @override
+  String get bankAccountNotSet => 'Bank account not set';
+
+  @override
+  String get setBankAccount => 'Set Bank Account';
+
+  @override
+  String get editBankAccount => 'Edit Bank Account';
+
+  @override
+  String get bankName => 'Bank Name';
+
+  @override
+  String get bankNameHint => 'e.g., Chase Bank';
+
+  @override
+  String get accountNumber => 'Account Number';
+
+  @override
+  String get accountNumberHint => 'e.g., 1234567890';
+
+  @override
+  String get accountHolder => 'Account Holder';
+
+  @override
+  String get accountHolderHint => 'e.g., John Doe';
+
+  @override
+  String get bankAccountSaved => 'Bank account saved';
+
+  @override
+  String bankAccountFormat(Object bank, Object holder, Object number) {
+    return '$bank $number ($holder)';
+  }
+
+  @override
+  String get pleaseFillAllFields => 'Please fill in all fields';
 }

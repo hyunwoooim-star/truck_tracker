@@ -384,5 +384,19 @@
   "confirmDeleteReply": "정말 답글을 삭제하시겠습니까?",
   "noReviewsForTruck": "아직 받은 리뷰가 없습니다",
   "viewAllReviews": "전체 리뷰 보기",
-  "starsCount": "{count}개"
+  "starsCount": "{count}개",
+
+  "bankAccountSettings": "계좌 정보 설정",
+  "bankAccountNotSet": "계좌 정보가 설정되지 않았습니다",
+  "setBankAccount": "계좌 설정하기",
+  "editBankAccount": "계좌 수정",
+  "bankName": "은행명",
+  "bankNameHint": "예: 카카오뱅크",
+  "accountNumber": "계좌번호",
+  "accountNumberHint": "예: 3333-12-1234567",
+  "accountHolder": "예금주",
+  "accountHolderHint": "예: 홍길동",
+  "bankAccountSaved": "계좌 정보가 저장되었습니다",
+  "bankAccountFormat": "{bank} {number} ({holder})",
+  "pleaseFillAllFields": "모든 항목을 입력해주세요"
 }

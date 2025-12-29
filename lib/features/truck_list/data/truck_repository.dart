@@ -241,5 +241,22 @@ class TruckRepository {
       rethrow;
     }
   }
+
+  /// Update bank account for a truck (for payment QR)
+  Future<void> updateBankAccount(String truckId, String bankAccount) async {
+    AppLogger.debug('Updating bank account for truck $truckId', tag: 'TruckRepository');
+
+    try {
+      await _trucksCollection.doc(truckId).update({
+        'bankAccount': bankAccount,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      AppLogger.success('Bank account updated: trucks/$truckId', tag: 'TruckRepository');
+    } catch (e, stackTrace) {
+      AppLogger.error('Bank account update failed for truck $truckId', error: e, stackTrace: stackTrace, tag: 'TruckRepository');
+      rethrow;
+    }
+  }
 }
 

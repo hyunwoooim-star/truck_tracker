@@ -486,5 +486,19 @@
   "confirmDeleteReply": "Are you sure you want to delete this reply?",
   "noReviewsForTruck": "No reviews yet",
   "viewAllReviews": "View All Reviews",
-  "starsCount": "{count}"
+  "starsCount": "{count}",
+
+  "bankAccountSettings": "Bank Account Settings",
+  "bankAccountNotSet": "Bank account not set",
+  "setBankAccount": "Set Bank Account",
+  "editBankAccount": "Edit Bank Account",
+  "bankName": "Bank Name",
+  "bankNameHint": "e.g., Chase Bank",
+  "accountNumber": "Account Number",
+  "accountNumberHint": "e.g., 1234567890",
+  "accountHolder": "Account Holder",
+  "accountHolderHint": "e.g., John Doe",
+  "bankAccountSaved": "Bank account saved",
+  "bankAccountFormat": "{bank} {number} ({holder})",
+  "pleaseFillAllFields": "Please fill in all fields"
 }

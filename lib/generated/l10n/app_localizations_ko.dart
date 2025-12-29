@@ -1039,4 +1039,45 @@ class AppLocalizationsKo extends AppLocalizations {
   String starsCount(Object count) {
     return '$count개';
   }
+
+  @override
+  String get bankAccountSettings => '계좌 정보 설정';
+
+  @override
+  String get bankAccountNotSet => '계좌 정보가 설정되지 않았습니다';
+
+  @override
+  String get setBankAccount => '계좌 설정하기';
+
+  @override
+  String get editBankAccount => '계좌 수정';
+
+  @override
+  String get bankName => '은행명';
+
+  @override
+  String get bankNameHint => '예: 카카오뱅크';
+
+  @override
+  String get accountNumber => '계좌번호';
+
+  @override
+  String get accountNumberHint => '예: 3333-12-1234567';
+
+  @override
+  String get accountHolder => '예금주';
+
+  @override
+  String get accountHolderHint => '예: 홍길동';
+
+  @override
+  String get bankAccountSaved => '계좌 정보가 저장되었습니다';
+
+  @override
+  String bankAccountFormat(Object bank, Object holder, Object number) {
+    return '$bank $number ($holder)';
+  }
+
+  @override
+  String get pleaseFillAllFields => '모든 항목을 입력해주세요';
 }
