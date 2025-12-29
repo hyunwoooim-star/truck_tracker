@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../data/notification_preferences_repository.dart';
+import '../services/nearby_truck_provider.dart';
 
 /// Notification settings screen
 class NotificationSettingsScreen extends ConsumerWidget {
@@ -227,10 +228,10 @@ class NotificationSettingsScreen extends ConsumerWidget {
 
             const Divider(height: 1),
 
-            _buildSectionHeader('위치 기반 알림'),
+            _buildSectionHeader('위치 기반 알림 🎯'),
             SwitchListTile(
               title: const Text('근처 트럭 알림'),
-              subtitle: const Text('근처에서 트럭이 영업을 시작하면 알림'),
+              subtitle: const Text('포켓몬GO 스타일! 근처에 트럭이 오면 알림'),
               value: settings.nearbyTrucks,
               activeTrackColor: AppTheme.baeminMint.withAlpha(128),
               inactiveTrackColor: Colors.grey.withAlpha(77),
@@ -241,10 +242,70 @@ class NotificationSettingsScreen extends ConsumerWidget {
                   notificationType: 'nearbyTrucks',
                   enabled: value,
                 );
+
+                // Start or stop monitoring
+                final service = ref.read(nearbyTruckServiceProvider);
+                if (value) {
+                  await service.startMonitoring(
+                    userId: user.uid,
+                    settings: settings.copyWith(nearbyTrucks: true),
+                  );
+                  if (context.mounted) {
+                    SnackBarHelper.showSuccess(context, '🚚 근처 트럭 모니터링 시작!');
+                  }
+                } else {
+                  service.stopMonitoring();
+                }
               },
             ),
 
-            if (settings.nearbyTrucks)
+            if (settings.nearbyTrucks) ...[
+              // Monitoring status indicator
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green.withAlpha(30),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.green.withAlpha(100)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 12,
+                      height: 12,
+                      decoration: const BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '모니터링 활성화됨',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
+                          ),
+                          Text(
+                            '반경 ${settings.nearbyRadiusKm.toStringAsFixed(1)}km 내 트럭을 감시 중',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.radar, color: Colors.green),
+                  ],
+                ),
+              ),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Column(
@@ -271,10 +332,16 @@ class NotificationSettingsScreen extends ConsumerWidget {
                           userId: user.uid,
                           radiusMeters: value.toInt(),
                         );
+
+                        // Update service settings
+                        final service = ref.read(nearbyTruckServiceProvider);
+                        service.updateSettings(
+                          settings.copyWith(nearbyRadius: value.toInt()),
+                        );
                       },
                     ),
                     Text(
-                      '현재 위치로부터 ${settings.nearbyRadiusKm.toStringAsFixed(1)}km 이내의 트럭이 영업을 시작하면 알림을 받습니다.',
+                      '🚚 ${settings.nearbyRadiusKm.toStringAsFixed(1)}km 이내에 트럭이 나타나면 알림을 받습니다!',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],
@@ -283,6 +350,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+            ],
 
             const Divider(height: 1),
 
