@@ -11,6 +11,7 @@ import '../../truck_list/domain/truck.dart';
 import '../../location/location_service.dart';
 import '../../order/domain/order.dart';
 import '../../order/data/order_repository.dart';
+import '../../truck_detail/domain/menu_item.dart';
 import '../../truck_detail/presentation/truck_detail_provider.dart';
 import 'analytics_screen.dart';
 import 'owner_status_provider.dart';
@@ -125,7 +126,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                 ordersAsync.when(
                   data: (orders) => _buildTodayOrderStats(orders, numberFormat, l10n),
                   loading: () => const SizedBox.shrink(),
-                  error: (_, __) => const SizedBox.shrink(),
+                  error: (error, stackTrace) => const SizedBox.shrink(),
                 ),
 
                 // Kanban Order Board
@@ -143,7 +144,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
         loading: () => const Center(
           child: CircularProgressIndicator(color: _mustard),
         ),
-        error: (_, __) => Center(
+        error: (error, stackTrace) => Center(
           child: Text(
             l10n.errorLoadingTruckData,
             style: const TextStyle(color: Colors.red),
@@ -220,7 +221,50 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     );
   }
 
-void _showCloseBusinessDialog(BuildContext context, WidgetRef ref, truck, AppLocalizations l10n) {    showDialog(      context: context,      builder: (context) => AlertDialog(        backgroundColor: AppTheme.charcoalMedium,        title: const Text('영업 종료', style: TextStyle(color: Colors.white)),        content: const Text('정말 영업을 종료하시겠습니까?', style: TextStyle(color: Colors.white70)),        actions: [          TextButton(            onPressed: () => Navigator.pop(context),            child: Text(l10n.cancel, style: const TextStyle(color: Colors.white54)),          ),          ElevatedButton(            onPressed: () async {              Navigator.pop(context);              try {                final repository = ref.read(truckRepositoryProvider);                await repository.updateStatus(truck.id, TruckStatus.maintenance);                await ref.read(ownerOperatingStatusProvider.notifier).setStatus(false);                if (context.mounted) {                  SnackBarHelper.showInfo(context, '영업이 종료되었습니다.');                }              } catch (e) {                if (context.mounted) {                  SnackBarHelper.showError(context, '오류: ');                }              }            },            style: ElevatedButton.styleFrom(              backgroundColor: Colors.red,              foregroundColor: Colors.white,            ),            child: const Text('영업 종료'),          ),        ],      ),    );  }
+  void _showCloseBusinessDialog(
+      BuildContext context, WidgetRef ref, truck, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.charcoalMedium,
+        title: const Text('영업 종료', style: TextStyle(color: Colors.white)),
+        content: const Text('정말 영업을 종료하시겠습니까?',
+            style: TextStyle(color: Colors.white70)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel,
+                style: const TextStyle(color: Colors.white54)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              try {
+                final repository = ref.read(truckRepositoryProvider);
+                await repository.updateStatus(truck.id, TruckStatus.maintenance);
+                await ref
+                    .read(ownerOperatingStatusProvider.notifier)
+                    .setStatus(false);
+                if (context.mounted) {
+                  SnackBarHelper.showInfo(context, '영업이 종료되었습니다.');
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  SnackBarHelper.showError(context, '오류: $e');
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('영업 종료'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAnnouncementSection(BuildContext context, WidgetRef ref, truck, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.all(16),
@@ -558,7 +602,42 @@ void _showCloseBusinessDialog(BuildContext context, WidgetRef ref, truck, AppLoc
               ),
             ],
           ),
-const SizedBox(height: 12),          // 현금 vs 온라인 매출 분류          Builder(            builder: (context) {              final cashOrders = todayOrders.where((o) => o.paymentMethod == 'cash' && o.status == OrderStatus.completed);              final onlineOrders = todayOrders.where((o) => o.paymentMethod != 'cash' && o.status == OrderStatus.completed);              final cashRevenue = cashOrders.fold<int>(0, (sum, o) => sum + o.totalAmount);              final onlineRevenue = onlineOrders.fold<int>(0, (sum, o) => sum + o.totalAmount);                            return Row(                children: [                  Expanded(                    child: _OrderStatTile(                      icon: Icons.payments,                      label: '현금',                      value: '₩${numberFormat.format(cashRevenue)}',                      color: Colors.orange,                    ),                  ),                  const SizedBox(width: 12),                  Expanded(                    child: _OrderStatTile(                      icon: Icons.credit_card,                      label: '온라인',                      value: '₩${numberFormat.format(onlineRevenue)}',                      color: Colors.blue,                    ),                  ),                ],              );            },          ),
+          const SizedBox(height: 12),
+          // 현금 vs 온라인 매출 분류
+          Builder(
+            builder: (context) {
+              final cashOrders = todayOrders.where(
+                  (o) => o.paymentMethod == 'cash' && o.status == OrderStatus.completed);
+              final onlineOrders = todayOrders.where(
+                  (o) => o.paymentMethod != 'cash' && o.status == OrderStatus.completed);
+              final cashRevenue =
+                  cashOrders.fold<int>(0, (sum, o) => sum + o.totalAmount);
+              final onlineRevenue =
+                  onlineOrders.fold<int>(0, (sum, o) => sum + o.totalAmount);
+
+              return Row(
+                children: [
+                  Expanded(
+                    child: _OrderStatTile(
+                      icon: Icons.payments,
+                      label: '현금',
+                      value: '₩${numberFormat.format(cashRevenue)}',
+                      color: Colors.orange,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _OrderStatTile(
+                      icon: Icons.credit_card,
+                      label: '온라인',
+                      value: '₩${numberFormat.format(onlineRevenue)}',
+                      color: Colors.blue,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ],
       ),
     );
@@ -609,7 +688,7 @@ const SizedBox(height: 12),          // 현금 vs 온라인 매출 분류       
             loading: () => const Center(
               child: CircularProgressIndicator(color: _mustard),
             ),
-            error: (_, __) => Center(
+            error: (error, stackTrace) => Center(
               child: Text(
                 l10n.errorLoadingOrders,
                 style: const TextStyle(color: Colors.red),
@@ -814,7 +893,7 @@ const SizedBox(height: 12),          // 현금 vs 온라인 매출 분류       
               );
             },
             loading: () => const CircularProgressIndicator(color: _mustard),
-            error: (_, __) => Text(
+            error: (error, stackTrace) => Text(
               l10n.errorLoadingMenu,
               style: const TextStyle(color: Colors.red),
             ),
@@ -824,7 +903,7 @@ const SizedBox(height: 12),          // 현금 vs 온라인 매출 분류       
     );
   }
 
-  Future<void> _toggleSoldOut(item, String truckId, WidgetRef ref) async {
+  Future<void> _toggleSoldOut(MenuItem item, String truckId, WidgetRef ref) async {
     final detailProvider = ref.read(truckDetailProvider(truckId).notifier);
     await detailProvider.toggleMenuItemSoldOut(item.id);
   }
@@ -980,7 +1059,7 @@ class _OrderStatTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.charcoalMedium,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
