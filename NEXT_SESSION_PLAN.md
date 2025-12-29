@@ -26,7 +26,7 @@ flutter build web
 ```bash
 flutter analyze
 ```
-현재 37개 경고 남음
+현재 4개 경고 남음 (dart:html, Radio 위젯 deprecation)
 
 ---
 
@@ -44,16 +44,19 @@ flutter analyze
 - 휴업 중인 트럭 시각적 표시 (회색 테두리)
 
 ### 3. 코드 품질 개선
-- flutter analyze 경고: 44개 → 37개 (7개 감소)
-- 불필요한 언더스코어 수정
+- flutter analyze 경고: 44개 → 4개 (40개 감소, 91% 해결)
+- 불필요한 언더스코어 → (error, stackTrace) 수정
 - deprecated withOpacity → withValues 변경
-- 타입 어노테이션 추가
+- 타입 어노테이션 추가 (TruckFollow, MenuItem, Review)
+- LocationSettings 사용 (deprecated params 대체)
+- context.mounted 체크 추가
 
 ### 4. Git 커밋 내역
 ```
 - feat: Add dedicated favorites screen
 - refactor: Clean up owner_dashboard_screen.dart
 - feat: Add pull-to-refresh and open-first sorting
+- fix: Resolve 33 analyzer warnings (37 → 4)
 ```
 
 ---
