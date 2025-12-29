@@ -697,94 +697,140 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Kakao Sign In Button
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _handleKakaoSignIn,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFEE500),
-                      foregroundColor: Colors.black,
-                      disabledBackgroundColor: const Color(0xFFFEE500).withValues(alpha: 0.5),
-                      disabledForegroundColor: Colors.black.withValues(alpha: 0.5),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 20,
-                          width: 20,
-                          decoration: const BoxDecoration(
-                            color: Colors.black,
-                            shape: BoxShape.circle,
+                  // Kakao Sign In Button (Coming Soon)
+                  Stack(
+                    children: [
+                      ElevatedButton(
+                        onPressed: null, // Disabled - Coming Soon
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFEE500),
+                          foregroundColor: Colors.black,
+                          disabledBackgroundColor: const Color(0xFFFEE500).withValues(alpha: 0.3),
+                          disabledForegroundColor: Colors.black.withValues(alpha: 0.4),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(
-                            Icons.chat_bubble,
-                            size: 12,
-                            color: Color(0xFFFEE500),
-                          ),
+                          elevation: 0,
                         ),
-                        const SizedBox(width: 12),
-                        const Text(
-                          '카카오로 계속하기',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Naver Sign In Button
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _handleNaverSignIn,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF03C75A),
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor: const Color(0xFF03C75A).withValues(alpha: 0.5),
-                      disabledForegroundColor: Colors.white.withValues(alpha: 0.5),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 20,
-                          width: 20,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'N',
-                              style: TextStyle(
-                                color: Color(0xFF03C75A),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 20,
+                              width: 20,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.4),
+                                shape: BoxShape.circle,
                               ),
+                              child: Icon(
+                                Icons.chat_bubble,
+                                size: 12,
+                                color: const Color(0xFFFEE500).withValues(alpha: 0.5),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            const Text(
+                              '카카오로 계속하기',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[800],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            '준비 중',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        const Text(
-                          '네이버로 계속하기',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Naver Sign In Button (Coming Soon)
+                  Stack(
+                    children: [
+                      ElevatedButton(
+                        onPressed: null, // Disabled - Coming Soon
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF03C75A),
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: const Color(0xFF03C75A).withValues(alpha: 0.3),
+                          disabledForegroundColor: Colors.white.withValues(alpha: 0.4),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 20,
+                              width: 20,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.4),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'N',
+                                  style: TextStyle(
+                                    color: const Color(0xFF03C75A).withValues(alpha: 0.5),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            const Text(
+                              '네이버로 계속하기',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[800],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            '준비 중',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 24),
 
