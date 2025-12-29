@@ -558,6 +558,7 @@ void _showCloseBusinessDialog(BuildContext context, WidgetRef ref, truck, AppLoc
               ),
             ],
           ),
+const SizedBox(height: 12),          // 현금 vs 온라인 매출 분류          Builder(            builder: (context) {              final cashOrders = todayOrders.where((o) => o.paymentMethod == 'cash' && o.status == OrderStatus.completed);              final onlineOrders = todayOrders.where((o) => o.paymentMethod != 'cash' && o.status == OrderStatus.completed);              final cashRevenue = cashOrders.fold<int>(0, (sum, o) => sum + o.totalAmount);              final onlineRevenue = onlineOrders.fold<int>(0, (sum, o) => sum + o.totalAmount);                            return Row(                children: [                  Expanded(                    child: _OrderStatTile(                      icon: Icons.payments,                      label: '현금',                      value: '₩${numberFormat.format(cashRevenue)}',                      color: Colors.orange,                    ),                  ),                  const SizedBox(width: 12),                  Expanded(                    child: _OrderStatTile(                      icon: Icons.credit_card,                      label: '온라인',                      value: '₩${numberFormat.format(onlineRevenue)}',                      color: Colors.blue,                    ),                  ),                ],              );            },          ),
         ],
       ),
     );
