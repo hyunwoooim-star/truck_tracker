@@ -53,21 +53,30 @@ class TruckListScreen extends ConsumerWidget {
           ),
           // Filter Bar
           const _FilterBar(),
-          // Truck List
+          // Truck List with Pull-to-Refresh
           Expanded(
-            child: trucksAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, stackTrace) => Center(
-                child: Text(
-                  AppLocalizations.of(context).loadDataFailed,
-                  style: Theme.of(context).textTheme.bodyMedium,
+            child: RefreshIndicator(
+              onRefresh: () async {
+                // Invalidate the Firestore stream to refresh data
+                ref.invalidate(firestoreTruckStreamProvider);
+                // Wait a moment for the stream to restart
+                await Future.delayed(const Duration(milliseconds: 500));
+              },
+              color: AppTheme.mustardYellow,
+              backgroundColor: AppTheme.charcoalMedium,
+              child: trucksAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (e, stackTrace) => Center(
+                  child: Text(
+                    AppLocalizations.of(context).loadDataFailed,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ),
-              ),
-              data: (trucks) {
-                // Get top ranked trucks (sync or empty list if loading)
-                final topRanked = topRankedAsync.value ?? [];
+                data: (trucks) {
+                  // Get top ranked trucks (sync or empty list if loading)
+                  final topRanked = topRankedAsync.value ?? [];
 
-                return ListView.builder(
+                  return ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   itemCount: trucks.length,
                   itemExtent: 180.0,  // Approximate card height for better scroll performance
@@ -344,9 +353,10 @@ class TruckListScreen extends ConsumerWidget {
                   },
                 );
               },
+              ),
             ),
           ),
-      ],
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

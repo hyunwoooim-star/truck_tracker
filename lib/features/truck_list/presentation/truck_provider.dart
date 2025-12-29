@@ -187,6 +187,19 @@ Stream<List<Truck>> filteredTruckList(Ref ref) async* {
       AppLogger.debug('After open filter: ${filtered.length} trucks', tag: 'FilteredTruckList');
     }
 
+    // Sort: Open trucks first (onRoute, resting), then closed (maintenance)
+    filtered.sort((a, b) {
+      // Primary sort: Open trucks first
+      if (a.isOpen && !b.isOpen) return -1;
+      if (!a.isOpen && b.isOpen) return 1;
+      // Secondary sort: onRoute before resting
+      if (a.status == TruckStatus.onRoute && b.status == TruckStatus.resting) return -1;
+      if (a.status == TruckStatus.resting && b.status == TruckStatus.onRoute) return 1;
+      // Tertiary sort: by truck number for consistency
+      return a.truckNumber.compareTo(b.truckNumber);
+    });
+    AppLogger.debug('Sorted: Open trucks first', tag: 'FilteredTruckList');
+
     AppLogger.success('Yielding ${filtered.length} filtered trucks to UI', tag: 'FilteredTruckList');
 
     yield filtered;
