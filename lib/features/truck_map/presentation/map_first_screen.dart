@@ -394,7 +394,7 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                         ),
                       ),
                       loading: () => const SizedBox.shrink(),
-                      error: (_, __) => const SizedBox.shrink(),
+                      error: (error, stackTrace) => const SizedBox.shrink(),
                     );
                   },
                 ),

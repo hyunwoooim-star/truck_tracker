@@ -30,7 +30,7 @@ class AnalyticsScreen extends ConsumerWidget {
           ? ref.watch(analyticsRangeProvider(truckId.toString(), dateRange))
           : const AsyncValue<TruckAnalyticsRange>.loading(),
       loading: () => const AsyncValue<TruckAnalyticsRange>.loading(),
-      error: (_, __) => const AsyncValue<TruckAnalyticsRange>.loading(),
+      error: (error, stackTrace) => const AsyncValue<TruckAnalyticsRange>.loading(),
     );
 
     return Scaffold(
@@ -540,7 +540,7 @@ class _StatCard extends StatelessWidget {
         color: AppTheme.charcoalMedium,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -549,7 +549,7 @@ class _StatCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: color, size: 32),

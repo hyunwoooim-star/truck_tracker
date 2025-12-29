@@ -75,9 +75,7 @@ class _ScheduleManagementScreenState
       );
     }
 
-    if (_schedule == null) {
-      _schedule = _getEmptySchedule();
-    }
+    _schedule ??= _getEmptySchedule();
 
     final l10n = AppLocalizations.of(context);
 

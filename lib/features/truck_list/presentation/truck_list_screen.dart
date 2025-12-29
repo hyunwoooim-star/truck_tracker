@@ -257,6 +257,7 @@ class TruckListScreen extends ConsumerWidget {
                                               try {
                                                 await notifier.toggleFavorite(truck.id);
                                               } catch (_) {
+                                                if (!context.mounted) return;
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   SnackBar(

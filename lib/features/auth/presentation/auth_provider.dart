@@ -28,7 +28,7 @@ User? currentUser(Ref ref) {
   return authState.when(
     data: (user) => user,
     loading: () => null,
-    error: (_, __) => null,
+    error: (error, stackTrace) => null,
   );
 }
 

@@ -9,6 +9,7 @@ import '../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../data/follow_repository.dart';
+import '../domain/truck_follow.dart';
 
 /// User Profile Screen showing followed trucks and statistics
 class UserProfileScreen extends ConsumerWidget {
@@ -219,7 +220,7 @@ class _FollowedTruckCard extends ConsumerWidget {
     required this.userId,
   });
 
-  final follow;
+  final TruckFollow follow;
   final String userId;
 
   @override
@@ -234,7 +235,7 @@ class _FollowedTruckCard extends ConsumerWidget {
           child: Center(child: CircularProgressIndicator()),
         ),
       ),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (error, stackTrace) => const SizedBox.shrink(),
       data: (truck) {
         if (truck == null) return const SizedBox.shrink();
 

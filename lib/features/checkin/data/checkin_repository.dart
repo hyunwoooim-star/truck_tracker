@@ -90,7 +90,7 @@ class CheckinRepository {
 
       final totalPoints = snapshot.docs.fold<int>(
         0,
-        (sum, doc) => sum + ((doc.data()['loyaltyPoints'] ?? 0) as int),
+        (total, doc) => total + ((doc.data()['loyaltyPoints'] ?? 0) as int),
       );
 
       AppLogger.success('Total loyalty points: $totalPoints', tag: 'CheckinRepository');

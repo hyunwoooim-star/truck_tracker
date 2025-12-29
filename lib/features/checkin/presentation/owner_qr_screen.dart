@@ -249,7 +249,7 @@ class _OwnerQRScreenState extends ConsumerState<OwnerQRScreen> {
         loading: () => const Center(
           child: CircularProgressIndicator(color: _mustard),
         ),
-        error: (_, __) => Center(
+        error: (error, stackTrace) => Center(
           child: Text(
             l10n.errorLoadingTruckData,
             style: const TextStyle(color: Colors.red),

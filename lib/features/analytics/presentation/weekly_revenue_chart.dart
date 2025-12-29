@@ -51,7 +51,7 @@ class WeeklyRevenueChart extends ConsumerWidget {
               loading: () => const Center(
                 child: CircularProgressIndicator(color: _mustard),
               ),
-              error: (_, __) => const Center(
+              error: (error, stackTrace) => const Center(
                 child: Text(
                   'Error loading revenue data',
                   style: TextStyle(color: Colors.red),

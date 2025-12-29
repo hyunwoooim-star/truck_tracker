@@ -86,8 +86,10 @@ class LocationService {
       }
 
       final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 10),
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 10),
+        ),
       );
 
       AppLogger.success('Position acquired:', tag: 'LocationService');
@@ -323,7 +325,7 @@ class LocationService {
     } else {
       final hours = duration.inHours;
       final minutes = duration.inMinutes % 60;
-      return '도보 약 ${hours}시간 ${minutes}분';
+      return '도보 약 $hours시간 $minutes분';
     }
   }
 

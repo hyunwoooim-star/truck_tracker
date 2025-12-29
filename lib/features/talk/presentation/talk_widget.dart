@@ -260,7 +260,7 @@ class _MessageBubble extends StatelessWidget {
                   Text(
                     message.userName,
                     style: TextStyle(
-                      color: textColor.withOpacity(0.8),
+                      color: textColor.withValues(alpha: 0.8),
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -283,7 +283,7 @@ class _MessageBubble extends StatelessWidget {
                         ? timeFormat.format(message.createdAt!)
                         : '',
                     style: TextStyle(
-                      color: textColor.withOpacity(0.6),
+                      color: textColor.withValues(alpha: 0.6),
                       fontSize: 10,
                     ),
                   ),

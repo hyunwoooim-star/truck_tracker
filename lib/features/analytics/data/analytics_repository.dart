@@ -66,15 +66,15 @@ class TruckAnalyticsRange {
 
   /// Total clicks across all days
   int get totalClicks =>
-      dailyData.fold(0, (sum, item) => sum + item.clickCount);
+      dailyData.fold(0, (total, item) => total + item.clickCount);
 
   /// Total reviews across all days
   int get totalReviews =>
-      dailyData.fold(0, (sum, item) => sum + item.reviewCount);
+      dailyData.fold(0, (total, item) => total + item.reviewCount);
 
   /// Total favorites across all days
   int get totalFavorites =>
-      dailyData.fold(0, (sum, item) => sum + item.favoriteCount);
+      dailyData.fold(0, (total, item) => total + item.favoriteCount);
 
   /// Average daily clicks
   double get avgDaily =>

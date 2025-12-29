@@ -146,7 +146,7 @@ Stream<TruckStatus?> ownerTruckStatus(Ref ref) async* {
   await for (final trucks in allTrucksStream) {
     // Use safe null-aware access to find owner's truck
     final ownerTruck = trucks
-        .where((truck) => truck.id == ownedTruckId)
+        .where((truck) => truck.id == ownedTruckId.toString())
         .firstOrNull;
 
     if (ownerTruck == null) {

@@ -13,11 +13,13 @@ import '../../order/data/order_repository.dart';
 import '../../order/domain/order.dart' as order_model;
 import '../../order/presentation/cart_provider.dart';
 import '../../review/data/review_repository.dart';
+import '../../review/domain/review.dart';
 import '../../review/presentation/review_form_dialog.dart';
 import '../../schedule/data/schedule_repository.dart';
 import '../../social/data/follow_repository.dart';
 import '../../talk/presentation/talk_widget.dart';
 import '../../truck_list/domain/truck.dart';
+import '../domain/menu_item.dart';
 import '../../chat/data/chat_repository.dart';
 import '../../chat/presentation/chat_screen.dart';
 import 'truck_detail_provider.dart';
@@ -45,7 +47,7 @@ class TruckDetailScreen extends ConsumerWidget {
     return Scaffold(
       body: detailAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, __) => Center(
+        error: (e, stackTrace) => Center(
           child: Text(l10n.errorLoadingData),
         ),
         data: (detail) {
@@ -120,7 +122,7 @@ class TruckDetailScreen extends ConsumerWidget {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           ),
                         ),
-                        error: (_, __) => const SizedBox.shrink(),
+                        error: (error, stackTrace) => const SizedBox.shrink(),
                         data: (isFollowing) => IconButton(
                           icon: Icon(
                             isFollowing ? Icons.favorite : Icons.favorite_border,
@@ -355,7 +357,7 @@ class TruckDetailScreen extends ConsumerWidget {
                               
                               return todayScheduleAsync.when(
                                 loading: () => const SizedBox.shrink(),
-                                error: (_, __) => const SizedBox.shrink(),
+                                error: (error, stackTrace) => const SizedBox.shrink(),
                                 data: (schedule) {
                                   if (schedule == null || !schedule.isOpen || schedule.location.isEmpty) {
                                     return const SizedBox.shrink();
@@ -407,7 +409,7 @@ class TruckDetailScreen extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          ...?detail?.menuItems?.map(
+                          ...?detail?.menuItems.map(
                             (item) => _MenuItemCard(
                               item: item,
                               truck: truck,
@@ -427,7 +429,7 @@ class TruckDetailScreen extends ConsumerWidget {
                             padding: EdgeInsets.all(20),
                             child: Center(child: CircularProgressIndicator()),
                           ),
-                          error: (e, __) => Padding(
+                          error: (e, stackTrace) => Padding(
                             padding: const EdgeInsets.all(20),
                             child: Text(l10n.errorLoadingReviews),
                           ),
@@ -650,7 +652,7 @@ class _MenuItemCard extends ConsumerWidget {
     required this.truck,
   });
 
-  final item;
+  final MenuItem item;
   final Truck truck;
 
   @override
@@ -664,7 +666,7 @@ class _MenuItemCard extends ConsumerWidget {
     final quantity = cartItem?.quantity ?? 0;
 
     // Check if sold out
-    final isSoldOut = item.isSoldOut ?? false;
+    final isSoldOut = item.isSoldOut;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 7),
@@ -834,7 +836,7 @@ class _MenuItemCard extends ConsumerWidget {
 class _ReviewCard extends StatelessWidget {
   const _ReviewCard({required this.review});
 
-  final review;
+  final Review review;
 
   @override
   Widget build(BuildContext context) {
@@ -891,7 +893,9 @@ class _ReviewCard extends StatelessWidget {
                           }),
                           const SizedBox(width: 4),
                           Text(
-                            dateFormat.format(review.createdAt),
+                            review.createdAt != null
+                                ? dateFormat.format(review.createdAt!)
+                                : '',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: Colors.grey[600],
                             ),
