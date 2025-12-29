@@ -28,7 +28,7 @@ final nearbyTruckMonitoringProvider = FutureProvider.family<void, String>((
       }
     },
     loading: () async {},
-    error: (_, __) async {},
+    error: (e, s) async {},
   );
 });
 

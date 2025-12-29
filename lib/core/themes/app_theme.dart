@@ -36,6 +36,7 @@ class AppTheme {
   static const Color mustardYellow30 = Color(0x4DFFC107);  // 30% opacity
   static const Color mustardYellow50 = Color(0x80FFC107);  // 50% opacity
   static const Color mustardYellow70 = Color(0xB3FFC107);  // 70% opacity
+  static const Color mustardYellow80 = Color(0xCCFFC107);  // 80% opacity
   static const Color mustardYellow90 = Color(0xE6FFC107);  // 90% opacity
 
   // Black opacity variants

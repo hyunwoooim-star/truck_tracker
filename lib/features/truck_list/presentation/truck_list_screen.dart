@@ -867,7 +867,7 @@ class _AppDrawer extends ConsumerWidget {
                 Text(
                   'Food Truck Tracker',
                   style: TextStyle(
-                    color: AppTheme.mustardYellow.withOpacity(0.8),
+                    color: AppTheme.mustardYellow80,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),

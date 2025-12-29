@@ -772,7 +772,7 @@ class _OwnerVerificationBanner extends ConsumerWidget {
 
     return requestStatusAsync.when(
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (e, s) => const SizedBox.shrink(),
       data: (requestData) {
         if (requestData == null) return const SizedBox.shrink();
 

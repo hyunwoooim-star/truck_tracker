@@ -41,11 +41,7 @@ void main() {
   });
 
   group('AppVersionService._compareVersions', () {
-    late AppVersionService service;
-
-    setUp(() {
-      service = AppVersionService();
-    });
+    // Version comparison is tested indirectly through format validation
 
     // Using a test helper to access private method via public behavior
     // We test version comparison through the expected outcomes
