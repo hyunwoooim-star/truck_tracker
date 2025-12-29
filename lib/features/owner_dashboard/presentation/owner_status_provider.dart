@@ -111,7 +111,7 @@ class OwnerOperatingStatus extends _$OwnerOperatingStatus {
             });
             AppLogger.debug('Push notification triggered', tag: 'OwnerStatus');
           }
-        } catch (e, stackTrace) {
+        } catch (e) {
           AppLogger.warning('Error triggering notification', tag: 'OwnerStatus');
         }
       }

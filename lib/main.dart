@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -197,7 +196,7 @@ Future<void> _cleanOldImageCache() async {
     await cacheManager.emptyCache();
 
     AppLogger.debug('Image cache cleaned: Removed files older than 7 days', tag: 'Main');
-  } catch (e, stackTrace) {
+  } catch (e) {
     AppLogger.warning('Failed to clean image cache', tag: 'Main');
     // Non-critical error, continue app startup
   }

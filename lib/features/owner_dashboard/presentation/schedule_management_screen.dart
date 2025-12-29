@@ -7,7 +7,6 @@ import '../../../core/utils/snackbar_helper.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../schedule/data/schedule_repository.dart';
 import '../../schedule/domain/daily_schedule.dart';
-import '../presentation/owner_status_provider.dart';
 
 /// Screen for managing weekly schedule
 class ScheduleManagementScreen extends ConsumerStatefulWidget {

@@ -4,7 +4,6 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../auth/presentation/auth_provider.dart';
-import '../../truck_list/data/truck_repository.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../data/checkin_repository.dart';

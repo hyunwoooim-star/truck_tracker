@@ -11,7 +11,6 @@ import '../../../core/constants/food_types.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../shared/widgets/status_tag.dart';
 import '../../auth/presentation/auth_provider.dart';
-import '../../owner_dashboard/presentation/owner_dashboard_screen.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../truck_map/presentation/truck_map_screen.dart';
 import '../../checkin/presentation/customer_checkin_screen.dart';
@@ -369,7 +368,6 @@ class _FilterBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedTag = ref.watch(truckFilterProvider).selectedTag;
     final filterState = ref.watch(truckFilterProvider);
-    final currentSort = ref.watch(sortOptionProvider);
 
     return Container(
       height: 60,

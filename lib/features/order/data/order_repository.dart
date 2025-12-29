@@ -83,7 +83,7 @@ class OrderRepository {
       final orders = snapshot.docs.map((doc) {
         try {
           return Order.fromFirestore(doc);
-        } catch (e, stackTrace) {
+        } catch (e) {
           AppLogger.warning('Error parsing order ${doc.id}', tag: 'OrderRepository');
           return null;
         }
@@ -107,7 +107,7 @@ class OrderRepository {
       final orders = snapshot.docs.map((doc) {
         try {
           return Order.fromFirestore(doc);
-        } catch (e, stackTrace) {
+        } catch (e) {
           AppLogger.warning('Error parsing order ${doc.id}', tag: 'OrderRepository');
           return null;
         }

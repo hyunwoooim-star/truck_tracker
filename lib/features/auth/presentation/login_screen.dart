@@ -115,25 +115,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  Future<void> _handleGoogleSignIn() async {
-    setState(() => _isLoading = true);
-
-    try {
-      final authService = ref.read(authServiceProvider);
-      await authService.signInWithGoogle();
-
-      // Don't manually navigate - let AuthWrapper handle it
-    } catch (e) {
-      if (mounted) {
-        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
   Future<void> _handleKakaoSignIn() async {
     setState(() => _isLoading = true);
     try {

@@ -262,28 +262,6 @@ class AnalyticsRepository {
     }
   }
 
-  /// Get review count for a specific date
-  Future<int> _getReviewCountForDate(String truckId, DateTime date) async {
-    try {
-      final startOfDay = DateTime(date.year, date.month, date.day);
-      final endOfDay = startOfDay.add(const Duration(days: 1));
-
-      final snapshot = await _firestore
-          .collection('reviews')
-          .where('truckId', isEqualTo: truckId)
-          .where('createdAt',
-              isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
-          .where('createdAt', isLessThan: Timestamp.fromDate(endOfDay))
-          .count()
-          .get();
-
-      return snapshot.count ?? 0;
-    } catch (e, stackTrace) {
-      AppLogger.error('Error getting review count for date', error: e, stackTrace: stackTrace, tag: 'AnalyticsRepository');
-      return 0;
-    }
-  }
-
   String _getDateKey(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }

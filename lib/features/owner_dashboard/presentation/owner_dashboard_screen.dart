@@ -38,7 +38,6 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final ownerTruckAsync = ref.watch(ownerTruckProvider);
-    final currentEmail = ref.watch(currentUserEmailProvider);
     final numberFormat = NumberFormat('#,###');
     final l10n = AppLocalizations.of(context)!;
 

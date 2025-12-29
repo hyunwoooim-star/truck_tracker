@@ -8,7 +8,6 @@ import '../../order/data/order_repository.dart';
 import '../../order/domain/order.dart';
 
 const Color _mustard = AppTheme.mustardYellow;
-const Color _charcoal = AppTheme.midnightCharcoal;
 
 /// Weekly Revenue Chart using fl_chart
 class WeeklyRevenueChart extends ConsumerWidget {

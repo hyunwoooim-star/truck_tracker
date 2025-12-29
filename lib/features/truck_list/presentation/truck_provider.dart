@@ -231,7 +231,7 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
     if (userPosition != null) {
       AppLogger.debug('User position: ${userPosition.latitude}, ${userPosition.longitude}', tag: 'FilteredTrucksWithDistance');
     }
-  } catch (e, stackTrace) {
+  } catch (e) {
     AppLogger.warning('Could not get user position', tag: 'FilteredTrucksWithDistance');
   }
 

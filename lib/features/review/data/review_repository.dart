@@ -137,7 +137,7 @@ class ReviewRepository {
       final reviews = snapshot.docs.map((doc) {
         try {
           return Review.fromFirestore(doc);
-        } catch (e, stackTrace) {
+        } catch (e) {
           AppLogger.warning('Error parsing review ${doc.id}', tag: 'ReviewRepository');
           return null;
         }

@@ -67,7 +67,7 @@ class TalkRepository {
       final messages = snapshot.docs.map((doc) {
         try {
           return TalkMessage.fromFirestore(doc);
-        } catch (e, stackTrace) {
+        } catch (e) {
           AppLogger.warning('Error parsing message ${doc.id}', tag: 'TalkRepository');
           return null;
         }

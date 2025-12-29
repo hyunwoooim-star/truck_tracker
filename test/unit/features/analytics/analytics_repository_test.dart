@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:truck_tracker/features/analytics/data/analytics_repository.dart';
@@ -9,12 +8,7 @@ import 'package:truck_tracker/features/analytics/data/analytics_repository.dart'
 /// Tests analytics tracking, statistics calculation, and N+1 query optimization.
 void main() {
   group('AnalyticsRepository', () {
-    late FakeFirebaseFirestore fakeFirestore;
-    late AnalyticsRepository repository;
-
     setUp(() {
-      fakeFirestore = FakeFirebaseFirestore();
-      repository = AnalyticsRepository();
       // Note: fake_cloud_firestore doesn't support instance injection well,
       // so we test the logic that doesn't depend on Firestore internals
     });
