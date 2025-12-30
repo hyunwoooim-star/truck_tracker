@@ -10,6 +10,8 @@ import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../analytics/data/analytics_repository.dart';
+import '../../visit_verification/presentation/visit_verification_button.dart';
+import '../../visit_verification/presentation/visit_count_badge.dart';
 import '../../order/data/order_repository.dart';
 import '../../order/domain/order.dart' as order_model;
 import '../../order/presentation/cart_provider.dart';
@@ -393,6 +395,36 @@ class TruckDetailScreen extends ConsumerWidget {
                               );
                             },
                           ),
+                        ],
+                      ),
+                    ),
+                    // Visit Verification Section
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.verified_user,
+                                color: AppTheme.mustardYellow,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                '방문 인증',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Spacer(),
+                              VisitCountBadge(truckId: truck.id),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          VisitVerificationButton(truck: truck),
                         ],
                       ),
                     ),
