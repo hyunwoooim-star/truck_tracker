@@ -76,6 +76,8 @@ dependencies:
   http: ^1.2.0
   shared_preferences: ^2.3.4  # Theme preference persistence
   flutter_staggered_grid_view: ^0.7.0  # Bento Grid layout
+  tosspayments_widget_sdk_flutter: ^1.0.5  # TossPayments SDK
+  webview_flutter: ^4.8.0  # WebView for payments
 
 dev_dependencies:
   flutter_test:

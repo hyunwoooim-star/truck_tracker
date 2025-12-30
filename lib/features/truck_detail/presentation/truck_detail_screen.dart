@@ -26,6 +26,9 @@ import '../../truck_list/domain/truck.dart';
 import '../domain/menu_item.dart';
 import '../../chat/data/chat_repository.dart';
 import '../../chat/presentation/chat_screen.dart';
+import '../../payment/domain/payment.dart';
+import '../../payment/presentation/payment_screen.dart';
+import '../../payment/presentation/payment_result_screen.dart';
 import 'truck_detail_provider.dart';
 
 class TruckDetailScreen extends ConsumerWidget {
@@ -1277,7 +1280,7 @@ Future<void> _launchGoogleMaps(BuildContext context, Truck truck, AppLocalizatio
   }
 }
 
-// Place Order Function
+// Place Order Function - Now with Payment Integration
 Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLocalizations l10n) async {
   final cart = ref.read(cartProvider);
   final user = FirebaseAuth.instance.currentUser;
@@ -1348,8 +1351,44 @@ Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLo
 
   if (confirmed != true) return;
 
+  // Generate order ID before payment
+  final tempOrderId = 'ORD${DateTime.now().millisecondsSinceEpoch}';
+  final orderName = cart.items.length == 1
+      ? cart.items.first.menuItemName
+      : '${cart.items.first.menuItemName} 외 ${cart.items.length - 1}개';
+
+  // Navigate to payment screen
+  if (!context.mounted) return;
+
+  final paymentResult = await Navigator.push<PaymentResult>(
+    context,
+    MaterialPageRoute(
+      builder: (_) => PaymentScreen(
+        orderId: tempOrderId,
+        orderName: orderName,
+        amount: cart.totalAmount,
+        items: cart.items,
+        truckName: cart.truckName!,
+      ),
+    ),
+  );
+
+  // Handle payment result
+  if (paymentResult == null) {
+    // User cancelled payment
+    return;
+  }
+
+  if (!paymentResult.success) {
+    // Payment failed
+    if (context.mounted) {
+      SnackBarHelper.showError(context, paymentResult.errorMessage ?? '결제에 실패했습니다');
+    }
+    return;
+  }
+
+  // Payment successful - Create order
   try {
-    // Create order
     final order = order_model.Order(
       id: '',
       userId: user.uid,
@@ -1358,7 +1397,8 @@ Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLo
       truckName: cart.truckName!,
       items: cart.items,
       totalAmount: cart.totalAmount,
-      status: order_model.OrderStatus.pending,
+      status: order_model.OrderStatus.confirmed, // Already paid, set to confirmed
+      paymentMethod: 'toss', // TossPayments
       createdAt: DateTime.now(),
     );
 
@@ -1369,13 +1409,35 @@ Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLo
     // Clear cart
     ref.read(cartProvider.notifier).clear();
 
-    // Show success message
+    // Navigate to success screen
     if (context.mounted) {
-      SnackBarHelper.showSuccess(context, l10n.orderCompleted(orderId.substring(0, 8)));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PaymentResultScreen(
+            success: true,
+            orderId: orderId,
+            amount: cart.totalAmount,
+            truckName: cart.truckName,
+          ),
+        ),
+      );
     }
   } catch (e) {
     if (context.mounted) {
-      SnackBarHelper.showError(context, l10n.orderFailed('$e'));
+      // Payment succeeded but order creation failed
+      // This is a critical error - show error and refund will be handled by support
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PaymentResultScreen(
+            success: false,
+            orderId: tempOrderId,
+            amount: cart.totalAmount,
+            errorMessage: '주문 생성에 실패했습니다. 고객센터에 문의해 주세요.\n결제 번호: $tempOrderId',
+          ),
+        ),
+      );
     }
   }
 }

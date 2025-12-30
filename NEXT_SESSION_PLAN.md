@@ -83,10 +83,23 @@
   - Firebase Storage 연동
   - 추천 해시태그 제안
 
-### Phase 5: 결제 연동
-- [ ] TossPayments (1순위)
-- [ ] KakaoPay (2순위)
-- [ ] 선결제 → 픽업 플로우
+### Phase 5: 결제 연동 ✅ 완료
+- [x] **TossPayments 결제 통합**
+  - `lib/features/payment/domain/payment.dart` - Freezed 모델 (Payment, PaymentResult)
+  - `lib/features/payment/data/payment_repository.dart` - TossPayments API 연동
+  - 패키지: `tosspayments_widget_sdk_flutter: ^1.0.5`
+- [x] **결제 수단 선택 화면**
+  - `payment_screen.dart` - 결제 수단 선택 UI
+  - 카드/토스페이/카카오페이/네이버페이/계좌이체 지원
+- [x] **TossPayments WebView 결제창**
+  - `toss_payment_webview.dart` - WebView 기반 결제
+  - JavaScript 브릿지로 결제 결과 수신
+- [x] **결제 결과 화면**
+  - `payment_result_screen.dart` - 성공/실패 표시
+  - 픽업 안내 메시지
+- [x] **주문 플로우 통합**
+  - `truck_detail_screen.dart` 수정
+  - 주문 확인 → 결제 수단 선택 → 결제 → 주문 생성 → 결과 표시
 
 ### Phase 6: 멤버십/구독
 - [ ] 방문 횟수 기반 등급 (실버/골드/VIP)
@@ -138,4 +151,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-30 (Phase 1, 2, 3, 4 완료 - 소셜 피드 Instagram 스타일 구현)
+**마지막 업데이트**: 2025-12-30 (Phase 1-5 완료 - TossPayments 결제 연동)
