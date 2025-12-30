@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +9,6 @@ import '../../../core/services/geocoding_service.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
-import '../../../shared/widgets/web_safe_image.dart';
 import '../../analytics/data/analytics_repository.dart';
 import '../../visit_verification/presentation/visit_verification_button.dart';
 import '../../visit_verification/presentation/visit_count_badge.dart';
@@ -180,18 +180,20 @@ class TruckDetailScreen extends ConsumerWidget {
                     tag: 'truck_image_${truck.id}',
                     child: Material(
                       color: Colors.transparent,
-                      child: WebSafeImage(
+                      child: CachedNetworkImage(
                         imageUrl: truck.imageUrl,
-                        memCacheHeight: 800,
-                        memCacheWidth: 800,
+                        maxHeightDiskCache: 800,  // 🚀 OPTIMIZATION: Limit header image size
+                        maxWidthDiskCache: 800,   // 🚀 OPTIMIZATION: Limit header image size
+                        memCacheHeight: 800,      // 🚀 OPTIMIZATION: Limit memory cache
+                        memCacheWidth: 800,       // 🚀 OPTIMIZATION: Limit memory cache
                         fit: BoxFit.cover,
-                        placeholder: Container(
+                        placeholder: (context, url) => Container(
                           color: AppTheme.mustardYellow10,
                           child: const Center(
                             child: CircularProgressIndicator(),
                           ),
                         ),
-                        errorWidget: Container(
+                        errorWidget: (context, url, error) => Container(
                           color: Colors.grey[300],
                           child: const Icon(
                             Icons.local_shipping,
@@ -1000,14 +1002,16 @@ class _ReviewCard extends StatelessWidget {
                       padding: const EdgeInsets.only(right: 8),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: WebSafeImage(
+                        child: CachedNetworkImage(
                           imageUrl: review.photoUrls[index],
                           width: 100,
                           height: 100,
-                          memCacheHeight: 200,
-                          memCacheWidth: 200,
+                          maxHeightDiskCache: 200,  // 🚀 OPTIMIZATION: Limit thumbnail size
+                          maxWidthDiskCache: 200,   // 🚀 OPTIMIZATION: Limit thumbnail size
+                          memCacheHeight: 200,      // 🚀 OPTIMIZATION: Limit memory cache
+                          memCacheWidth: 200,       // 🚀 OPTIMIZATION: Limit memory cache
                           fit: BoxFit.cover,
-                          placeholder: Container(
+                          placeholder: (context, url) => Container(
                             width: 100,
                             height: 100,
                             color: Colors.grey[300],
@@ -1015,7 +1019,7 @@ class _ReviewCard extends StatelessWidget {
                               child: CircularProgressIndicator(),
                             ),
                           ),
-                          errorWidget: Container(
+                          errorWidget: (context, url, error) => Container(
                             width: 100,
                             height: 100,
                             color: Colors.grey[300],

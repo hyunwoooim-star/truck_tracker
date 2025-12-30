@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -8,7 +9,6 @@ import '../../../../core/themes/app_theme.dart';
 import '../../../../core/utils/snackbar_helper.dart';
 import '../../../../generated/l10n/app_localizations.dart';
 import '../../../../shared/widgets/status_tag.dart';
-import '../../../../shared/widgets/web_safe_image.dart';
 import '../../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../../truck_map/presentation/truck_map_screen.dart';
 import '../../domain/truck.dart';
@@ -156,13 +156,13 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
         fit: StackFit.expand,
         children: [
           // Background image
-          WebSafeImage(
+          CachedNetworkImage(
             imageUrl: truck.imageUrl,
             fit: BoxFit.cover,
             memCacheHeight: 400,
             memCacheWidth: 400,
-            placeholder: Container(color: AppTheme.charcoalMedium),
-            errorWidget: Container(
+            placeholder: (_, __) => Container(color: AppTheme.charcoalMedium),
+            errorWidget: (_, __, ___) => Container(
               color: AppTheme.charcoalMedium,
               child: const Icon(Icons.local_shipping, size: 60, color: AppTheme.textTertiary),
             ),
@@ -259,13 +259,13 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  WebSafeImage(
+                  CachedNetworkImage(
                     imageUrl: truck.imageUrl,
                     fit: BoxFit.cover,
                     memCacheHeight: 200,
                     memCacheWidth: 200,
-                    placeholder: Container(color: AppTheme.charcoalLight),
-                    errorWidget: Container(
+                    placeholder: (_, __) => Container(color: AppTheme.charcoalLight),
+                    errorWidget: (_, __, ___) => Container(
                       color: AppTheme.charcoalLight,
                       child: const Icon(Icons.local_shipping, color: AppTheme.textTertiary),
                     ),
@@ -339,13 +339,13 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
         fit: StackFit.expand,
         children: [
           // Background image
-          WebSafeImage(
+          CachedNetworkImage(
             imageUrl: truck.imageUrl,
             fit: BoxFit.cover,
             memCacheHeight: 200,
             memCacheWidth: 200,
-            placeholder: Container(color: AppTheme.charcoalMedium),
-            errorWidget: Container(
+            placeholder: (_, __) => Container(color: AppTheme.charcoalMedium),
+            errorWidget: (_, __, ___) => Container(
               color: AppTheme.charcoalMedium,
               child: const Icon(Icons.local_shipping, color: AppTheme.textTertiary),
             ),
