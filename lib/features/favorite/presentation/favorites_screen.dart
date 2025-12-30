@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -6,6 +5,7 @@ import '../../../core/themes/app_theme.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
 import '../../../shared/widgets/status_tag.dart';
+import '../../../shared/widgets/web_safe_image.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../truck_list/domain/truck.dart';
@@ -142,25 +142,23 @@ class _FavoriteTruckCard extends StatelessWidget {
             child: Row(
               children: [
                 // 트럭 이미지
-                ClipRRect(
+                WebSafeImage(
+                  imageUrl: truck.imageUrl,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
                   borderRadius: BorderRadius.circular(8),
-                  child: CachedNetworkImage(
-                    imageUrl: truck.imageUrl,
+                  placeholder: Container(
                     width: 60,
                     height: 60,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      width: 60,
-                      height: 60,
-                      color: AppTheme.charcoalLight,
-                      child: const Icon(Icons.local_shipping, color: Colors.grey),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      width: 60,
-                      height: 60,
-                      color: AppTheme.charcoalLight,
-                      child: const Icon(Icons.local_shipping, color: Colors.grey),
-                    ),
+                    color: AppTheme.charcoalLight,
+                    child: const Icon(Icons.local_shipping, color: Colors.grey),
+                  ),
+                  errorWidget: Container(
+                    width: 60,
+                    height: 60,
+                    color: AppTheme.charcoalLight,
+                    child: const Icon(Icons.local_shipping, color: Colors.grey),
                   ),
                 ),
                 const SizedBox(width: 12),

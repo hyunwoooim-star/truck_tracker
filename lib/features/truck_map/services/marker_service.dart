@@ -1,6 +1,4 @@
-import 'dart:ui' as ui;
-
-import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../core/utils/app_logger.dart';
@@ -8,6 +6,9 @@ import '../../truck_list/domain/truck.dart';
 
 /// Service for managing custom map markers
 /// Caches BitmapDescriptors for performance optimization
+///
+/// Note: On web platform, uses default markers with hue colors
+/// because custom BitmapDescriptor.bytes() doesn't work reliably on web.
 class MarkerService {
   // Singleton pattern
   static final MarkerService _instance = MarkerService._internal();
@@ -29,53 +30,49 @@ class MarkerService {
     AppLogger.debug('Initializing marker service...', tag: 'MarkerService');
 
     try {
-      // Load all markers in parallel
-      final results = await Future.wait([
-        _loadMarker('assets/markers/truck_marker.png'),
-        _loadMarker('assets/markers/truck_marker_moving.png'),
-        _loadMarker('assets/markers/truck_marker_closed.png'),
-      ]);
+      if (kIsWeb) {
+        // Web: Use default markers with custom hues
+        // Custom bitmap markers don't work reliably on web
+        _openMarker = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
+        _movingMarker = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
+        _closedMarker = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRose);
+        AppLogger.success('Marker service initialized (web mode - using default markers)', tag: 'MarkerService');
+      } else {
+        // Mobile: Load custom marker images
+        final results = await Future.wait([
+          _loadMarkerForMobile('assets/markers/truck_marker.png'),
+          _loadMarkerForMobile('assets/markers/truck_marker_moving.png'),
+          _loadMarkerForMobile('assets/markers/truck_marker_closed.png'),
+        ]);
 
-      _openMarker = results[0];
-      _movingMarker = results[1];
-      _closedMarker = results[2];
+        _openMarker = results[0];
+        _movingMarker = results[1];
+        _closedMarker = results[2];
+        AppLogger.success('Marker service initialized (mobile mode)', tag: 'MarkerService');
+      }
 
       _initialized = true;
-      AppLogger.success('Marker service initialized', tag: 'MarkerService');
     } catch (e, stackTrace) {
       AppLogger.error('Failed to initialize markers',
           error: e, stackTrace: stackTrace, tag: 'MarkerService');
-      // Fallback to default markers if custom ones fail
+      // Fallback to default markers
+      _openMarker = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
+      _movingMarker = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
+      _closedMarker = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRose);
       _initialized = true;
     }
   }
 
-  /// Load a marker from assets and resize it
-  Future<BitmapDescriptor> _loadMarker(String assetPath) async {
+  /// Load a marker from assets for mobile platforms
+  Future<BitmapDescriptor> _loadMarkerForMobile(String assetPath) async {
     try {
-      // Load the image bytes
-      final ByteData data = await rootBundle.load(assetPath);
-      final Uint8List bytes = data.buffer.asUint8List();
-
-      // Decode the image
-      final ui.Codec codec = await ui.instantiateImageCodec(
-        bytes,
-        targetWidth: 64, // Resize for map display
-        targetHeight: 64,
+      // Use BitmapDescriptor.asset() which handles platform differences
+      final descriptor = await BitmapDescriptor.asset(
+        const ImageConfiguration(size: Size(64, 64)),
+        assetPath,
       );
-      final ui.FrameInfo frameInfo = await codec.getNextFrame();
-
-      // Convert to bytes
-      final ByteData? resizedData = await frameInfo.image.toByteData(
-        format: ui.ImageByteFormat.png,
-      );
-
-      if (resizedData == null) {
-        throw Exception('Failed to convert image to bytes');
-      }
-
       AppLogger.debug('Loaded marker: $assetPath', tag: 'MarkerService');
-      return BitmapDescriptor.bytes(resizedData.buffer.asUint8List());
+      return descriptor;
     } catch (e) {
       AppLogger.warning('Failed to load marker $assetPath, using default', tag: 'MarkerService');
       // Return default marker as fallback

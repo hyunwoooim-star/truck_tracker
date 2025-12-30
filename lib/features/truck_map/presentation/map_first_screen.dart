@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +11,7 @@ import '../../../core/constants/food_types.dart';
 import '../../../core/themes/app_theme.dart';
 import '../services/marker_service.dart';
 import '../../../shared/widgets/status_tag.dart';
+import '../../../shared/widgets/web_safe_image.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../auth/presentation/login_screen.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
@@ -532,39 +532,35 @@ class _TruckCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
+              WebSafeImage(
+                imageUrl: truck.imageUrl,
+                width: 72,
+                height: 72,
+                memCacheHeight: 150,
+                memCacheWidth: 150,
+                fit: BoxFit.cover,
                 borderRadius: BorderRadius.circular(12),
-                child: CachedNetworkImage(
-                  imageUrl: truck.imageUrl,
+                placeholder: Container(
                   width: 72,
                   height: 72,
-                  maxHeightDiskCache: 150,  // 🚀 OPTIMIZATION: Limit cached image size
-                  maxWidthDiskCache: 150,   // 🚀 OPTIMIZATION: Limit cached image size
-                  memCacheHeight: 150,      // 🚀 OPTIMIZATION: Limit memory cache size
-                  memCacheWidth: 150,       // 🚀 OPTIMIZATION: Limit memory cache size
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    width: 72,
-                    height: 72,
-                    color: AppTheme.charcoalLight,
-                    child: const Center(
-                      child: SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppTheme.mustardYellow,
-                        ),
+                  color: AppTheme.charcoalLight,
+                  child: const Center(
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppTheme.mustardYellow,
                       ),
                     ),
                   ),
-                  errorWidget: (context, url, error) => Container(
-                    width: 72,
-                    height: 72,
-                    color: AppTheme.charcoalLight,
-                    child: const Icon(Icons.local_shipping_outlined,
-                        color: AppTheme.textTertiary),
-                  ),
+                ),
+                errorWidget: Container(
+                  width: 72,
+                  height: 72,
+                  color: AppTheme.charcoalLight,
+                  child: const Icon(Icons.local_shipping_outlined,
+                      color: AppTheme.textTertiary),
                 ),
               ),
               const SizedBox(width: 12),

@@ -1,11 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/utils/snackbar_helper.dart';
 import '../../../../generated/l10n/app_localizations.dart';
+import '../../../../shared/widgets/web_safe_image.dart';
 import '../../data/social_repository.dart';
 import '../../domain/post.dart';
 import '../comments_sheet.dart';
@@ -200,7 +202,9 @@ class _PostCardState extends ConsumerState<PostCard>
             radius: 20,
             backgroundColor: AppTheme.charcoalLight,
             backgroundImage: post.authorProfileUrl != null
-                ? CachedNetworkImageProvider(post.authorProfileUrl!)
+                ? (kIsWeb
+                    ? NetworkImage(post.authorProfileUrl!)
+                    : CachedNetworkImageProvider(post.authorProfileUrl!) as ImageProvider)
                 : null,
             child: post.authorProfileUrl == null
                 ? Text(
@@ -271,10 +275,10 @@ class _PostCardState extends ConsumerState<PostCard>
             itemBuilder: (context, index) {
               return GestureDetector(
                 onDoubleTap: _toggleLike,
-                child: CachedNetworkImage(
+                child: WebSafeImage(
                   imageUrl: imageUrls[index],
                   fit: BoxFit.cover,
-                  placeholder: (_, __) => Container(
+                  placeholder: Container(
                     color: AppTheme.charcoalLight,
                     child: const Center(
                       child: CircularProgressIndicator(
@@ -282,7 +286,7 @@ class _PostCardState extends ConsumerState<PostCard>
                       ),
                     ),
                   ),
-                  errorWidget: (_, __, ___) => Container(
+                  errorWidget: Container(
                     color: AppTheme.charcoalLight,
                     child: const Icon(
                       Icons.broken_image,
