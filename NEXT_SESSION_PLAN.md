@@ -12,7 +12,7 @@
 
 ## 현재 상태 (2025-12-30)
 
-**전체 완성도**: 95%+ (프로덕션 배포 완료)
+**전체 완성도**: 98%+ (프로덕션 배포 완료)
 
 | 항목 | 상태 |
 |------|------|
@@ -157,10 +157,19 @@
   - 빠른 템플릿 (영업시작, 신메뉴, 특가, 종료임박)
   - 팔로워 수 표시 및 미리보기
 
-### Phase 10: 성능 최적화
-- [ ] 이미지 lazy loading
-- [ ] 오프라인 모드 (Hive)
-- [ ] PWA 강화
+### Phase 10: 성능 최적화 ✅ 완료
+- [x] **웹 이미지 호환성 개선**
+  - `lib/shared/widgets/web_safe_image.dart` - 플랫폼별 이미지 로딩
+  - 웹: `Image.network` / 모바일: `CachedNetworkImage`
+  - MarkerService: 웹에서 기본 마커 사용 (BitmapDescriptor.bytes 미지원)
+- [x] **주요 화면 웹 이미지 수정**
+  - bento_truck_card.dart, truck_detail_screen.dart
+  - map_first_screen.dart, favorites_screen.dart
+  - post_card.dart
+- [x] **PWA 설정 완료**
+  - manifest.json, index.html SEO 메타태그
+  - CanvasKit 렌더러 사용
+- [ ] 오프라인 모드 (Hive) - 선택적
 
 ---
 
@@ -189,4 +198,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-30 (Phase 1-5 + 광고 + Phase 8-9 완료 - 픽업최적화/관리자대시보드)
+**마지막 업데이트**: 2025-12-30 (Phase 1-5, 광고, Phase 8-10 완료 - 웹 이미지 호환성 수정)
