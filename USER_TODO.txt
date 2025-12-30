@@ -1,0 +1,43 @@
+=====================================
+TRUCK TRACKER - 사용자 할 일 목록
+=====================================
+
+!! 2시간 뒤 할 일 (GitHub Secrets) !!
+
+[1] GitHub Secrets 설정 (카카오 로그인용)
+-------------------------------------
+1. 이 링크 열기:
+   https://github.com/hyunwoooim-star/truck_tracker/settings/secrets/actions
+
+2. "New repository secret" 버튼 클릭
+
+3. 첫 번째 시크릿 추가:
+   Name:  KAKAO_NATIVE_APP_KEY
+   Value: 16a3e20d6e8bff9d586a64029614a40e
+
+4. (선택) 두 번째 시크릿 추가:
+   Name:  GOOGLE_MAPS_API_KEY
+   Value: Google Cloud Console에서 발급받은 키
+
+
+[2] Firebase 규칙 배포 (선택)
+-------------------------------------
+Firebase Console 열기:
+https://console.firebase.google.com/project/truck-tracker-fa0b0/firestore/rules
+
+firestore.rules 파일 내용 복사해서 붙여넣기 후 "게시" 클릭
+
+
+[3] 프로덕션 키 (실제 수익화 시)
+-------------------------------------
+- TossPayments: https://developers.tosspayments.com
+- AdMob: https://admob.google.com
+
+키 발급 후 코드에 직접 입력 필요:
+- lib/features/payment/data/payment_repository.dart (19-20줄)
+- lib/features/ads/data/ad_service.dart (25-30줄)
+
+
+=====================================
+완료! 질문있으면 Claude에게 물어보세요
+=====================================

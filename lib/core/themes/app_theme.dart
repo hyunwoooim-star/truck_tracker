@@ -83,6 +83,39 @@ class AppTheme {
   // Red opacity variant
   static const Color red50 = Color(0x80F44336);  // 50% opacity
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TOSS DESIGN SYSTEM COLORS
+  // 토스 앱 스타일 컬러 시스템
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Toss Blue - Primary accent color
+  static const Color tossBlue = Color(0xFF3182F6);
+  static const Color tossBlueDark = Color(0xFF1B64DA);
+  static const Color tossBlueLight = Color(0xFFE8F3FF);
+  static const Color tossBlue10 = Color(0x1A3182F6);  // 10% opacity
+  static const Color tossBlue20 = Color(0x333182F6);  // 20% opacity
+
+  // Toss Neutral Grays
+  static const Color tossGray50 = Color(0xFFF9FAFB);   // Lightest
+  static const Color tossGray100 = Color(0xFFF2F4F6);
+  static const Color tossGray200 = Color(0xFFE5E8EB);
+  static const Color tossGray300 = Color(0xFFD1D6DB);
+  static const Color tossGray400 = Color(0xFFB0B8C1);
+  static const Color tossGray500 = Color(0xFF8B95A1);  // Mid gray
+  static const Color tossGray600 = Color(0xFF6B7684);
+  static const Color tossGray700 = Color(0xFF4E5968);
+  static const Color tossGray800 = Color(0xFF333D4B);
+  static const Color tossGray900 = Color(0xFF191F28);  // Darkest
+
+  // Toss Semantic Colors
+  static const Color tossRed = Color(0xFFFF5247);
+  static const Color tossGreen = Color(0xFF00C48C);
+  static const Color tossOrange = Color(0xFFFF9F40);
+
+  // Toss Card Shadows (for BoxShadow)
+  static const Color tossShadow = Color(0x0A000000);  // Very subtle shadow
+  static const Color tossShadowMedium = Color(0x14000000);  // Medium shadow
+
   // 레거시 호환성 (기존 코드에서 사용 중)
   static const Color baeminMint = mustardYellow;
   static const Color background = midnightCharcoal;

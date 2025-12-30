@@ -12,6 +12,8 @@ import '../../../core/constants/food_types.dart';
 import '../../../core/themes/app_theme.dart';
 import '../services/marker_service.dart';
 import '../../../shared/widgets/status_tag.dart';
+import '../../../shared/widgets/toss_card.dart';
+import '../../../shared/widgets/skeleton_loading.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../auth/presentation/login_screen.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
@@ -293,34 +295,59 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
 
                     const Divider(height: 1, color: AppTheme.charcoalLight),
 
-                    // Truck List (Scrollable)
+                    // Truck List (Scrollable) - Toss Style
                     Expanded(
                       child: trucksWithDistanceAsync.when(
-                        loading: () => const Center(
-                            child: CircularProgressIndicator(
-                                color: AppTheme.mustardYellow)),
+                        loading: () => ListView.builder(
+                          controller: scrollController,
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          itemCount: 5,
+                          itemBuilder: (_, __) => const _SkeletonTruckCard(),
+                        ),
                         error: (e, _) => Center(
-                          child: Text(l10n.loadDataFailed,
-                              style: Theme.of(context).textTheme.bodyMedium),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.error_outline, size: 48, color: AppTheme.tossGray500),
+                              const SizedBox(height: 12),
+                              Text(
+                                l10n.loadDataFailed,
+                                style: TextStyle(color: AppTheme.tossGray500),
+                              ),
+                            ],
+                          ),
                         ),
                         data: (trucksWithDistance) {
                           if (trucksWithDistance.isEmpty) {
                             return Center(
-                              child: Text(l10n.noTrucks,
-                                  style:
-                                      const TextStyle(color: AppTheme.textSecondary)),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.local_shipping_outlined, size: 56, color: AppTheme.tossGray600),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    l10n.noTrucks,
+                                    style: TextStyle(
+                                      color: AppTheme.tossGray500,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
                           }
 
                           return ListView.builder(
                             controller: scrollController,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             itemCount: trucksWithDistance.length,
-                            itemExtent: 100.0, // ✅ OPTIMIZATION: Fixed height for better scroll performance
                             itemBuilder: (context, index) {
                               final truckWithDistance = trucksWithDistance[index];
-                              return _TruckCard(truckWithDistance: truckWithDistance);
+                              // Staggered animation (50ms delay per item)
+                              return _AnimatedTruckCard(
+                                index: index,
+                                child: _TruckCard(truckWithDistance: truckWithDistance),
+                              );
                             },
                           );
                         },
@@ -508,6 +535,7 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
   }
 }
 
+/// 토스 스타일 트럭 카드 (탭 애니메이션 + 부드러운 그림자)
 class _TruckCard extends StatelessWidget {
   const _TruckCard({required this.truckWithDistance});
 
@@ -518,134 +546,70 @@ class _TruckCard extends StatelessWidget {
     final truck = truckWithDistance.truck;
     final hasDistance = truckWithDistance.distanceInMeters != double.infinity;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => TruckDetailScreen(truck: truck),
-            ),
-          );
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: AppTheme.charcoalMedium,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppTheme.charcoalLight, width: 1),
+    // 상태에 따른 TossStatusTag 선택
+    Widget statusTag;
+    switch (truck.status) {
+      case TruckStatus.onRoute:
+        statusTag = TossStatusTag.open(label: '운행중');
+        break;
+      case TruckStatus.resting:
+        statusTag = TossStatusTag.resting(label: '대기중');
+        break;
+      case TruckStatus.maintenance:
+        statusTag = TossStatusTag.maintenance(label: '점검중');
+        break;
+    }
+
+    return TossTruckCard(
+      imageUrl: truck.imageUrl,
+      name: truck.truckNumber,
+      foodType: truck.foodType,
+      statusWidget: statusTag,
+      distance: hasDistance ? truckWithDistance.distanceText : null,
+      location: truck.locationDescription,
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => TruckDetailScreen(truck: truck),
           ),
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Truck image
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: CachedNetworkImage(
-                  imageUrl: truck.imageUrl,
-                  width: 64,
-                  height: 64,
-                  maxHeightDiskCache: 150,
-                  maxWidthDiskCache: 150,
-                  memCacheHeight: 150,
-                  memCacheWidth: 150,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    width: 64,
-                    height: 64,
-                    color: AppTheme.charcoalLight,
-                    child: const Center(
-                      child: SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppTheme.mustardYellow,
-                        ),
-                      ),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    width: 64,
-                    height: 64,
-                    color: AppTheme.charcoalLight,
-                    child: const Icon(Icons.local_shipping_outlined,
-                        color: AppTheme.textTertiary),
-                  ),
-                ),
+        );
+      },
+      imageBuilder: (url) => CachedNetworkImage(
+        imageUrl: url,
+        width: 56,
+        height: 56,
+        fit: BoxFit.cover,
+        memCacheHeight: 120,
+        memCacheWidth: 120,
+        placeholder: (context, url) => Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: AppTheme.tossGray800,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: const Center(
+            child: SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppTheme.tossBlue,
               ),
-              const SizedBox(width: 12),
-              // Truck info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Name + Status
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            truck.truckNumber,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.textPrimary,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        StatusTag(status: truck.status),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    // Food type
-                    Text(
-                      truck.foodType,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: AppTheme.mustardYellow,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    // Distance + Location
-                    Row(
-                      children: [
-                        if (hasDistance) ...[
-                          Icon(Icons.near_me, size: 14, color: AppTheme.electricBlue),
-                          const SizedBox(width: 4),
-                          Text(
-                            truckWithDistance.distanceText,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppTheme.electricBlue,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                        ],
-                        Icon(Icons.location_on, size: 14, color: AppTheme.textTertiary),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            truck.locationDescription,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppTheme.textTertiary,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
+          ),
+        ),
+        errorWidget: (context, url, error) => Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: AppTheme.tossGray800,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: const Icon(
+            Icons.local_shipping_outlined,
+            color: AppTheme.tossGray500,
+            size: 24,
           ),
         ),
       ),
@@ -1127,6 +1091,128 @@ class _ReapplyScreenState extends ConsumerState<_ReapplyScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// 토스 스타일 스켈레톤 트럭 카드 (로딩 시 표시)
+class _SkeletonTruckCard extends StatelessWidget {
+  const _SkeletonTruckCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppTheme.tossGray900,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.tossShadow,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // 이미지 스켈레톤
+          const SkeletonBox(width: 56, height: 56, borderRadius: 14),
+          const SizedBox(width: 14),
+          // 텍스트 스켈레톤
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Expanded(child: SkeletonLine(width: 100, height: 15)),
+                    const SizedBox(width: 8),
+                    const SkeletonBox(width: 50, height: 22, borderRadius: 6),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                const SkeletonLine(width: 70, height: 13),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const SkeletonBox(width: 55, height: 12, borderRadius: 4),
+                    const SizedBox(width: 10),
+                    const Expanded(child: SkeletonLine(width: 100, height: 12)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 토스 스타일 Staggered 애니메이션 래퍼
+class _AnimatedTruckCard extends StatefulWidget {
+  const _AnimatedTruckCard({
+    required this.index,
+    required this.child,
+  });
+
+  final int index;
+  final Widget child;
+
+  @override
+  State<_AnimatedTruckCard> createState() => _AnimatedTruckCardState();
+}
+
+class _AnimatedTruckCardState extends State<_AnimatedTruckCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+    );
+
+    // Staggered delay: 50ms per item (max 5 items = 250ms)
+    final delay = Duration(milliseconds: (widget.index.clamp(0, 5)) * 50);
+    Future.delayed(delay, () {
+      if (mounted) {
+        _controller.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: widget.child,
       ),
     );
   }
