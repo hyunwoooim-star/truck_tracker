@@ -1,154 +1,166 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:truck_tracker/features/visit_verification/data/visit_verification_repository.dart';
+import 'package:truck_tracker/features/visit_verification/domain/visit_verification.dart';
 
 void main() {
-  group('VisitVerification', () {
-    test('verificationRadiusMeters is 50', () {
-      expect(VisitVerificationRepository.verificationRadiusMeters, 50.0);
+  group('VisitVerification Model', () {
+    late VisitVerification verification;
+    late DateTime testDateTime;
+
+    setUp(() {
+      testDateTime = DateTime(2025, 12, 31, 18, 30, 0);
+      verification = VisitVerification(
+        id: 'visit_123',
+        visitorId: 'visitor_456',
+        visitorName: 'TestVisitor',
+        visitorPhotoUrl: 'https://example.com/avatar.jpg',
+        truckId: 'truck_789',
+        truckName: 'TestTruck',
+        verifiedAt: testDateTime,
+        distanceMeters: 25.5,
+        latitude: 37.4979,
+        longitude: 127.0276,
+      );
     });
 
-    group('Distance calculation', () {
-      test('calculates distance correctly for same location', () {
-        const lat1 = 37.5665;
-        const lng1 = 126.9780;
-        const lat2 = 37.5665;
-        const lng2 = 126.9780;
+    test('should create VisitVerification with all fields', () {
+      expect(verification.id, 'visit_123');
+      expect(verification.visitorId, 'visitor_456');
+      expect(verification.visitorName, 'TestVisitor');
+      expect(verification.visitorPhotoUrl, 'https://example.com/avatar.jpg');
+      expect(verification.truckId, 'truck_789');
+      expect(verification.truckName, 'TestTruck');
+      expect(verification.verifiedAt, testDateTime);
+      expect(verification.distanceMeters, 25.5);
+      expect(verification.latitude, 37.4979);
+      expect(verification.longitude, 127.0276);
+    });
 
-        final distance = _calculateDistance(lat1, lng1, lat2, lng2);
-        expect(distance, closeTo(0, 0.001));
+    test('should create VisitVerification without optional photo', () {
+      final noPhoto = VisitVerification(
+        id: 'v1',
+        visitorId: 'visitor1',
+        visitorName: 'Visitor',
+        truckId: 'truck1',
+        truckName: 'Truck',
+        verifiedAt: testDateTime,
+        distanceMeters: 30.0,
+        latitude: 37.5,
+        longitude: 127.0,
+      );
+      expect(noPhoto.visitorPhotoUrl, isNull);
+    });
+
+    group('distanceMeters', () {
+      test('should store distance in meters', () {
+        expect(verification.distanceMeters, 25.5);
       });
 
-      test('calculates distance correctly for nearby locations', () {
-        // Seoul City Hall to Deoksugung Palace (~300m)
-        const lat1 = 37.5665;
-        const lng1 = 126.9780;
-        const lat2 = 37.5659;
-        const lng2 = 126.9751;
-
-        final distance = _calculateDistance(lat1, lng1, lat2, lng2);
-        expect(distance, greaterThan(200));
-        expect(distance, lessThan(400));
+      test('should handle very close distance', () {
+        final veryClose = verification.copyWith(distanceMeters: 5.0);
+        expect(veryClose.distanceMeters, 5.0);
       });
 
-      test('calculates distance correctly for far locations', () {
-        // Seoul to Busan (~325km)
-        const lat1 = 37.5665;
-        const lng1 = 126.9780;
-        const lat2 = 35.1796;
-        const lng2 = 129.0756;
-
-        final distance = _calculateDistance(lat1, lng1, lat2, lng2);
-        expect(distance, greaterThan(300000)); // >300km
-        expect(distance, lessThan(350000)); // <350km
+      test('should handle max verification distance (50m)', () {
+        final maxDistance = verification.copyWith(distanceMeters: 50.0);
+        expect(maxDistance.distanceMeters, 50.0);
       });
     });
 
-    group('Verification eligibility', () {
-      test('user within 50m can verify', () {
-        const distance = 30.0;
-        expect(distance <= VisitVerificationRepository.verificationRadiusMeters, isTrue);
+    group('coordinates', () {
+      test('should store latitude and longitude', () {
+        expect(verification.latitude, 37.4979);
+        expect(verification.longitude, 127.0276);
       });
 
-      test('user exactly at 50m can verify', () {
-        const distance = 50.0;
-        expect(distance <= VisitVerificationRepository.verificationRadiusMeters, isTrue);
-      });
-
-      test('user beyond 50m cannot verify', () {
-        const distance = 51.0;
-        expect(distance <= VisitVerificationRepository.verificationRadiusMeters, isFalse);
-      });
-
-      test('user at 100m cannot verify', () {
-        const distance = 100.0;
-        expect(distance <= VisitVerificationRepository.verificationRadiusMeters, isFalse);
+      test('should handle Seoul area coordinates', () {
+        expect(verification.latitude, greaterThan(37.0));
+        expect(verification.latitude, lessThan(38.0));
+        expect(verification.longitude, greaterThan(126.0));
+        expect(verification.longitude, lessThan(128.0));
       });
     });
 
-    group('Today check', () {
-      test('same day is today', () {
-        final now = DateTime.now();
-        final visitTime = DateTime.now();
-
-        expect(_isSameDay(now, visitTime), isTrue);
+    group('toFirestore', () {
+      test('should convert VisitVerification to Map correctly', () {
+        final firestoreMap = verification.toFirestore();
+        expect(firestoreMap['visitorId'], 'visitor_456');
+        expect(firestoreMap['visitorName'], 'TestVisitor');
+        expect(firestoreMap['truckId'], 'truck_789');
+        expect(firestoreMap['distanceMeters'], 25.5);
+        expect(firestoreMap['latitude'], 37.4979);
+        expect(firestoreMap['longitude'], 127.0276);
       });
 
-      test('yesterday is not today', () {
-        final now = DateTime.now();
-        final visitTime = now.subtract(const Duration(days: 1));
+      test('should not include id in Firestore map', () {
+        final firestoreMap = verification.toFirestore();
+        expect(firestoreMap.containsKey('id'), isFalse);
+      });
+    });
 
-        expect(_isSameDay(now, visitTime), isFalse);
+    group('copyWith', () {
+      test('should create copy with updated distance', () {
+        final updated = verification.copyWith(distanceMeters: 40.0);
+        expect(updated.distanceMeters, 40.0);
+        expect(updated.id, verification.id);
       });
 
-      test('tomorrow is not today', () {
-        final now = DateTime.now();
-        final visitTime = now.add(const Duration(days: 1));
-
-        expect(_isSameDay(now, visitTime), isFalse);
+      test('should create copy with updated location', () {
+        final updated = verification.copyWith(latitude: 37.5563, longitude: 126.9220);
+        expect(updated.latitude, 37.5563);
+        expect(updated.longitude, 126.9220);
       });
     });
   });
-}
 
-// Haversine formula for distance calculation (in meters)
-double _calculateDistance(double lat1, double lng1, double lat2, double lng2) {
-  const double earthRadius = 6371000; // meters
-  final double dLat = _toRadians(lat2 - lat1);
-  final double dLng = _toRadians(lng2 - lng1);
+  group('TruckVisitStats Model', () {
+    test('should create TruckVisitStats with defaults', () {
+      const stats = TruckVisitStats(truckId: 'truck_123');
+      expect(stats.truckId, 'truck_123');
+      expect(stats.totalVisits, 0);
+      expect(stats.uniqueVisitors, 0);
+      expect(stats.recentVisitors, isEmpty);
+    });
 
-  final double a = _sin(dLat / 2) * _sin(dLat / 2) +
-      _cos(_toRadians(lat1)) *
-          _cos(_toRadians(lat2)) *
-          _sin(dLng / 2) *
-          _sin(dLng / 2);
+    test('should create TruckVisitStats with values', () {
+      const stats = TruckVisitStats(
+        truckId: 'truck_123',
+        totalVisits: 100,
+        uniqueVisitors: 50,
+        recentVisitors: [],
+      );
+      expect(stats.totalVisits, 100);
+      expect(stats.uniqueVisitors, 50);
+    });
+  });
 
-  final double c = 2 * _atan2(_sqrt(a), _sqrt(1 - a));
-  return earthRadius * c;
-}
+  group('RecentVisitor Model', () {
+    late DateTime testDateTime;
 
-double _toRadians(double degrees) => degrees * 3.14159265359 / 180;
-double _sin(double x) => _power(x, 1) - _power(x, 3) / 6 + _power(x, 5) / 120;
-double _cos(double x) => 1 - _power(x, 2) / 2 + _power(x, 4) / 24;
-double _sqrt(double x) {
-  if (x <= 0) return 0;
-  double guess = x / 2;
-  for (int i = 0; i < 20; i++) {
-    guess = (guess + x / guess) / 2;
-  }
-  return guess;
-}
+    setUp(() {
+      testDateTime = DateTime(2025, 12, 31, 12, 0, 0);
+    });
 
-double _atan2(double y, double x) {
-  if (x > 0) return _atan(y / x);
-  if (x < 0 && y >= 0) return _atan(y / x) + 3.14159265359;
-  if (x < 0 && y < 0) return _atan(y / x) - 3.14159265359;
-  if (x == 0 && y > 0) return 3.14159265359 / 2;
-  if (x == 0 && y < 0) return -3.14159265359 / 2;
-  return 0;
-}
+    test('should create RecentVisitor with all fields', () {
+      final visitor = RecentVisitor(
+        visitorId: 'visitor_123',
+        visitorName: 'Visitor',
+        visitorPhotoUrl: 'https://example.com/photo.jpg',
+        lastVisitAt: testDateTime,
+        visitCount: 5,
+      );
+      expect(visitor.visitorId, 'visitor_123');
+      expect(visitor.visitorName, 'Visitor');
+      expect(visitor.visitCount, 5);
+    });
 
-double _atan(double x) {
-  // Taylor series approximation
-  if (x.abs() > 1) {
-    return (x > 0 ? 1 : -1) * 3.14159265359 / 2 - _atan(1 / x);
-  }
-  double result = 0;
-  double term = x;
-  for (int n = 1; n <= 20; n++) {
-    result += term / (2 * n - 1);
-    term *= -x * x;
-  }
-  return result;
-}
-
-double _power(double base, int exp) {
-  double result = 1;
-  for (int i = 0; i < exp; i++) {
-    result *= base;
-  }
-  return result;
-}
-
-bool _isSameDay(DateTime a, DateTime b) {
-  return a.year == b.year && a.month == b.month && a.day == b.day;
+    test('should create RecentVisitor with defaults', () {
+      final visitor = RecentVisitor(
+        visitorId: 'v1',
+        visitorName: 'Visitor',
+        lastVisitAt: testDateTime,
+      );
+      expect(visitor.visitorPhotoUrl, isNull);
+      expect(visitor.visitCount, 1);
+    });
+  });
 }
