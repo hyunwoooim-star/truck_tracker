@@ -17,9 +17,39 @@
 | 항목 | 상태 |
 |------|------|
 | 웹 배포 | GitHub Actions CI/CD |
-| Flutter analyze | ✅ 0 errors, 0 warnings (18 infos) |
+| Flutter analyze | ✅ No issues found! (0 errors, 0 warnings, 0 infos) |
 | 핵심 기능 | 100% |
 | 코드 품질 | 최적화 완료 |
+
+---
+
+## 📋 2025-12-31 작업 기록
+
+### ✅ 완료된 작업
+
+#### 1. social_feed 모듈 에러 수정
+- `post.dart`: Freezed 3.x 호환 (abstract class 변환)
+- `social_repository.dart`: Riverpod Ref 타입 수정 (6개 provider)
+- 결과: 9개 에러 → 0개
+
+#### 2. 코드 품질 개선
+- warnings 5개 수정 (미사용 import/변수 제거)
+- infos 18개 수정 (unnecessary_underscores, unnecessary_brace)
+- 결과: **flutter analyze: No issues found!**
+
+#### 3. GitHub Actions CI 개선
+- 3개 워크플로우에 build_runner, analyze, test 단계 추가
+- `web-deploy.yml`, `build-android.yml`, `build-web.yml`
+
+#### 4. CLAUDE.md 규칙 추가
+- Windows flutter test 금지 (impellerc 버그)
+- 테스트는 GitHub Actions CI에서만 실행
+
+### 📊 커밋 히스토리
+- `3f3d7ee`: fix: social_feed Freezed/Riverpod 에러 수정
+- `eca94cd`: docs: NEXT_SESSION_PLAN 업데이트
+- `4262ca4`: ci: GitHub Actions에 테스트 단계 추가
+- `0579f34`: style: 18개 lint infos 수정
 
 ---
 
