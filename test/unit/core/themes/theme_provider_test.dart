@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:truck_tracker/core/themes/app_theme.dart';
 import 'package:truck_tracker/core/themes/theme_provider.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Disable Google Fonts HTTP fetching for tests
+  setUpAll(() {
+    GoogleFonts.config.allowRuntimeFetching = false;
+  });
   group('AppThemeMode', () {
     test('has all expected values', () {
       expect(AppThemeMode.values, contains(AppThemeMode.dark));

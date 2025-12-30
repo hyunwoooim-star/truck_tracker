@@ -7,6 +7,7 @@ import 'package:truck_tracker/features/analytics/data/analytics_repository.dart'
 ///
 /// Tests analytics tracking, statistics calculation, and N+1 query optimization.
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('AnalyticsRepository', () {
     setUp(() {
       // Note: fake_cloud_firestore doesn't support instance injection well,
