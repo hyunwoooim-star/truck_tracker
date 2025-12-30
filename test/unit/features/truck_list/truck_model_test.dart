@@ -317,8 +317,13 @@ void main() {
       });
 
       test('should toggle with copyWith', () {
+        // truck.isFavorite defaults to false, so toggling makes it true
         final toggled = truck.copyWith(isFavorite: !truck.isFavorite);
-        expect(toggled.isFavorite, isFalse);
+        expect(toggled.isFavorite, isTrue);
+
+        // toggle again makes it false
+        final toggledBack = toggled.copyWith(isFavorite: !toggled.isFavorite);
+        expect(toggledBack.isFavorite, isFalse);
       });
     });
 
