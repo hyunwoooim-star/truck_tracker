@@ -45,7 +45,7 @@
 - Windows flutter test 금지 (impellerc 버그)
 - 테스트는 GitHub Actions CI에서만 실행
 
-#### 5. 테스트 커버리지 대폭 개선 (23개 → 40개 파일)
+#### 5. 테스트 커버리지 대폭 개선 (23개 → 43개 파일)
 **기존 테스트**:
 - `payment_model_test.dart`: Payment, PaymentRequest, PaymentResult (15+)
 - `post_model_test.dart`: Post, Comment, PostLike (10+)
@@ -53,7 +53,7 @@
 - `coupon_model_test.dart`: Coupon, CouponType (20+)
 - `daily_schedule_test.dart`: DailySchedule, koreanDays (15+)
 
-**신규 추가 테스트 (12개 파일, 250+ 테스트)**:
+**신규 도메인 모델 테스트 (17개 파일)**:
 - `checkin_model_test.dart`: CheckIn 모델 (12+)
 - `truck_model_test.dart`: Truck, TruckStatus (25+)
 - `ad_unit_ids_test.dart`: AdUnitIds 상수 (13)
@@ -69,8 +69,15 @@
 - `truck_follow_test.dart`: TruckFollow 모델 (15)
 - `visit_verification_test.dart`: VisitVerification, TruckVisitStats, RecentVisitor (18)
 - `walking_route_test.dart`: WalkingRoute, RouteStep, LatLngPoint (25)
+- `truck_detail_test.dart`: TruckDetail 모델 (25)
+- `password_validator_test.dart`: PasswordValidator 유틸 (27)
+- `date_utils_test.dart`: DateTimeExtensions (24)
 
-**총 테스트 파일: 40개 / 총 테스트 케이스: 400+**
+**신규 위젯 테스트 (2개 파일)**:
+- `skeleton_loading_test.dart`: 16개 스켈레톤 위젯 테스트 (25)
+- `toss_card_test.dart`: TossCard, TossListCard, TossTruckCard, TossStatusTag (28)
+
+**총 테스트 파일: 43개 / 총 테스트 케이스: 530+**
 
 ### 📊 커밋 히스토리 (총 11개)
 - `3f3d7ee`: fix: social_feed Freezed/Riverpod 에러 수정
@@ -241,7 +248,7 @@ flutter analyze
   - `owner_announcement.dart` - 공지사항
   - `owner_soldout_toggles.dart` - 품절 관리
   - `owner_talk_section.dart` - 고객 대화
-- [x] 테스트 파일 19 → 40개 (+21, 모든 도메인 모델 커버)
+- [x] 테스트 파일 19 → 43개 (+24, 모든 도메인 모델 + 위젯 테스트)
 - [x] **접근성 개선** (Semantics 라벨 추가)
   - BentoTruckCard에 전체 컨텍스트 Semantics 추가
   - 좋아요/지도 버튼에 Semantics 추가
@@ -408,4 +415,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-31 (테스트 커버리지 대폭 개선: 40개 테스트 파일, 400+ 테스트 케이스)
+**마지막 업데이트**: 2025-12-31 (테스트 커버리지 대폭 개선: 43개 테스트 파일, 530+ 테스트 케이스)
