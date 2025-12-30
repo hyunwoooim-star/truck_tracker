@@ -101,6 +101,21 @@
   - `truck_detail_screen.dart` 수정
   - 주문 확인 → 결제 수단 선택 → 결제 → 주문 생성 → 결과 표시
 
+### 광고 수익화 ✅ 완료
+- [x] **Google AdMob 통합**
+  - `lib/features/ads/data/ad_service.dart` - AdMob SDK 관리
+  - 패키지: `google_mobile_ads: ^5.2.0`
+  - 테스트/프로덕션 광고 ID 분리
+- [x] **배너 광고 위젯**
+  - `banner_ad_widget.dart` - 표준/적응형 배너
+  - FeedScreen 하단에 적용
+- [x] **보상형 광고**
+  - `rewarded_ad_button.dart` - 광고 시청 버튼
+  - 스탬프 카드에 "광고 보고 보너스 스탬프 받기" 추가
+  - `addBonusStamp()` 메서드 추가
+- [x] **전면 광고 (Interstitial)**
+  - AdService에 구현 (화면 전환 시 사용 가능)
+
 ### Phase 6: 멤버십/구독
 - [ ] 방문 횟수 기반 등급 (실버/골드/VIP)
 - [ ] 푸드트럭 패스 (월정액)
@@ -151,4 +166,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-30 (Phase 1-5 완료 - TossPayments 결제 연동)
+**마지막 업데이트**: 2025-12-30 (Phase 1-5 + 광고 수익화 완료 - AdMob 배너/보상형 광고)

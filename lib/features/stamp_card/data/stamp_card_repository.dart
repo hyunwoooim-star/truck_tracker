@@ -212,6 +212,36 @@ class StampCardRepository {
     }
   }
 
+  /// 보너스 스탬프 추가 (광고 시청 보상)
+  Future<StampResult> addBonusStamp({
+    required String userId,
+    required String truckId,
+    required String truckName,
+  }) async {
+    AppLogger.debug('Adding bonus stamp for user $userId at $truckName', tag: 'StampCard');
+
+    try {
+      // 기존 스탬프 카드 찾기
+      final existingCard = await _getStampCard(userId, truckId);
+
+      if (existingCard != null) {
+        // 기존 카드에 보너스 스탬프 추가
+        return await _addStampToExistingCard(existingCard, '', truckName);
+      } else {
+        // 새 카드 생성 (보너스 스탬프 1개)
+        return await _createNewStampCard(
+          visitorId: userId,
+          visitorName: '', // 보너스 스탬프는 이름 불필요
+          truckId: truckId,
+          truckName: truckName,
+        );
+      }
+    } catch (e, stackTrace) {
+      AppLogger.error('Error adding bonus stamp', error: e, stackTrace: stackTrace, tag: 'StampCard');
+      return StampResult.error('보너스 스탬프 추가 중 오류가 발생했습니다');
+    }
+  }
+
   /// 스탬프 카드 스트림 (사용자별 트럭별)
   Stream<StampCard?> watchStampCard(String visitorId, String truckId) {
     return _firestore

@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/snackbar_helper.dart';
+import '../../ads/data/ad_service.dart';
 import '../data/stamp_card_repository.dart';
 import '../domain/stamp_card.dart';
 
@@ -192,6 +195,12 @@ class StampCardWidget extends ConsumerWidget {
               ),
             ],
           ),
+
+          // 보상형 광고로 보너스 스탬프 받기
+          if (!kIsWeb && stampCount < StampCard.maxStamps) ...[
+            const SizedBox(height: 12),
+            _BonusStampAdButton(truckId: truckId, truckName: truckName),
+          ],
         ],
       ),
     );
@@ -307,6 +316,105 @@ class StampBadge extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// 보상형 광고로 보너스 스탬프 받기 버튼
+class _BonusStampAdButton extends ConsumerStatefulWidget {
+  final String truckId;
+  final String truckName;
+
+  const _BonusStampAdButton({
+    required this.truckId,
+    required this.truckName,
+  });
+
+  @override
+  ConsumerState<_BonusStampAdButton> createState() => _BonusStampAdButtonState();
+}
+
+class _BonusStampAdButtonState extends ConsumerState<_BonusStampAdButton> {
+  bool _isLoading = false;
+
+  Future<void> _watchAdForBonusStamp() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final adService = ref.read(adServiceProvider);
+
+    final shown = await adService.showRewardedAd(
+      onRewardEarned: (amount, type) async {
+        // 광고 시청 완료 - 보너스 스탬프 지급
+        try {
+          final repository = ref.read(stampCardRepositoryProvider);
+          await repository.addBonusStamp(
+            userId: user.uid,
+            truckId: widget.truckId,
+            truckName: widget.truckName,
+          );
+
+          if (mounted) {
+            SnackBarHelper.showSuccess(context, '보너스 스탬프 1개를 받았어요! 🎉');
+          }
+        } catch (e) {
+          if (mounted) {
+            SnackBarHelper.showError(context, '스탬프 지급에 실패했습니다');
+          }
+        }
+      },
+      onAdDismissed: () {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      },
+    );
+
+    if (!shown && mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+      SnackBarHelper.showInfo(context, '광고를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: _isLoading ? null : _watchAdForBonusStamp,
+        icon: _isLoading
+            ? const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppTheme.electricBlue,
+                ),
+              )
+            : const Icon(Icons.play_circle_outline, size: 18),
+        label: Text(
+          _isLoading ? '광고 로딩 중...' : '광고 보고 보너스 스탬프 받기',
+          style: const TextStyle(fontSize: 12),
+        ),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppTheme.electricBlue,
+          side: BorderSide(
+            color: AppTheme.electricBlue.withValues(alpha: 0.5),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
     );
   }
 }

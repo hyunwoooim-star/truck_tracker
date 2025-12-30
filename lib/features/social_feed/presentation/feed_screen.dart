@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../ads/presentation/widgets/banner_ad_widget.dart';
 import '../data/social_repository.dart';
 import 'create_post_screen.dart';
 import 'hashtag_search_screen.dart';
@@ -130,6 +131,10 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
         backgroundColor: AppTheme.electricBlue,
         foregroundColor: Colors.black,
         child: const Icon(Icons.add),
+      ),
+      // Banner Ad at bottom
+      bottomNavigationBar: const SafeArea(
+        child: AdaptiveBannerAdWidget(),
       ),
     );
   }

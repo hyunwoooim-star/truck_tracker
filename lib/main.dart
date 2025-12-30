@@ -27,6 +27,7 @@ import 'features/checkin/presentation/customer_checkin_screen.dart';
 import 'features/checkin/presentation/owner_qr_screen.dart';
 import 'features/admin/presentation/admin_screen.dart';
 import 'features/notifications/fcm_service.dart';
+import 'features/ads/data/ad_service.dart';
 import 'firebase_options.dart';
 
 /// Global key for showing foreground notifications
@@ -94,6 +95,9 @@ void main() async {
     if (initialMessage != null) {
       _handleNotificationTap(initialMessage);
     }
+
+    // 📺 ADMOB: Initialize Google Mobile Ads SDK
+    await AdService().initialize();
 
     // 🧹 OPTIMIZATION: Clean old image cache (7 days+) to free storage
     _cleanOldImageCache();
