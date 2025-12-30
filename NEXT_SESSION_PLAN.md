@@ -27,21 +27,26 @@
 
 > 배민/요기요/쿠팡이츠 + 2025 UI/UX 트렌드 분석 기반
 
-### Phase 1: 기술 부채 청산 ⬅️ 현재 진행 중
+### Phase 1: 기술 부채 청산
 - [x] 문서 정리 완료
-- [ ] **Owner Dashboard 분리** (1,570줄 → 6개 위젯)
+- [x] **Owner Dashboard 분리** (1,570줄 → 710줄, 55% 감소)
   - `owner_stats_card.dart` - 통계 카드
   - `owner_order_kanban.dart` - 칸반 보드
   - `owner_quick_actions.dart` - GPS/현금매출 버튼
   - `owner_announcement.dart` - 공지사항
   - `owner_soldout_toggles.dart` - 품절 관리
   - `owner_talk_section.dart` - 고객 대화
-- [ ] 테스트 커버리지 30% → 70%
+- [ ] 테스트 커버리지 30% → 70% ⬅️ 현재 진행 중
 - [ ] 접근성 개선 (Semantics, 색상 대비)
 
-### Phase 2: Cloud Functions 배포
-- [ ] Firebase CLI 설정
-- [ ] 4개 함수 배포 (주문알림, 채팅알림, 일일정리, 통계계산)
+### Phase 2: Cloud Functions 배포 ✅ 완료
+- [x] 6개 함수 배포 완료
+  - createCustomToken (카카오/네이버 인증)
+  - notifyTruckOpening (영업 시작 알림)
+  - notifyOrderStatus (주문 상태 알림)
+  - notifyCouponCreated (쿠폰 발행 알림)
+  - notifyChatMessage (채팅 알림)
+  - notifyNearbyTrucks (근처 트럭 알림)
 
 ### Phase 3: UI/UX 트렌드 적용
 - [ ] Bento Grid 레이아웃 (홈, 트럭상세)
