@@ -11,7 +11,6 @@ import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 import '../../../core/constants/food_types.dart';
 import '../../../core/themes/app_theme.dart';
 import '../services/marker_service.dart';
-import '../../../shared/widgets/status_tag.dart';
 import '../../../shared/widgets/toss_card.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
 import '../../auth/presentation/auth_provider.dart';

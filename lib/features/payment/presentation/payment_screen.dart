@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
-import '../../../generated/l10n/app_localizations.dart';
 import '../../order/domain/cart_item.dart';
 import '../data/payment_repository.dart';
 import '../domain/payment.dart';
@@ -75,7 +74,6 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
     final formatter = NumberFormat('#,###');
 
     return Scaffold(

@@ -53,7 +53,7 @@ final class SocialRepositoryProvider
   }
 }
 
-String _$socialRepositoryHash() => r'a8b62b6868d777b6f0f1b69d2d373630d05d8eda';
+String _$socialRepositoryHash() => r'7d569754b12b03553210270401408164b2eaeeb9';
 
 @ProviderFor(feedPosts)
 final feedPostsProvider = FeedPostsProvider._();
@@ -91,7 +91,7 @@ final class FeedPostsProvider
   }
 }
 
-String _$feedPostsHash() => r'2c64a67d428ab5354453df6a5133ff40801f5598';
+String _$feedPostsHash() => r'41e93199f6a655ad705425c9dac19a751b83d31b';
 
 @ProviderFor(postsByHashtag)
 final postsByHashtagProvider = PostsByHashtagFamily._();
@@ -147,7 +147,7 @@ final class PostsByHashtagProvider
   }
 }
 
-String _$postsByHashtagHash() => r'6c17e814f7ad09c649892fa359967ffb5f0dad32';
+String _$postsByHashtagHash() => r'd027fa98ad418fe4150443e9973eda8dea0a14f8';
 
 final class PostsByHashtagFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Post>>, String> {
@@ -221,7 +221,7 @@ final class PostsByTruckProvider
   }
 }
 
-String _$postsByTruckHash() => r'533ec3a75d28b69b8104461b37a49afef9228d7a';
+String _$postsByTruckHash() => r'1126cda7d36fbcea8899c4b12e76b4be669d4a33';
 
 final class PostsByTruckFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Post>>, String> {
@@ -296,7 +296,7 @@ final class PostCommentsProvider
   }
 }
 
-String _$postCommentsHash() => r'd9520cd354ff08487a8504b56b694b6e62b7082a';
+String _$postCommentsHash() => r'b9e8f1113dac8b1f0ab918d0ec315ca9bbf45651';
 
 final class PostCommentsFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Comment>>, String> {
@@ -353,4 +353,4 @@ final class TrendingHashtagsProvider
   }
 }
 
-String _$trendingHashtagsHash() => r'921d9df7123135ea4bc40cb1fb32478ff2017bbf';
+String _$trendingHashtagsHash() => r'6c9f915fc224dfaad8a184db2d2a7caa243e8029';

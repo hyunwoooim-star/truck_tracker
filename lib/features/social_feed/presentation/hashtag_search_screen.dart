@@ -54,7 +54,6 @@ class _HashtagSearchScreenState extends ConsumerState<HashtagSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
     final trendingAsync = ref.watch(trendingHashtagsProvider);
 
     return Scaffold(

@@ -207,36 +207,36 @@ class SocialRepository {
 }
 
 @riverpod
-SocialRepository socialRepository(SocialRepositoryRef ref) {
+SocialRepository socialRepository(Ref ref) {
   return SocialRepository(FirebaseFirestore.instance);
 }
 
 @riverpod
-Stream<List<Post>> feedPosts(FeedPostsRef ref) {
+Stream<List<Post>> feedPosts(Ref ref) {
   final repository = ref.watch(socialRepositoryProvider);
   return repository.getFeedStream();
 }
 
 @riverpod
-Stream<List<Post>> postsByHashtag(PostsByHashtagRef ref, String hashtag) {
+Stream<List<Post>> postsByHashtag(Ref ref, String hashtag) {
   final repository = ref.watch(socialRepositoryProvider);
   return repository.getPostsByHashtag(hashtag);
 }
 
 @riverpod
-Stream<List<Post>> postsByTruck(PostsByTruckRef ref, String truckId) {
+Stream<List<Post>> postsByTruck(Ref ref, String truckId) {
   final repository = ref.watch(socialRepositoryProvider);
   return repository.getPostsByTruck(truckId);
 }
 
 @riverpod
-Stream<List<Comment>> postComments(PostCommentsRef ref, String postId) {
+Stream<List<Comment>> postComments(Ref ref, String postId) {
   final repository = ref.watch(socialRepositoryProvider);
   return repository.getComments(postId);
 }
 
 @riverpod
-Future<List<String>> trendingHashtags(TrendingHashtagsRef ref) {
+Future<List<String>> trendingHashtags(Ref ref) {
   final repository = ref.watch(socialRepositoryProvider);
   return repository.getTrendingHashtags();
 }

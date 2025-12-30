@@ -6,7 +6,7 @@ part 'post.g.dart';
 
 /// Social feed post model
 @freezed
-class Post with _$Post {
+abstract class Post with _$Post {
   const Post._();
 
   const factory Post({
@@ -94,7 +94,7 @@ class Post with _$Post {
 
 /// Comment on a post
 @freezed
-class Comment with _$Comment {
+abstract class Comment with _$Comment {
   const Comment._();
 
   const factory Comment({
@@ -156,7 +156,7 @@ class Comment with _$Comment {
 
 /// Like reaction on a post or comment
 @freezed
-class PostLike with _$PostLike {
+abstract class PostLike with _$PostLike {
   const factory PostLike({
     required String id,
     required String postId,

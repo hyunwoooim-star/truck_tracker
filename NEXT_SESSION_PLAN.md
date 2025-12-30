@@ -10,16 +10,119 @@
 
 ---
 
-## 현재 상태 (2025-12-30)
+## 현재 상태 (2025-12-30 23:00 업데이트)
 
 **전체 완성도**: 98%+ (프로덕션 배포 완료)
 
 | 항목 | 상태 |
 |------|------|
 | 웹 배포 | GitHub Actions CI/CD |
-| Flutter analyze | 0 issues |
+| Flutter analyze | ⚠️ 32 issues (social_feed 모듈 에러 9개) |
 | 핵심 기능 | 100% |
 | 코드 품질 | 최적화 완료 |
+
+---
+
+## 📋 2025-12-30 작업 기록
+
+### ✅ 완료된 작업
+
+#### 1. WSL1 + Ubuntu 22.04 설치
+- Windows 버전 10.0.18362 (Version 1903) → WSL2 미지원, WSL1로 진행
+- Microsoft Store에서 Ubuntu 22.04 LTS 설치
+- 사용자: `hyunwoo` / 비밀번호 설정 완료
+
+#### 2. WSL에 Flutter 수동 설치
+- snap 미지원으로 수동 설치 진행
+- Flutter 3.38.5 (stable) 설치 완료
+- 경로: `~/flutter/bin`
+- `.bashrc`에 PATH 추가
+
+#### 3. 프로젝트 클론 및 환경 확인
+- `git clone https://github.com/hyunwoooim-star/truck_tracker.git`
+- `flutter pub get` 완료
+- `flutter pub run build_runner build --delete-conflicting-outputs` 완료
+
+#### 4. flutter doctor 결과
+```
+[✓] Flutter (3.38.5, Ubuntu 22.04.5 LTS)
+[✗] Android toolchain (SDK 없음)
+[✗] Chrome (없음)
+[✓] Linux toolchain
+[✓] Connected device (1 available)
+```
+
+### ❌ 실패/보류된 작업
+
+#### SSH/Tailscale 원격 접속 설정
+- **SSH**: PasswordAuthentication 설정했으나 계속 Permission denied
+- **Tailscale**: WSL1에서 TUN 모듈 미지원으로 불가
+- **결론**: WSL1 환경 한계로 원격 접속 불가
+- **대안**: AnyDesk 또는 Chrome 원격 데스크톱 사용 권장
+
+### ⚠️ 발견된 문제
+
+#### social_feed 모듈 에러 (9개)
+```
+error • Undefined class 'SocialRepositoryRef' • social_repository.dart:210
+error • Undefined class 'FeedPostsRef' • social_repository.dart:215
+error • Undefined class 'PostsByHashtagRef' • social_repository.dart:221
+error • Undefined class 'PostsByTruckRef' • social_repository.dart:227
+error • Undefined class 'PostCommentsRef' • social_repository.dart:233
+error • Undefined class 'TrendingHashtagsRef' • social_repository.dart:239
+error • Missing implementations '_$Post' • post.dart:9
+error • Missing implementations '_$Comment' • post.dart:97
+error • Missing implementations '_$PostLike' • post.dart:159
+```
+- **원인**: Riverpod/Freezed 코드 생성 파일이 GitHub에 동기화되지 않음
+- **해결 필요**: Windows에서 코드 수정 후 push
+
+---
+
+## 🔜 다음 세션 TODO
+
+### 우선순위 1: 코드 에러 수정
+- [ ] `social_repository.dart` - Riverpod provider 어노테이션 확인/수정
+- [ ] `post.dart` - Freezed 어노테이션 확인/수정
+- [ ] `flutter pub run build_runner build --delete-conflicting-outputs` 실행
+- [ ] `flutter analyze` → 0 issues 확인
+- [ ] GitHub push
+
+### 우선순위 2: GitHub Secrets 설정
+- [ ] KAKAO_NATIVE_APP_KEY 추가
+- [ ] GOOGLE_MAPS_API_KEY 추가
+
+### 우선순위 3: 카카오/네이버 OAuth 설정
+- [ ] AndroidManifest.xml 카카오 설정
+- [ ] Info.plist 카카오 설정
+- [ ] 네이버 개발자 센터 앱 등록
+
+### 우선순위 4: Firebase 배포
+- [ ] Firestore 규칙 배포
+- [ ] Cloud Functions 배포 (WSL 또는 Windows에서)
+
+---
+
+## 💡 WSL 관련 참고사항
+
+### WSL이 필요한 경우
+- `flutter build web --release`에서 impellerc 버그 발생 시
+
+### WSL 사용 안 해도 되는 경우
+- GitHub Actions로 웹 빌드/배포 중이면 불필요
+- 현재 Live Site 정상 작동 중
+
+### WSL1 한계
+- systemd 미지원 → snap, systemctl 불가
+- TUN 모듈 없음 → Tailscale, VPN 불가
+- SSH 접속 어려움 → AnyDesk 권장
+
+### WSL 시작 명령어 (Ubuntu 창에서)
+```bash
+cd ~/truck_tracker
+flutter pub get
+flutter analyze
+```
 
 ---
 

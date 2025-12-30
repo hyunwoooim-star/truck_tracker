@@ -6,22 +6,51 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## -1. 🚀 Session Start (ALWAYS DO THIS FIRST)
 
-**세션 시작 시 반드시 NEXT_SESSION_PLAN.md를 읽어라.**
+**세션 시작 시 무조건 이 순서대로 실행:**
 
+### 1️⃣ NEXT_SESSION_PLAN.md 읽기 (필수)
 ```bash
-# 1단계: 현재 상태 확인
 Read NEXT_SESSION_PLAN.md
-
-# 2단계: TODO 목록에서 다음 작업 선택
-# 3단계: 작업 완료 후 NEXT_SESSION_PLAN.md 업데이트
 ```
 
-**핵심 파일**:
-- `NEXT_SESSION_PLAN.md` - 현재 상태 & TODO (이것만 읽으면 됨)
-- `CLAUDE.md` - 워크플로우 가이드
-- `PROJECT_CONTEXT.md` - 아키텍처 & 스키마
+### 2️⃣ 브리핑 출력 (3줄 이내)
+```
+📋 현재 상태: [완성도 %]
+⚠️ 이슈: [있으면 표시, 없으면 생략]
+🔜 다음 작업: [TODO 첫 번째 항목]
+```
 
-**과거 문서**: `docs/archive/` (참고용)
+### 3️⃣ 바로 작업 시작 (질문 NO)
+- "뭐 할까요?" 묻지 말고 **바로 다음 TODO 진행**
+- 사용자가 다른 작업 원하면 알아서 말함
+- 브리핑 후 즉시 코드 작업 시작
+
+### 예시
+```
+📋 현재 상태: 98%+ (프로덕션 배포 완료)
+⚠️ 이슈: social_feed 에러 9개
+🔜 다음 작업: social_repository.dart Riverpod 에러 수정
+
+바로 시작합니다. social_repository.dart 파일을 확인하겠습니다.
+[코드 작업 시작...]
+```
+
+---
+
+### 📁 핵심 파일 (이것만 읽으면 됨)
+
+| 파일 | 용도 | 읽는 시점 |
+|------|------|----------|
+| `NEXT_SESSION_PLAN.md` | 현재 상태 & TODO | **세션 시작 시 필수** |
+| `CLAUDE.md` | 워크플로우 규칙 | 이미 컨텍스트에 있음 |
+| `PROJECT_CONTEXT.md` | 아키텍처 참고 | 필요할 때만 |
+
+### ❌ 읽지 말 것 (토큰 낭비)
+- `docs/archive/*` - 과거 문서
+- `ANALYSIS.md` - 이미 정리됨
+- `IMPROVEMENT_PLAN.md` - NEXT_SESSION_PLAN.md에 통합됨
+- `CHANGELOG.md` - 참고용
+- `README.md` - 일반 사용자용
 
 ---
 
@@ -285,9 +314,17 @@ See PROJECT_CONTEXT.md § Development Commands for:
 - **Incremental Commits**: Commit after each logical step prevents re-generating on interruption
 - **Parallel Tool Calls**: Call Read, Grep in parallel when no dependency (2x faster, same tokens)
 
-### [Add new lessons here as you learn]
-- Date: Lesson learned
-- Date: Another lesson
+### 2025-12-30: WSL 환경 설정 & 세션 관리
+- **WSL1 한계**: systemd 미지원(snap 불가), TUN 없음(Tailscale 불가), SSH 접속 어려움
+- **WSL 필수 아님**: GitHub Actions로 빌드 중이면 WSL 불필요
+- **세션 시작**: NEXT_SESSION_PLAN.md만 읽고 브리핑 → 바로 작업 시작 (질문 NO)
+- **폰 원격 작업**: WSL SSH 안 되면 AnyDesk 사용
+- **문서 정리**: 불필요한 문서 읽지 말 것 (토큰 낭비)
+
+### 2025-12-31: 테스트 & 빌드 규칙
+- **flutter test 금지**: Windows에서 impellerc 버그로 flutter test/dart test 실행 불가
+- **테스트 방법**: GitHub Actions CI에서만 테스트 실행 (push 후 자동)
+- **로컬 검증**: flutter analyze만 사용, 테스트는 CI에 맡김
 
 ---
 
