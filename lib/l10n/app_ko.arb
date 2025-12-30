@@ -405,5 +405,18 @@
   "accountHolderHint": "예: 홍길동",
   "bankAccountSaved": "계좌 정보가 저장되었습니다",
   "bankAccountFormat": "{bank} {number} ({holder})",
-  "pleaseFillAllFields": "모든 항목을 입력해주세요"
+  "pleaseFillAllFields": "모든 항목을 입력해주세요",
+
+  "tapToViewDetails": "상세 보기를 탭하세요",
+  "ranked": "{rank}위",
+  "@ranked": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "operating": "운행 중",
+  "resting": "휴식 중",
+  "maintenance": "점검 중"
 }

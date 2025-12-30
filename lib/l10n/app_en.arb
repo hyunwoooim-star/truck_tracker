@@ -507,5 +507,18 @@
   "accountHolderHint": "e.g., John Doe",
   "bankAccountSaved": "Bank account saved",
   "bankAccountFormat": "{bank} {number} ({holder})",
-  "pleaseFillAllFields": "Please fill in all fields"
+  "pleaseFillAllFields": "Please fill in all fields",
+
+  "tapToViewDetails": "Tap to view details",
+  "ranked": "Ranked #{rank}",
+  "@ranked": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "operating": "Operating",
+  "resting": "Resting",
+  "maintenance": "Maintenance"
 }

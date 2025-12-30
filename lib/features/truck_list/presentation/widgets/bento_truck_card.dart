@@ -108,15 +108,32 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
     final l10n = AppLocalizations.of(context);
     final isClosed = truck.status == TruckStatus.maintenance;
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => TruckDetailScreen(truck: truck),
-          ),
-        );
-      },
-      child: _buildCardBySize(truck, l10n, isClosed),
+    // Accessibility: Build semantic description
+    final statusText = truck.status == TruckStatus.onRoute
+        ? l10n.operating
+        : truck.status == TruckStatus.resting
+            ? l10n.resting
+            : l10n.maintenance;
+    final distanceText = widget.truckWithDistance.distanceInMeters != double.infinity
+        ? ', ${widget.truckWithDistance.distanceText}'
+        : '';
+    final rankText = widget.rank != null ? ', ${l10n.ranked(widget.rank!)}' : '';
+    final semanticLabel = '${truck.truckNumber}, ${truck.foodType}, $statusText$distanceText$rankText. ${l10n.tapToViewDetails}';
+
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      enabled: true,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => TruckDetailScreen(truck: truck),
+            ),
+          );
+        },
+        child: _buildCardBySize(truck, l10n, isClosed),
+      ),
     );
   }
 
@@ -500,65 +517,76 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
 
   /// Animated like button with micro-interaction
   Widget _buildLikeButton({bool compact = false, bool mini = false}) {
-    return AnimatedBuilder(
-      animation: _likeScale,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _likeScale.value,
-          child: mini
-              ? GestureDetector(
-                  onTap: _onLikeTap,
-                  child: Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.4),
-                      shape: BoxShape.circle,
+    final l10n = AppLocalizations.of(context);
+    final semanticLabel = _isLiked ? l10n.favoriteRemoved : l10n.favoriteSuccess;
+
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      child: AnimatedBuilder(
+        animation: _likeScale,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _likeScale.value,
+            child: mini
+                ? GestureDetector(
+                    onTap: _onLikeTap,
+                    child: Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.4),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        _isLiked ? Icons.favorite : Icons.favorite_border,
+                        size: 16,
+                        color: _isLiked ? Colors.red : Colors.white,
+                      ),
                     ),
-                    child: Icon(
+                  )
+                : IconButton(
+                    onPressed: _onLikeTap,
+                    icon: Icon(
                       _isLiked ? Icons.favorite : Icons.favorite_border,
-                      size: 16,
-                      color: _isLiked ? Colors.red : Colors.white,
+                      color: _isLiked ? Colors.red : AppTheme.textTertiary,
                     ),
+                    iconSize: compact ? 20 : 24,
+                    padding: compact ? EdgeInsets.zero : null,
+                    constraints: compact
+                        ? const BoxConstraints(minWidth: 32, minHeight: 32)
+                        : null,
                   ),
-                )
-              : IconButton(
-                  onPressed: _onLikeTap,
-                  icon: Icon(
-                    _isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: _isLiked ? Colors.red : AppTheme.textTertiary,
-                  ),
-                  iconSize: compact ? 20 : 24,
-                  padding: compact ? EdgeInsets.zero : null,
-                  constraints: compact
-                      ? const BoxConstraints(minWidth: 32, minHeight: 32)
-                      : null,
-                ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
   /// Map button
   Widget _buildMapButton(Truck truck, AppLocalizations l10n, {bool compact = false}) {
-    return IconButton(
-      onPressed: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => TruckMapScreen(
-              initialTruckId: truck.id,
-              initialLatLng: LatLng(truck.latitude, truck.longitude),
+    return Semantics(
+      label: l10n.viewOnMap,
+      button: true,
+      child: IconButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => TruckMapScreen(
+                initialTruckId: truck.id,
+                initialLatLng: LatLng(truck.latitude, truck.longitude),
+              ),
             ),
-          ),
-        );
-      },
-      icon: const Icon(Icons.location_on, color: AppTheme.electricBlue),
-      iconSize: compact ? 20 : 24,
-      padding: compact ? EdgeInsets.zero : null,
-      constraints: compact
-          ? const BoxConstraints(minWidth: 32, minHeight: 32)
-          : null,
-      tooltip: l10n.viewOnMap,
+          );
+        },
+        icon: const Icon(Icons.location_on, color: AppTheme.electricBlue),
+        iconSize: compact ? 20 : 24,
+        padding: compact ? EdgeInsets.zero : null,
+        constraints: compact
+            ? const BoxConstraints(minWidth: 32, minHeight: 32)
+            : null,
+        tooltip: l10n.viewOnMap,
+      ),
     );
   }
 
