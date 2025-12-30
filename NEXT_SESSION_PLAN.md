@@ -48,9 +48,11 @@
 #### 5. 테스트 커버리지 개선
 - `payment_model_test.dart`: Payment, PaymentRequest, PaymentResult 테스트 (15+)
 - `post_model_test.dart`: Post, Comment, PostLike 테스트 (10+)
-- 총 25+ 새 단위 테스트 추가
+- `review_model_test.dart`: Review 테스트 (10+)
+- `coupon_model_test.dart`: Coupon, CouponType 테스트 (20+)
+- **총 55+ 새 단위 테스트 추가**
 
-### 📊 커밋 히스토리
+### 📊 커밋 히스토리 (총 9개)
 - `3f3d7ee`: fix: social_feed Freezed/Riverpod 에러 수정
 - `eca94cd`: docs: NEXT_SESSION_PLAN 업데이트
 - `4262ca4`: ci: GitHub Actions에 테스트 단계 추가
@@ -58,6 +60,8 @@
 - `cd9a83b`: docs: 2025-12-31 작업 기록 추가
 - `2b40e17`: docs: CI/CD 개선 완료 표시
 - `be43db5`: test: Payment, Post 모델 테스트 추가
+- `672399c`: docs: 테스트 커버리지 업데이트
+- `39730d9`: test: Review, Coupon 모델 테스트 추가
 
 ---
 
