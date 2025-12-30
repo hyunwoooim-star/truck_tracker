@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/services/geocoding_service.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
@@ -1062,12 +1063,9 @@ void _showNavigationDialog(BuildContext context, Truck truck, AppLocalizations l
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            '${l10n.location}: ${truck.latitude.toStringAsFixed(4)}, ${truck.longitude.toStringAsFixed(4)}',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+          _AddressText(
+            latitude: truck.latitude,
+            longitude: truck.longitude,
           ),
           const SizedBox(height: 20),
           Text(
@@ -1340,6 +1338,99 @@ Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLo
     if (context.mounted) {
       SnackBarHelper.showError(context, l10n.orderFailed('$e'));
     }
+  }
+}
+
+/// Widget that displays address from coordinates
+class _AddressText extends StatefulWidget {
+  const _AddressText({
+    required this.latitude,
+    required this.longitude,
+  });
+
+  final double latitude;
+  final double longitude;
+
+  @override
+  State<_AddressText> createState() => _AddressTextState();
+}
+
+class _AddressTextState extends State<_AddressText> {
+  String? _address;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAddress();
+  }
+
+  Future<void> _loadAddress() async {
+    try {
+      final address = await GeocodingService().getAddressFromCoordinates(
+        widget.latitude,
+        widget.longitude,
+      );
+      if (mounted) {
+        setState(() {
+          _address = address;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _address = '${widget.latitude.toStringAsFixed(4)}, ${widget.longitude.toStringAsFixed(4)}';
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Row(
+        children: [
+          SizedBox(
+            width: 12,
+            height: 12,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.grey[400],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '주소 확인 중...',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Row(
+      children: [
+        Icon(
+          Icons.place,
+          size: 16,
+          color: Colors.grey[600],
+        ),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Text(
+            _address ?? '',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
