@@ -33,7 +33,7 @@ void main() {
           userId: 'user_1',
           userName: 'User1',
           rating: 5,
-          content: 'Great food!',
+          comment: 'Great food!',
           createdAt: testDateTime,
         ),
       ];
@@ -96,7 +96,7 @@ void main() {
     group('reviews', () {
       test('should contain correct reviews', () {
         expect(truckDetail.reviews[0].rating, 5);
-        expect(truckDetail.reviews[0].content, 'Great food!');
+        expect(truckDetail.reviews[0].comment, 'Great food!');
       });
 
       test('should handle empty reviews list', () {
