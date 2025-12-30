@@ -1,6 +1,7 @@
 # Truck Tracker - 세션 시작 가이드
 
 > **세션 시작 시 이 파일만 읽으면 됨**
+> **앱 컨셉**: 푸드트럭 위치 찾기 + 선결제/선주문 + 직접 픽업 (배달 X)
 
 ## 링크
 - **Live**: https://hyunwoooim-star.github.io/truck_tracker/
@@ -22,33 +23,64 @@
 
 ---
 
-## 다음 할 일 (TODO)
+## 🚀 10단계 개선 로드맵
 
-### 우선순위 높음
-- [ ] Cloud Functions 배포 (Firebase CLI 필요)
-- [ ] 테스트 버튼 제거 (login_screen.dart - kDebugMode 조건 추가)
+> 배민/요기요/쿠팡이츠 + 2025 UI/UX 트렌드 분석 기반
 
-### 우선순위 중간
-- [ ] Google Sign-In 웹 설정 (web/index.html OAuth Client ID)
-- [ ] 주요 Feature 테스트 추가 (auth, order, chat)
+### Phase 1: 기술 부채 청산 ⬅️ 현재 진행 중
+- [x] 문서 정리 완료
+- [ ] **Owner Dashboard 분리** (1,570줄 → 6개 위젯)
+  - `owner_stats_card.dart` - 통계 카드
+  - `owner_order_kanban.dart` - 칸반 보드
+  - `owner_quick_actions.dart` - GPS/현금매출 버튼
+  - `owner_announcement.dart` - 공지사항
+  - `owner_soldout_toggles.dart` - 품절 관리
+  - `owner_talk_section.dart` - 고객 대화
+- [ ] 테스트 커버리지 30% → 70%
+- [ ] 접근성 개선 (Semantics, 색상 대비)
 
-### 우선순위 낮음
-- [ ] 결제 연동 (Phase 14)
-- [ ] 오프라인 모드
+### Phase 2: Cloud Functions 배포
+- [ ] Firebase CLI 설정
+- [ ] 4개 함수 배포 (주문알림, 채팅알림, 일일정리, 통계계산)
 
----
+### Phase 3: UI/UX 트렌드 적용
+- [ ] Bento Grid 레이아웃 (홈, 트럭상세)
+- [ ] 대형 이미지 + 타이포그래피
+- [ ] Micro-interactions (좋아요 애니메이션)
+- [ ] Glassmorphism 카드
 
-## 최근 완료 작업
+### Phase 4: 소셜 피드
+- [ ] Instagram 스타일 트럭/음식 사진 피드
+- [ ] 좋아요 + 댓글
+- [ ] 해시태그 검색
 
-### 2025-12-30
-- 스탬프 카드 시스템 + 방문 인증 연동
-- 커스텀 트럭 마커 아이콘
-- 근처 트럭 알림 (Pokemon GO 스타일)
-- withOpacity() 100% 상수화 완료
-- SnackBarHelper 유틸리티
-- 비밀번호 검증 강화 (password_validator.dart)
-- 테스트 의존성 복원 (fake_cloud_firestore)
-- 문서 정리 (23개 → docs/archive/)
+### Phase 5: 결제 연동
+- [ ] TossPayments (1순위)
+- [ ] KakaoPay (2순위)
+- [ ] 선결제 → 픽업 플로우
+
+### Phase 6: 멤버십/구독
+- [ ] 방문 횟수 기반 등급 (실버/골드/VIP)
+- [ ] 푸드트럭 패스 (월정액)
+
+### Phase 7: AI 개인화
+- [ ] 사용자 취향 기반 트럭 추천
+- [ ] 시간대별/날씨별 메뉴 추천
+
+### Phase 8: 픽업 최적화 (배달 X)
+- [ ] 도보 경로 안내 (Google Maps)
+- [ ] 예상 도착 시간 표시
+- [ ] 픽업 준비 완료 알림
+
+### Phase 9: 관리자 대시보드 강화
+- [ ] 실시간 통계
+- [ ] 매출 리포트
+- [ ] 푸시 알림 발송 도구
+
+### Phase 10: 성능 최적화
+- [ ] 이미지 lazy loading
+- [ ] 오프라인 모드 (Hive)
+- [ ] PWA 강화
 
 ---
 
@@ -68,7 +100,7 @@ git add . && git commit -m "message" && git push
 ```
 lib/
 ├── core/           # 테마, 상수, 유틸
-├── features/       # 기능 모듈 (19개)
+├── features/       # 기능 모듈 (23개)
 ├── shared/         # 공유 위젯
 └── main.dart
 
@@ -77,4 +109,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-30 23:50
+**마지막 업데이트**: 2025-12-30 (10단계 로드맵 추가)
