@@ -27,7 +27,7 @@
 
 > 배민/요기요/쿠팡이츠 + 2025 UI/UX 트렌드 분석 기반
 
-### Phase 1: 기술 부채 청산
+### Phase 1: 기술 부채 청산 ✅ 완료
 - [x] 문서 정리 완료
 - [x] **Owner Dashboard 분리** (1,570줄 → 710줄, 55% 감소)
   - `owner_stats_card.dart` - 통계 카드
@@ -37,7 +37,10 @@
   - `owner_soldout_toggles.dart` - 품절 관리
   - `owner_talk_section.dart` - 고객 대화
 - [x] 테스트 파일 19 → 23개 (+4, auth/stamp_card/visit_verification/owner_dashboard)
-- [ ] 접근성 개선 (Semantics, 색상 대비)
+- [x] **접근성 개선** (Semantics 라벨 추가)
+  - BentoTruckCard에 전체 컨텍스트 Semantics 추가
+  - 좋아요/지도 버튼에 Semantics 추가
+  - 새 l10n 문자열 추가 (tapToViewDetails, ranked, operating/resting/maintenance)
 
 ### Phase 2: Cloud Functions 배포 ✅ 완료
 - [x] 6개 함수 배포 완료
@@ -122,4 +125,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-30 (Phase 3 UI/UX 트렌드 적용 - Bento Grid, Glassmorphism, Micro-interactions 완료)
+**마지막 업데이트**: 2025-12-30 (Phase 1, 2, 3 완료 - Bento Grid, Glassmorphism, 접근성 개선)
