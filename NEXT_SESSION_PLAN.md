@@ -51,7 +51,7 @@
   - notifyChatMessage (채팅 알림)
   - notifyNearbyTrucks (근처 트럭 알림)
 
-### Phase 3: UI/UX 트렌드 적용 ✅ 진행 중
+### Phase 3: UI/UX 트렌드 적용 ✅ 완료
 - [x] **Bento Grid 레이아웃** (TruckListScreen 적용 완료)
   - `bento_truck_card.dart` - 3가지 크기 카드 (Large/Medium/Small)
   - `bento_truck_grid.dart` - MasonryGridView 기반 스태거드 그리드
@@ -63,12 +63,25 @@
 - [x] **Glassmorphism 카드** (Large 카드 하단 패널)
   - BackdropFilter + ImageFilter.blur
   - 반투명 배경 + 테두리
-- [ ] TruckDetailScreen에 Bento Grid 적용
 
-### Phase 4: 소셜 피드
-- [ ] Instagram 스타일 트럭/음식 사진 피드
-- [ ] 좋아요 + 댓글
-- [ ] 해시태그 검색
+### Phase 4: 소셜 피드 ✅ 완료
+- [x] **Instagram 스타일 트럭/음식 사진 피드**
+  - `lib/features/social_feed/domain/post.dart` - Freezed 모델 (Post, Comment, PostLike)
+  - `lib/features/social_feed/data/social_repository.dart` - Firestore CRUD
+  - `lib/features/social_feed/presentation/feed_screen.dart` - 메인 피드
+  - `lib/features/social_feed/presentation/widgets/post_card.dart` - 게시물 카드
+- [x] **좋아요 + 댓글**
+  - 실시간 좋아요 카운트 (Firestore Transaction)
+  - 댓글 Bottom Sheet (`comments_sheet.dart`)
+  - 애니메이션 좋아요 버튼 (elasticOut curve)
+- [x] **해시태그 검색**
+  - `hashtag_search_screen.dart` - 인기 해시태그 + 검색
+  - 해시태그별 게시물 필터링
+  - 본문에서 자동 해시태그 추출
+- [x] **게시물 작성**
+  - `create_post_screen.dart` - 다중 이미지 업로드
+  - Firebase Storage 연동
+  - 추천 해시태그 제안
 
 ### Phase 5: 결제 연동
 - [ ] TossPayments (1순위)
@@ -125,4 +138,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-30 (Phase 1, 2, 3 완료 - Bento Grid, Glassmorphism, 접근성 개선)
+**마지막 업데이트**: 2025-12-30 (Phase 1, 2, 3, 4 완료 - 소셜 피드 Instagram 스타일 구현)
