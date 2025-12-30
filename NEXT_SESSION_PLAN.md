@@ -45,13 +45,32 @@
 - Windows flutter test 금지 (impellerc 버그)
 - 테스트는 GitHub Actions CI에서만 실행
 
-#### 5. 테스트 커버리지 개선
-- `payment_model_test.dart`: Payment, PaymentRequest, PaymentResult 테스트 (15+)
-- `post_model_test.dart`: Post, Comment, PostLike 테스트 (10+)
-- `review_model_test.dart`: Review 테스트 (10+)
-- `coupon_model_test.dart`: Coupon, CouponType 테스트 (20+)
-- `daily_schedule_test.dart`: DailySchedule, koreanDays 테스트 (15+)
-- **총 70+ 새 단위 테스트 추가**
+#### 5. 테스트 커버리지 대폭 개선 (23개 → 40개 파일)
+**기존 테스트**:
+- `payment_model_test.dart`: Payment, PaymentRequest, PaymentResult (15+)
+- `post_model_test.dart`: Post, Comment, PostLike (10+)
+- `review_model_test.dart`: Review (10+)
+- `coupon_model_test.dart`: Coupon, CouponType (20+)
+- `daily_schedule_test.dart`: DailySchedule, koreanDays (15+)
+
+**신규 추가 테스트 (12개 파일, 250+ 테스트)**:
+- `checkin_model_test.dart`: CheckIn 모델 (12+)
+- `truck_model_test.dart`: Truck, TruckStatus (25+)
+- `ad_unit_ids_test.dart`: AdUnitIds 상수 (13)
+- `notification_model_test.dart`: AppNotification, NotificationType (22)
+- `notification_settings_test.dart`: NotificationSettings (28)
+- `app_user_test.dart`: AppUser 모델 (28)
+- `menu_item_test.dart`: MenuItem 모델 (22)
+- `chat_room_test.dart`: ChatRoom 모델 (20)
+- `chat_message_test.dart`: ChatMessage 모델 (20)
+- `cart_item_test.dart`: CartItem 모델 (18)
+- `stamp_card_test.dart`: StampCard, Reward, RewardType (35+)
+- `talk_message_test.dart`: TalkMessage 모델 (20)
+- `truck_follow_test.dart`: TruckFollow 모델 (15)
+- `visit_verification_test.dart`: VisitVerification, TruckVisitStats, RecentVisitor (18)
+- `walking_route_test.dart`: WalkingRoute, RouteStep, LatLngPoint (25)
+
+**총 테스트 파일: 40개 / 총 테스트 케이스: 400+**
 
 ### 📊 커밋 히스토리 (총 11개)
 - `3f3d7ee`: fix: social_feed Freezed/Riverpod 에러 수정
@@ -222,7 +241,7 @@ flutter analyze
   - `owner_announcement.dart` - 공지사항
   - `owner_soldout_toggles.dart` - 품절 관리
   - `owner_talk_section.dart` - 고객 대화
-- [x] 테스트 파일 19 → 23개 (+4, auth/stamp_card/visit_verification/owner_dashboard)
+- [x] 테스트 파일 19 → 40개 (+21, 모든 도메인 모델 커버)
 - [x] **접근성 개선** (Semantics 라벨 추가)
   - BentoTruckCard에 전체 컨텍스트 Semantics 추가
   - 좋아요/지도 버튼에 Semantics 추가
@@ -389,4 +408,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-30 (보안 개선: API 키 dart-define 적용, 사용자 필수 작업 가이드 추가)
+**마지막 업데이트**: 2025-12-31 (테스트 커버리지 대폭 개선: 40개 테스트 파일, 400+ 테스트 케이스)
