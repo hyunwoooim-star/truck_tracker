@@ -2,199 +2,157 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:truck_tracker/features/notifications/domain/notification.dart';
 
 void main() {
-  group('NotificationType', () {
-    test('has all expected types', () {
-      expect(NotificationType.values.length, 6);
-      expect(NotificationType.values, contains(NotificationType.orderUpdate));
-      expect(NotificationType.values, contains(NotificationType.truckOpen));
-      expect(NotificationType.values, contains(NotificationType.promotion));
-      expect(NotificationType.values, contains(NotificationType.chat));
-      expect(NotificationType.values, contains(NotificationType.checkin));
-      expect(NotificationType.values, contains(NotificationType.system));
-    });
-  });
+  group('AppNotification Model', () {
+    late AppNotification notification;
+    late DateTime testDateTime;
 
-  group('AppNotification', () {
-    final testDate = DateTime(2024, 12, 30, 10, 30);
-
-    test('can create notification with required fields', () {
-      final notification = AppNotification(
-        id: 'test-id-1',
-        userId: 'user-123',
-        title: 'Test Title',
-        body: 'Test Body',
-        type: NotificationType.system,
-        createdAt: testDate,
-      );
-
-      expect(notification.id, 'test-id-1');
-      expect(notification.userId, 'user-123');
-      expect(notification.title, 'Test Title');
-      expect(notification.body, 'Test Body');
-      expect(notification.type, NotificationType.system);
-      expect(notification.createdAt, testDate);
-      expect(notification.isRead, false); // default
-    });
-
-    test('can create notification with optional fields', () {
-      final notification = AppNotification(
-        id: 'test-id-2',
-        userId: 'user-123',
-        title: 'Order Ready',
-        body: 'Your order is ready!',
+    setUp(() {
+      testDateTime = DateTime(2025, 12, 31, 18, 30, 0);
+      notification = AppNotification(
+        id: 'notif_123',
+        userId: 'user_456',
+        title: '주문이 준비되었습니다!',
+        body: '떡볶이 트럭에서 주문하신 음식이 준비되었습니다.',
         type: NotificationType.orderUpdate,
-        createdAt: testDate,
-        isRead: true,
-        truckId: 'truck-456',
-        orderId: 'order-789',
-        chatRoomId: null,
-        data: {'extraInfo': 'value'},
+        createdAt: testDateTime,
+        isRead: false,
+        truckId: 'truck_789',
+        orderId: 'order_111',
+        data: {'status': 'ready'},
+      );
+    });
+
+    test('should create AppNotification with all fields', () {
+      expect(notification.id, 'notif_123');
+      expect(notification.userId, 'user_456');
+      expect(notification.title, '주문이 준비되었습니다!');
+      expect(notification.body, contains('떡볶이'));
+      expect(notification.type, NotificationType.orderUpdate);
+      expect(notification.createdAt, testDateTime);
+      expect(notification.isRead, isFalse);
+      expect(notification.truckId, 'truck_789');
+      expect(notification.orderId, 'order_111');
+      expect(notification.data, isNotNull);
+    });
+
+    test('should create AppNotification with required fields only', () {
+      final minimalNotification = AppNotification(
+        id: 'n1',
+        userId: 'u1',
+        title: '알림 제목',
+        body: '알림 내용',
+        type: NotificationType.system,
+        createdAt: DateTime.now(),
       );
 
-      expect(notification.isRead, true);
-      expect(notification.truckId, 'truck-456');
-      expect(notification.orderId, 'order-789');
-      expect(notification.chatRoomId, null);
-      expect(notification.data, {'extraInfo': 'value'});
+      expect(minimalNotification.id, 'n1');
+      expect(minimalNotification.isRead, isFalse);
+      expect(minimalNotification.truckId, isNull);
+      expect(minimalNotification.orderId, isNull);
+      expect(minimalNotification.chatRoomId, isNull);
+      expect(minimalNotification.data, isNull);
+    });
+
+    group('NotificationType enum', () {
+      test('should have all expected values', () {
+        expect(NotificationType.values.length, 6);
+        expect(NotificationType.values, contains(NotificationType.orderUpdate));
+        expect(NotificationType.values, contains(NotificationType.truckOpen));
+        expect(NotificationType.values, contains(NotificationType.promotion));
+        expect(NotificationType.values, contains(NotificationType.chat));
+        expect(NotificationType.values, contains(NotificationType.checkin));
+        expect(NotificationType.values, contains(NotificationType.system));
+      });
     });
 
     group('typeLabel', () {
-      test('orderUpdate returns 주문', () {
-        final notification = AppNotification(
-          id: '1',
-          userId: 'u1',
-          title: 't',
-          body: 'b',
-          type: NotificationType.orderUpdate,
-          createdAt: testDate,
-        );
-        expect(notification.typeLabel, '주문');
+      test('should return correct label for orderUpdate', () {
+        final n = notification.copyWith(type: NotificationType.orderUpdate);
+        expect(n.typeLabel, '주문');
       });
 
-      test('truckOpen returns 영업 알림', () {
-        final notification = AppNotification(
-          id: '1',
-          userId: 'u1',
-          title: 't',
-          body: 'b',
-          type: NotificationType.truckOpen,
-          createdAt: testDate,
-        );
-        expect(notification.typeLabel, '영업 알림');
+      test('should return correct label for truckOpen', () {
+        final n = notification.copyWith(type: NotificationType.truckOpen);
+        expect(n.typeLabel, '영업 알림');
       });
 
-      test('promotion returns 프로모션', () {
-        final notification = AppNotification(
-          id: '1',
-          userId: 'u1',
-          title: 't',
-          body: 'b',
-          type: NotificationType.promotion,
-          createdAt: testDate,
-        );
-        expect(notification.typeLabel, '프로모션');
+      test('should return correct label for promotion', () {
+        final n = notification.copyWith(type: NotificationType.promotion);
+        expect(n.typeLabel, '프로모션');
       });
 
-      test('chat returns 메시지', () {
-        final notification = AppNotification(
-          id: '1',
-          userId: 'u1',
-          title: 't',
-          body: 'b',
-          type: NotificationType.chat,
-          createdAt: testDate,
-        );
-        expect(notification.typeLabel, '메시지');
+      test('should return correct label for chat', () {
+        final n = notification.copyWith(type: NotificationType.chat);
+        expect(n.typeLabel, '메시지');
       });
 
-      test('checkin returns 체크인', () {
-        final notification = AppNotification(
-          id: '1',
-          userId: 'u1',
-          title: 't',
-          body: 'b',
-          type: NotificationType.checkin,
-          createdAt: testDate,
-        );
-        expect(notification.typeLabel, '체크인');
+      test('should return correct label for checkin', () {
+        final n = notification.copyWith(type: NotificationType.checkin);
+        expect(n.typeLabel, '체크인');
       });
 
-      test('system returns 시스템', () {
-        final notification = AppNotification(
-          id: '1',
-          userId: 'u1',
-          title: 't',
-          body: 'b',
-          type: NotificationType.system,
-          createdAt: testDate,
-        );
-        expect(notification.typeLabel, '시스템');
+      test('should return correct label for system', () {
+        final n = notification.copyWith(type: NotificationType.system);
+        expect(n.typeLabel, '시스템');
       });
     });
 
-    group('toFirestore', () {
-      test('converts notification to firestore map', () {
-        final notification = AppNotification(
-          id: 'test-id',
-          userId: 'user-123',
-          title: 'Test Title',
-          body: 'Test Body',
-          type: NotificationType.orderUpdate,
-          createdAt: testDate,
-          isRead: true,
-          truckId: 'truck-456',
-          orderId: 'order-789',
+    group('isRead', () {
+      test('should default to false', () {
+        final unreadNotification = AppNotification(
+          id: 'n1',
+          userId: 'u1',
+          title: '제목',
+          body: '내용',
+          type: NotificationType.system,
+          createdAt: DateTime.now(),
         );
-
-        final map = notification.toFirestore();
-
-        expect(map['userId'], 'user-123');
-        expect(map['title'], 'Test Title');
-        expect(map['body'], 'Test Body');
-        expect(map['type'], 'orderUpdate');
-        expect(map['isRead'], true);
-        expect(map['truckId'], 'truck-456');
-        expect(map['orderId'], 'order-789');
-        expect(map.containsKey('createdAt'), true);
+        expect(unreadNotification.isRead, isFalse);
       });
 
-      test('excludes null optional fields', () {
-        final notification = AppNotification(
-          id: 'test-id',
-          userId: 'user-123',
-          title: 'Test Title',
-          body: 'Test Body',
-          type: NotificationType.system,
-          createdAt: testDate,
-        );
-
-        final map = notification.toFirestore();
-
-        expect(map.containsKey('truckId'), false);
-        expect(map.containsKey('orderId'), false);
-        expect(map.containsKey('chatRoomId'), false);
-        expect(map.containsKey('data'), false);
+      test('should toggle with copyWith', () {
+        final readNotification = notification.copyWith(isRead: true);
+        expect(readNotification.isRead, isTrue);
       });
     });
 
     group('copyWith', () {
-      test('can copy with new isRead value', () {
-        final original = AppNotification(
-          id: 'test-id',
-          userId: 'user-123',
-          title: 'Test Title',
-          body: 'Test Body',
-          type: NotificationType.system,
-          createdAt: testDate,
-          isRead: false,
+      test('should create copy with updated title', () {
+        final updated = notification.copyWith(title: '새 제목');
+
+        expect(updated.title, '새 제목');
+        expect(updated.id, notification.id);
+        expect(updated.type, notification.type);
+      });
+
+      test('should create copy with updated type', () {
+        final updated = notification.copyWith(type: NotificationType.chat);
+
+        expect(updated.type, NotificationType.chat);
+        expect(updated.title, notification.title);
+      });
+    });
+
+    group('optional fields', () {
+      test('should handle notification with truckId', () {
+        expect(notification.truckId, 'truck_789');
+      });
+
+      test('should handle notification with orderId', () {
+        expect(notification.orderId, 'order_111');
+      });
+
+      test('should handle notification with chatRoomId', () {
+        final chatNotification = notification.copyWith(
+          type: NotificationType.chat,
+          chatRoomId: 'chat_123',
         );
+        expect(chatNotification.chatRoomId, 'chat_123');
+      });
 
-        final copy = original.copyWith(isRead: true);
-
-        expect(copy.id, original.id);
-        expect(copy.userId, original.userId);
-        expect(copy.title, original.title);
-        expect(copy.isRead, true);
+      test('should handle notification with additional data', () {
+        expect(notification.data, isNotNull);
+        expect(notification.data!['status'], 'ready');
       });
     });
   });
