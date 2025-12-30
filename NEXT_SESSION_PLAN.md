@@ -115,10 +115,16 @@ error • Missing implementations '_$PostLike' • post.dart:159
 - [x] `social_repository.dart` - Riverpod Ref 타입 수정 (6개 provider)
 - [x] `post.dart` - Freezed 3.x abstract class 변환
 - [x] `flutter pub run build_runner build --delete-conflicting-outputs` 실행
-- [x] `flutter analyze` → 0 errors, 0 warnings
+- [x] `flutter analyze` → **No issues found!**
 - [x] GitHub push
 
-### 우선순위 2: GitHub Secrets 설정
+### ✅ 우선순위 1.5: CI/CD 개선 (2025-12-31 완료)
+- [x] GitHub Actions 워크플로우에 build_runner 추가
+- [x] GitHub Actions 워크플로우에 flutter analyze 추가
+- [x] GitHub Actions 워크플로우에 flutter test 추가
+- [x] 18개 lint infos 수정
+
+### 우선순위 2: GitHub Secrets 설정 (사용자 수동 작업)
 - [ ] KAKAO_NATIVE_APP_KEY 추가
 - [ ] GOOGLE_MAPS_API_KEY 추가
 
