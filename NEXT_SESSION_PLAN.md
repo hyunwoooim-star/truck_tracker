@@ -50,9 +50,10 @@
 - `post_model_test.dart`: Post, Comment, PostLike 테스트 (10+)
 - `review_model_test.dart`: Review 테스트 (10+)
 - `coupon_model_test.dart`: Coupon, CouponType 테스트 (20+)
-- **총 55+ 새 단위 테스트 추가**
+- `daily_schedule_test.dart`: DailySchedule, koreanDays 테스트 (15+)
+- **총 70+ 새 단위 테스트 추가**
 
-### 📊 커밋 히스토리 (총 9개)
+### 📊 커밋 히스토리 (총 11개)
 - `3f3d7ee`: fix: social_feed Freezed/Riverpod 에러 수정
 - `eca94cd`: docs: NEXT_SESSION_PLAN 업데이트
 - `4262ca4`: ci: GitHub Actions에 테스트 단계 추가
@@ -62,6 +63,8 @@
 - `be43db5`: test: Payment, Post 모델 테스트 추가
 - `672399c`: docs: 테스트 커버리지 업데이트
 - `39730d9`: test: Review, Coupon 모델 테스트 추가
+- `5ec9cbf`: docs: 테스트 통계 업데이트
+- `f31eed9`: test: DailySchedule 모델 테스트 추가
 
 ---
 
