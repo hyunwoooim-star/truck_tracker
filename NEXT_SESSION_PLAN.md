@@ -45,11 +45,19 @@
 - Windows flutter test 금지 (impellerc 버그)
 - 테스트는 GitHub Actions CI에서만 실행
 
+#### 5. 테스트 커버리지 개선
+- `payment_model_test.dart`: Payment, PaymentRequest, PaymentResult 테스트 (15+)
+- `post_model_test.dart`: Post, Comment, PostLike 테스트 (10+)
+- 총 25+ 새 단위 테스트 추가
+
 ### 📊 커밋 히스토리
 - `3f3d7ee`: fix: social_feed Freezed/Riverpod 에러 수정
 - `eca94cd`: docs: NEXT_SESSION_PLAN 업데이트
 - `4262ca4`: ci: GitHub Actions에 테스트 단계 추가
 - `0579f34`: style: 18개 lint infos 수정
+- `cd9a83b`: docs: 2025-12-31 작업 기록 추가
+- `2b40e17`: docs: CI/CD 개선 완료 표시
+- `be43db5`: test: Payment, Post 모델 테스트 추가
 
 ---
 
