@@ -36,7 +36,7 @@
   - `owner_announcement.dart` - 공지사항
   - `owner_soldout_toggles.dart` - 품절 관리
   - `owner_talk_section.dart` - 고객 대화
-- [ ] 테스트 커버리지 30% → 70% ⬅️ 현재 진행 중
+- [x] 테스트 파일 19 → 23개 (+4, auth/stamp_card/visit_verification/owner_dashboard)
 - [ ] 접근성 개선 (Semantics, 색상 대비)
 
 ### Phase 2: Cloud Functions 배포 ✅ 완료
@@ -48,8 +48,8 @@
   - notifyChatMessage (채팅 알림)
   - notifyNearbyTrucks (근처 트럭 알림)
 
-### Phase 3: UI/UX 트렌드 적용
-- [ ] Bento Grid 레이아웃 (홈, 트럭상세)
+### Phase 3: UI/UX 트렌드 적용 ⬅️ 다음 진행
+- [ ] Bento Grid 레이아웃 (TruckListScreen, TruckDetailScreen)
 - [ ] 대형 이미지 + 타이포그래피
 - [ ] Micro-interactions (좋아요 애니메이션)
 - [ ] Glassmorphism 카드
@@ -114,4 +114,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-30 (10단계 로드맵 추가)
+**마지막 업데이트**: 2025-12-30 (Phase 1.2, 2, 1.1 완료)
