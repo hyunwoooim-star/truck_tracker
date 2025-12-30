@@ -159,13 +159,18 @@
 
 ### Phase 10: 성능 최적화 ✅ 완료
 - [x] **웹 이미지 호환성 개선**
-  - `lib/shared/widgets/web_safe_image.dart` - 플랫폼별 이미지 로딩
-  - 웹: `Image.network` / 모바일: `CachedNetworkImage`
-  - MarkerService: 웹에서 기본 마커 사용 (BitmapDescriptor.bytes 미지원)
-- [x] **주요 화면 웹 이미지 수정**
-  - bento_truck_card.dart, truck_detail_screen.dart
-  - map_first_screen.dart, favorites_screen.dart
-  - post_card.dart
+  - MarkerService: 웹에서 기본 마커 사용 (`BitmapDescriptor.defaultMarkerWithHue`)
+  - CachedNetworkImage: 웹/모바일 동일하게 사용 (플러그인이 자동 처리)
+- [x] **Drawer 앱 아이콘 웹 호환성**
+  - 배경색 추가 (`AppTheme.charcoalDark`)
+  - errorBuilder 추가 (asset 로드 실패 시 fallback 아이콘)
+- [x] **트럭 리스트 카드 개선** (map_first_screen.dart)
+  - `filteredTrucksWithDistanceProvider` 사용으로 변경
+  - 거리 정보 표시 추가 (예: "1.2km")
+  - 상태 태그 + 음식 종류 + 위치 표시
+- [x] **빌드 오류 수정**
+  - `tosspayments_widget_sdk_flutter`: ^1.0.5 → ^2.1.2 (버전 미존재 문제)
+  - `pickup_ready_listener.dart`: import 및 메서드 호출 수정
 - [x] **PWA 설정 완료**
   - manifest.json, index.html SEO 메타태그
   - CanvasKit 렌더러 사용
@@ -198,4 +203,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-30 (Phase 1-5, 광고, Phase 8-10 완료 - 웹 이미지 호환성 수정)
+**마지막 업데이트**: 2025-12-30 (Phase 1-10 완료, 빌드 오류 수정, 웹 UI 개선)
