@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
+import '../../stamp_card/data/stamp_card_repository.dart';
+import '../../stamp_card/domain/stamp_card.dart';
 import '../../truck_list/domain/truck.dart';
 import '../data/visit_verification_repository.dart';
 import 'visit_verification_service.dart';
@@ -79,9 +81,9 @@ class _VisitVerificationButtonState extends ConsumerState<VisitVerificationButto
       if (!mounted) return;
 
       switch (result) {
-        case VerificationSuccess(:final userVisitCount):
+        case VerificationSuccess(:final userVisitCount, :final stampResult):
           setState(() => _hasVisitedToday = true);
-          _showSuccessDialog(userVisitCount);
+          _showSuccessDialog(userVisitCount, stampResult);
         case VerificationFailure(:final error):
           SnackBarHelper.showError(context, error.message);
       }
@@ -92,7 +94,21 @@ class _VisitVerificationButtonState extends ConsumerState<VisitVerificationButto
     }
   }
 
-  void _showSuccessDialog(int visitCount) {
+  void _showSuccessDialog(int visitCount, StampResult? stampResult) {
+    // 스탬프 정보 추출
+    bool earnedReward = false;
+
+    if (stampResult != null) {
+      switch (stampResult) {
+        case StampAdded():
+          break;
+        case RewardEarned():
+          earnedReward = true;
+        case StampError():
+          break;
+      }
+    }
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -105,19 +121,21 @@ class _VisitVerificationButtonState extends ConsumerState<VisitVerificationButto
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppTheme.mustardYellow.withValues(alpha: 0.2),
+                color: earnedReward
+                    ? Colors.amber.withValues(alpha: 0.2)
+                    : AppTheme.mustardYellow.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.check_circle,
-                color: AppTheme.mustardYellow,
+              child: Icon(
+                earnedReward ? Icons.card_giftcard : Icons.check_circle,
+                color: earnedReward ? Colors.amber : AppTheme.mustardYellow,
                 size: 60,
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              '방문 인증 완료!',
-              style: TextStyle(
+            Text(
+              earnedReward ? '쿠폰 획득!' : '방문 인증 완료!',
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -132,7 +150,57 @@ class _VisitVerificationButtonState extends ConsumerState<VisitVerificationButto
               ),
               textAlign: TextAlign.center,
             ),
-            if (visitCount >= 5) ...[
+
+            // 스탬프 정보
+            if (stampResult != null && !earnedReward) ...[
+              const SizedBox(height: 16),
+              _buildStampInfo(stampResult),
+            ],
+
+            // 쿠폰 획득 안내
+            if (earnedReward) ...[
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.amber[700]!, Colors.orange[600]!],
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.celebration, color: Colors.white, size: 24),
+                        SizedBox(width: 8),
+                        Text(
+                          '축하해요!',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '스탬프 10개를 모아\n무료 쿠폰을 받았어요!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withValues(alpha: 0.9),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
+            // 단골 배지
+            if (visitCount >= 5 && !earnedReward) ...[
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -165,6 +233,56 @@ class _VisitVerificationButtonState extends ConsumerState<VisitVerificationButto
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('확인'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStampInfo(StampResult result) {
+    int currentStamps = 0;
+
+    switch (result) {
+      case StampAdded(:final stampCount):
+        currentStamps = stampCount;
+      case RewardEarned():
+        currentStamps = 0;
+      case StampError():
+        return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey[900],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.mustardYellow.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.card_giftcard,
+            color: AppTheme.mustardYellow,
+            size: 20,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '스탬프 $currentStamps/${StampCard.maxStamps}',
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.mustardYellow,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '+1',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Colors.green[400],
+            ),
           ),
         ],
       ),
