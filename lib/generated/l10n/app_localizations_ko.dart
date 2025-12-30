@@ -626,9 +626,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get continueWithNaver => '네이버로 계속하기';
 
   @override
-  String get startAsOwnerTest => '사장님으로 시작하기 (테스트)';
-
-  @override
   String get browse => '둘러보기';
 
   @override

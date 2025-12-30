@@ -1274,12 +1274,6 @@ abstract class AppLocalizations {
   /// **'네이버로 계속하기'**
   String get continueWithNaver;
 
-  /// No description provided for @startAsOwnerTest.
-  ///
-  /// In ko, this message translates to:
-  /// **'사장님으로 시작하기 (테스트)'**
-  String get startAsOwnerTest;
-
   /// No description provided for @browse.
   ///
   /// In ko, this message translates to:

@@ -635,9 +635,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueWithNaver => 'Continue with Naver';
 
   @override
-  String get startAsOwnerTest => 'Start as Owner (Test)';
-
-  @override
   String get browse => 'Browse';
 
   @override
