@@ -16,6 +16,7 @@ import '../../auth/presentation/auth_provider.dart';
 import '../../auth/presentation/login_screen.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../truck_list/domain/truck.dart';
+import '../../truck_list/domain/truck_with_distance.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../chat/presentation/chat_list_screen.dart';
 import '../../chat/presentation/chat_provider.dart';
@@ -88,14 +89,14 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final trucksAsync = ref.watch(filteredTruckListProvider);
+    final trucksWithDistanceAsync = ref.watch(filteredTrucksWithDistanceProvider);
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: Stack(
         children: [
           // Base: Google Map (Full Screen)
-          trucksAsync.when(
+          trucksWithDistanceAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stack) => Center(
               child: Column(
@@ -109,12 +110,12 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                 ],
               ),
             ),
-            data: (trucks) {
-              final validTrucks = trucks
-                  .where((t) => t.latitude != 0.0 && t.longitude != 0.0)
+            data: (trucksWithDistance) {
+              final validTrucksWithDistance = trucksWithDistance
+                  .where((t) => t.truck.latitude != 0.0 && t.truck.longitude != 0.0)
                   .toList();
 
-              if (validTrucks.isEmpty) {
+              if (validTrucksWithDistance.isEmpty) {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -129,6 +130,9 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                   ),
                 );
               }
+
+              // Extract trucks for markers
+              final validTrucks = validTrucksWithDistance.map((t) => t.truck).toList();
 
               // ✅ OPTIMIZATION: Only rebuild markers if truck list changed or markers initialized
               if (_lastTruckList != validTrucks || (_markersInitialized && _cachedMarkers == null)) {
@@ -291,7 +295,7 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
 
                     // Truck List (Scrollable)
                     Expanded(
-                      child: trucksAsync.when(
+                      child: trucksWithDistanceAsync.when(
                         loading: () => const Center(
                             child: CircularProgressIndicator(
                                 color: AppTheme.mustardYellow)),
@@ -299,8 +303,8 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                           child: Text(l10n.loadDataFailed,
                               style: Theme.of(context).textTheme.bodyMedium),
                         ),
-                        data: (trucks) {
-                          if (trucks.isEmpty) {
+                        data: (trucksWithDistance) {
+                          if (trucksWithDistance.isEmpty) {
                             return Center(
                               child: Text(l10n.noTrucks,
                                   style:
@@ -312,11 +316,11 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                             controller: scrollController,
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 12),
-                            itemCount: trucks.length,
+                            itemCount: trucksWithDistance.length,
                             itemExtent: 100.0, // ✅ OPTIMIZATION: Fixed height for better scroll performance
                             itemBuilder: (context, index) {
-                              final truck = trucks[index];
-                              return _TruckCard(truck: truck);
+                              final truckWithDistance = trucksWithDistance[index];
+                              return _TruckCard(truckWithDistance: truckWithDistance);
                             },
                           );
                         },
@@ -505,12 +509,15 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
 }
 
 class _TruckCard extends StatelessWidget {
-  const _TruckCard({required this.truck});
+  const _TruckCard({required this.truckWithDistance});
 
-  final Truck truck;
+  final TruckWithDistance truckWithDistance;
 
   @override
   Widget build(BuildContext context) {
+    final truck = truckWithDistance.truck;
+    final hasDistance = truckWithDistance.distanceInMeters != double.infinity;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -530,22 +537,23 @@ class _TruckCard extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(12),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // Truck image
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: CachedNetworkImage(
                   imageUrl: truck.imageUrl,
-                  width: 72,
-                  height: 72,
-                  maxHeightDiskCache: 150,  // 🚀 OPTIMIZATION: Limit cached image size
-                  maxWidthDiskCache: 150,   // 🚀 OPTIMIZATION: Limit cached image size
-                  memCacheHeight: 150,      // 🚀 OPTIMIZATION: Limit memory cache size
-                  memCacheWidth: 150,       // 🚀 OPTIMIZATION: Limit memory cache size
+                  width: 64,
+                  height: 64,
+                  maxHeightDiskCache: 150,
+                  maxWidthDiskCache: 150,
+                  memCacheHeight: 150,
+                  memCacheWidth: 150,
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
-                    width: 72,
-                    height: 72,
+                    width: 64,
+                    height: 64,
                     color: AppTheme.charcoalLight,
                     child: const Center(
                       child: SizedBox(
@@ -559,8 +567,8 @@ class _TruckCard extends StatelessWidget {
                     ),
                   ),
                   errorWidget: (context, url, error) => Container(
-                    width: 72,
-                    height: 72,
+                    width: 64,
+                    height: 64,
                     color: AppTheme.charcoalLight,
                     child: const Icon(Icons.local_shipping_outlined,
                         color: AppTheme.textTertiary),
@@ -568,46 +576,67 @@ class _TruckCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
+              // Truck info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Name + Status
                     Row(
                       children: [
                         Expanded(
                           child: Text(
                             truck.truckNumber,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.textPrimary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         StatusTag(status: truck.status),
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Text(truck.driverName,
-                        style: Theme.of(context).textTheme.bodyMedium),
-                    const SizedBox(height: 8),
+                    // Food type
+                    Text(
+                      truck.foodType,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppTheme.mustardYellow,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    // Distance + Location
                     Row(
                       children: [
-                        Icon(Icons.restaurant,
-                            size: 16, color: AppTheme.mustardYellow),
-                        const SizedBox(width: 4),
-                        Text(truck.foodType,
+                        if (hasDistance) ...[
+                          Icon(Icons.near_me, size: 14, color: AppTheme.electricBlue),
+                          const SizedBox(width: 4),
+                          Text(
+                            truckWithDistance.distanceText,
                             style: const TextStyle(
-                                color: AppTheme.mustardYellow,
-                                fontWeight: FontWeight.w600)),
-                        const Spacer(),
-                        Icon(Icons.location_on,
-                            size: 16, color: AppTheme.textSecondary),
+                              fontSize: 12,
+                              color: AppTheme.electricBlue,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                        ],
+                        Icon(Icons.location_on, size: 14, color: AppTheme.textTertiary),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
                             truck.locationDescription,
                             style: const TextStyle(
-                                color: AppTheme.textSecondary, fontSize: 12),
+                              fontSize: 12,
+                              color: AppTheme.textTertiary,
+                            ),
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),

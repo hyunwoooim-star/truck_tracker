@@ -520,6 +520,7 @@ class _AppDrawer extends ConsumerWidget {
                   width: 72,
                   height: 72,
                   decoration: BoxDecoration(
+                    color: AppTheme.charcoalDark, // Background color for web compatibility
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -534,6 +535,17 @@ class _AppDrawer extends ConsumerWidget {
                     child: Image.asset(
                       'assets/app_icon.png',
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        // Fallback for web if asset fails to load
+                        return Container(
+                          color: AppTheme.charcoalDark,
+                          child: const Icon(
+                            Icons.local_shipping,
+                            size: 40,
+                            color: AppTheme.mustardYellow,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
