@@ -13,6 +13,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'core/themes/app_theme.dart';
 import 'core/themes/theme_provider.dart';
@@ -35,89 +36,134 @@ import 'firebase_options.dart';
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 void main() async {
-  // Wrap entire app in error zone for Crashlytics
-  await runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  // 🔍 SENTRY: Get DSN from environment (set in GitHub Actions secrets)
+  // Create free account at sentry.io → Create Flutter project → Get DSN
+  const sentryDsn = String.fromEnvironment(
+    'SENTRY_DSN',
+    defaultValue: '', // Will be set via GitHub Actions
+  );
 
-    // Initialize Firebase
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+  // Initialize Sentry for error tracking (works on web + mobile)
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = sentryDsn;
+      // Disable Sentry in debug mode
+      options.environment = kDebugMode ? 'development' : 'production';
+      // Sample rate for performance monitoring (10%)
+      options.tracesSampleRate = 0.1;
+      // Capture 100% of errors
+      options.sampleRate = 1.0;
+      // Enable automatic session tracking
+      options.enableAutoSessionTracking = true;
+      // Add app version info
+      options.release = 'truck_tracker@1.0.0';
+      // Don't send in debug mode unless DSN is explicitly set
+      options.beforeSend = (event, hint) {
+        if (kDebugMode && sentryDsn.isEmpty) {
+          return null; // Don't send in debug without DSN
+        }
+        return event;
+      };
+    },
+    appRunner: () async {
+      // Wrap entire app in error zone for Crashlytics + Sentry
+      await runZonedGuarded(() async {
+        WidgetsFlutterBinding.ensureInitialized();
 
-    // 🔄 FIRESTORE: Enable offline persistence for better offline support
-    FirebaseFirestore.instance.settings = const Settings(
-      persistenceEnabled: true,
-      cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
-    );
-    AppLogger.debug('Firestore offline persistence enabled', tag: 'Main');
+        // Initialize Firebase
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
 
-    // 📊 CRASHLYTICS: Initialize crash reporting (not available on web)
-    if (!kIsWeb) {
-      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
-      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-      AppLogger.debug('Firebase Crashlytics initialized', tag: 'Main');
-    }
+        // 🔄 FIRESTORE: Enable offline persistence for better offline support
+        FirebaseFirestore.instance.settings = const Settings(
+          persistenceEnabled: true,
+          cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+        );
+        AppLogger.debug('Firestore offline persistence enabled', tag: 'Main');
 
-    // 📈 PERFORMANCE: Initialize performance monitoring (not available on web)
-    if (!kIsWeb) {
-      await FirebasePerformance.instance.setPerformanceCollectionEnabled(!kDebugMode);
-      AppLogger.debug('Firebase Performance initialized', tag: 'Main');
-    }
+        // 📊 CRASHLYTICS: Initialize crash reporting (not available on web)
+        if (!kIsWeb) {
+          await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
+          FlutterError.onError = (details) {
+            // Send to both Crashlytics and Sentry
+            FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+            Sentry.captureException(details.exception, stackTrace: details.stack);
+          };
+          AppLogger.debug('Firebase Crashlytics initialized', tag: 'Main');
+        } else {
+          // Web: Only Sentry handles Flutter errors
+          FlutterError.onError = (details) {
+            Sentry.captureException(details.exception, stackTrace: details.stack);
+            AppLogger.error('Flutter error', error: details.exception, stackTrace: details.stack, tag: 'Main');
+          };
+        }
 
-    // 🔐 AUTH PERSISTENCE: Enable local persistence for web to prevent incognito mode requirement
-    if (kIsWeb) {
-      await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
-      AppLogger.debug('Firebase Auth persistence set to LOCAL for web', tag: 'Main');
-    }
+        // 📈 PERFORMANCE: Initialize performance monitoring (not available on web)
+        if (!kIsWeb) {
+          await FirebasePerformance.instance.setPerformanceCollectionEnabled(!kDebugMode);
+          AppLogger.debug('Firebase Performance initialized', tag: 'Main');
+        }
 
-    // 🔑 KAKAO SDK: Initialize Kakao SDK with native app key
-    // Pass via --dart-define=KAKAO_NATIVE_APP_KEY=xxx at build time
-    // Or set in GitHub Actions secrets
-    const kakaoNativeAppKey = String.fromEnvironment(
-      'KAKAO_NATIVE_APP_KEY',
-      defaultValue: '16a3e20d6e8bff9d586a64029614a40e', // From .env
-    );
-    kakao.KakaoSdk.init(nativeAppKey: kakaoNativeAppKey);
-    AppLogger.debug('Kakao SDK initialized', tag: 'Main');
+        // 🔐 AUTH PERSISTENCE: Enable local persistence for web to prevent incognito mode requirement
+        if (kIsWeb) {
+          await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+          AppLogger.debug('Firebase Auth persistence set to LOCAL for web', tag: 'Main');
+        }
 
-    // Initialize FCM (Firebase Cloud Messaging)
-    final fcmService = FcmService();
-    await fcmService.initialize();
+        // 🔑 KAKAO SDK: Initialize Kakao SDK with native app key
+        // Pass via --dart-define=KAKAO_NATIVE_APP_KEY=xxx at build time
+        // Or set in GitHub Actions secrets
+        const kakaoNativeAppKey = String.fromEnvironment(
+          'KAKAO_NATIVE_APP_KEY',
+          defaultValue: '16a3e20d6e8bff9d586a64029614a40e', // From .env
+        );
+        kakao.KakaoSdk.init(nativeAppKey: kakaoNativeAppKey);
+        AppLogger.debug('Kakao SDK initialized', tag: 'Main');
 
-    // Set up foreground message handler to show in-app notifications
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      _showForegroundNotification(message);
-    });
+        // Initialize FCM (Firebase Cloud Messaging)
+        final fcmService = FcmService();
+        await fcmService.initialize();
 
-    // Handle notification tap when app is in background
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      _handleNotificationTap(message);
-    });
+        // Set up foreground message handler to show in-app notifications
+        FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+          _showForegroundNotification(message);
+        });
 
-    // Handle notification tap when app was terminated
-    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-    if (initialMessage != null) {
-      _handleNotificationTap(initialMessage);
-    }
+        // Handle notification tap when app is in background
+        FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+          _handleNotificationTap(message);
+        });
 
-    // 📺 ADMOB: Initialize Google Mobile Ads SDK
-    await AdService().initialize();
+        // Handle notification tap when app was terminated
+        final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+        if (initialMessage != null) {
+          _handleNotificationTap(initialMessage);
+        }
 
-    // 🧹 OPTIMIZATION: Clean old image cache (7 days+) to free storage
-    _cleanOldImageCache();
+        // 📺 ADMOB: Initialize Google Mobile Ads SDK
+        await AdService().initialize();
 
-    runApp(
-      const ProviderScope(
-        child: MyApp(),
-      ),
-    );
-  }, (error, stack) {
-    // Catch async errors and report to Crashlytics
-    if (!kIsWeb) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    }
-    AppLogger.error('Uncaught async error', error: error, stackTrace: stack, tag: 'Main');
-  });
+        // 🧹 OPTIMIZATION: Clean old image cache (7 days+) to free storage
+        _cleanOldImageCache();
+
+        AppLogger.debug('Sentry initialized (DSN ${sentryDsn.isNotEmpty ? "configured" : "not set"})', tag: 'Main');
+
+        runApp(
+          const ProviderScope(
+            child: MyApp(),
+          ),
+        );
+      }, (error, stack) {
+        // Catch async errors and report to both Crashlytics and Sentry
+        if (!kIsWeb) {
+          FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        }
+        Sentry.captureException(error, stackTrace: stack);
+        AppLogger.error('Uncaught async error', error: error, stackTrace: stack, tag: 'Main');
+      });
+    },
+  );
 }
 
 class MyApp extends ConsumerWidget {
