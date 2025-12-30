@@ -4,6 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+## -1. 🚀 Session Start (ALWAYS DO THIS FIRST)
+
+**세션 시작 시 반드시 NEXT_SESSION_PLAN.md를 읽어라.**
+
+```bash
+# 1단계: 현재 상태 확인
+Read NEXT_SESSION_PLAN.md
+
+# 2단계: TODO 목록에서 다음 작업 선택
+# 3단계: 작업 완료 후 NEXT_SESSION_PLAN.md 업데이트
+```
+
+**핵심 파일**:
+- `NEXT_SESSION_PLAN.md` - 현재 상태 & TODO (이것만 읽으면 됨)
+- `CLAUDE.md` - 워크플로우 가이드
+- `PROJECT_CONTEXT.md` - 아키텍처 & 스키마
+
+**과거 문서**: `docs/archive/` (참고용)
+
+---
+
 ## 0. 🎯 Prime Directive (Self-Evolution)
 
 **You are the lead engineer of this project.**
