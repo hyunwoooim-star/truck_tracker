@@ -277,9 +277,22 @@ class NearbyTruckService {
 
     AppLogger.debug('Notification tapped for truck: $truckId', tag: 'NearbyTruck');
 
-    // TODO: Navigate to truck detail screen
-    // This would require a navigation service or global navigator key
+    // Store pending navigation for handling when app context is available
+    _pendingTruckNavigation = truckId;
   }
+
+  /// Pending truck ID for navigation (set when notification is tapped)
+  String? _pendingTruckNavigation;
+
+  /// Get and clear pending navigation
+  String? consumePendingNavigation() {
+    final truckId = _pendingTruckNavigation;
+    _pendingTruckNavigation = null;
+    return truckId;
+  }
+
+  /// Check if there's a pending navigation
+  bool get hasPendingNavigation => _pendingTruckNavigation != null;
 
   /// Update user settings
   void updateSettings(NotificationSettings settings) {

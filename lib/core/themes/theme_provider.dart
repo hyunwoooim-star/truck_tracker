@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app_theme.dart';
 
@@ -12,24 +13,59 @@ enum AppThemeMode {
   system,
 }
 
-/// Provider for managing app theme mode
+/// Key for storing theme preference
+const String _themePreferenceKey = 'app_theme_mode';
+
+/// Provider for managing app theme mode with persistence
 @riverpod
 class AppThemeModeNotifier extends _$AppThemeModeNotifier {
   @override
   AppThemeMode build() {
+    // Load saved theme preference asynchronously
+    _loadThemePreference();
     // Default to dark theme (original design)
-    // TODO: Persist theme preference using shared_preferences
     return AppThemeMode.dark;
+  }
+
+  /// Load theme preference from SharedPreferences
+  Future<void> _loadThemePreference() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedTheme = prefs.getString(_themePreferenceKey);
+
+      if (savedTheme != null) {
+        final mode = AppThemeMode.values.firstWhere(
+          (e) => e.name == savedTheme,
+          orElse: () => AppThemeMode.dark,
+        );
+        state = mode;
+      }
+    } catch (e) {
+      // If loading fails, keep default dark theme
+      debugPrint('Failed to load theme preference: $e');
+    }
+  }
+
+  /// Save theme preference to SharedPreferences
+  Future<void> _saveThemePreference(AppThemeMode mode) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_themePreferenceKey, mode.name);
+    } catch (e) {
+      debugPrint('Failed to save theme preference: $e');
+    }
   }
 
   /// Toggle between dark and light theme
   void toggle() {
-    state = state == AppThemeMode.dark ? AppThemeMode.light : AppThemeMode.dark;
+    final newMode = state == AppThemeMode.dark ? AppThemeMode.light : AppThemeMode.dark;
+    setThemeMode(newMode);
   }
 
-  /// Set specific theme mode
+  /// Set specific theme mode and persist it
   void setThemeMode(AppThemeMode mode) {
     state = mode;
+    _saveThemePreference(mode);
   }
 }
 

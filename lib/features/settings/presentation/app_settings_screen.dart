@@ -7,6 +7,7 @@ import '../../../core/themes/app_theme.dart';
 import '../../../core/themes/theme_provider.dart';
 import '../../../core/widgets/network_status_banner.dart';
 import '../../notifications/presentation/notification_settings_screen.dart';
+import 'help_screen.dart';
 import 'privacy_policy_screen.dart';
 import 'terms_of_service_screen.dart';
 
@@ -107,7 +108,12 @@ class AppSettingsScreen extends ConsumerWidget {
                   title: const Text('도움말'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
-                    // TODO: Open help screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const HelpScreen(),
+                      ),
+                    );
                   },
                 ),
                 ListTile(

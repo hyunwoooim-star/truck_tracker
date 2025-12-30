@@ -387,7 +387,7 @@ final class TruckListNotifierProvider
   TruckListNotifier create() => TruckListNotifier();
 }
 
-String _$truckListNotifierHash() => r'c6014efc3f680189a8c9cd8398f305da0e464a2c';
+String _$truckListNotifierHash() => r'ca74633a9938181f293377eae717e09b55da1fe9';
 
 abstract class _$TruckListNotifier extends $AsyncNotifier<List<Truck>> {
   FutureOr<List<Truck>> build();

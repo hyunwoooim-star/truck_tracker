@@ -1,10 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../auth/presentation/auth_provider.dart';
+import '../../chat/presentation/chat_screen.dart';
+import '../../truck_detail/presentation/truck_detail_screen.dart';
+import '../../truck_list/domain/truck.dart';
 import '../data/notification_repository.dart';
 import '../domain/notification.dart';
 
@@ -180,7 +185,7 @@ class NotificationHistoryScreen extends ConsumerWidget {
     );
   }
 
-  void _handleNotificationTap(
+  Future<void> _handleNotificationTap(
     BuildContext context,
     WidgetRef ref,
     AppNotification notification,
@@ -192,8 +197,70 @@ class NotificationHistoryScreen extends ConsumerWidget {
     }
 
     // Navigate based on notification type
-    // TODO: Add navigation logic based on notification type
-    // For now, just mark as read
+    switch (notification.type) {
+      case NotificationType.truckOpen:
+      case NotificationType.promotion:
+        // Navigate to truck detail
+        if (notification.truckId != null && context.mounted) {
+          await _navigateToTruck(context, notification.truckId!);
+        }
+        break;
+
+      case NotificationType.chat:
+        // Navigate to chat room
+        if (notification.chatRoomId != null && context.mounted) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ChatScreen(chatRoomId: notification.chatRoomId!),
+            ),
+          );
+        }
+        break;
+
+      case NotificationType.orderUpdate:
+      case NotificationType.checkin:
+        // Navigate to truck detail (orders are managed from there)
+        if (notification.truckId != null && context.mounted) {
+          await _navigateToTruck(context, notification.truckId!);
+        }
+        break;
+
+      case NotificationType.system:
+        // No navigation for system notifications
+        break;
+    }
+  }
+
+  Future<void> _navigateToTruck(BuildContext context, String truckId) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('trucks')
+          .doc(truckId)
+          .get();
+
+      if (!doc.exists) {
+        if (context.mounted) {
+          SnackBarHelper.showError(context, '트럭을 찾을 수 없습니다');
+        }
+        return;
+      }
+
+      final truck = Truck.fromFirestore(doc);
+
+      if (context.mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => TruckDetailScreen(truck: truck),
+          ),
+        );
+      }
+    } catch (e, stackTrace) {
+      AppLogger.error('Failed to navigate to truck',
+          error: e, stackTrace: stackTrace, tag: 'NotificationHistory');
+      if (context.mounted) {
+        SnackBarHelper.showError(context, '트럭 정보를 불러올 수 없습니다');
+      }
+    }
   }
 }
 

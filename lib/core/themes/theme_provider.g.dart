@@ -8,15 +8,15 @@ part of 'theme_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provider for managing app theme mode
+/// Provider for managing app theme mode with persistence
 
 @ProviderFor(AppThemeModeNotifier)
 final appThemeModeProvider = AppThemeModeNotifierProvider._();
 
-/// Provider for managing app theme mode
+/// Provider for managing app theme mode with persistence
 final class AppThemeModeNotifierProvider
     extends $NotifierProvider<AppThemeModeNotifier, AppThemeMode> {
-  /// Provider for managing app theme mode
+  /// Provider for managing app theme mode with persistence
   AppThemeModeNotifierProvider._()
     : super(
         from: null,
@@ -45,9 +45,9 @@ final class AppThemeModeNotifierProvider
 }
 
 String _$appThemeModeNotifierHash() =>
-    r'6c473a132e93ab8b524512db752668044cfc6400';
+    r'5e0f336f9cc0b7ab219b09bf5e2479d4e742012d';
 
-/// Provider for managing app theme mode
+/// Provider for managing app theme mode with persistence
 
 abstract class _$AppThemeModeNotifier extends $Notifier<AppThemeMode> {
   AppThemeMode build();
@@ -111,7 +111,7 @@ final class CurrentThemeProvider
   }
 }
 
-String _$currentThemeHash() => r'35eead0a35213823db0e71fe57b0b22b9c6407f4';
+String _$currentThemeHash() => r'df1c55be6ff4b27eb9e882f5a032d8e1922d19f4';
 
 /// Provider that returns ThemeMode for MaterialApp
 
@@ -158,4 +158,4 @@ final class AppThemeModeForMaterialProvider
 }
 
 String _$appThemeModeForMaterialHash() =>
-    r'850276bfd49560ca61564512f105c9c45841b75f';
+    r'a2d0255ecf4e72a361279915c1f451888b4a3bcc';
