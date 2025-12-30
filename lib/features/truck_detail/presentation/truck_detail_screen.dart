@@ -29,6 +29,8 @@ import '../../chat/presentation/chat_screen.dart';
 import '../../payment/domain/payment.dart';
 import '../../payment/presentation/payment_screen.dart';
 import '../../payment/presentation/payment_result_screen.dart';
+import '../../pickup_navigation/presentation/pickup_navigation_screen.dart';
+import '../../pickup_navigation/presentation/widgets/eta_card.dart';
 import 'truck_detail_provider.dart';
 
 class TruckDetailScreen extends ConsumerWidget {
@@ -361,7 +363,7 @@ class TruckDetailScreen extends ConsumerWidget {
                               final todayScheduleAsync = ref.watch(
                                 todayScheduleProvider(truck.id),
                               );
-                              
+
                               return todayScheduleAsync.when(
                                 loading: () => const SizedBox.shrink(),
                                 error: (error, stackTrace) => const SizedBox.shrink(),
@@ -400,6 +402,16 @@ class TruckDetailScreen extends ConsumerWidget {
                             },
                           ),
                         ],
+                      ),
+                    ),
+                    // ETA Card (도보 예상 시간)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      child: EtaCard(
+                        truckLat: truck.latitude,
+                        truckLng: truck.longitude,
+                        truckName: truck.foodType,
+                        onNavigateTap: () => _showNavigationDialog(context, truck, l10n),
                       ),
                     ),
                     // Visit Verification Section
@@ -1120,6 +1132,25 @@ void _showNavigationDialog(BuildContext context, Truck truck, AppLocalizations l
         ],
       ),
       actions: [
+        // 앱 내 도보 안내 (우선 표시)
+        TextButton.icon(
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => PickupNavigationScreen(
+                  truckName: truck.foodType,
+                  truckAddress: truck.locationDescription,
+                  truckLat: truck.latitude,
+                  truckLng: truck.longitude,
+                ),
+              ),
+            );
+          },
+          icon: const Icon(Icons.directions_walk, color: AppTheme.electricBlue),
+          label: const Text('도보 안내', style: TextStyle(color: AppTheme.electricBlue)),
+        ),
         TextButton.icon(
           onPressed: () {
             Navigator.pop(context);

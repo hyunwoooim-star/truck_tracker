@@ -28,6 +28,7 @@ import 'features/checkin/presentation/owner_qr_screen.dart';
 import 'features/admin/presentation/admin_screen.dart';
 import 'features/notifications/fcm_service.dart';
 import 'features/ads/data/ad_service.dart';
+import 'features/pickup_navigation/presentation/pickup_ready_listener.dart';
 import 'firebase_options.dart';
 
 /// Global key for showing foreground notifications
@@ -197,7 +198,10 @@ class AuthWrapper extends ConsumerWidget {
             } else {
               AppLogger.debug('User is customer → MapFirstScreen', tag: 'AuthWrapper');
               // Regular customer → map-first screen (Street Tycoon)
-              return const MapFirstScreen();
+              // Wrap with PickupReadyListener to monitor order status
+              return const PickupReadyListener(
+                child: MapFirstScreen(),
+              );
             }
           },
           loading: () {

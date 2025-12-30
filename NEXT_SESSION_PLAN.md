@@ -124,10 +124,21 @@
 - [ ] 사용자 취향 기반 트럭 추천
 - [ ] 시간대별/날씨별 메뉴 추천
 
-### Phase 8: 픽업 최적화 (배달 X)
-- [ ] 도보 경로 안내 (Google Maps)
-- [ ] 예상 도착 시간 표시
-- [ ] 픽업 준비 완료 알림
+### Phase 8: 픽업 최적화 (배달 X) ✅ 완료
+- [x] **도보 경로 안내** (Google Maps Directions API)
+  - `lib/features/pickup_navigation/domain/walking_route.dart` - Freezed 모델
+  - `lib/features/pickup_navigation/data/directions_service.dart` - Directions API 연동
+  - `lib/features/pickup_navigation/presentation/pickup_navigation_screen.dart` - 네비게이션 화면
+  - 실시간 위치 추적 + 경로 업데이트
+  - 상세 경로 단계 표시
+- [x] **예상 도착 시간(ETA) 표시**
+  - `pickup_navigation/presentation/widgets/eta_card.dart` - ETA 카드 위젯
+  - CompactEtaBadge (트럭 카드용)
+  - 트럭 상세 화면에 ETA 카드 통합
+- [x] **픽업 준비 완료 알림**
+  - `pickup_ready_listener.dart` - 주문 상태 모니터링
+  - 준비 완료 시 다이얼로그 표시
+  - 길찾기 버튼으로 네비게이션 연결
 
 ### Phase 9: 관리자 대시보드 강화
 - [ ] 실시간 통계
@@ -166,4 +177,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-30 (Phase 1-5 + 광고 수익화 완료 - AdMob 배너/보상형 광고)
+**마지막 업데이트**: 2025-12-30 (Phase 1-5 + 광고 수익화 + Phase 8 픽업 최적화 완료)
