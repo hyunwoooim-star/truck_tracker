@@ -130,7 +130,7 @@ class _RevenueDashboardContent extends ConsumerWidget {
                 height: 12,
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
-              error: (_, __) => const Icon(Icons.error, size: 16, color: Colors.red),
+              error: (e, st) => const Icon(Icons.error, size: 16, color: Colors.red),
               data: (data) => Text(
                 '${DateFormat('HH:mm').format(data.lastUpdated)} 업데이트',
                 style: const TextStyle(fontSize: 12, color: AppTheme.textTertiary),

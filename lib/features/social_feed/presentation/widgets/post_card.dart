@@ -274,7 +274,7 @@ class _PostCardState extends ConsumerState<PostCard>
                 child: CachedNetworkImage(
                   imageUrl: imageUrls[index],
                   fit: BoxFit.cover,
-                  placeholder: (_, __) => Container(
+                  placeholder: (context, url) => Container(
                     color: AppTheme.charcoalLight,
                     child: const Center(
                       child: CircularProgressIndicator(
@@ -282,7 +282,7 @@ class _PostCardState extends ConsumerState<PostCard>
                       ),
                     ),
                   ),
-                  errorWidget: (_, __, ___) => Container(
+                  errorWidget: (context, url, error) => Container(
                     color: AppTheme.charcoalLight,
                     child: const Icon(
                       Icons.broken_image,

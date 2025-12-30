@@ -161,8 +161,8 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
             fit: BoxFit.cover,
             memCacheHeight: 400,
             memCacheWidth: 400,
-            placeholder: (_, __) => Container(color: AppTheme.charcoalMedium),
-            errorWidget: (_, __, ___) => Container(
+            placeholder: (context, url) => Container(color: AppTheme.charcoalMedium),
+            errorWidget: (context, url, error) => Container(
               color: AppTheme.charcoalMedium,
               child: const Icon(Icons.local_shipping, size: 60, color: AppTheme.textTertiary),
             ),
@@ -264,8 +264,8 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
                     fit: BoxFit.cover,
                     memCacheHeight: 200,
                     memCacheWidth: 200,
-                    placeholder: (_, __) => Container(color: AppTheme.charcoalLight),
-                    errorWidget: (_, __, ___) => Container(
+                    placeholder: (context, url) => Container(color: AppTheme.charcoalLight),
+                    errorWidget: (context, url, error) => Container(
                       color: AppTheme.charcoalLight,
                       child: const Icon(Icons.local_shipping, color: AppTheme.textTertiary),
                     ),
@@ -344,8 +344,8 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
             fit: BoxFit.cover,
             memCacheHeight: 200,
             memCacheWidth: 200,
-            placeholder: (_, __) => Container(color: AppTheme.charcoalMedium),
-            errorWidget: (_, __, ___) => Container(
+            placeholder: (context, url) => Container(color: AppTheme.charcoalMedium),
+            errorWidget: (context, url, error) => Container(
               color: AppTheme.charcoalMedium,
               child: const Icon(Icons.local_shipping, color: AppTheme.textTertiary),
             ),

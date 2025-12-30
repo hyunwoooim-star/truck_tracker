@@ -26,7 +26,7 @@ class EtaCard extends ConsumerWidget {
 
     return positionAsync.when(
       loading: () => _buildLoadingCard(),
-      error: (_, __) => _buildErrorCard(context),
+      error: (e, st) => _buildErrorCard(context),
       data: (position) {
         if (position == null) {
           return _buildLocationDisabledCard(context);
@@ -255,7 +255,7 @@ class CompactEtaBadge extends ConsumerWidget {
 
     return positionAsync.when(
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (e, st) => const SizedBox.shrink(),
       data: (position) {
         if (position == null) return const SizedBox.shrink();
 
@@ -269,7 +269,7 @@ class CompactEtaBadge extends ConsumerWidget {
         final etaMinutes = (distanceMeters / 83).ceil();
         final etaText = etaMinutes >= 60
             ? '${etaMinutes ~/ 60}h ${etaMinutes % 60}m'
-            : '${etaMinutes}분';
+            : '$etaMinutes분';
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

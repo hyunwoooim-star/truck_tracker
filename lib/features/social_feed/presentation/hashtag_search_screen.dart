@@ -242,7 +242,7 @@ class _HashtagSearchScreenState extends ConsumerState<HashtagSearchScreen> {
                           fontSize: 14,
                         ),
                       ),
-                      error: (_, __) => const SizedBox.shrink(),
+                      error: (e, st) => const SizedBox.shrink(),
                       data: (posts) => Text(
                         '게시물 ${posts.length}개',
                         style: TextStyle(

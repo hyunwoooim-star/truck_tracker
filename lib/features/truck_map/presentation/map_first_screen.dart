@@ -301,7 +301,7 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                           controller: scrollController,
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           itemCount: 5,
-                          itemBuilder: (_, __) => const _SkeletonTruckCard(),
+                          itemBuilder: (context, index) => const _SkeletonTruckCard(),
                         ),
                         error: (e, _) => Center(
                           child: Column(
