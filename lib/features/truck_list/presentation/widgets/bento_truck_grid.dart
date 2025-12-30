@@ -5,7 +5,7 @@ import '../../domain/truck_with_distance.dart';
 import 'bento_truck_card.dart';
 
 /// Bento Grid layout for displaying trucks
-/// Uses staggered grid with varying tile sizes for visual interest
+/// Uses clean list layout with featured card for first item
 class BentoTruckGrid extends StatelessWidget {
   const BentoTruckGrid({
     super.key,
@@ -24,10 +24,7 @@ class BentoTruckGrid extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return MasonryGridView.count(
-      crossAxisCount: 2,
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
+    return ListView.builder(
       padding: padding,
       itemCount: trucksWithDistance.length,
       itemBuilder: (context, index) {
@@ -38,68 +35,24 @@ class BentoTruckGrid extends StatelessWidget {
         final rankIndex = topRanked.indexWhere((t) => t.id == truck.id);
         final rank = rankIndex >= 0 ? rankIndex + 1 : null;
 
-        // Determine card size based on position and ranking
-        final size = _determineCardSize(index, rank);
-        final height = _getCardHeight(size);
+        // First item or top 3 ranked: Large card (full width)
+        // Others: Medium card (horizontal layout)
+        final isLarge = index == 0 || (rank != null && rank <= 3);
+        final size = isLarge ? BentoCardSize.large : BentoCardSize.medium;
 
-        return SizedBox(
-          height: height,
-          child: BentoTruckCard(
-            truckWithDistance: truckWithDistance,
-            size: size,
-            rank: rank,
+        return Padding(
+          padding: EdgeInsets.only(bottom: index < trucksWithDistance.length - 1 ? 12 : 0),
+          child: SizedBox(
+            height: isLarge ? 220 : 120,
+            child: BentoTruckCard(
+              truckWithDistance: truckWithDistance,
+              size: size,
+              rank: rank,
+            ),
           ),
         );
       },
     );
-  }
-
-  /// Determines card size based on index and ranking
-  /// Pattern creates visual variety:
-  /// - First item: Large (featured)
-  /// - Top 3 ranked: Large
-  /// - Every 5th item: Medium
-  /// - Others: Small or Medium alternating
-  BentoCardSize _determineCardSize(int index, int? rank) {
-    // First truck is always large (featured)
-    if (index == 0) {
-      return BentoCardSize.large;
-    }
-
-    // Top 3 ranked trucks get large cards
-    if (rank != null && rank <= 3) {
-      return BentoCardSize.large;
-    }
-
-    // Create a pattern for visual variety
-    // Pattern: L, S, M, S, M, S, L, S, M...
-    final patternIndex = index % 7;
-    switch (patternIndex) {
-      case 0:
-        return BentoCardSize.large;
-      case 1:
-      case 3:
-      case 5:
-        return BentoCardSize.small;
-      case 2:
-      case 4:
-      case 6:
-        return BentoCardSize.medium;
-      default:
-        return BentoCardSize.small;
-    }
-  }
-
-  /// Returns height for each card size
-  double _getCardHeight(BentoCardSize size) {
-    switch (size) {
-      case BentoCardSize.large:
-        return 280;
-      case BentoCardSize.medium:
-        return 140;
-      case BentoCardSize.small:
-        return 160;
-    }
   }
 }
 

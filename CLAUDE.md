@@ -322,9 +322,17 @@ See PROJECT_CONTEXT.md § Development Commands for:
 - **문서 정리**: 불필요한 문서 읽지 말 것 (토큰 낭비)
 
 ### 2025-12-31: 테스트 & 빌드 규칙
-- **flutter test 금지**: Windows에서 impellerc 버그로 flutter test/dart test 실행 불가
-- **테스트 방법**: GitHub Actions CI에서만 테스트 실행 (push 후 자동)
-- **로컬 검증**: flutter analyze만 사용, 테스트는 CI에 맡김
+- **Windows flutter test 버그**: impellerc 버그로 Windows에서 flutter test 실행 불가
+- **WSL 테스트 실행**: WSL Ubuntu에서 테스트 실행 가능!
+  ```bash
+  # 전체 테스트
+  wsl -d Ubuntu-22.04 -- bash -c "export PATH=\"\$HOME/flutter/bin:\$PATH\" && cd ~/truck_tracker && git pull && flutter test"
+
+  # 특정 폴더만
+  wsl -d Ubuntu-22.04 -- bash -c "export PATH=\"\$HOME/flutter/bin:\$PATH\" && cd ~/truck_tracker && flutter test test/unit/features/truck_list/"
+  ```
+- **GitHub Actions CI**: push 시 자동으로 테스트 실행
+- **로컬 검증**: flutter analyze + WSL flutter test
 
 ---
 

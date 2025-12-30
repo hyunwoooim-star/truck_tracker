@@ -282,18 +282,19 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
             // Info section
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    // Title + Status
                     Row(
                       children: [
                         Expanded(
                           child: Text(
                             truck.truckNumber,
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
                               color: AppTheme.textPrimary,
                             ),
@@ -304,15 +305,32 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
                         StatusTag(status: truck.status),
                       ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      truck.foodType,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: AppTheme.textSecondary,
-                      ),
+                    // Food type + Location
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          truck.foodType,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: AppTheme.textSecondary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          truck.locationDescription,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppTheme.textTertiary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 8),
+                    // Distance + Actions
                     Row(
                       children: [
                         _buildDistanceChip(compact: true),
