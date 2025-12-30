@@ -1118,4 +1118,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pleaseFillAllFields => 'Please fill in all fields';
+
+  @override
+  String get tapToViewDetails => 'Tap to view details';
+
+  @override
+  String ranked(int rank) {
+    return 'Ranked #$rank';
+  }
+
+  @override
+  String get operating => 'Operating';
+
+  @override
+  String get resting => 'Resting';
+
+  @override
+  String get maintenance => 'Maintenance';
 }

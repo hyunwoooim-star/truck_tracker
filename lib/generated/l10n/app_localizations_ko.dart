@@ -1101,4 +1101,21 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get pleaseFillAllFields => '모든 항목을 입력해주세요';
+
+  @override
+  String get tapToViewDetails => '상세 보기를 탭하세요';
+
+  @override
+  String ranked(int rank) {
+    return '$rank위';
+  }
+
+  @override
+  String get operating => '운행 중';
+
+  @override
+  String get resting => '휴식 중';
+
+  @override
+  String get maintenance => '점검 중';
 }

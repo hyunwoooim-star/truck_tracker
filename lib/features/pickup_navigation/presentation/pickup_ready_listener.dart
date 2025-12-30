@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../order/data/order_repository.dart';
 import '../../order/domain/order.dart';
-import '../../truck_list/data/truck_repository.dart';
+import '../../truck_list/presentation/truck_provider.dart';
 import 'pickup_navigation_screen.dart';
 
 /// 픽업 준비 완료 알림을 듣고 화면을 표시하는 위젯
@@ -209,12 +209,12 @@ class _PickupReadyDialog extends ConsumerWidget {
 
   Future<void> _navigateToPickup(BuildContext context, WidgetRef ref) async {
     // 트럭 위치 조회
-    final truckId = int.tryParse(order.truckId);
-    if (truckId == null) return;
+    final truckId = order.truckId;
+    if (truckId.isEmpty) return;
 
     try {
       final truckRepo = ref.read(truckRepositoryProvider);
-      final truck = await truckRepo.getTruckById(truckId);
+      final truck = await truckRepo.getTruck(truckId);
 
       if (truck != null && context.mounted) {
         Navigator.push(

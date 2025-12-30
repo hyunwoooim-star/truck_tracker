@@ -2185,6 +2185,36 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'모든 항목을 입력해주세요'**
   String get pleaseFillAllFields;
+
+  /// No description provided for @tapToViewDetails.
+  ///
+  /// In ko, this message translates to:
+  /// **'상세 보기를 탭하세요'**
+  String get tapToViewDetails;
+
+  /// No description provided for @ranked.
+  ///
+  /// In ko, this message translates to:
+  /// **'{rank}위'**
+  String ranked(int rank);
+
+  /// No description provided for @operating.
+  ///
+  /// In ko, this message translates to:
+  /// **'운행 중'**
+  String get operating;
+
+  /// No description provided for @resting.
+  ///
+  /// In ko, this message translates to:
+  /// **'휴식 중'**
+  String get resting;
+
+  /// No description provided for @maintenance.
+  ///
+  /// In ko, this message translates to:
+  /// **'점검 중'**
+  String get maintenance;
 }
 
 class _AppLocalizationsDelegate
