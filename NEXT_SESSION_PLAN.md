@@ -48,11 +48,19 @@
   - notifyChatMessage (채팅 알림)
   - notifyNearbyTrucks (근처 트럭 알림)
 
-### Phase 3: UI/UX 트렌드 적용 ⬅️ 다음 진행
-- [ ] Bento Grid 레이아웃 (TruckListScreen, TruckDetailScreen)
-- [ ] 대형 이미지 + 타이포그래피
-- [ ] Micro-interactions (좋아요 애니메이션)
-- [ ] Glassmorphism 카드
+### Phase 3: UI/UX 트렌드 적용 ✅ 진행 중
+- [x] **Bento Grid 레이아웃** (TruckListScreen 적용 완료)
+  - `bento_truck_card.dart` - 3가지 크기 카드 (Large/Medium/Small)
+  - `bento_truck_grid.dart` - MasonryGridView 기반 스태거드 그리드
+  - 패키지: `flutter_staggered_grid_view: ^0.7.0`
+- [x] **대형 이미지 + 타이포그래피** (Large 카드에 적용)
+- [x] **Micro-interactions** (좋아요 버튼 애니메이션)
+  - AnimatedBuilder + elasticOut curve
+  - Scale 1.0 → 1.3 → 1.0 효과
+- [x] **Glassmorphism 카드** (Large 카드 하단 패널)
+  - BackdropFilter + ImageFilter.blur
+  - 반투명 배경 + 테두리
+- [ ] TruckDetailScreen에 Bento Grid 적용
 
 ### Phase 4: 소셜 피드
 - [ ] Instagram 스타일 트럭/음식 사진 피드
@@ -114,4 +122,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-30 (Phase 1.2, 2, 1.1 완료)
+**마지막 업데이트**: 2025-12-30 (Phase 3 UI/UX 트렌드 적용 - Bento Grid, Glassmorphism, Micro-interactions 완료)
