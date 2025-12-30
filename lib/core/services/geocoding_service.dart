@@ -30,7 +30,6 @@ class GeocodingService {
       final placemarks = await placemarkFromCoordinates(
         latitude,
         longitude,
-        localeIdentifier: 'ko_KR',
       );
 
       if (placemarks.isNotEmpty) {
@@ -101,7 +100,6 @@ class GeocodingService {
       final placemarks = await placemarkFromCoordinates(
         latitude,
         longitude,
-        localeIdentifier: 'ko_KR',
       );
 
       if (placemarks.isNotEmpty) {

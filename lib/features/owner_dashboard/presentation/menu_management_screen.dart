@@ -1,5 +1,11 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
@@ -87,29 +93,99 @@ class _MenuList extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.restaurant_menu, size: 64, color: Colors.grey[600]),
-                const SizedBox(height: 16),
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: AppTheme.charcoalMedium,
+                    borderRadius: BorderRadius.circular(60),
+                  ),
+                  child: Icon(Icons.restaurant_menu, size: 64, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 24),
                 Text(
                   l10n.noMenuItems,
-                  style: TextStyle(color: Colors.grey[400], fontSize: 16),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '아래 + 버튼을 눌러 메뉴를 추가하세요',
+                  style: TextStyle(color: Colors.grey[500], fontSize: 14),
                 ),
               ],
             ),
           );
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: detail.menuItems.length,
-          itemBuilder: (context, index) {
-            final item = detail.menuItems[index];
-            return _MenuItemCard(
-              item: item,
-              truckId: truckId,
-            );
-          },
+        final availableCount = detail.menuItems.where((m) => !m.isSoldOut).length;
+        final soldOutCount = detail.menuItems.where((m) => m.isSoldOut).length;
+
+        return Column(
+          children: [
+            // Stats header
+            Container(
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppTheme.charcoalMedium,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppTheme.mustardYellow30),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildStatItem('전체', detail.menuItems.length.toString(), AppTheme.mustardYellow),
+                  Container(width: 1, height: 40, color: AppTheme.mustardYellow30),
+                  _buildStatItem('판매 중', availableCount.toString(), Colors.green),
+                  Container(width: 1, height: 40, color: AppTheme.mustardYellow30),
+                  _buildStatItem('품절', soldOutCount.toString(), Colors.red),
+                ],
+              ),
+            ),
+            // Menu list
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                itemCount: detail.menuItems.length,
+                itemBuilder: (context, index) {
+                  final item = detail.menuItems[index];
+                  return _MenuItemCard(
+                    item: item,
+                    truckId: truckId,
+                  );
+                },
+              ),
+            ),
+          ],
         );
       },
+    );
+  }
+
+  Widget _buildStatItem(String label, String value, Color color) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            color: Colors.white70,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -138,9 +214,67 @@ class _MenuItemCard extends ConsumerWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Row(
           children: [
+            // Menu item image
+            if (item.imageUrl.isNotEmpty)
+              Container(
+                width: 80,
+                height: 80,
+                margin: const EdgeInsets.only(right: 12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: item.isSoldOut ? Colors.grey[700]! : AppTheme.mustardYellow30,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: ColorFiltered(
+                    colorFilter: item.isSoldOut
+                        ? const ColorFilter.mode(Colors.grey, BlendMode.saturation)
+                        : const ColorFilter.mode(Colors.transparent, BlendMode.multiply),
+                    child: CachedNetworkImage(
+                      imageUrl: item.imageUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: AppTheme.charcoalMedium,
+                        child: const Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppTheme.mustardYellow,
+                            ),
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: AppTheme.charcoalMedium,
+                        child: const Icon(Icons.broken_image, color: Colors.grey, size: 32),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            else
+              Container(
+                width: 80,
+                height: 80,
+                margin: const EdgeInsets.only(right: 12),
+                decoration: BoxDecoration(
+                  color: AppTheme.charcoalMedium,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppTheme.mustardYellow30),
+                ),
+                child: Icon(
+                  Icons.restaurant,
+                  color: item.isSoldOut ? Colors.grey[700] : AppTheme.mustardYellow,
+                  size: 32,
+                ),
+              ),
             // Menu item info
             Expanded(
               child: Column(
@@ -150,17 +284,17 @@ class _MenuItemCard extends ConsumerWidget {
                     item.name,
                     style: TextStyle(
                       color: item.isSoldOut ? Colors.grey[600] : Colors.white,
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       decoration: item.isSoldOut ? TextDecoration.lineThrough : null,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '\u20a9${item.price}',
+                    '\u20a9${item.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
                     style: TextStyle(
                       color: item.isSoldOut ? Colors.grey[700] : AppTheme.mustardYellow,
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -289,6 +423,12 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
   late TextEditingController _descriptionController;
   bool _isLoading = false;
 
+  // Image handling
+  final ImagePicker _imagePicker = ImagePicker();
+  dynamic _selectedImage; // File for mobile, XFile for web
+  String? _existingImageUrl;
+  bool _isUploadingImage = false;
+
   bool get isEditing => widget.existingItem != null;
 
   @override
@@ -299,6 +439,7 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
         TextEditingController(text: widget.existingItem?.price.toString() ?? '');
     _descriptionController =
         TextEditingController(text: widget.existingItem?.description ?? '');
+    _existingImageUrl = widget.existingItem?.imageUrl;
   }
 
   @override
@@ -323,6 +464,9 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Image picker section
+            _buildImagePicker(l10n),
+            const SizedBox(height: 20),
             TextField(
               controller: _nameController,
               decoration: InputDecoration(
@@ -330,6 +474,20 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
                 labelStyle: const TextStyle(color: Colors.white70),
                 hintText: l10n.menuItemNameHint,
                 hintStyle: const TextStyle(color: Colors.white30),
+                filled: true,
+                fillColor: AppTheme.charcoalMedium,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppTheme.mustardYellow30),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppTheme.mustardYellow),
+                ),
               ),
               style: const TextStyle(color: Colors.white),
             ),
@@ -342,6 +500,20 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
                 labelStyle: const TextStyle(color: Colors.white70),
                 prefixText: '\u20a9 ',
                 prefixStyle: const TextStyle(color: Colors.white70),
+                filled: true,
+                fillColor: AppTheme.charcoalMedium,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppTheme.mustardYellow30),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppTheme.mustardYellow),
+                ),
               ),
               style: const TextStyle(color: Colors.white),
             ),
@@ -352,6 +524,20 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
               decoration: InputDecoration(
                 labelText: l10n.menuItemDescription,
                 labelStyle: const TextStyle(color: Colors.white70),
+                filled: true,
+                fillColor: AppTheme.charcoalMedium,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppTheme.mustardYellow30),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppTheme.mustardYellow),
+                ),
               ),
               style: const TextStyle(color: Colors.white),
             ),
@@ -401,6 +587,12 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
     setState(() => _isLoading = true);
 
     try {
+      // Upload image if selected
+      String? imageUrl = _existingImageUrl;
+      if (_selectedImage != null) {
+        imageUrl = await _uploadImage();
+      }
+
       final repository = ref.read(truckDetailRepositoryProvider);
 
       if (isEditing) {
@@ -408,6 +600,7 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
           name: name,
           price: price,
           description: description,
+          imageUrl: imageUrl ?? '',
         );
         await repository.updateMenuItem(widget.truckId, updatedItem);
         if (mounted) {
@@ -420,6 +613,7 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
           name: name,
           price: price,
           description: description,
+          imageUrl: imageUrl ?? '',
         );
         await repository.addMenuItem(widget.truckId, newItem);
         if (mounted) {
@@ -434,6 +628,264 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  /// Build image picker widget
+  Widget _buildImagePicker(AppLocalizations l10n) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.menuItemImage,
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: _isLoading ? null : _pickImage,
+          child: Container(
+            width: double.infinity,
+            height: 150,
+            decoration: BoxDecoration(
+              color: AppTheme.charcoalMedium,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppTheme.mustardYellow30),
+            ),
+            child: _buildImagePreview(),
+          ),
+        ),
+        if (_selectedImage != null || (_existingImageUrl?.isNotEmpty ?? false))
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: TextButton.icon(
+              onPressed: _isLoading ? null : _removeImage,
+              icon: const Icon(Icons.delete_outline, color: Colors.red, size: 18),
+              label: Text(
+                l10n.removeImage,
+                style: const TextStyle(color: Colors.red, fontSize: 12),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  /// Build image preview based on current state
+  Widget _buildImagePreview() {
+    // Show uploading indicator
+    if (_isUploadingImage) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(color: AppTheme.mustardYellow),
+            SizedBox(height: 8),
+            Text(
+              '이미지 업로드 중...',
+              style: TextStyle(color: Colors.white70, fontSize: 12),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Show selected image (from picker)
+    if (_selectedImage != null) {
+      if (kIsWeb) {
+        // Web: XFile
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.network(
+            (_selectedImage as XFile).path,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 150,
+          ),
+        );
+      } else {
+        // Mobile: File
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.file(
+            _selectedImage as File,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 150,
+          ),
+        );
+      }
+    }
+
+    // Show existing image URL
+    if (_existingImageUrl?.isNotEmpty ?? false) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: CachedNetworkImage(
+          imageUrl: _existingImageUrl!,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: 150,
+          placeholder: (context, url) => const Center(
+            child: CircularProgressIndicator(color: AppTheme.mustardYellow),
+          ),
+          errorWidget: (context, url, error) => const Icon(
+            Icons.broken_image,
+            color: Colors.grey,
+            size: 48,
+          ),
+        ),
+      );
+    }
+
+    // Show placeholder
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.add_photo_alternate, color: AppTheme.mustardYellow, size: 48),
+        SizedBox(height: 8),
+        Text(
+          '이미지 추가',
+          style: TextStyle(color: Colors.white70, fontSize: 14),
+        ),
+        Text(
+          '탭하여 선택',
+          style: TextStyle(color: Colors.white38, fontSize: 12),
+        ),
+      ],
+    );
+  }
+
+  /// Pick image from gallery or camera
+  Future<void> _pickImage() async {
+    final l10n = AppLocalizations.of(context);
+
+    // Show bottom sheet with options
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: AppTheme.charcoalMedium,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[600],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                l10n.selectImageSource,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: const Icon(Icons.photo_library, color: AppTheme.mustardYellow),
+                title: Text(l10n.gallery, style: const TextStyle(color: Colors.white)),
+                onTap: () => Navigator.pop(context, ImageSource.gallery),
+              ),
+              if (!kIsWeb) ...[
+                ListTile(
+                  leading: const Icon(Icons.camera_alt, color: AppTheme.electricBlue),
+                  title: Text(l10n.camera, style: const TextStyle(color: Colors.white)),
+                  onTap: () => Navigator.pop(context, ImageSource.camera),
+                ),
+              ],
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (source == null) return;
+
+    try {
+      final XFile? pickedFile = await _imagePicker.pickImage(
+        source: source,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          if (kIsWeb) {
+            _selectedImage = pickedFile;
+          } else {
+            _selectedImage = File(pickedFile.path);
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        SnackBarHelper.showError(context, l10n.errorOccurred);
+      }
+    }
+  }
+
+  /// Remove selected image
+  void _removeImage() {
+    setState(() {
+      _selectedImage = null;
+      _existingImageUrl = null;
+    });
+  }
+
+  /// Upload image to Firebase Storage
+  Future<String?> _uploadImage() async {
+    if (_selectedImage == null) return null;
+
+    setState(() => _isUploadingImage = true);
+
+    try {
+      final storage = FirebaseStorage.instance;
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final path = 'menu_images/${widget.truckId}/menu_$timestamp.jpg';
+      final ref = storage.ref().child(path);
+
+      UploadTask uploadTask;
+      if (kIsWeb) {
+        // Web upload
+        final xFile = _selectedImage as XFile;
+        final bytes = await xFile.readAsBytes();
+        uploadTask = ref.putData(
+          bytes,
+          SettableMetadata(contentType: 'image/jpeg'),
+        );
+      } else {
+        // Mobile upload
+        uploadTask = ref.putFile(_selectedImage as File);
+      }
+
+      final snapshot = await uploadTask;
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+
+      return downloadUrl;
+    } catch (e) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context);
+        SnackBarHelper.showError(context, l10n.imageUploadFailed);
+      }
+      return null;
+    } finally {
+      if (mounted) {
+        setState(() => _isUploadingImage = false);
       }
     }
   }

@@ -71,6 +71,9 @@ class AuthService {
         await userCredential.user?.updateDisplayName(displayName);
       }
 
+      // Send email verification
+      await sendEmailVerification();
+
       AppLogger.success('Email sign up successful!', tag: 'AuthService');
       AppLogger.debug('User ID: ${userCredential.user?.uid}', tag: 'AuthService');
       AppLogger.debug('Email: ${userCredential.user?.email}', tag: 'AuthService');
@@ -83,6 +86,56 @@ class AuthService {
       AppLogger.error('Email sign up failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
       rethrow;
     }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // EMAIL VERIFICATION
+  // ═══════════════════════════════════════════════════════════
+
+  /// Check if current user's email is verified
+  bool get isEmailVerified => _auth.currentUser?.emailVerified ?? false;
+
+  /// Send email verification to current user
+  Future<void> sendEmailVerification() async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw Exception('로그인이 필요합니다');
+    }
+
+    if (user.emailVerified) {
+      AppLogger.info('Email already verified', tag: 'AuthService');
+      return;
+    }
+
+    try {
+      await user.sendEmailVerification();
+      AppLogger.success('Verification email sent to: ${user.email}', tag: 'AuthService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Failed to send verification email', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
+  }
+
+  /// Reload user to check email verification status
+  Future<bool> checkEmailVerified() async {
+    final user = _auth.currentUser;
+    if (user == null) return false;
+
+    await user.reload();
+    final freshUser = _auth.currentUser;
+
+    final verified = freshUser?.emailVerified ?? false;
+    AppLogger.debug('Email verified status: $verified', tag: 'AuthService');
+
+    if (verified) {
+      // Update Firestore with verified status
+      await _firestore.collection('users').doc(user.uid).update({
+        'emailVerified': true,
+        'emailVerifiedAt': FieldValue.serverTimestamp(),
+      });
+    }
+
+    return verified;
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -479,6 +532,48 @@ class AuthService {
     } catch (e) {
       AppLogger.error('Error checking admin status', error: e, tag: 'AuthService');
       return false;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // OWNER ONBOARDING
+  // ═══════════════════════════════════════════════════════════
+
+  /// Check if owner needs to complete onboarding
+  Future<bool> checkNeedsOnboarding(int truckId) async {
+    try {
+      final truckDoc = await _firestore
+          .collection('trucks')
+          .doc(truckId.toString())
+          .get();
+
+      if (!truckDoc.exists) {
+        // Truck doesn't exist yet - needs onboarding
+        return true;
+      }
+
+      final data = truckDoc.data();
+      if (data == null) return true;
+
+      // Check if onboarding was completed
+      final onboardingCompleted = data['onboardingCompleted'] as bool? ?? false;
+
+      // Also check if essential fields are filled
+      final truckNumber = data['truckNumber'] as String?;
+      final driverName = data['driverName'] as String?;
+      final foodType = data['foodType'] as String?;
+
+      // If onboarding not marked complete, or essential fields are empty/default
+      if (!onboardingCompleted) return true;
+      if (truckNumber == null || truckNumber.isEmpty || truckNumber.contains('호')) return true;
+      if (driverName == null || driverName.isEmpty) return true;
+      if (foodType == null || foodType.isEmpty || foodType == '미정') return true;
+
+      return false;
+    } catch (e, stackTrace) {
+      AppLogger.error('Error checking onboarding status',
+          error: e, stackTrace: stackTrace, tag: 'AuthService');
+      return false; // Default to not requiring onboarding on error
     }
   }
 }

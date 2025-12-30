@@ -259,22 +259,30 @@ class TruckRepository {
     }
   }
 
-  /// Update truck profile (name, driver, phone)
+  /// Update truck profile (name, driver, phone, image)
   Future<void> updateTruckProfile({
     required String truckId,
     required String truckNumber,
     required String driverName,
     required String contactPhone,
+    String? imageUrl,
   }) async {
     AppLogger.debug('Updating profile for truck $truckId', tag: 'TruckRepository');
 
     try {
-      await _trucksCollection.doc(truckId).update({
+      final updateData = <String, dynamic>{
         'truckNumber': truckNumber,
         'driverName': driverName,
         'contactPhone': contactPhone,
         'updatedAt': FieldValue.serverTimestamp(),
-      });
+      };
+
+      // Only update imageUrl if provided (allows clearing with empty string)
+      if (imageUrl != null) {
+        updateData['imageUrl'] = imageUrl;
+      }
+
+      await _trucksCollection.doc(truckId).update(updateData);
 
       AppLogger.success('Profile updated: trucks/$truckId', tag: 'TruckRepository');
     } catch (e, stackTrace) {

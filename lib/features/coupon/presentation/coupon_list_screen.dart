@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
+import '../../../shared/widgets/skeleton_loading.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../domain/coupon.dart';
 import 'coupon_provider.dart';
@@ -34,8 +35,10 @@ class CouponListScreen extends ConsumerWidget {
         elevation: 0,
       ),
       body: couponsAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppTheme.mustardYellow),
+        loading: () => ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: 3,
+          itemBuilder: (_, index) => const SkeletonCouponCard(),
         ),
         error: (error, _) => Center(
           child: Column(

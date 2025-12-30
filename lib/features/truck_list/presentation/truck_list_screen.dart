@@ -11,6 +11,7 @@ import 'package:rxdart/rxdart.dart';
 import '../../../core/constants/food_types.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
+import '../../../shared/widgets/skeleton_loading.dart';
 import '../../../shared/widgets/status_tag.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../auth/presentation/login_screen.dart';
@@ -68,24 +69,7 @@ class TruckListScreen extends ConsumerWidget {
               color: AppTheme.mustardYellow,
               backgroundColor: AppTheme.charcoalMedium,
               child: trucksWithDistanceAsync.when(
-                loading: () => Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const CircularProgressIndicator(
-                        color: AppTheme.electricBlue,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        '트럭 정보를 불러오는 중...',
-                        style: TextStyle(
-                          color: AppTheme.textSecondary,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                loading: () => const SkeletonTruckList(itemCount: 5),
                 error: (e, stackTrace) => Center(
                   child: Text(
                     l10n.loadDataFailed,

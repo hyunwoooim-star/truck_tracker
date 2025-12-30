@@ -1964,6 +1964,54 @@ abstract class AppLocalizations {
   /// **'삭제'**
   String get delete;
 
+  /// No description provided for @menuItemImage.
+  ///
+  /// In ko, this message translates to:
+  /// **'메뉴 이미지'**
+  String get menuItemImage;
+
+  /// No description provided for @removeImage.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미지 삭제'**
+  String get removeImage;
+
+  /// No description provided for @selectImageSource.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미지 선택'**
+  String get selectImageSource;
+
+  /// No description provided for @gallery.
+  ///
+  /// In ko, this message translates to:
+  /// **'갤러리'**
+  String get gallery;
+
+  /// No description provided for @camera.
+  ///
+  /// In ko, this message translates to:
+  /// **'카메라'**
+  String get camera;
+
+  /// No description provided for @imageUploadFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미지 업로드에 실패했습니다'**
+  String get imageUploadFailed;
+
+  /// No description provided for @truckImage.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭 이미지'**
+  String get truckImage;
+
+  /// No description provided for @truckImageUploadSuccess.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭 이미지가 업데이트되었습니다'**
+  String get truckImageUploadSuccess;
+
   /// No description provided for @reviewManagement.
   ///
   /// In ko, this message translates to:

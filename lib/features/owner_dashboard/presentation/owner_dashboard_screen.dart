@@ -1,5 +1,11 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 
@@ -14,6 +20,7 @@ import '../../order/data/order_repository.dart';
 import '../../truck_detail/domain/menu_item.dart';
 import '../../truck_detail/presentation/truck_detail_provider.dart';
 import 'analytics_screen.dart';
+import 'coupon_management_screen.dart';
 import 'menu_management_screen.dart';
 import 'owner_status_provider.dart';
 import 'review_management_screen.dart';
@@ -82,6 +89,17 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (_) => const MenuManagementScreen(),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.local_offer),
+            tooltip: '쿠폰 관리',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const CouponManagementScreen(),
                 ),
               );
             },
@@ -955,127 +973,10 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     final ownerTruck = ref.read(ownerTruckProvider).value;
     if (ownerTruck == null) return;
 
-    final truckNameController = TextEditingController(text: ownerTruck.truckNumber);
-    final driverNameController = TextEditingController(text: ownerTruck.driverName);
-    final phoneController = TextEditingController(text: ownerTruck.contactPhone);
-
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.charcoalMedium,
-        title: const Text(
-          '트럭 정보 수정',
-          style: TextStyle(color: Colors.white),
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: truckNameController,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: '트럭 이름',
-                  labelStyle: const TextStyle(color: AppTheme.textSecondary),
-                  filled: true,
-                  fillColor: AppTheme.charcoalDark,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: driverNameController,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: '사장님 이름',
-                  labelStyle: const TextStyle(color: AppTheme.textSecondary),
-                  filled: true,
-                  fillColor: AppTheme.charcoalDark,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: phoneController,
-                style: const TextStyle(color: Colors.white),
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  labelText: '연락처',
-                  labelStyle: const TextStyle(color: AppTheme.textSecondary),
-                  filled: true,
-                  fillColor: AppTheme.charcoalDark,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              '취소',
-              style: TextStyle(color: AppTheme.textSecondary),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              await _updateTruckProfile(
-                context,
-                ref,
-                ownerTruck.id,
-                truckNameController.text.trim(),
-                driverNameController.text.trim(),
-                phoneController.text.trim(),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.mustardYellow,
-              foregroundColor: Colors.black,
-            ),
-            child: const Text('저장'),
-          ),
-        ],
-      ),
+      builder: (context) => _TruckSettingsDialog(truck: ownerTruck),
     );
-  }
-
-  /// Update truck profile
-  Future<void> _updateTruckProfile(
-    BuildContext context,
-    WidgetRef ref,
-    String truckId,
-    String truckName,
-    String driverName,
-    String phone,
-  ) async {
-    try {
-      final truckRepository = ref.read(truckRepositoryProvider);
-      await truckRepository.updateTruckProfile(
-        truckId: truckId,
-        truckNumber: truckName,
-        driverName: driverName,
-        contactPhone: phone,
-      );
-
-      if (context.mounted) {
-        SnackBarHelper.showSuccess(context, '프로필이 저장되었습니다');
-      }
-
-      // Refresh truck data
-      ref.invalidate(ownerTruckProvider);
-    } catch (e) {
-      if (context.mounted) {
-        SnackBarHelper.showError(context, '저장 실패: $e');
-      }
-    }
   }
 
   /// Show logout confirmation dialog
@@ -1254,6 +1155,416 @@ class _OrderStatTile extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Truck settings dialog with image upload
+class _TruckSettingsDialog extends ConsumerStatefulWidget {
+  const _TruckSettingsDialog({required this.truck});
+
+  final Truck truck;
+
+  @override
+  ConsumerState<_TruckSettingsDialog> createState() => _TruckSettingsDialogState();
+}
+
+class _TruckSettingsDialogState extends ConsumerState<_TruckSettingsDialog> {
+  late TextEditingController _truckNameController;
+  late TextEditingController _driverNameController;
+  late TextEditingController _phoneController;
+
+  final ImagePicker _imagePicker = ImagePicker();
+  dynamic _selectedImage;
+  String? _existingImageUrl;
+  bool _isLoading = false;
+  bool _isUploadingImage = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _truckNameController = TextEditingController(text: widget.truck.truckNumber);
+    _driverNameController = TextEditingController(text: widget.truck.driverName);
+    _phoneController = TextEditingController(text: widget.truck.contactPhone);
+    _existingImageUrl = widget.truck.imageUrl;
+  }
+
+  @override
+  void dispose() {
+    _truckNameController.dispose();
+    _driverNameController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return AlertDialog(
+      backgroundColor: AppTheme.midnightCharcoal,
+      title: const Text(
+        '트럭 정보 수정',
+        style: TextStyle(color: AppTheme.mustardYellow),
+      ),
+      content: SingleChildScrollView(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.8,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image section
+              Text(
+                l10n.truckImage,
+                style: const TextStyle(color: Colors.white70, fontSize: 14),
+              ),
+              const SizedBox(height: 8),
+              _buildImagePicker(l10n),
+              const SizedBox(height: 20),
+              // Text fields
+              _buildTextField(_truckNameController, '트럭 이름'),
+              const SizedBox(height: 12),
+              _buildTextField(_driverNameController, '사장님 이름'),
+              const SizedBox(height: 12),
+              _buildTextField(_phoneController, '연락처', keyboardType: TextInputType.phone),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _isLoading ? null : () => Navigator.pop(context),
+          child: const Text('취소', style: TextStyle(color: Colors.white54)),
+        ),
+        ElevatedButton(
+          onPressed: _isLoading ? null : _saveSettings,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppTheme.mustardYellow,
+            foregroundColor: Colors.black,
+          ),
+          child: _isLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                )
+              : Text(l10n.save),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label, {
+    TextInputType? keyboardType,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.white70),
+        filled: true,
+        fillColor: AppTheme.charcoalMedium,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppTheme.mustardYellow30),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppTheme.mustardYellow),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImagePicker(AppLocalizations l10n) {
+    return GestureDetector(
+      onTap: _isLoading ? null : _pickImage,
+      child: Container(
+        width: double.infinity,
+        height: 180,
+        decoration: BoxDecoration(
+          color: AppTheme.charcoalMedium,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppTheme.mustardYellow30),
+        ),
+        child: _buildImagePreview(),
+      ),
+    );
+  }
+
+  Widget _buildImagePreview() {
+    if (_isUploadingImage) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(color: AppTheme.mustardYellow),
+            SizedBox(height: 8),
+            Text('이미지 업로드 중...', style: TextStyle(color: Colors.white70, fontSize: 12)),
+          ],
+        ),
+      );
+    }
+
+    if (_selectedImage != null) {
+      if (kIsWeb) {
+        return Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                (_selectedImage as XFile).path,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: 180,
+              ),
+            ),
+            _buildRemoveButton(),
+          ],
+        );
+      } else {
+        return Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.file(
+                _selectedImage as File,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: 180,
+              ),
+            ),
+            _buildRemoveButton(),
+          ],
+        );
+      }
+    }
+
+    if (_existingImageUrl?.isNotEmpty ?? false) {
+      return Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: CachedNetworkImage(
+              imageUrl: _existingImageUrl!,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: 180,
+              placeholder: (context, url) => const Center(
+                child: CircularProgressIndicator(color: AppTheme.mustardYellow),
+              ),
+              errorWidget: (context, url, error) => const Icon(
+                Icons.broken_image,
+                color: Colors.grey,
+                size: 48,
+              ),
+            ),
+          ),
+          _buildRemoveButton(),
+        ],
+      );
+    }
+
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.add_photo_alternate, color: AppTheme.mustardYellow, size: 48),
+        SizedBox(height: 8),
+        Text('트럭 이미지 추가', style: TextStyle(color: Colors.white70, fontSize: 14)),
+        Text('탭하여 선택', style: TextStyle(color: Colors.white38, fontSize: 12)),
+      ],
+    );
+  }
+
+  Widget _buildRemoveButton() {
+    return Positioned(
+      top: 8,
+      right: 8,
+      child: GestureDetector(
+        onTap: _removeImage,
+        child: Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: Colors.black54,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const Icon(Icons.close, color: Colors.white, size: 20),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickImage() async {
+    final l10n = AppLocalizations.of(context);
+
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: AppTheme.charcoalMedium,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[600],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                l10n.selectImageSource,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: const Icon(Icons.photo_library, color: AppTheme.mustardYellow),
+                title: Text(l10n.gallery, style: const TextStyle(color: Colors.white)),
+                onTap: () => Navigator.pop(context, ImageSource.gallery),
+              ),
+              if (!kIsWeb) ...[
+                ListTile(
+                  leading: const Icon(Icons.camera_alt, color: AppTheme.electricBlue),
+                  title: Text(l10n.camera, style: const TextStyle(color: Colors.white)),
+                  onTap: () => Navigator.pop(context, ImageSource.camera),
+                ),
+              ],
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (source == null) return;
+
+    try {
+      final XFile? pickedFile = await _imagePicker.pickImage(
+        source: source,
+        maxWidth: 1200,
+        maxHeight: 800,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          if (kIsWeb) {
+            _selectedImage = pickedFile;
+          } else {
+            _selectedImage = File(pickedFile.path);
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context);
+        SnackBarHelper.showError(context, l10n.errorOccurred);
+      }
+    }
+  }
+
+  void _removeImage() {
+    setState(() {
+      _selectedImage = null;
+      _existingImageUrl = null;
+    });
+  }
+
+  Future<String?> _uploadImage() async {
+    if (_selectedImage == null) return _existingImageUrl;
+
+    setState(() => _isUploadingImage = true);
+
+    try {
+      final storage = FirebaseStorage.instance;
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final path = 'truck_images/${widget.truck.id}/truck_$timestamp.jpg';
+      final ref = storage.ref().child(path);
+
+      UploadTask uploadTask;
+      if (kIsWeb) {
+        final xFile = _selectedImage as XFile;
+        final bytes = await xFile.readAsBytes();
+        uploadTask = ref.putData(
+          bytes,
+          SettableMetadata(contentType: 'image/jpeg'),
+        );
+      } else {
+        uploadTask = ref.putFile(_selectedImage as File);
+      }
+
+      final snapshot = await uploadTask;
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+
+      return downloadUrl;
+    } catch (e) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context);
+        SnackBarHelper.showError(context, l10n.imageUploadFailed);
+      }
+      return null;
+    } finally {
+      if (mounted) {
+        setState(() => _isUploadingImage = false);
+      }
+    }
+  }
+
+  Future<void> _saveSettings() async {
+    final l10n = AppLocalizations.of(context);
+
+    setState(() => _isLoading = true);
+
+    try {
+      // Upload image if selected
+      String? imageUrl = _existingImageUrl;
+      if (_selectedImage != null) {
+        imageUrl = await _uploadImage();
+      }
+
+      final truckRepository = ref.read(truckRepositoryProvider);
+      await truckRepository.updateTruckProfile(
+        truckId: widget.truck.id,
+        truckNumber: _truckNameController.text.trim(),
+        driverName: _driverNameController.text.trim(),
+        contactPhone: _phoneController.text.trim(),
+        imageUrl: imageUrl,
+      );
+
+      // Refresh truck data
+      ref.invalidate(ownerTruckProvider);
+
+      if (mounted) {
+        Navigator.pop(context);
+        SnackBarHelper.showSuccess(context, l10n.truckImageUploadSuccess);
+      }
+    } catch (e) {
+      if (mounted) {
+        SnackBarHelper.showError(context, l10n.errorOccurred);
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 }
 

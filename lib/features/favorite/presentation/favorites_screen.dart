@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../../shared/widgets/skeleton_loading.dart';
 import '../../../shared/widgets/status_tag.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
@@ -40,7 +41,7 @@ class FavoritesScreen extends ConsumerWidget {
         foregroundColor: AppTheme.electricBlue,
       ),
       body: favoriteTruckIdsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const SkeletonTruckList(itemCount: 3),
         error: (e, _) => Center(
           child: Text(l10n.errorWithMessage(e), style: const TextStyle(color: Colors.red)),
         ),
@@ -67,7 +68,7 @@ class FavoritesScreen extends ConsumerWidget {
           }
 
           return allTrucksAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const SkeletonTruckList(itemCount: 3),
             error: (e, _) => Center(
               child: Text(l10n.errorWithMessage(e), style: const TextStyle(color: Colors.red)),
             ),

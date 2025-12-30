@@ -20,6 +20,7 @@ import 'generated/l10n/app_localizations.dart';
 import 'features/auth/presentation/auth_provider.dart';
 import 'features/auth/presentation/login_screen.dart';
 import 'features/owner_dashboard/presentation/owner_dashboard_screen.dart';
+import 'features/owner_dashboard/presentation/owner_onboarding_screen.dart';
 import 'features/truck_map/presentation/map_first_screen.dart';
 import 'features/checkin/presentation/customer_checkin_screen.dart';
 import 'features/checkin/presentation/owner_qr_screen.dart';
@@ -179,9 +180,8 @@ class AuthWrapper extends ConsumerWidget {
             AppLogger.debug('Owned truck ID = $ownedTruckId', tag: 'AuthWrapper');
 
             if (ownedTruckId != null) {
-              AppLogger.debug('User is owner → OwnerDashboardScreen', tag: 'AuthWrapper');
-              // User owns a truck → owner dashboard
-              return const OwnerDashboardScreen();
+              // User owns a truck → check if onboarding is needed
+              return _OwnerRoutingWidget(truckId: ownedTruckId);
             } else {
               AppLogger.debug('User is customer → MapFirstScreen', tag: 'AuthWrapper');
               // Regular customer → map-first screen (Street Tycoon)
@@ -219,6 +219,53 @@ class AuthWrapper extends ConsumerWidget {
         AppLogger.error('Auth error', error: error, stackTrace: stack, tag: 'AuthWrapper');
         // On error, show login screen
         return const LoginScreen();
+      },
+    );
+  }
+}
+
+/// Widget to handle owner routing (onboarding vs dashboard)
+class _OwnerRoutingWidget extends ConsumerWidget {
+  const _OwnerRoutingWidget({required this.truckId});
+
+  final int truckId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final needsOnboardingAsync = ref.watch(needsOwnerOnboardingProvider);
+
+    return needsOnboardingAsync.when(
+      data: (needsOnboarding) {
+        if (needsOnboarding) {
+          AppLogger.debug('Owner needs onboarding → OwnerOnboardingScreen', tag: 'AuthWrapper');
+          return OwnerOnboardingScreen(truckId: truckId);
+        } else {
+          AppLogger.debug('Owner onboarding complete → OwnerDashboardScreen', tag: 'AuthWrapper');
+          return const OwnerDashboardScreen();
+        }
+      },
+      loading: () {
+        AppLogger.debug('Checking onboarding status...', tag: 'AuthWrapper');
+        return const Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(color: AppTheme.mustardYellow),
+                SizedBox(height: 16),
+                Text(
+                  '사장님 정보 확인 중...',
+                  style: TextStyle(color: Colors.white70),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+      error: (error, stack) {
+        AppLogger.error('Error checking onboarding', error: error, stackTrace: stack, tag: 'AuthWrapper');
+        // On error, go to dashboard (safer - they can access onboarding from there if needed)
+        return const OwnerDashboardScreen();
       },
     );
   }

@@ -360,3 +360,42 @@ final class OwnerRequestStatusProvider
 
 String _$ownerRequestStatusHash() =>
     r'335a862ceff52e7a23eb85f3081d403540a752aa';
+
+/// Check if owner needs onboarding (truck exists but onboarding not completed)
+
+@ProviderFor(needsOwnerOnboarding)
+final needsOwnerOnboardingProvider = NeedsOwnerOnboardingProvider._();
+
+/// Check if owner needs onboarding (truck exists but onboarding not completed)
+
+final class NeedsOwnerOnboardingProvider
+    extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
+    with $FutureModifier<bool>, $FutureProvider<bool> {
+  /// Check if owner needs onboarding (truck exists but onboarding not completed)
+  NeedsOwnerOnboardingProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'needsOwnerOnboardingProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$needsOwnerOnboardingHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<bool> create(Ref ref) {
+    return needsOwnerOnboarding(ref);
+  }
+}
+
+String _$needsOwnerOnboardingHash() =>
+    r'a1b2c3d4e5f6g7h8i9j0needsonboarding';

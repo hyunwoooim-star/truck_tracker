@@ -1004,6 +1004,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete => 'Delete';
 
   @override
+  String get menuItemImage => 'Menu Image';
+
+  @override
+  String get removeImage => 'Remove Image';
+
+  @override
+  String get selectImageSource => 'Select Image Source';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get imageUploadFailed => 'Image upload failed';
+
+  @override
+  String get truckImage => 'Truck Image';
+
+  @override
+  String get truckImageUploadSuccess => 'Truck image updated successfully';
+
+  @override
   String get reviewManagement => 'Review Management';
 
   @override

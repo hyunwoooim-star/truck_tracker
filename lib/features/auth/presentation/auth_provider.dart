@@ -79,3 +79,16 @@ Future<Map<String, dynamic>?> ownerRequestStatus(Ref ref) async {
   return authService.getOwnerRequestStatus(userId);
 }
 
+/// Check if owner needs onboarding (truck exists but onboarding not completed)
+@riverpod
+Future<bool> needsOwnerOnboarding(Ref ref) async {
+  final truckId = await ref.watch(currentUserTruckIdProvider.future);
+
+  if (truckId == null) {
+    return false; // Not an owner
+  }
+
+  final authService = ref.watch(authServiceProvider);
+  return authService.checkNeedsOnboarding(truckId);
+}
+

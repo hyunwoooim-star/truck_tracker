@@ -988,6 +988,30 @@ class AppLocalizationsKo extends AppLocalizations {
   String get delete => '삭제';
 
   @override
+  String get menuItemImage => '메뉴 이미지';
+
+  @override
+  String get removeImage => '이미지 삭제';
+
+  @override
+  String get selectImageSource => '이미지 선택';
+
+  @override
+  String get gallery => '갤러리';
+
+  @override
+  String get camera => '카메라';
+
+  @override
+  String get imageUploadFailed => '이미지 업로드에 실패했습니다';
+
+  @override
+  String get truckImage => '트럭 이미지';
+
+  @override
+  String get truckImageUploadSuccess => '트럭 이미지가 업데이트되었습니다';
+
+  @override
   String get reviewManagement => '리뷰 관리';
 
   @override

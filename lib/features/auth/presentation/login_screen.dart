@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,8 +10,11 @@ import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/password_validator.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../notifications/fcm_service.dart';
+import '../../settings/presentation/privacy_policy_screen.dart';
+import '../../settings/presentation/terms_of_service_screen.dart';
 import '../../truck_list/presentation/truck_list_screen.dart';
 import 'auth_provider.dart';
+import 'email_verification_screen.dart';
 
 /// Login Screen with Email and Google Sign-In
 class LoginScreen extends ConsumerStatefulWidget {
@@ -106,17 +110,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             _businessLicenseImagePath!,
           );
           AppLogger.success('Owner verification request submitted', tag: 'LoginScreen');
-
-          if (mounted) {
-            SnackBarHelper.showSuccess(
-              context,
-              '사장님 인증 요청이 접수되었습니다. 승인 후 사장님 기능을 사용할 수 있습니다.',
-            );
-          }
         }
+
+        // Save FCM token for push notifications
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          AppLogger.debug('Saving FCM token for user: ${user.uid}', tag: 'LoginScreen');
+          await FcmService().saveFcmTokenToUser(user.uid);
+          AppLogger.success('FCM token saved', tag: 'LoginScreen');
+        }
+
+        // Show email verification screen for new signups
+        if (mounted) {
+          final message = _isOwnerSignup
+              ? '회원가입이 완료되었습니다!\n이메일 인증 후 사장님 승인 절차가 진행됩니다.'
+              : '회원가입이 완료되었습니다!\n이메일을 인증해주세요.';
+          SnackBarHelper.showSuccess(context, message);
+
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => EmailVerificationScreen(
+                isOwnerSignup: _isOwnerSignup,
+              ),
+            ),
+          );
+        }
+
+        AppLogger.success('Sign up flow completed', tag: 'LoginScreen');
+        return; // Return early for signup - don't fall through to login handling
       }
 
-      // Save FCM token for push notifications
+      // Save FCM token for push notifications (for login)
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         AppLogger.debug('Saving FCM token for user: ${user.uid}', tag: 'LoginScreen');
@@ -633,18 +657,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           checkColor: Colors.black,
                         ),
                         Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _agreedToTerms = !_agreedToTerms;
-                              });
-                            },
-                            child: const Text(
-                              '이용약관에 동의합니다 (필수)',
-                              style: TextStyle(
+                          child: RichText(
+                            text: TextSpan(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
                               ),
+                              children: [
+                                TextSpan(
+                                  text: '이용약관',
+                                  style: const TextStyle(
+                                    color: AppTheme.mustardYellow,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const TermsOfServiceScreen(),
+                                        ),
+                                      );
+                                    },
+                                ),
+                                const TextSpan(text: '에 동의합니다 (필수)'),
+                              ],
                             ),
                           ),
                         ),
@@ -663,18 +700,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           checkColor: Colors.black,
                         ),
                         Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _agreedToPrivacy = !_agreedToPrivacy;
-                              });
-                            },
-                            child: const Text(
-                              '개인정보 처리방침에 동의합니다 (필수)',
-                              style: TextStyle(
+                          child: RichText(
+                            text: TextSpan(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
                               ),
+                              children: [
+                                TextSpan(
+                                  text: '개인정보 처리방침',
+                                  style: const TextStyle(
+                                    color: AppTheme.mustardYellow,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const PrivacyPolicyScreen(),
+                                        ),
+                                      );
+                                    },
+                                ),
+                                const TextSpan(text: '에 동의합니다 (필수)'),
+                              ],
                             ),
                           ),
                         ),

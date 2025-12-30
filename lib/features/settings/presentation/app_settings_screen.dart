@@ -7,6 +7,8 @@ import '../../../core/themes/app_theme.dart';
 import '../../../core/themes/theme_provider.dart';
 import '../../../core/widgets/network_status_banner.dart';
 import '../../notifications/presentation/notification_settings_screen.dart';
+import 'privacy_policy_screen.dart';
+import 'terms_of_service_screen.dart';
 
 /// General app settings screen
 class AppSettingsScreen extends ConsumerWidget {
@@ -72,14 +74,28 @@ class AppSettingsScreen extends ConsumerWidget {
                 ListTile(
                   leading: const Icon(Icons.policy_outlined),
                   title: const Text('개인정보 처리방침'),
-                  trailing: const Icon(Icons.open_in_new, size: 20),
-                  onTap: () => _launchUrl('https://example.com/privacy'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const PrivacyPolicyScreen(),
+                      ),
+                    );
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
                   title: const Text('서비스 이용약관'),
-                  trailing: const Icon(Icons.open_in_new, size: 20),
-                  onTap: () => _launchUrl('https://example.com/terms'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const TermsOfServiceScreen(),
+                      ),
+                    );
+                  },
                 ),
 
                 const Divider(),
@@ -98,7 +114,7 @@ class AppSettingsScreen extends ConsumerWidget {
                   leading: const Icon(Icons.feedback_outlined),
                   title: const Text('피드백 보내기'),
                   trailing: const Icon(Icons.open_in_new, size: 20),
-                  onTap: () => _launchUrl('mailto:support@example.com'),
+                  onTap: () => _launchUrl('mailto:support@truckajeossi.com'),
                 ),
 
                 const SizedBox(height: 32),
@@ -123,7 +139,7 @@ class AppSettingsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '© 2024 Truck Tracker',
+                        '© 2024-2025 트럭아저씨',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[500],
