@@ -53,6 +53,29 @@
 		<string>comgooglemaps</string>
 		<string>http</string>
 		<string>https</string>
+		<!-- Kakao SDK -->
+		<string>kakaokompassauth</string>
+		<string>kakaolink</string>
+		<string>kakaotalk</string>
+		<!-- Naver SDK -->
+		<string>naversearchapp</string>
+		<string>naversearchthirdlogin</string>
 	</array>
+	<!-- Kakao Login URL Scheme -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- Replace with your Kakao Native App Key -->
+				<string>kakaoYOUR_KAKAO_NATIVE_APP_KEY</string>
+			</array>
+		</dict>
+	</array>
+	<!-- Kakao Native App Key -->
+	<key>KAKAO_NATIVE_APP_KEY</key>
+	<string>YOUR_KAKAO_NATIVE_APP_KEY</string>
 </dict>
 </plist>

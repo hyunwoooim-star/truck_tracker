@@ -70,6 +70,10 @@ dependencies:
   connectivity_plus: ^7.0.0
   flutter_local_notifications: ^18.0.1
   shimmer: ^3.0.0
+  # Social Login SDKs
+  kakao_flutter_sdk_user: ^1.9.6
+  flutter_naver_login: ^1.8.0
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:

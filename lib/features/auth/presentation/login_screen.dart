@@ -164,6 +164,60 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  Future<void> _handleKakaoLogin() async {
+    AppLogger.debug('Kakao login button pressed', tag: 'LoginScreen');
+    setState(() => _isLoading = true);
+
+    try {
+      final authService = ref.read(authServiceProvider);
+      await authService.signInWithKakao();
+
+      AppLogger.success('Kakao login successful', tag: 'LoginScreen');
+
+      // Save FCM token for push notifications
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FcmService().saveFcmTokenToUser(user.uid);
+      }
+    } catch (e, stackTrace) {
+      AppLogger.error('Kakao login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
+      if (mounted) {
+        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _handleNaverLogin() async {
+    AppLogger.debug('Naver login button pressed', tag: 'LoginScreen');
+    setState(() => _isLoading = true);
+
+    try {
+      final authService = ref.read(authServiceProvider);
+      await authService.signInWithNaver();
+
+      AppLogger.success('Naver login successful', tag: 'LoginScreen');
+
+      // Save FCM token for push notifications
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FcmService().saveFcmTokenToUser(user.uid);
+      }
+    } catch (e, stackTrace) {
+      AppLogger.error('Naver login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
+      if (mounted) {
+        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   String _getErrorMessage(String error) {
     if (error.contains('user-not-found')) {
       return '등록되지 않은 이메일입니다';
@@ -809,172 +863,94 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Info Text
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.mustardYellow.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: AppTheme.mustardYellow.withValues(alpha: 0.3),
+                  // Kakao Sign In Button
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _handleKakaoLogin,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFEE500),
+                      foregroundColor: Colors.black,
+                      disabledBackgroundColor: const Color(0xFFFEE500).withValues(alpha: 0.5),
+                      disabledForegroundColor: Colors.black.withValues(alpha: 0.5),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
+                      elevation: 0,
                     ),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.check_circle_outline,
-                          color: AppTheme.mustardYellow,
-                          size: 16,
+                        Container(
+                          height: 20,
+                          width: 20,
+                          decoration: const BoxDecoration(
+                            color: Colors.black87,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.chat_bubble,
+                            size: 12,
+                            color: Color(0xFFFEE500),
+                          ),
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'Kakao/Naver 로그인은 Cloud Functions 배포 후 사용 가능',
-                            style: TextStyle(
-                              color: Colors.grey[300],
-                              fontSize: 12,
-                            ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          '카카오로 계속하기',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-
-                  // Kakao Sign In Button (Coming Soon)
-                  Stack(
-                    children: [
-                      ElevatedButton(
-                        onPressed: null, // Disabled - Coming Soon
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFEE500),
-                          foregroundColor: Colors.black,
-                          disabledBackgroundColor: const Color(0xFFFEE500).withValues(alpha: 0.3),
-                          disabledForegroundColor: Colors.black.withValues(alpha: 0.4),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 20,
-                              width: 20,
-                              decoration: BoxDecoration(
-                                color: Colors.black.withValues(alpha: 0.4),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.chat_bubble,
-                                size: 12,
-                                color: const Color(0xFFFEE500).withValues(alpha: 0.5),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            const Text(
-                              '카카오로 계속하기',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[800],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Text(
-                            '준비 중',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 12),
 
-                  // Naver Sign In Button (Coming Soon)
-                  Stack(
-                    children: [
-                      ElevatedButton(
-                        onPressed: null, // Disabled - Coming Soon
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF03C75A),
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor: const Color(0xFF03C75A).withValues(alpha: 0.3),
-                          disabledForegroundColor: Colors.white.withValues(alpha: 0.4),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                  // Naver Sign In Button
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _handleNaverLogin,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF03C75A),
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: const Color(0xFF03C75A).withValues(alpha: 0.5),
+                      disabledForegroundColor: Colors.white.withValues(alpha: 0.5),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 20,
+                          width: 20,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
                           ),
-                          elevation: 0,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 20,
-                              width: 20,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.4),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'N',
-                                  style: TextStyle(
-                                    color: const Color(0xFF03C75A).withValues(alpha: 0.5),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            const Text(
-                              '네이버로 계속하기',
+                          child: const Center(
+                            child: Text(
+                              'N',
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF03C75A),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[800],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Text(
-                            '준비 중',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 12),
+                        const Text(
+                          '네이버로 계속하기',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 24),
 

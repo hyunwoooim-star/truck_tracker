@@ -44,6 +44,20 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyArKTrCQyRO-srk9hvdMevMRhOXuSF55G0E" />
+
+        <!-- Kakao Login Activity -->
+        <activity
+            android:name="com.kakao.sdk.flutter.AuthCodeHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Kakao Native App Key (replace with actual key) -->
+                <data android:host="oauth"
+                    android:scheme="kakaoYOUR_KAKAO_NATIVE_APP_KEY" />
+            </intent-filter>
+        </activity>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

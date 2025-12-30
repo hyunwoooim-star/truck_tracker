@@ -12,6 +12,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 
 import 'core/themes/app_theme.dart';
 import 'core/themes/theme_provider.dart';
@@ -66,6 +67,13 @@ void main() async {
       await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
       AppLogger.debug('Firebase Auth persistence set to LOCAL for web', tag: 'Main');
     }
+
+    // 🔑 KAKAO SDK: Initialize Kakao SDK with native app key
+    // The key should be configured in Firebase Remote Config for security
+    // For now, using a placeholder - replace with actual key from Kakao Developer Console
+    const kakaoNativeAppKey = 'YOUR_KAKAO_NATIVE_APP_KEY'; // TODO: Configure in Remote Config
+    kakao.KakaoSdk.init(nativeAppKey: kakaoNativeAppKey);
+    AppLogger.debug('Kakao SDK initialized', tag: 'Main');
 
     // Initialize FCM (Firebase Cloud Messaging)
     final fcmService = FcmService();

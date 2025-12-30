@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import '../../../core/utils/app_logger.dart';
 
 /// Unified Authentication Service
@@ -187,23 +191,167 @@ class AuthService {
   }
 
   // ═══════════════════════════════════════════════════════════
-  // KAKAO AUTHENTICATION (Coming Soon)
+  // KAKAO AUTHENTICATION
   // ═══════════════════════════════════════════════════════════
 
-  /// Sign in with Kakao (coming soon)
-  Future<UserCredential?> signInWithKakao() async {
-    AppLogger.info('Kakao sign in - Coming soon', tag: 'AuthService');
-    throw UnsupportedError('카카오 로그인은 준비 중입니다');
+  /// Cloud Functions URL for custom token generation
+  static const String _cloudFunctionsUrl =
+      'https://us-central1-truck-tracker-fa0b0.cloudfunctions.net/createCustomToken';
+
+  /// Sign in with Kakao
+  Future<UserCredential> signInWithKakao() async {
+    AppLogger.debug('Starting Kakao Sign In', tag: 'AuthService');
+
+    try {
+      // 1. Try Kakao Talk login first, fall back to web login
+      if (await kakao.isKakaoTalkInstalled()) {
+        AppLogger.debug('Kakao Talk is installed, trying Kakao Talk login', tag: 'AuthService');
+        try {
+          await kakao.UserApi.instance.loginWithKakaoTalk();
+        } catch (e) {
+          AppLogger.warning('Kakao Talk login failed, falling back to web login', tag: 'AuthService');
+          await kakao.UserApi.instance.loginWithKakaoAccount();
+        }
+      } else {
+        AppLogger.debug('Kakao Talk not installed, using web login', tag: 'AuthService');
+        await kakao.UserApi.instance.loginWithKakaoAccount();
+      }
+
+      AppLogger.debug('Kakao OAuth token obtained', tag: 'AuthService');
+
+      // 2. Get user info from Kakao
+      final kakaoUser = await kakao.UserApi.instance.me();
+
+      final kakaoId = kakaoUser.id.toString();
+      final email = kakaoUser.kakaoAccount?.email;
+      final displayName = kakaoUser.kakaoAccount?.profile?.nickname ?? '카카오 사용자';
+      final photoURL = kakaoUser.kakaoAccount?.profile?.profileImageUrl;
+
+      AppLogger.debug('Kakao user info: id=$kakaoId, email=$email, name=$displayName', tag: 'AuthService');
+
+      // 3. Exchange Kakao token for Firebase custom token via Cloud Functions
+      final customToken = await _getFirebaseCustomToken(
+        provider: 'kakao',
+        socialId: kakaoId,
+        email: email,
+        displayName: displayName,
+        photoURL: photoURL,
+      );
+
+      // 4. Sign in to Firebase with custom token
+      final userCredential = await _auth.signInWithCustomToken(customToken);
+
+      AppLogger.success('Kakao Sign In successful!', tag: 'AuthService');
+      AppLogger.debug('Firebase UID: ${userCredential.user?.uid}', tag: 'AuthService');
+
+      // 5. Update user info in Firestore
+      await _updateUserInfo(userCredential.user!, 'kakao');
+
+      return userCredential;
+    } catch (e, stackTrace) {
+      AppLogger.error('Kakao Sign In failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
   }
 
   // ═══════════════════════════════════════════════════════════
-  // NAVER AUTHENTICATION (Coming Soon)
+  // NAVER AUTHENTICATION
   // ═══════════════════════════════════════════════════════════
 
-  /// Sign in with Naver (coming soon)
-  Future<UserCredential?> signInWithNaver() async {
-    AppLogger.info('Naver sign in - Coming soon', tag: 'AuthService');
-    throw UnsupportedError('네이버 로그인은 준비 중입니다');
+  /// Sign in with Naver
+  Future<UserCredential> signInWithNaver() async {
+    AppLogger.debug('Starting Naver Sign In', tag: 'AuthService');
+
+    try {
+      // 1. Trigger Naver login
+      final NaverLoginResult result = await FlutterNaverLogin.logIn();
+
+      if (result.status != NaverLoginStatus.loggedIn) {
+        AppLogger.warning('Naver login was cancelled or failed: ${result.status}', tag: 'AuthService');
+        throw Exception('네이버 로그인이 취소되었습니다');
+      }
+
+      AppLogger.debug('Naver login successful', tag: 'AuthService');
+
+      // 2. Get user info from Naver
+      final NaverAccountResult accountResult = await FlutterNaverLogin.currentAccount();
+
+      final naverId = accountResult.id;
+      final email = accountResult.email;
+      final displayName = accountResult.name.isNotEmpty ? accountResult.name : accountResult.nickname;
+      final photoURL = accountResult.profileImage;
+
+      AppLogger.debug('Naver user info: id=$naverId, email=$email, name=$displayName', tag: 'AuthService');
+
+      // 3. Exchange Naver token for Firebase custom token via Cloud Functions
+      final customToken = await _getFirebaseCustomToken(
+        provider: 'naver',
+        socialId: naverId,
+        email: email,
+        displayName: displayName,
+        photoURL: photoURL,
+      );
+
+      // 4. Sign in to Firebase with custom token
+      final userCredential = await _auth.signInWithCustomToken(customToken);
+
+      AppLogger.success('Naver Sign In successful!', tag: 'AuthService');
+      AppLogger.debug('Firebase UID: ${userCredential.user?.uid}', tag: 'AuthService');
+
+      // 5. Update user info in Firestore
+      await _updateUserInfo(userCredential.user!, 'naver');
+
+      return userCredential;
+    } catch (e, stackTrace) {
+      AppLogger.error('Naver Sign In failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
+  }
+
+  /// Helper method to get Firebase custom token from Cloud Functions
+  Future<String> _getFirebaseCustomToken({
+    required String provider,
+    required String socialId,
+    String? email,
+    String? displayName,
+    String? photoURL,
+  }) async {
+    AppLogger.debug('Getting Firebase custom token for $provider: $socialId', tag: 'AuthService');
+
+    try {
+      final body = {
+        'provider': provider,
+        if (provider == 'kakao') 'kakaoId': socialId,
+        if (provider == 'naver') 'naverId': socialId,
+        if (email != null) 'email': email,
+        if (displayName != null) 'displayName': displayName,
+        if (photoURL != null) 'photoURL': photoURL,
+      };
+
+      final response = await http.post(
+        Uri.parse(_cloudFunctionsUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode != 200) {
+        AppLogger.error('Cloud Function error: ${response.statusCode} - ${response.body}', tag: 'AuthService');
+        throw Exception('Firebase 토큰 생성에 실패했습니다');
+      }
+
+      final data = jsonDecode(response.body);
+      final token = data['token'] as String?;
+
+      if (token == null || token.isEmpty) {
+        throw Exception('Firebase 토큰이 비어있습니다');
+      }
+
+      AppLogger.debug('Firebase custom token obtained successfully', tag: 'AuthService');
+      return token;
+    } catch (e, stackTrace) {
+      AppLogger.error('Failed to get Firebase custom token', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
   }
 
   // ═══════════════════════════════════════════════════════════
