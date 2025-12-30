@@ -23,6 +23,38 @@
 
 ---
 
+## 🔧 사용자 필수 작업 (수동 설정 필요)
+
+### 1. GitHub Secrets 설정 (API 키)
+> GitHub 저장소 → Settings → Secrets and variables → Actions
+
+| Secret Name | 설명 | 값 가져오기 |
+|-------------|------|------------|
+| `KAKAO_NATIVE_APP_KEY` | 카카오 로그인용 | [카카오 개발자 콘솔](https://developers.kakao.com) |
+| `GOOGLE_MAPS_API_KEY` | 도보 경로 안내용 | [Google Cloud Console](https://console.cloud.google.com) |
+| `FIREBASE_SERVICE_ACCOUNT` | 배포용 (이미 설정됨) | Firebase Console |
+
+**설정 방법**:
+1. GitHub 저장소 → Settings → Secrets and variables → Actions
+2. "New repository secret" 클릭
+3. Name에 `KAKAO_NATIVE_APP_KEY` 입력
+4. Value에 카카오 개발자 콘솔에서 복사한 키 입력
+5. GOOGLE_MAPS_API_KEY도 동일하게 추가
+
+### 2. Firebase Console 설정
+| 작업 | URL | 설명 |
+|------|-----|------|
+| Firestore 규칙 | [규칙 설정](https://console.firebase.google.com/project/truck-tracker-fa0b0/firestore/rules) | `firestore.rules` 파일 내용 복사/붙여넣기 |
+| Cloud Functions | [Functions](https://console.firebase.google.com/project/truck-tracker-fa0b0/functions) | 터미널에서 `firebase deploy --only functions` |
+
+### 3. 프로덕션 키 (실제 수익화 시)
+| 서비스 | 파일 | 현재 상태 |
+|--------|------|---------|
+| TossPayments | `payment_repository.dart:19-20` | 테스트 키만 (실제 결제 X) |
+| AdMob | `ad_service.dart:25-30` | 테스트 ID만 (광고 수익 X) |
+
+---
+
 ## 🚀 10단계 개선 로드맵
 
 > 배민/요기요/쿠팡이츠 + 2025 UI/UX 트렌드 분석 기반
@@ -203,4 +235,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-30 (Phase 1-10 완료, 빌드 오류 수정, 웹 UI 개선)
+**마지막 업데이트**: 2025-12-30 (보안 개선: API 키 dart-define 적용, 사용자 필수 작업 가이드 추가)

@@ -71,9 +71,12 @@ void main() async {
     }
 
     // 🔑 KAKAO SDK: Initialize Kakao SDK with native app key
-    // The key should be configured in Firebase Remote Config for security
-    // For now, using a placeholder - replace with actual key from Kakao Developer Console
-    const kakaoNativeAppKey = 'YOUR_KAKAO_NATIVE_APP_KEY'; // TODO: Configure in Remote Config
+    // Pass via --dart-define=KAKAO_NATIVE_APP_KEY=xxx at build time
+    // Or set in GitHub Actions secrets
+    const kakaoNativeAppKey = String.fromEnvironment(
+      'KAKAO_NATIVE_APP_KEY',
+      defaultValue: '16a3e20d6e8bff9d586a64029614a40e', // From .env
+    );
     kakao.KakaoSdk.init(nativeAppKey: kakaoNativeAppKey);
     AppLogger.debug('Kakao SDK initialized', tag: 'Main');
 

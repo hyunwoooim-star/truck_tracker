@@ -24,7 +24,13 @@ jobs:
         run: flutter pub get
 
       - name: Build web
-        run: flutter build web --release
+        env:
+          KAKAO_NATIVE_APP_KEY: ${{ secrets.KAKAO_NATIVE_APP_KEY }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        run: |
+          flutter build web --release \
+            --dart-define=KAKAO_NATIVE_APP_KEY=$KAKAO_NATIVE_APP_KEY \
+            --dart-define=GOOGLE_MAPS_API_KEY=$GOOGLE_MAPS_API_KEY
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

@@ -64,8 +64,12 @@ Future<WalkingRoute?> walkingRoute(
 
 class DirectionsService {
   // Google Maps Directions API Key
-  // TODO: Move to Firebase Remote Config for security
-  static const String _apiKey = 'YOUR_GOOGLE_MAPS_API_KEY';
+  // Pass via --dart-define=GOOGLE_MAPS_API_KEY=xxx at build time
+  // Falls back to estimated route calculation if key is not provided
+  static const String _apiKey = String.fromEnvironment(
+    'GOOGLE_MAPS_API_KEY',
+    defaultValue: '', // Empty = use estimated route fallback
+  );
 
   static const String _baseUrl = 'https://maps.googleapis.com/maps/api/directions/json';
 
@@ -77,6 +81,16 @@ class DirectionsService {
     required double destLng,
     String language = 'ko',
   }) async {
+    // API 키가 없으면 바로 예상 경로 반환 (불필요한 API 호출 방지)
+    if (_apiKey.isEmpty) {
+      return _calculateEstimatedRoute(
+        originLat: originLat,
+        originLng: originLng,
+        destLat: destLat,
+        destLng: destLng,
+      );
+    }
+
     try {
       final url = Uri.parse(_baseUrl).replace(
         queryParameters: {
@@ -104,7 +118,7 @@ class DirectionsService {
         AppLogger.warning('Directions API status: $status', tag: 'Directions');
 
         // API 키가 없거나 유효하지 않은 경우 예상 경로 반환
-        if (status == 'REQUEST_DENIED' || _apiKey == 'YOUR_GOOGLE_MAPS_API_KEY') {
+        if (status == 'REQUEST_DENIED' || _apiKey.isEmpty) {
           return _calculateEstimatedRoute(
             originLat: originLat,
             originLng: originLng,
