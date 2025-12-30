@@ -21,6 +21,8 @@ import 'owner_status_provider.dart';
 import 'review_management_screen.dart';
 import 'schedule_management_screen.dart';
 import '../../checkin/presentation/owner_qr_screen.dart';
+import '../../analytics/presentation/revenue_dashboard_screen.dart';
+import '../../notifications/presentation/push_notification_tool.dart';
 import '../../../scripts/migrate_mock_data.dart';
 import 'widgets/widgets.dart';
 
@@ -109,13 +111,59 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
               }
             },
           ),
-          IconButton(
+          // 매출/분석 메뉴
+          PopupMenuButton<String>(
             icon: const Icon(Icons.analytics),
             tooltip: l10n.analyticsTooltip,
+            onSelected: (value) {
+              switch (value) {
+                case 'revenue':
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const RevenueDashboardScreen(),
+                    ),
+                  );
+                  break;
+                case 'analytics':
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const AnalyticsScreen(),
+                    ),
+                  );
+                  break;
+              }
+            },
+            itemBuilder: (_) => [
+              const PopupMenuItem(
+                value: 'revenue',
+                child: Row(
+                  children: [
+                    Icon(Icons.attach_money, size: 20),
+                    SizedBox(width: 8),
+                    Text('매출 대시보드'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'analytics',
+                child: Row(
+                  children: [
+                    Icon(Icons.bar_chart, size: 20),
+                    SizedBox(width: 8),
+                    Text('조회/리뷰 분석'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          // 푸시 알림 발송
+          IconButton(
+            icon: const Icon(Icons.notifications_active),
+            tooltip: '알림 발송',
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => const AnalyticsScreen(),
+                  builder: (_) => const PushNotificationTool(),
                 ),
               );
             },

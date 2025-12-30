@@ -140,10 +140,22 @@
   - 준비 완료 시 다이얼로그 표시
   - 길찾기 버튼으로 네비게이션 연결
 
-### Phase 9: 관리자 대시보드 강화
-- [ ] 실시간 통계
-- [ ] 매출 리포트
-- [ ] 푸시 알림 발송 도구
+### Phase 9: 관리자 대시보드 강화 ✅ 완료
+- [x] **실시간 통계 대시보드**
+  - `lib/features/analytics/data/revenue_repository.dart` - 매출 데이터 Repository
+  - `RealTimeDashboard` - 실시간 주문/매출 스트림
+  - 오늘 매출, 대기/준비중/픽업대기 주문 현황
+- [x] **매출 리포트 (일/주/월)**
+  - `lib/features/analytics/presentation/revenue_dashboard_screen.dart` - 매출 대시보드
+  - 일별 매출 추이 차트 (fl_chart)
+  - 기간별 필터 (오늘/이번주/이번달/30일/커스텀)
+  - 인기 메뉴 TOP 5
+  - 완료율, 평균 주문 금액
+- [x] **푸시 알림 발송 도구**
+  - `lib/features/notifications/presentation/push_notification_tool.dart`
+  - 공지/프로모션/이벤트 유형 선택
+  - 빠른 템플릿 (영업시작, 신메뉴, 특가, 종료임박)
+  - 팔로워 수 표시 및 미리보기
 
 ### Phase 10: 성능 최적화
 - [ ] 이미지 lazy loading
@@ -177,4 +189,4 @@ docs/archive/       # 과거 문서 (참고용)
 
 ---
 
-**마지막 업데이트**: 2025-12-30 (Phase 1-5 + 광고 수익화 + Phase 8 픽업 최적화 완료)
+**마지막 업데이트**: 2025-12-30 (Phase 1-5 + 광고 + Phase 8-9 완료 - 픽업최적화/관리자대시보드)
