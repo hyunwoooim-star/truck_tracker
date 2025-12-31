@@ -1343,9 +1343,9 @@ Future<void> _launchNaverMap(BuildContext context, Truck truck, AppLocalizations
     'nmap://route/destination?dlat=${truck.latitude}&dlng=${truck.longitude}&dname=${Uri.encodeComponent(destinationName)}&appname=com.example.truck_tracker',
   );
   
-  // Web fallback
+  // Web fallback - 목적지로 길찾기
   final naverWebUrl = Uri.parse(
-    'https://map.naver.com/v5/directions/-/-/${truck.latitude},${truck.longitude}/-/',
+    'https://map.naver.com/v5/search/${Uri.encodeComponent(truck.locationDescription)}?c=${truck.longitude},${truck.latitude},15,0,0,0,dh',
   );
 
   try {
@@ -1437,12 +1437,27 @@ Future<void> _launchKakaoMap(BuildContext context, Truck truck, AppLocalizations
 
 // Google Maps URL Launcher (Web Fallback)
 Future<void> _launchGoogleMaps(BuildContext context, Truck truck, AppLocalizations l10n) async {
+  final destinationName = '${truck.foodType} ${truck.locationDescription}';
+
+  // Google Maps with place name query (shows name instead of coordinates)
   final googleUrl = Uri.parse(
-    'https://www.google.com/maps/dir/?api=1&destination=${truck.latitude},${truck.longitude}&travelmode=transit',
+    'https://www.google.com/maps/dir/?api=1'
+    '&destination=${Uri.encodeComponent(destinationName)}'
+    '&destination_place_id='
+    '&travelmode=transit',
+  );
+
+  // Fallback with coordinates if name doesn't work
+  final googleCoordsUrl = Uri.parse(
+    'https://www.google.com/maps/search/?api=1&query=${truck.latitude},${truck.longitude}',
   );
 
   try {
-    await launchUrl(googleUrl, mode: LaunchMode.externalApplication);
+    // Try with destination name first
+    final launched = await launchUrl(googleUrl, mode: LaunchMode.externalApplication);
+    if (!launched) {
+      await launchUrl(googleCoordsUrl, mode: LaunchMode.externalApplication);
+    }
   } catch (e) {
     if (context.mounted) {
       SnackBarHelper.showError(context, l10n.cannotOpenGoogleMaps);
