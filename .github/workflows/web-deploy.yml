@@ -43,6 +43,13 @@ jobs:
             --dart-define=KAKAO_NATIVE_APP_KEY=$KAKAO_NATIVE_APP_KEY \
             --dart-define=GOOGLE_MAPS_API_KEY=$GOOGLE_MAPS_API_KEY
 
+      - name: Inject custom HTML (in-app browser warning)
+        run: |
+          # Copy custom index.html from source (preserves CSS in head and custom body content)
+          cp web/index.html build/web/index.html
+          # Replace the Flutter base href placeholder with actual path (root for Firebase)
+          sed -i 's|\$FLUTTER_BASE_HREF|/|g' build/web/index.html
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:

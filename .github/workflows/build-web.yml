@@ -51,6 +51,13 @@ jobs:
             --dart-define=KAKAO_NATIVE_APP_KEY=$KAKAO_NATIVE_APP_KEY \
             --dart-define=GOOGLE_MAPS_API_KEY=$GOOGLE_MAPS_API_KEY
 
+      - name: Inject custom HTML (in-app browser warning)
+        run: |
+          # Copy custom index.html from source (preserves CSS in head and custom body content)
+          cp web/index.html build/web/index.html
+          # Replace the Flutter base href placeholder with actual path
+          sed -i 's|\$FLUTTER_BASE_HREF|/truck_tracker/|g' build/web/index.html
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
