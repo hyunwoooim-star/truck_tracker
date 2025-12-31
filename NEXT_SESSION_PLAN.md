@@ -54,6 +54,10 @@ git add . && git commit -m "message" && git push
 - [x] 관리자 실시간 푸시 알림 (Cloud Function + FCM 토픽)
 
 ### 선택적 기능
+- [ ] **관리자 외부 알림 (텔레그램 + 이메일)** - 계획 완료, 구현 대기
+  - 텔레그램 봇 만들기 (`@BotFather` → `/newbot`)
+  - SendGrid 계정 생성 (무료)
+  - Cloud Function 수정 후 배포
 - [ ] 멤버십/구독 (Phase 6)
 - [ ] AI 개인화 추천 (Phase 7)
 - [ ] 오프라인 모드 (Hive)
