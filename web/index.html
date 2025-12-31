@@ -208,6 +208,10 @@
       if (isIOS && safariBtn) {
         safariBtn.style.display = 'inline-block';
         safariBtn.textContent = '📋 주소 복사하기';
+        // iOS에서는 openSafari 버튼만 표시, copyUrl 버튼 숨기기 (중복 방지)
+        if (copyBtn) {
+          copyBtn.style.display = 'none';
+        }
         safariBtn.href = '#';
         safariBtn.addEventListener('click', function(e) {
           e.preventDefault();
