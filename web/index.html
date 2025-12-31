@@ -124,6 +124,52 @@
       font-size: 12px;
       color: #00D4FF;
     }
+    /* iOS Safari Warning Styles */
+    #ios-safari-warning {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #121212;
+      z-index: 99998;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    #ios-safari-warning .content { text-align: center; color: white; max-width: 320px; }
+    #ios-safari-warning .emoji { font-size: 48px; margin-bottom: 20px; }
+    #ios-safari-warning h1 { font-size: 24px; margin-bottom: 12px; color: #FF6B6B; }
+    #ios-safari-warning p { font-size: 16px; color: #999; margin-bottom: 24px; line-height: 1.5; }
+    #ios-safari-warning .btn {
+      display: block;
+      width: 100%;
+      background: #4285F4;
+      color: white;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      border: none;
+      text-align: center;
+    }
+    #ios-safari-warning .url-box {
+      background: #333;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 16px;
+      word-break: break-all;
+      font-size: 12px;
+      color: #00D4FF;
+    }
+    #ios-safari-warning .hint { font-size: 12px; color: #666; margin-top: 12px; }
   </style>
 
   <!-- Auto-detect renderer: HTML for mobile, CanvasKit for desktop -->
@@ -146,8 +192,14 @@
       var isAndroid = /android/.test(ua);
       var isMobile = isIOS || isAndroid;
 
+      // Detect iOS Safari (iOS but not Chrome/Firefox/etc)
+      var isCriOS = ua.indexOf('crios') > -1; // Chrome on iOS
+      var isFxiOS = ua.indexOf('fxios') > -1; // Firefox on iOS
+      var isIOSSafari = isIOS && !isCriOS && !isFxiOS && !isInAppBrowser;
+
       // Store for later use
       window.isInAppBrowser = isInAppBrowser;
+      window.isIOSSafari = isIOSSafari;
 
       // Let Flutter auto-detect the best renderer
       // Don't force renderer - let the build handle it
@@ -155,6 +207,19 @@
   </script>
 </head>
 <body>
+  <!-- iOS Safari Warning (Safari doesn't support Flutter Web properly) -->
+  <div id="ios-safari-warning" style="display:none;">
+    <div class="content">
+      <div class="emoji">🍎</div>
+      <h1>Safari 미지원</h1>
+      <p>죄송합니다. Safari에서는 앱이 제대로 작동하지 않습니다.<br><strong>Chrome 브라우저</strong>를 사용해주세요!</p>
+      <a href="https://apps.apple.com/app/google-chrome/id535886823" class="btn" style="background:#4285F4;color:white;">Chrome 다운로드</a>
+      <button class="btn" id="copyUrlSafari" style="background:#666;">📋 주소 복사 후 Chrome에서 열기</button>
+      <div class="url-box" id="urlDisplaySafari"></div>
+      <p class="hint">Chrome 설치 후 위 주소를 붙여넣기 하세요</p>
+    </div>
+  </div>
+
   <!-- In-App Browser Warning (visible by default, hidden by JS if normal browser) -->
   <div id="inapp-warning">
     <div class="content">
@@ -316,9 +381,44 @@
         warning.classList.add('hidden');
       }
 
-      // Only load Flutter if NOT in-app browser
-      // This prevents errors and crashes in incompatible browsers
-      if (!window.isInAppBrowser) {
+      // iOS Safari Warning
+      var iosSafariWarning = document.getElementById('ios-safari-warning');
+      var copyUrlSafari = document.getElementById('copyUrlSafari');
+      var urlDisplaySafari = document.getElementById('urlDisplaySafari');
+
+      if (window.isIOSSafari && iosSafariWarning) {
+        // Show iOS Safari warning
+        iosSafariWarning.style.display = 'flex';
+        if (urlDisplaySafari) {
+          urlDisplaySafari.textContent = currentUrl;
+        }
+
+        // Copy button for Safari users
+        if (copyUrlSafari) {
+          copyUrlSafari.addEventListener('click', function() {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(currentUrl).then(function() {
+                copyUrlSafari.textContent = '✅ 복사 완료!';
+                copyUrlSafari.style.background = '#4CAF50';
+                setTimeout(function() {
+                  copyUrlSafari.textContent = '📋 주소 복사 후 Chrome에서 열기';
+                  copyUrlSafari.style.background = '#666';
+                }, 2000);
+              }).catch(function() {
+                alert('주소를 길게 눌러 복사하세요:\n' + currentUrl);
+              });
+            } else {
+              alert('주소를 길게 눌러 복사하세요:\n' + currentUrl);
+            }
+          });
+        }
+
+        // Don't load Flutter for iOS Safari
+        return;
+      }
+
+      // Only load Flutter if NOT in-app browser AND NOT iOS Safari
+      if (!window.isInAppBrowser && !window.isIOSSafari) {
         var script = document.createElement('script');
         script.src = 'flutter_bootstrap.js';
         script.async = true;
