@@ -46,9 +46,64 @@
   - `web/index.html`에 Google Sign-In Client ID 설정
   - Firebase Console에서 Google 로그인 활성화 확인
 
-### 4. 공통 문제: OAuth 콜백 라우팅
-- Flutter 웹에서 OAuth 콜백 URL 처리를 위한 라우트 추가 필요
-- `main.dart` 또는 라우터 설정에서 콜백 경로 등록
+### 4. 공통 문제: OAuth 콜백 라우팅 (Gemini 분석 결과)
+
+#### 핵심 원인
+- Flutter 웹은 기본적으로 URL에 `#`(Hash)가 붙음 (예: `.../#/kakao`)
+- 카카오/네이버 Redirect URI에는 `#`이 없어서 인식 안 됨
+- go_router에 콜백 경로가 등록 안 되어 있음
+
+#### 해결 방법
+
+**1. main.dart에 Path URL Strategy 추가**
+```dart
+import 'package:flutter_web_plugins/url_strategy.dart';
+
+void main() {
+  usePathUrlStrategy(); // '#' 제거
+  runApp(const MyApp());
+}
+```
+
+**2. go_router에 콜백 라우트 추가**
+```dart
+GoRoute(
+  path: '/kakao',
+  builder: (context, state) {
+    final code = state.uri.queryParameters['code'];
+    if (code != null) {
+      return SocialLoginCallbackScreen(code: code, provider: 'kakao');
+    }
+    return const LoginErrorScreen();
+  },
+),
+GoRoute(
+  path: '/oauth/naver/callback',
+  builder: (context, state) {
+    final code = state.uri.queryParameters['code'];
+    final naverState = state.uri.queryParameters['state'];
+    if (code != null) {
+      return SocialLoginCallbackScreen(code: code, state: naverState, provider: 'naver');
+    }
+    return const LoginErrorScreen();
+  },
+),
+```
+
+**3. SocialLoginCallbackScreen 구현**
+- initState에서 code를 Cloud Function으로 전송
+- Custom Token 받아서 Firebase signInWithCustomToken() 호출
+- 성공하면 메인 페이지로 이동
+
+**4. 카카오 추가 확인사항**
+- Client Secret ON이면 Cloud Function에서 반드시 client_secret 파라미터 보내야 함
+- 테스트 중이면 Client Secret OFF로 설정하고 테스트
+
+**5. Google 로그인 (index.html 설정)**
+```html
+<meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+```
 
 ### 5. 선택적 기능 (미뤄둔 것들)
 - [ ] 관리자 외부 알림 (텔레그램 + 이메일)
