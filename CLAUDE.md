@@ -334,20 +334,15 @@ See PROJECT_CONTEXT.md § Development Commands for:
 - **GitHub Actions CI**: push 시 자동으로 테스트 실행
 - **로컬 검증**: flutter analyze + WSL flutter test
 
-### 2025-12-31: Flutter Web iOS Safari 호환성 (중요!)
-- **CanvasKit은 iOS Safari에서 작동 안 함**: 빈 화면, 크래시, 메모리 누수
-- **HTML 렌더러 deprecated**: Flutter 3.29+에서 `--web-renderer html` 사용 불가 (exit code 64)
-- **Flutter 버전 선택 시 주의**:
-  - 3.38.5: HTML 렌더러 X, iOS Safari X
-  - 3.27.4: HTML 렌더러 O, Dart 3.6.x (SDK ^3.10.4 호환성 확인 필요)
-  - 3.24.5: HTML 렌더러 O, Dart 3.5.x (SDK 충돌 가능)
-- **Firebase CDN 캐시**: `firebase.json`에 headers 설정 필수
-  ```json
-  "headers": [
-    {"source": "/index.html", "headers": [{"key": "Cache-Control", "value": "no-cache"}]}
-  ]
+### 2025-12-31: Flutter Web iOS Safari (최종 해결)
+- **문제**: CanvasKit 렌더러가 iOS Safari에서 작동 안 함 (빈 화면)
+- **HTML 렌더러**: Flutter 3.29+에서 deprecated → 사용 불가 (exit code 64)
+- **최종 해결**: `index.html`에 iOS Safari 감지 → "Chrome 사용" 안내 표시
+  ```javascript
+  // iOS Safari 감지: iOS이면서 Chrome/Firefox 아닌 경우
+  var isIOSSafari = isIOS && !isCriOS && !isFxiOS && !isInAppBrowser;
   ```
-- **iOS 중복 버튼**: `index.html`에서 iOS일 때 copyUrl 버튼 숨기기
+- **Firebase CDN 캐시**: `firebase.json`에 `no-cache` 헤더 설정
 
 ---
 
