@@ -24,6 +24,11 @@ class BentoTruckGrid extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    // ✅ OPTIMIZATION: Pre-compute rank lookup map O(n) -> O(1) per lookup
+    final rankMap = <String, int>{
+      for (var i = 0; i < topRanked.length; i++) topRanked[i].id as String: i + 1
+    };
+
     return ListView.builder(
       padding: padding,
       itemCount: trucksWithDistance.length,
@@ -31,9 +36,8 @@ class BentoTruckGrid extends StatelessWidget {
         final truckWithDistance = trucksWithDistance[index];
         final truck = truckWithDistance.truck;
 
-        // Determine rank if in top 3
-        final rankIndex = topRanked.indexWhere((t) => t.id == truck.id);
-        final rank = rankIndex >= 0 ? rankIndex + 1 : null;
+        // O(1) lookup instead of O(n) indexWhere
+        final rank = rankMap[truck.id];
 
         // First item or top 3 ranked: Large card (full width)
         // Others: Medium card (horizontal layout)
@@ -79,6 +83,11 @@ class QuiltedTruckGrid extends StatelessWidget {
     // Calculate the pattern for quilted grid
     final pattern = _generatePattern(trucksWithDistance.length);
 
+    // ✅ OPTIMIZATION: Pre-compute rank lookup map O(n) -> O(1) per lookup
+    final rankMap = <String, int>{
+      for (var i = 0; i < topRanked.length; i++) topRanked[i].id as String: i + 1
+    };
+
     return GridView.custom(
       padding: padding,
       gridDelegate: SliverQuiltedGridDelegate(
@@ -93,9 +102,8 @@ class QuiltedTruckGrid extends StatelessWidget {
           final truckWithDistance = trucksWithDistance[index];
           final truck = truckWithDistance.truck;
 
-          // Determine rank if in top 3
-          final rankIndex = topRanked.indexWhere((t) => t.id == truck.id);
-          final rank = rankIndex >= 0 ? rankIndex + 1 : null;
+          // O(1) lookup instead of O(n) indexWhere
+          final rank = rankMap[truck.id];
 
           // Get size from pattern
           final patternIndex = index % pattern.length;

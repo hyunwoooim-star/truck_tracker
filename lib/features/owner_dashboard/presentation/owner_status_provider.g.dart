@@ -51,7 +51,7 @@ final class OwnerOperatingStatusProvider
 }
 
 String _$ownerOperatingStatusHash() =>
-    r'f5ac1339a288e34483c6a952b69c24d900817ba1';
+    r'1c79e00e4e81cf45c95a9810cdaf9cde978836b4';
 
 /// Provider that manages operating status for Owner's truck
 ///

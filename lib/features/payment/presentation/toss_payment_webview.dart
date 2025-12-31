@@ -161,7 +161,7 @@ class _TossPaymentWebViewState extends ConsumerState<TossPaymentWebView> {
   <div class="error" id="error" style="display: none;"></div>
 
   <script>
-    var clientKey = '${TossPaymentsConfig.testClientKey}';
+    var clientKey = '${TossPaymentsConfig.clientKey}';
     var tossPayments = TossPayments(clientKey);
 
     // Success/Fail URLs (handled by WebView navigation delegate)

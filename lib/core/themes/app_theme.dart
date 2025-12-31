@@ -34,29 +34,47 @@ class AppTheme {
   static const Color mustardYellow15 = Color(0x26FFC107);  // 15% opacity
   static const Color mustardYellow20 = Color(0x33FFC107);  // 20% opacity
   static const Color mustardYellow30 = Color(0x4DFFC107);  // 30% opacity
+  static const Color mustardYellow40 = Color(0x66FFC107);  // 40% opacity
   static const Color mustardYellow50 = Color(0x80FFC107);  // 50% opacity
   static const Color mustardYellow70 = Color(0xB3FFC107);  // 70% opacity
   static const Color mustardYellow80 = Color(0xCCFFC107);  // 80% opacity
   static const Color mustardYellow90 = Color(0xE6FFC107);  // 90% opacity
 
+  // electricBlue aliases (since electricBlue = mustardYellow)
+  static const Color electricBlue10 = mustardYellow10;
+  static const Color electricBlue15 = mustardYellow15;
+  static const Color electricBlue20 = mustardYellow20;
+  static const Color electricBlue30 = mustardYellow30;
+  static const Color electricBlue50 = mustardYellow50;
+  static const Color electricBlue70 = mustardYellow70;
+
   // Black opacity variants
   static const Color black03 = Color(0x08000000);  // 3% opacity
   static const Color black05 = Color(0x0D000000);  // 5% opacity
+  static const Color black06 = Color(0x0F000000);  // 6% opacity
   static const Color black10 = Color(0x1A000000);  // 10% opacity
   static const Color black20 = Color(0x33000000);  // 20% opacity
   static const Color black30 = Color(0x4D000000);  // 30% opacity
+  static const Color black40 = Color(0x66000000);  // 40% opacity
   static const Color black50 = Color(0x80000000);  // 50% opacity
+  static const Color black60 = Color(0x99000000);  // 60% opacity
+  static const Color black70 = Color(0xB3000000);  // 70% opacity
+  static const Color black80 = Color(0xCC000000);  // 80% opacity
 
   // Charcoal opacity variants
   static const Color charcoalMedium95 = Color(0xF21A1A1A);  // charcoalMedium (0xFF1A1A1A) with 95% opacity
 
   // White opacity variants
-  static const Color white10 = Color(0x1AFFFFFF);
-  static const Color white20 = Color(0x33FFFFFF);
-  static const Color white30 = Color(0x4DFFFFFF);
-  static const Color white50 = Color(0x80FFFFFF);
+  static const Color white05 = Color(0x0DFFFFFF);  // 5% opacity
+  static const Color white10 = Color(0x1AFFFFFF);  // 10% opacity
+  static const Color white15 = Color(0x26FFFFFF);  // 15% opacity
+  static const Color white20 = Color(0x33FFFFFF);  // 20% opacity
+  static const Color white30 = Color(0x4DFFFFFF);  // 30% opacity
+  static const Color white50 = Color(0x80FFFFFF);  // 50% opacity
   static const Color white60 = Color(0x99FFFFFF);  // 60% opacity
+  static const Color white70 = Color(0xB3FFFFFF);  // 70% opacity
   static const Color white80 = Color(0xCCFFFFFF);  // 80% opacity
+  static const Color white90 = Color(0xE6FFFFFF);  // 90% opacity
 
   // Semantic colors
   static const Color error = Color(0xFFE53935);      // Red for errors and danger actions
@@ -75,13 +93,25 @@ class AppTheme {
 
   // Orange opacity variants
   static const Color orange15 = Color(0x26FF9800);
+  static const Color orange20 = Color(0x33FF9800);  // 20% opacity
   static const Color orange30 = Color(0x4DFF9800);  // 30% opacity
 
-  // Green opacity variant
+  // Green opacity variants
+  static const Color green20 = Color(0x334CAF50);  // 20% opacity
   static const Color green30 = Color(0x4D4CAF50);  // 30% opacity
 
-  // Red opacity variant
+  // Amber opacity variants (similar to mustardYellow but distinct)
+  static const Color amber20 = Color(0x33FFC107);  // 20% opacity
+
+  // Red opacity variants
+  static const Color red15 = Color(0x26F44336);  // 15% opacity
   static const Color red50 = Color(0x80F44336);  // 50% opacity
+
+  // Social Login colors (for disabled states)
+  static const Color kakaoYellow = Color(0xFFFEE500);
+  static const Color kakaoYellow50 = Color(0x80FEE500);  // 50% opacity
+  static const Color naverGreen = Color(0xFF03C75A);
+  static const Color naverGreen50 = Color(0x8003C75A);  // 50% opacity
 
   // ═══════════════════════════════════════════════════════════════════════════
   // TOSS DESIGN SYSTEM COLORS

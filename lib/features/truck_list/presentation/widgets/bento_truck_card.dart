@@ -175,7 +175,7 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withValues(alpha: 0.7),
+                  AppTheme.black70,
                 ],
                 stops: const [0.3, 1.0],
               ),
@@ -211,9 +211,9 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
                     const SizedBox(height: 4),
                     Text(
                       truck.foodType,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: AppTheme.white90,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -376,7 +376,7 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withValues(alpha: 0.8),
+                  AppTheme.black80,
                 ],
                 stops: const [0.4, 1.0],
               ),
@@ -404,9 +404,9 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
                 const SizedBox(height: 2),
                 Text(
                   truck.foodType,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
-                    color: Colors.white.withValues(alpha: 0.8),
+                    color: AppTheme.white80,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -436,7 +436,7 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
                         : Colors.grey,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: AppTheme.black30,
                     blurRadius: 4,
                   ),
                 ],
@@ -454,11 +454,11 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
+          decoration: const BoxDecoration(
+            color: AppTheme.white10,
             border: Border(
               top: BorderSide(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: AppTheme.white20,
               ),
             ),
           ),
@@ -479,7 +479,7 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
         vertical: compact ? 3 : 4,
       ),
       decoration: BoxDecoration(
-        color: AppTheme.electricBlue.withValues(alpha: 0.2),
+        color: AppTheme.electricBlue20,
         borderRadius: BorderRadius.circular(compact ? 6 : 8),
       ),
       child: Row(
@@ -509,7 +509,7 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.15),
+        color: AppTheme.white15,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -552,8 +552,8 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
                     child: Container(
                       width: 28,
                       height: 28,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.4),
+                      decoration: const BoxDecoration(
+                        color: AppTheme.black40,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -618,11 +618,11 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
       decoration: BoxDecoration(
         color: AppTheme.mustardYellow,
         borderRadius: BorderRadius.circular(compact ? 6 : 10),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: AppTheme.black30,
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),

@@ -310,59 +310,6 @@ final class FilteredTrucksWithDistanceProvider
 String _$filteredTrucksWithDistanceHash() =>
     r'7f177208176c3b3c7b63e8eefb3a3ee575ce7c73';
 
-/// LEGACY: Mock data filtered list (kept for reference/fallback)
-
-@ProviderFor(filteredTruckListMock)
-final filteredTruckListMockProvider = FilteredTruckListMockProvider._();
-
-/// LEGACY: Mock data filtered list (kept for reference/fallback)
-
-final class FilteredTruckListMockProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<Truck>>,
-          AsyncValue<List<Truck>>,
-          AsyncValue<List<Truck>>
-        >
-    with $Provider<AsyncValue<List<Truck>>> {
-  /// LEGACY: Mock data filtered list (kept for reference/fallback)
-  FilteredTruckListMockProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'filteredTruckListMockProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$filteredTruckListMockHash();
-
-  @$internal
-  @override
-  $ProviderElement<AsyncValue<List<Truck>>> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  AsyncValue<List<Truck>> create(Ref ref) {
-    return filteredTruckListMock(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<List<Truck>> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<List<Truck>>>(value),
-    );
-  }
-}
-
-String _$filteredTruckListMockHash() =>
-    r'bd22af34a98a2256a69e4042cb688579bf30894e';
-
 @ProviderFor(TruckListNotifier)
 final truckListProvider = TruckListNotifierProvider._();
 
