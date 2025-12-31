@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  
+
   <!-- SEO Meta Tags -->
   <meta name="description" content="트럭아저씨 - 내 주변 푸드트럭 실시간 찾기. GPS 위치 기반으로 가까운 푸드트럭을 찾아 메뉴를 확인하고 주문하세요. 닭꼬치, 호떡, 붕어빵, 심야라멘 등 다양한 길거리 음식을 실시간으로!">
   <meta name="keywords" content="푸드트럭, 내 주변 푸드트럭, 실시간 위치, GPS, 트럭, 음식, 주문, 배달, 위치추적, 맛집, 트럭아저씨, 닭꼬치, 호떡, 붕어빵, 심야라멘, 불막창, 어묵, 크레페, 옛날통닭, 길거리음식">
@@ -48,7 +48,7 @@
 
   <title>트럭아저씨 - 내 주변 푸드트럭 실시간 찾기</title>
   <link rel="manifest" href="manifest.json">
-  
+
   <!-- Google Sign-In -->
   <!-- TODO: Replace with your actual Google OAuth Client ID from Firebase Console -->
   <!-- Get it from: Firebase Console → Authentication → Sign-in method → Google → Web SDK configuration -->
@@ -59,7 +59,7 @@
 
   <!-- Google Maps JavaScript API -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArKTrCQyRO-srk9hvdMevMRhOXuSF55G0"></script>
-  
+
   <!-- Structured Data for SEO -->
   <script type="application/ld+json">
   {
@@ -78,72 +78,145 @@
   }
   </script>
 
-  <!-- CanvasKit renderer for better performance -->
-  <script>
-    window.flutterConfiguration = {
-      renderer: "canvaskit",
-      canvasKitBaseUrl: "https://www.gstatic.com/flutter-canvaskit/1527ae0ec577a4ef50e65f6fefcfc1326707d9bf/"
-    };
-  </script>
-</head>
-<body>
-  <!-- In-App Browser Detection -->
+  <!-- In-App Browser Warning Styles (visible by default) -->
+  <style>
+    #inapp-warning {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #121212;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    #inapp-warning.hidden { display: none; }
+    #inapp-warning .content { text-align: center; color: white; max-width: 320px; }
+    #inapp-warning .emoji { font-size: 48px; margin-bottom: 20px; }
+    #inapp-warning h1 { font-size: 24px; margin-bottom: 12px; color: #FFD43B; }
+    #inapp-warning p { font-size: 16px; color: #999; margin-bottom: 24px; line-height: 1.5; }
+    #inapp-warning .btn {
+      display: inline-block;
+      background: #FFD43B;
+      color: #000;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      border: none;
+    }
+    #inapp-warning .hint { font-size: 12px; color: #666; margin-top: 16px; }
+    #inapp-warning .url-box {
+      background: #333;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 16px;
+      word-break: break-all;
+      font-size: 12px;
+      color: #00D4FF;
+    }
+  </style>
+
+  <!-- Auto-detect renderer: HTML for WebView, CanvasKit for modern browsers -->
   <script>
     (function() {
       var ua = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
 
-      // Detect in-app browsers (case-insensitive)
+      // Detect problematic WebViews
       var isKakao = ua.indexOf('kakaotalk') > -1 || ua.indexOf('kakao') > -1;
       var isLine = ua.indexOf('line') > -1;
       var isFacebook = ua.indexOf('fban') > -1 || ua.indexOf('fbav') > -1 || ua.indexOf('fb_iab') > -1;
       var isInstagram = ua.indexOf('instagram') > -1;
-      var isNaverApp = ua.indexOf('naver') > -1 || ua.indexOf('whale') > -1;
+      var isNaverApp = (ua.indexOf('naver') > -1 && ua.indexOf('whale') === -1);
+      var isGenericWebView = ua.indexOf('wv') > -1 || ua.indexOf('; wv)') > -1;
 
-      // Also detect generic WebView indicators
-      var isWebView = ua.indexOf('wv') > -1 || ua.indexOf('webview') > -1;
+      var isInAppBrowser = isKakao || isLine || isFacebook || isInstagram || isNaverApp || isGenericWebView;
 
-      var isInAppBrowser = isKakao || isLine || isFacebook || isInstagram || isNaverApp || isWebView;
+      // Store for later use
+      window.isInAppBrowser = isInAppBrowser;
 
-      // Debug: Log user agent to console
-      console.log('User Agent:', ua);
-      console.log('Is In-App Browser:', isInAppBrowser);
-
+      // Use HTML renderer for WebView (more compatible), CanvasKit for normal browsers
       if (isInAppBrowser) {
-        // Create overlay
-        var overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#121212;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+        window.flutterConfiguration = {
+          renderer: "html"
+        };
+      } else {
+        window.flutterConfiguration = {
+          renderer: "canvaskit",
+          canvasKitBaseUrl: "https://www.gstatic.com/flutter-canvaskit/1527ae0ec577a4ef50e65f6fefcfc1326707d9bf/"
+        };
+      }
+    })();
+  </script>
+</head>
+<body>
+  <!-- In-App Browser Warning (visible by default, hidden by JS if normal browser) -->
+  <div id="inapp-warning">
+    <div class="content">
+      <div class="emoji">🚚</div>
+      <h1>트럭아저씨</h1>
+      <p>인앱 브라우저에서는 앱이 제대로 작동하지 않습니다.<br><strong>크롬 또는 사파리</strong>에서 열어주세요!</p>
+      <button class="btn" id="copyUrl">주소 복사하기</button>
+      <p class="hint">복사 후 크롬/사파리에서 붙여넣기 하세요</p>
+      <div class="url-box" id="urlDisplay"></div>
+      <p class="hint" style="margin-top:24px;">또는 우측 상단 ⋮ 메뉴 →<br>"다른 브라우저로 열기"</p>
+    </div>
+  </div>
 
-        var content = document.createElement('div');
-        content.style.cssText = 'text-align:center;color:white;max-width:320px;';
+  <noscript>
+    <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#121212;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;">
+      <div style="text-align:center;color:white;">
+        <div style="font-size:48px;margin-bottom:20px;">🚚</div>
+        <h1 style="font-size:24px;color:#FFD43B;">트럭아저씨</h1>
+        <p style="color:#999;">JavaScript가 필요합니다.<br>크롬 또는 사파리에서 열어주세요.</p>
+      </div>
+    </div>
+  </noscript>
 
-        content.innerHTML = '<div style="font-size:48px;margin-bottom:20px;">🚚</div>' +
-          '<h1 style="font-size:24px;margin-bottom:12px;color:#FFD43B;">트럭아저씨</h1>' +
-          '<p style="font-size:16px;color:#999;margin-bottom:24px;">인앱 브라우저에서는 일부 기능이 제한됩니다.<br>외부 브라우저로 열어주세요!</p>' +
-          '<a id="openExternal" style="display:inline-block;background:#FFD43B;color:#000;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:bold;font-size:16px;margin-bottom:16px;">크롬/사파리로 열기</a>' +
-          '<p style="font-size:12px;color:#666;margin-top:16px;">우측 상단 ⋮ 메뉴 → "다른 브라우저로 열기"</p>';
+  <script>
+    (function() {
+      var warning = document.getElementById('inapp-warning');
+      var urlDisplay = document.getElementById('urlDisplay');
+      var copyBtn = document.getElementById('copyUrl');
 
-        overlay.appendChild(content);
-        document.body.appendChild(overlay);
+      // Show current URL
+      if (urlDisplay) {
+        urlDisplay.textContent = window.location.href;
+      }
 
-        // Try to open in external browser
-        document.getElementById('openExternal').addEventListener('click', function(e) {
-          e.preventDefault();
-          var currentUrl = window.location.href;
-
-          // Android intent for Chrome
-          if (/android/i.test(ua)) {
-            window.location.href = 'intent://' + currentUrl.replace(/https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
-          }
-          // iOS Safari
-          else if (/iphone|ipad|ipod/i.test(ua)) {
-            // Copy URL and show instruction
-            navigator.clipboard.writeText(currentUrl).then(function() {
-              alert('주소가 복사되었습니다!\\n사파리에서 붙여넣기 해주세요.');
+      // Copy URL button
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function() {
+          var url = window.location.href;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function() {
+              copyBtn.textContent = '복사 완료!';
+              copyBtn.style.background = '#4CAF50';
+              setTimeout(function() {
+                copyBtn.textContent = '주소 복사하기';
+                copyBtn.style.background = '#FFD43B';
+              }, 2000);
             }).catch(function() {
-              alert('주소: ' + currentUrl + '\\n\\n주소를 복사해서 사파리에서 열어주세요.');
+              prompt('주소를 복사하세요:', url);
             });
+          } else {
+            prompt('주소를 복사하세요:', url);
           }
         });
+      }
+
+      // Hide warning if NOT in-app browser
+      if (!window.isInAppBrowser && warning) {
+        warning.classList.add('hidden');
       }
     })();
   </script>
