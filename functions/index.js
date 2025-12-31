@@ -790,12 +790,22 @@ exports.exchangeNaverCode = functions
   }
 
   try {
+    // 디버깅: 요청 파라미터 로깅
+    const secretValue = naverClientSecret.value();
+    console.log('🔍 네이버 요청 파라미터:', {
+      client_id: NAVER_CLIENT_ID,
+      client_secret_length: secretValue ? secretValue.length : 0,
+      client_secret_preview: secretValue ? secretValue.substring(0, 3) + '***' : 'EMPTY',
+      code_length: code ? code.length : 0,
+      state: state,
+    });
+
     // 1. Exchange code for access token
     const tokenResponse = await axios.get('https://nid.naver.com/oauth2.0/token', {
       params: {
         grant_type: 'authorization_code',
         client_id: NAVER_CLIENT_ID,
-        client_secret: naverClientSecret.value(),
+        client_secret: secretValue,
         code: code,
         state: state,
       },
@@ -841,7 +851,14 @@ exports.exchangeNaverCode = functions
     console.log('✅ Naver web login successful');
     res.json({ token: customToken });
   } catch (error) {
-    console.error('❌ Naver code exchange failed:', error.response?.data || error.message);
-    res.status(500).json({ error: error.message });
+    console.error('❌ Naver code exchange failed');
+    console.error('Error message:', error.message);
+    console.error('Error response status:', error.response?.status);
+    console.error('Error response data:', JSON.stringify(error.response?.data));
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data,
+      status: error.response?.status
+    });
   }
 });
