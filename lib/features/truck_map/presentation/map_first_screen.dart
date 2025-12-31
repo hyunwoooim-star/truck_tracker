@@ -359,156 +359,105 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
             },
           ),
 
-          // 🔄 Settings, Notification, Chat and Logout buttons (top-right corner, always visible)
+          // 🔄 Top-right menu button (hamburger style)
           Positioned(
             top: MediaQuery.of(context).padding.top + 16,
             right: 16,
-            child: Row(
-              children: [
-                // Settings Button
-                Material(
-                  color: AppTheme.charcoalMedium95,
+            child: Material(
+              color: AppTheme.charcoalMedium95,
+              borderRadius: BorderRadius.circular(12),
+              elevation: 10,
+              shadowColor: AppTheme.black50,
+              child: PopupMenuButton<String>(
+                icon: const Icon(
+                  Icons.menu,
+                  color: AppTheme.mustardYellow,
+                  size: 28,
+                ),
+                color: AppTheme.charcoalMedium,
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  elevation: 10,
-                  shadowColor: AppTheme.black50,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {
+                ),
+                offset: const Offset(0, 50),
+                onSelected: (value) {
+                  switch (value) {
+                    case 'settings':
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const AppSettingsScreen(),
                         ),
                       );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      child: const Icon(
-                        Icons.settings_outlined,
-                        color: AppTheme.mustardYellow,
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Notification Settings Button
-                Material(
-                  color: AppTheme.charcoalMedium95,
-                  borderRadius: BorderRadius.circular(12),
-                  elevation: 10,
-                  shadowColor: AppTheme.black50,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {
+                      break;
+                    case 'notifications':
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const NotificationSettingsScreen(),
                         ),
                       );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      child: const Icon(
-                        Icons.notifications_outlined,
-                        color: AppTheme.mustardYellow,
-                        size: 24,
+                      break;
+                    case 'chat':
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ChatListScreen(),
+                        ),
+                      );
+                      break;
+                    case 'logout':
+                      _showLogoutDialog(context, ref);
+                      break;
+                  }
+                },
+                itemBuilder: (context) {
+                  final user = FirebaseAuth.instance.currentUser;
+                  return [
+                    const PopupMenuItem(
+                      value: 'settings',
+                      child: Row(
+                        children: [
+                          Icon(Icons.settings_outlined, color: AppTheme.mustardYellow),
+                          SizedBox(width: 12),
+                          Text('설정', style: TextStyle(color: Colors.white)),
+                        ],
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Chat Button with unread badge
-                Consumer(
-                  builder: (context, ref, _) {
-                    final user = FirebaseAuth.instance.currentUser;
-                    if (user == null) return const SizedBox.shrink();
-
-                    final unreadCountAsync = ref.watch(unreadChatCountProvider(user.uid));
-
-                    return unreadCountAsync.when(
-                      data: (unreadCount) => Material(
-                        color: AppTheme.charcoalMedium95,
-                        borderRadius: BorderRadius.circular(12),
-                        elevation: 10,
-                        shadowColor: AppTheme.black50,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(12),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ChatListScreen(),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            child: Stack(
-                              children: [
-                                const Icon(
-                                  Icons.chat_bubble_outline,
-                                  color: AppTheme.mustardYellow,
-                                  size: 24,
-                                ),
-                                if (unreadCount > 0)
-                                  Positioned(
-                                    right: -2,
-                                    top: -2,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(4),
-                                      decoration: const BoxDecoration(
-                                        color: Colors.red,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      constraints: const BoxConstraints(
-                                        minWidth: 18,
-                                        minHeight: 18,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          unreadCount > 9 ? '9+' : '$unreadCount',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
+                    const PopupMenuItem(
+                      value: 'notifications',
+                      child: Row(
+                        children: [
+                          Icon(Icons.notifications_outlined, color: AppTheme.mustardYellow),
+                          SizedBox(width: 12),
+                          Text('알림 설정', style: TextStyle(color: Colors.white)),
+                        ],
+                      ),
+                    ),
+                    if (user != null)
+                      const PopupMenuItem(
+                        value: 'chat',
+                        child: Row(
+                          children: [
+                            Icon(Icons.chat_bubble_outline, color: AppTheme.mustardYellow),
+                            SizedBox(width: 12),
+                            Text('채팅', style: TextStyle(color: Colors.white)),
+                          ],
                         ),
                       ),
-                      loading: () => const SizedBox.shrink(),
-                      error: (error, stackTrace) => const SizedBox.shrink(),
-                    );
-                  },
-                ),
-                const SizedBox(width: 8),
-                // Logout Button
-                Material(
-                  color: AppTheme.charcoalMedium95,
-                  borderRadius: BorderRadius.circular(12),
-                  elevation: 10,
-                  shadowColor: AppTheme.black50,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () => _showLogoutDialog(context, ref),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      child: const Icon(
-                        Icons.logout,
-                        color: Colors.red,
-                        size: 24,
+                    const PopupMenuDivider(),
+                    const PopupMenuItem(
+                      value: 'logout',
+                      child: Row(
+                        children: [
+                          Icon(Icons.logout, color: Colors.red),
+                          SizedBox(width: 12),
+                          Text('로그아웃', style: TextStyle(color: Colors.red)),
+                        ],
                       ),
                     ),
-                  ),
-                ),
-              ],
+                  ];
+                },
+              ),
             ),
           ),
         ],
