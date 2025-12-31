@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/services/geocoding_service.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
@@ -464,12 +463,44 @@ class TruckDetailScreen extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          ...?detail?.menuItems.map(
-                            (item) => _MenuItemCard(
-                              item: item,
-                              truck: truck,
+                          if (detail == null || detail.menuItems.isEmpty)
+                            // 메뉴 데이터 없을 때 안내 메시지
+                            Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                children: [
+                                  Icon(Icons.restaurant_menu, size: 48, color: Colors.grey.shade400),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    '메뉴 준비 중입니다',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    '사장님이 곧 메뉴를 등록할 예정이에요!',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          else
+                            ...detail.menuItems.map(
+                              (item) => _MenuItemCard(
+                                item: item,
+                                truck: truck,
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -1094,91 +1125,199 @@ class _ReviewCard extends StatelessWidget {
 
 // Navigation Dialog Helper Function
 void _showNavigationDialog(BuildContext context, Truck truck, AppLocalizations l10n) {
-  showDialog(
+  showModalBottomSheet(
     context: context,
-    builder: (context) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Row(
-        children: [
-          Icon(Icons.navigation, color: AppTheme.baeminMint),
-          const SizedBox(width: 8),
-          Text(l10n.navigation),
-        ],
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    builder: (context) => Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            truck.locationDescription,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          _AddressText(
-            latitude: truck.latitude,
-            longitude: truck.longitude,
-          ),
-          const SizedBox(height: 20),
-          Text(
-            l10n.chooseNavigationApp,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-      actions: [
-        // 앱 내 도보 안내 (우선 표시)
-        TextButton.icon(
-          onPressed: () {
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => PickupNavigationScreen(
-                  truckName: truck.foodType,
-                  truckAddress: truck.locationDescription,
-                  truckLat: truck.latitude,
-                  truckLng: truck.longitude,
-                ),
+      padding: const EdgeInsets.all(20),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
               ),
-            );
-          },
-          icon: const Icon(Icons.directions_walk, color: AppTheme.electricBlue),
-          label: const Text('도보 안내', style: TextStyle(color: AppTheme.electricBlue)),
+            ),
+            // Header
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppTheme.baeminMint.withAlpha(30),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(Icons.navigation, color: AppTheme.baeminMint, size: 24),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        truck.foodType,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        truck.locationDescription,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            // Navigation Options
+            _NavigationOptionTile(
+              icon: Icons.directions_walk,
+              iconColor: AppTheme.electricBlue,
+              title: '도보 안내',
+              subtitle: '앱 내 길찾기',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PickupNavigationScreen(
+                      truckName: truck.foodType,
+                      truckAddress: truck.locationDescription,
+                      truckLat: truck.latitude,
+                      truckLng: truck.longitude,
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            _NavigationOptionTile(
+              icon: Icons.map,
+              iconColor: const Color(0xFF03C75A),
+              title: l10n.naverMap,
+              subtitle: '네이버 지도 앱으로 열기',
+              onTap: () {
+                Navigator.pop(context);
+                _launchNaverMap(context, truck, l10n);
+              },
+            ),
+            const SizedBox(height: 8),
+            _NavigationOptionTile(
+              icon: Icons.location_on,
+              iconColor: const Color(0xFFFFE500),
+              iconBgColor: const Color(0xFFFEE500),
+              title: l10n.kakaoMap,
+              subtitle: '카카오맵 앱으로 열기',
+              onTap: () {
+                Navigator.pop(context);
+                _launchKakaoMap(context, truck, l10n);
+              },
+            ),
+            const SizedBox(height: 8),
+            _NavigationOptionTile(
+              icon: Icons.public,
+              iconColor: AppTheme.baeminMint,
+              title: l10n.googleMaps,
+              subtitle: '구글 지도로 열기',
+              onTap: () {
+                Navigator.pop(context);
+                _launchGoogleMaps(context, truck, l10n);
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
         ),
-        TextButton.icon(
-          onPressed: () {
-            Navigator.pop(context);
-            _launchNaverMap(context, truck, l10n);
-          },
-          icon: const Icon(Icons.map, color: Color(0xFF03C75A)),
-          label: Text(l10n.naverMap, style: const TextStyle(color: Color(0xFF03C75A))),
-        ),
-        TextButton.icon(
-          onPressed: () {
-            Navigator.pop(context);
-            _launchKakaoMap(context, truck, l10n);
-          },
-          icon: const Icon(Icons.location_on, color: Color(0xFFFEE500)),
-          label: Text(l10n.kakaoMap, style: const TextStyle(color: Colors.black87)),
-        ),
-        TextButton.icon(
-          onPressed: () {
-            Navigator.pop(context);
-            _launchGoogleMaps(context, truck, l10n);
-          },
-          icon: Icon(Icons.public, color: AppTheme.baeminMint),
-          label: Text(l10n.googleMaps, style: TextStyle(color: AppTheme.baeminMint)),
-        ),
-      ],
-      actionsAlignment: MainAxisAlignment.spaceEvenly,
+      ),
     ),
   );
+}
+
+/// Navigation option tile widget
+class _NavigationOptionTile extends StatelessWidget {
+  const _NavigationOptionTile({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+    this.iconBgColor,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final Color? iconBgColor;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.grey[50],
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: (iconBgColor ?? iconColor).withAlpha(30),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: iconColor, size: 22),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: Colors.grey[400]),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 // Naver Map URL Launcher
@@ -1473,96 +1612,4 @@ Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLo
   }
 }
 
-/// Widget that displays address from coordinates
-class _AddressText extends StatefulWidget {
-  const _AddressText({
-    required this.latitude,
-    required this.longitude,
-  });
-
-  final double latitude;
-  final double longitude;
-
-  @override
-  State<_AddressText> createState() => _AddressTextState();
-}
-
-class _AddressTextState extends State<_AddressText> {
-  String? _address;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadAddress();
-  }
-
-  Future<void> _loadAddress() async {
-    try {
-      final address = await GeocodingService().getAddressFromCoordinates(
-        widget.latitude,
-        widget.longitude,
-      );
-      if (mounted) {
-        setState(() {
-          _address = address;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _address = '${widget.latitude.toStringAsFixed(4)}, ${widget.longitude.toStringAsFixed(4)}';
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Row(
-        children: [
-          SizedBox(
-            width: 12,
-            height: 12,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: Colors.grey[400],
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            '주소 확인 중...',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
-          ),
-        ],
-      );
-    }
-
-    return Row(
-      children: [
-        Icon(
-          Icons.place,
-          size: 16,
-          color: Colors.grey[600],
-        ),
-        const SizedBox(width: 4),
-        Expanded(
-          child: Text(
-            _address ?? '',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
 

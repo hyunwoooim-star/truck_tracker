@@ -268,10 +268,11 @@ class PrivacyPolicyScreen extends StatelessWidget {
   }
 
   Widget _buildFooter(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: isDark ? Colors.grey[800] : Colors.grey[100],
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -281,14 +282,18 @@ class PrivacyPolicyScreen extends StatelessWidget {
             '문의처',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
           ),
           const SizedBox(height: 8),
-          const Row(
+          Row(
             children: [
-              Icon(Icons.email_outlined, size: 16, color: Colors.grey),
-              SizedBox(width: 8),
-              Text('support@truckajeossi.com'),
+              Icon(Icons.email_outlined, size: 16, color: isDark ? Colors.grey[400] : Colors.grey),
+              const SizedBox(width: 8),
+              Text(
+                'support@truckajeossi.com',
+                style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
+              ),
             ],
           ),
         ],

@@ -166,40 +166,41 @@ void main() async {
   );
 }
 
+/// GoRouter instance - must be static to persist across rebuilds
+final _router = GoRouter(
+  initialLocation: '/',
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const AuthWrapper(),
+    ),
+    GoRoute(
+      path: '/check-in/:truckId',
+      builder: (context, state) => const CustomerCheckinScreen(),
+    ),
+    GoRoute(
+      path: '/qr-code/:truckId',
+      builder: (context, state) => const OwnerQRScreen(),
+    ),
+    GoRoute(
+      path: '/admin',
+      builder: (context, state) => const AdminScreen(),
+    ),
+  ],
+);
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final router = GoRouter(
-      initialLocation: '/',
-      routes: [
-        GoRoute(
-          path: '/',
-          builder: (context, state) => const AuthWrapper(),
-        ),
-        GoRoute(
-          path: '/check-in/:truckId',
-          builder: (context, state) => const CustomerCheckinScreen(),
-        ),
-        GoRoute(
-          path: '/qr-code/:truckId',
-          builder: (context, state) => const OwnerQRScreen(),
-        ),
-        GoRoute(
-          path: '/admin',
-          builder: (context, state) => const AdminScreen(),
-        ),
-      ],
-    );
-
     return MaterialApp.router(
       title: '트럭아저씨',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: ref.watch(appThemeModeForMaterialProvider),
-      routerConfig: router,
+      routerConfig: _router,
       scaffoldMessengerKey: scaffoldMessengerKey,
       // 🌏 LOCALIZATION: Support Korean and English
       localizationsDelegates: const [
