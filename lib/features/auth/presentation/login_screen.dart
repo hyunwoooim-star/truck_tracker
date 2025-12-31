@@ -171,9 +171,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ref.invalidate(currentUserTruckIdProvider);
       }
     } catch (e, stackTrace) {
+      print('🔴 Auth error: $e');
       AppLogger.error('Auth error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
       if (mounted) {
-        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
+        // Show full error for debugging
+        SnackBarHelper.showError(context, '에러: ${e.toString().substring(0, e.toString().length > 100 ? 100 : e.toString().length)}');
       }
     } finally {
       if (mounted) {
