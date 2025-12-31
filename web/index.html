@@ -149,17 +149,8 @@
       // Store for later use
       window.isInAppBrowser = isInAppBrowser;
 
-      // Use HTML renderer for mobile (more compatible), CanvasKit for desktop only
-      if (isInAppBrowser || isMobile) {
-        window.flutterConfiguration = {
-          renderer: "html"
-        };
-      } else {
-        // Desktop browsers: use CanvasKit for better performance
-        window.flutterConfiguration = {
-          renderer: "canvaskit"
-        };
-      }
+      // Let Flutter auto-detect the best renderer
+      // Don't force renderer - let the build handle it
     })();
   </script>
 </head>
