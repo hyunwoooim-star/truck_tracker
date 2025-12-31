@@ -176,7 +176,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
           ),
           // 손님 화면 미리보기 (지도에서 내 트럭이 어떻게 보이는지)
           IconButton(
-            icon: const Icon(Icons.visibility),
+            icon: const Icon(Icons.storefront, color: Colors.cyan),
             tooltip: '손님 화면 보기',
             onPressed: () {
               Navigator.of(context).push(

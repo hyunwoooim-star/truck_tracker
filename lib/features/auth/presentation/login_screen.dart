@@ -431,29 +431,45 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Logo/Title - App Icon with glow effect
-                  Center(
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(22),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.mustardYellow30,
-                            blurRadius: 30,
-                            spreadRadius: 5,
+                  // Logo/Title - App Icon with glow effect (반응형)
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      // 화면 너비에 따라 아이콘 크기 조절
+                      // 모바일: 100, 태블릿: 120, PC: 140 (최대)
+                      final screenWidth = MediaQuery.sizeOf(context).width;
+                      final iconSize = screenWidth < 400
+                          ? 80.0  // 작은 모바일
+                          : screenWidth < 600
+                              ? 100.0  // 일반 모바일
+                              : screenWidth < 900
+                                  ? 120.0  // 태블릿
+                                  : 140.0; // PC/대형 화면
+                      final borderRadius = iconSize * 0.22;
+
+                      return Center(
+                        child: Container(
+                          width: iconSize,
+                          height: iconSize,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(borderRadius),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.mustardYellow30,
+                                blurRadius: 30,
+                                spreadRadius: 5,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(22),
-                        child: Image.asset(
-                          'assets/app_icon.png',
-                          fit: BoxFit.cover,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(borderRadius),
+                            child: Image.asset(
+                              'assets/app_icon.png',
+                              fit: BoxFit.contain,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -1051,20 +1067,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // Google 'G' 로고 (SVG 대신 커스텀 페인팅)
                         Container(
                           height: 20,
                           width: 20,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
+                            border: Border.all(color: Colors.grey.shade300, width: 0.5),
                           ),
-                          child: Image.network(
-                            'https://www.google.com/favicon.ico',
-                            width: 20,
-                            height: 20,
-                            errorBuilder: (context, error, stackTrace) => const Icon(
-                              Icons.g_mobiledata,
-                              size: 20,
-                              color: Colors.red,
+                          child: const Center(
+                            child: Text(
+                              'G',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF4285F4), // Google Blue
+                              ),
                             ),
                           ),
                         ),
