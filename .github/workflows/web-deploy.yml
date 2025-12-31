@@ -34,13 +34,15 @@ jobs:
       # - name: Run tests
       #   run: flutter test
 
-      - name: Build web
+      - name: Build web (Optimized)
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           KAKAO_NATIVE_APP_KEY: ${{ secrets.KAKAO_NATIVE_APP_KEY }}
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: |
           flutter build web --release \
+            --tree-shake-icons \
+            --pwa-strategy none \
             --dart-define=SENTRY_DSN=$SENTRY_DSN \
             --dart-define=KAKAO_NATIVE_APP_KEY=$KAKAO_NATIVE_APP_KEY \
             --dart-define=GOOGLE_MAPS_API_KEY=$GOOGLE_MAPS_API_KEY
