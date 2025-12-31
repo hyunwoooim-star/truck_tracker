@@ -181,8 +181,8 @@ class TermsOfServiceScreen extends StatelessWidget {
             _buildSection(
               context,
               '부칙',
-              '''■ 공고일자: 2024년 12월 30일
-■ 시행일자: 2024년 12월 30일
+              '''■ 공고일자: 2026년 1월 1일
+■ 시행일자: 2026년 1월 1일
 
 본 약관은 시행일로부터 적용되며, 종전의 약관은 본 약관으로 대체됩니다.''',
             ),
@@ -241,10 +241,11 @@ class TermsOfServiceScreen extends StatelessWidget {
   }
 
   Widget _buildFooter(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: isDark ? Colors.grey[800] : Colors.grey[100],
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -254,14 +255,18 @@ class TermsOfServiceScreen extends StatelessWidget {
             '문의처',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
           ),
           const SizedBox(height: 8),
-          const Row(
+          Row(
             children: [
-              Icon(Icons.email_outlined, size: 16, color: Colors.grey),
-              SizedBox(width: 8),
-              Text('support@truckajeossi.com'),
+              Icon(Icons.email_outlined, size: 16, color: isDark ? Colors.grey[400] : Colors.grey),
+              const SizedBox(width: 8),
+              Text(
+                'support@truckajeossi.com',
+                style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
+              ),
             ],
           ),
         ],
