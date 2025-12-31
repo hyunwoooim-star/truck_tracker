@@ -21,6 +21,7 @@ import 'core/utils/app_logger.dart';
 import 'generated/l10n/app_localizations.dart';
 import 'features/auth/presentation/auth_provider.dart';
 import 'features/auth/presentation/login_screen.dart';
+import 'features/auth/presentation/owner_pending_screen.dart';
 import 'features/owner_dashboard/presentation/owner_dashboard_screen.dart';
 import 'features/owner_dashboard/presentation/owner_onboarding_screen.dart';
 import 'features/truck_map/presentation/map_first_screen.dart';
@@ -226,6 +227,7 @@ class AuthWrapper extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateChangesProvider);
     final truckIdAsync = ref.watch(currentUserTruckIdProvider);
+    final ownerRequestAsync = ref.watch(ownerRequestStatusProvider);
 
     return authState.when(
       data: (user) {
@@ -246,11 +248,50 @@ class AuthWrapper extends ConsumerWidget {
               // User owns a truck → check if onboarding is needed
               return _OwnerRoutingWidget(truckId: ownedTruckId);
             } else {
-              AppLogger.debug('User is customer → MapFirstScreen', tag: 'AuthWrapper');
-              // Regular customer → map-first screen (Street Tycoon)
-              // Wrap with PickupReadyListener to monitor order status
-              return const PickupReadyListener(
-                child: MapFirstScreen(),
+              // Check if there's a pending owner request
+              return ownerRequestAsync.when(
+                data: (requestData) {
+                  if (requestData != null) {
+                    final status = requestData['status'] as String?;
+                    final rejectionReason = requestData['rejectionReason'] as String?;
+
+                    if (status == 'pending') {
+                      AppLogger.debug('Owner request pending → OwnerPendingScreen', tag: 'AuthWrapper');
+                      return const OwnerPendingScreen(status: 'pending');
+                    } else if (status == 'rejected') {
+                      AppLogger.debug('Owner request rejected → OwnerPendingScreen', tag: 'AuthWrapper');
+                      return OwnerPendingScreen(
+                        status: 'rejected',
+                        rejectionReason: rejectionReason,
+                      );
+                    }
+                    // If approved, ownedTruckId should be set, but if not, fall through to customer
+                  }
+
+                  AppLogger.debug('User is customer → MapFirstScreen', tag: 'AuthWrapper');
+                  // Regular customer → map-first screen (Street Tycoon)
+                  // Wrap with PickupReadyListener to monitor order status
+                  return const PickupReadyListener(
+                    child: MapFirstScreen(),
+                  );
+                },
+                loading: () {
+                  AppLogger.debug('Loading owner request status...', tag: 'AuthWrapper');
+                  return const Scaffold(
+                    body: Center(
+                      child: CircularProgressIndicator(
+                        color: AppTheme.mustardYellow,
+                      ),
+                    ),
+                  );
+                },
+                error: (error, stack) {
+                  AppLogger.error('Error checking owner request', error: error, stackTrace: stack, tag: 'AuthWrapper');
+                  // On error, show customer screen
+                  return const PickupReadyListener(
+                    child: MapFirstScreen(),
+                  );
+                },
               );
             }
           },

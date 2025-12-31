@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -487,19 +488,34 @@ class AuthService {
   // ═══════════════════════════════════════════════════════════
 
   /// Submit owner verification request with business license
-  Future<void> submitOwnerRequest(String userId, String imagePath) async {
+  /// [imageData] can be either a file path (String) for mobile or Uint8List for web
+  Future<void> submitOwnerRequest(String userId, dynamic imageData) async {
     AppLogger.debug('Submitting owner request for user: $userId', tag: 'AuthService');
 
     try {
       // Upload business license image to Firebase Storage
-      final file = File(imagePath);
       final storageRef = FirebaseStorage.instance
           .ref()
           .child('owner_requests')
           .child('$userId.jpg');
 
-      await storageRef.putFile(file);
-      final imageUrl = await storageRef.getDownloadURL();
+      String imageUrl;
+
+      if (imageData is Uint8List) {
+        // Web: Upload bytes directly
+        await storageRef.putData(
+          imageData,
+          SettableMetadata(contentType: 'image/jpeg'),
+        );
+        imageUrl = await storageRef.getDownloadURL();
+      } else if (imageData is String) {
+        // Mobile: Upload from file path
+        final file = File(imageData);
+        await storageRef.putFile(file);
+        imageUrl = await storageRef.getDownloadURL();
+      } else {
+        throw Exception('Invalid image data type');
+      }
 
       AppLogger.debug('Business license uploaded: $imageUrl', tag: 'AuthService');
 

@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,7 +37,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _agreedToTerms = false;
   bool _agreedToPrivacy = false;
   bool _isOwnerSignup = false; // true: 사장님 가입, false: 고객 가입
-  String? _businessLicenseImagePath; // 사업자등록증 이미지 경로
+  String? _businessLicenseImagePath; // 사업자등록증 이미지 경로 (mobile)
+  Uint8List? _businessLicenseImageBytes; // 사업자등록증 이미지 바이트 (web)
 
   @override
   void initState() {
@@ -68,7 +72,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     // Validate business license for owner signup
-    if (!_isLogin && _isOwnerSignup && _businessLicenseImagePath == null) {
+    final hasBusinessLicense = kIsWeb
+        ? _businessLicenseImageBytes != null
+        : _businessLicenseImagePath != null;
+    if (!_isLogin && _isOwnerSignup && !hasBusinessLicense) {
       AppLogger.warning('Business license not uploaded', tag: 'LoginScreen');
       SnackBarHelper.showError(context, '사업자등록증을 업로드해주세요');
       return;
@@ -96,11 +103,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         AppLogger.success('Email sign up successful', tag: 'LoginScreen');
 
         // If owner signup, submit verification request
-        if (_isOwnerSignup && _businessLicenseImagePath != null && userCredential.user != null) {
+        if (_isOwnerSignup && hasBusinessLicense && userCredential.user != null) {
           AppLogger.debug('Submitting owner verification request...', tag: 'LoginScreen');
+          // Web: 바이트 전달, Mobile: 경로 전달
+          final imageData = kIsWeb ? _businessLicenseImageBytes! : _businessLicenseImagePath!;
           await authService.submitOwnerRequest(
             userCredential.user!.uid,
-            _businessLicenseImagePath!,
+            imageData,
           );
           AppLogger.success('Owner verification request submitted', tag: 'LoginScreen');
         }
@@ -349,10 +358,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       );
 
       if (image != null) {
-        setState(() {
-          _businessLicenseImagePath = image.path;
-        });
-        AppLogger.debug('Business license image selected: ${image.path}', tag: 'LoginScreen');
+        if (kIsWeb) {
+          // Web: 바이트로 읽기 (putFile 미지원)
+          final bytes = await image.readAsBytes();
+          setState(() {
+            _businessLicenseImageBytes = bytes;
+            _businessLicenseImagePath = image.name; // 표시용으로 이름만 저장
+          });
+          AppLogger.debug('Business license image selected (web): ${image.name}, ${bytes.length} bytes', tag: 'LoginScreen');
+        } else {
+          // Mobile: 경로 저장
+          setState(() {
+            _businessLicenseImagePath = image.path;
+          });
+          AppLogger.debug('Business license image selected: ${image.path}', tag: 'LoginScreen');
+        }
       }
     } catch (e, stackTrace) {
       AppLogger.error('Failed to pick image', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
@@ -555,6 +575,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               setState(() {
                                 _isOwnerSignup = false;
                                 _businessLicenseImagePath = null;
+                                _businessLicenseImageBytes = null;
                               });
                             },
                             child: Container(
@@ -647,56 +668,63 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                     // Business License Upload (only for owner signup)
                     if (_isOwnerSignup) ...[
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1A1A1A),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: _businessLicenseImagePath != null
-                                ? Colors.green
-                                : const Color(0xFF1E1E1E),
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            Icon(
-                              _businessLicenseImagePath != null
-                                  ? Icons.check_circle
-                                  : Icons.upload_file,
-                              color: _businessLicenseImagePath != null
-                                  ? Colors.green
-                                  : const Color(0xFFB0B0B0),
-                              size: 48,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              _businessLicenseImagePath != null
-                                  ? '사업자등록증 업로드 완료'
-                                  : '사업자등록증을 업로드해주세요',
-                              style: TextStyle(
-                                color: _businessLicenseImagePath != null
+                      Builder(
+                        builder: (context) {
+                          final hasImage = kIsWeb
+                              ? _businessLicenseImageBytes != null
+                              : _businessLicenseImagePath != null;
+                          return Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1A1A1A),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: hasImage
                                     ? Colors.green
-                                    : const Color(0xFFB0B0B0),
-                                fontSize: 14,
+                                    : const Color(0xFF1E1E1E),
                               ),
                             ),
-                            const SizedBox(height: 12),
-                            ElevatedButton.icon(
-                              onPressed: _pickBusinessLicenseImage,
-                              icon: const Icon(Icons.camera_alt),
-                              label: Text(
-                                _businessLicenseImagePath != null
-                                    ? '다시 선택'
-                                    : '사진 선택',
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppTheme.electricBlue,
-                                foregroundColor: Colors.white,
-                              ),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  hasImage
+                                      ? Icons.check_circle
+                                      : Icons.upload_file,
+                                  color: hasImage
+                                      ? Colors.green
+                                      : const Color(0xFFB0B0B0),
+                                  size: 48,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  hasImage
+                                      ? '사업자등록증 업로드 완료'
+                                      : '사업자등록증을 업로드해주세요',
+                                  style: TextStyle(
+                                    color: hasImage
+                                        ? Colors.green
+                                        : const Color(0xFFB0B0B0),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                ElevatedButton.icon(
+                                  onPressed: _pickBusinessLicenseImage,
+                                  icon: const Icon(Icons.camera_alt),
+                                  label: Text(
+                                    hasImage
+                                        ? '다시 선택'
+                                        : '사진 선택',
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppTheme.electricBlue,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -847,6 +875,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               _agreedToPrivacy = false;
                               _isOwnerSignup = false;
                               _businessLicenseImagePath = null;
+                              _businessLicenseImageBytes = null;
                             });
                             AppLogger.debug('Mode switched to ${_isLogin ? "로그인" : "회원가입"}', tag: 'LoginScreen');
                           },
