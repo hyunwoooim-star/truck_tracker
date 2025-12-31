@@ -260,34 +260,15 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                       ),
                     ),
 
-                    // Search Bar + Logout Button (Fixed)
+                    // Search Bar (Fixed)
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 8),
-                      child: Row(
-                        children: [
-                          Expanded(child: _SearchBar()),
-                          const SizedBox(width: 8),
-                          // Logout Button
-                          Material(
-                            color: AppTheme.charcoalMedium,
-                            borderRadius: BorderRadius.circular(12),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(12),
-                              onTap: () => _showLogoutDialog(context, ref),
-                              child: Container(
-                                padding: const EdgeInsets.all(12),
-                                child: const Icon(
-                                  Icons.logout,
-                                  color: Colors.red,
-                                  size: 24,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: _SearchBar(),
                     ),
+
+                    // Sort Options (거리순/인기순)
+                    const _SortOptionsBar(),
 
                     // Filter Tags (Fixed)
                     const _FilterBar(),
@@ -586,6 +567,103 @@ class _TruckCard extends StatelessWidget {
             color: AppTheme.tossGray500,
             size: 24,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Sort options bar (거리순/이름순/평점순)
+class _SortOptionsBar extends ConsumerWidget {
+  const _SortOptionsBar();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentSort = ref.watch(sortOptionProvider);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        children: [
+          Text(
+            '정렬',
+            style: TextStyle(
+              color: AppTheme.textSecondary,
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(width: 8),
+          _SortChip(
+            label: '거리순',
+            icon: Icons.near_me,
+            isSelected: currentSort == SortOption.distance,
+            onTap: () => ref.read(sortOptionProvider.notifier).setSortOption(SortOption.distance),
+          ),
+          const SizedBox(width: 6),
+          _SortChip(
+            label: '이름순',
+            icon: Icons.sort_by_alpha,
+            isSelected: currentSort == SortOption.name,
+            onTap: () => ref.read(sortOptionProvider.notifier).setSortOption(SortOption.name),
+          ),
+          const SizedBox(width: 6),
+          _SortChip(
+            label: '평점순',
+            icon: Icons.star,
+            isSelected: currentSort == SortOption.rating,
+            onTap: () => ref.read(sortOptionProvider.notifier).setSortOption(SortOption.rating),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SortChip extends StatelessWidget {
+  const _SortChip({
+    required this.label,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.mustardYellow : AppTheme.charcoalMedium,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? AppTheme.mustardYellow : AppTheme.charcoalLight,
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 14,
+              color: isSelected ? Colors.black : AppTheme.textSecondary,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                color: isSelected ? Colors.black : AppTheme.textSecondary,
+              ),
+            ),
+          ],
         ),
       ),
     );
