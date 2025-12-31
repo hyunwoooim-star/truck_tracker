@@ -7,6 +7,7 @@ import '../../../core/services/app_version_service.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/themes/theme_provider.dart';
 import '../../../core/utils/app_logger.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../../../core/widgets/network_status_banner.dart';
 import '../../notifications/presentation/notification_settings_screen.dart';
 import 'help_screen.dart';
@@ -324,12 +325,7 @@ class AppSettingsScreen extends ConsumerWidget {
               }
 
               // 성공 메시지 표시
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('✅ 테스트 에러가 Sentry로 전송되었습니다!'),
-                  backgroundColor: Colors.green,
-                ),
-              );
+              SnackBarHelper.showSuccess(context, '테스트 에러가 Sentry로 전송되었습니다!');
             },
             child: const Text('에러 전송', style: TextStyle(color: Colors.white)),
           ),

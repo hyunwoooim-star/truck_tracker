@@ -297,40 +297,6 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
   }
 }
 
-/// LEGACY: Mock data filtered list (kept for reference/fallback)
-@riverpod
-AsyncValue<List<Truck>> filteredTruckListMock(Ref ref) {
-  final trucksAsync = ref.watch(truckListProvider);
-  final filterState = ref.watch(truckFilterProvider);
-
-  return trucksAsync.when(
-    data: (trucks) {
-      var filtered = trucks;
-
-      // Filter by selected tag
-      if (filterState.selectedTag != '전체') {
-        filtered = filtered
-            .where((truck) => truck.foodType == filterState.selectedTag)
-            .toList();
-      }
-
-      // Filter by search keyword (truck name or location)
-      if (filterState.searchKeyword.isNotEmpty) {
-        final keyword = filterState.searchKeyword.toLowerCase();
-        filtered = filtered.where((truck) {
-          return truck.truckNumber.toLowerCase().contains(keyword) ||
-              truck.driverName.toLowerCase().contains(keyword) ||
-              truck.foodType.toLowerCase().contains(keyword) ||
-              truck.locationDescription.toLowerCase().contains(keyword);
-        }).toList();
-      }
-
-      return AsyncData(filtered);
-    },
-    loading: () => const AsyncLoading(),
-    error: (error, stackTrace) => AsyncError(error, stackTrace),
-  );
-}
 
 @riverpod
 class TruckListNotifier extends _$TruckListNotifier {

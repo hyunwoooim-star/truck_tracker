@@ -10,20 +10,26 @@ import '../domain/payment.dart';
 part 'payment_repository.g.dart';
 
 /// TossPayments configuration
+///
+/// API keys are loaded from environment variables:
+/// - TOSS_CLIENT_KEY: Client key for Toss Payments
+/// - TOSS_SECRET_KEY: Secret key for Toss Payments
+/// - TOSS_IS_PRODUCTION: Set to 'true' for production mode
+///
+/// Build with: flutter build --dart-define=TOSS_CLIENT_KEY=xxx --dart-define=TOSS_SECRET_KEY=xxx
 class TossPaymentsConfig {
-  // 테스트 키 (개발용)
-  static const String testClientKey = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
-  static const String testSecretKey = 'test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R';
+  // 테스트 키 (개발용 - 환경변수 없을 때 폴백)
+  static const String _testClientKey = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
+  static const String _testSecretKey = 'test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R';
 
-  // 실서비스 키 (프로덕션용 - 환경 변수로 관리)
-  static const String liveClientKey = ''; // TODO: Set from environment
-  static const String liveSecretKey = ''; // TODO: Set from environment
+  // 환경변수에서 로드 (GitHub Secrets에서 주입)
+  static const String _envClientKey = String.fromEnvironment('TOSS_CLIENT_KEY');
+  static const String _envSecretKey = String.fromEnvironment('TOSS_SECRET_KEY');
+  static const bool isProduction = bool.fromEnvironment('TOSS_IS_PRODUCTION', defaultValue: false);
 
-  // 현재 환경
-  static const bool isProduction = false;
-
-  static String get clientKey => isProduction ? liveClientKey : testClientKey;
-  static String get secretKey => isProduction ? liveSecretKey : testSecretKey;
+  // 환경변수 있으면 사용, 없으면 테스트 키 사용
+  static String get clientKey => _envClientKey.isNotEmpty ? _envClientKey : _testClientKey;
+  static String get secretKey => _envSecretKey.isNotEmpty ? _envSecretKey : _testSecretKey;
 
   // API URLs
   static const String baseUrl = 'https://api.tosspayments.com';

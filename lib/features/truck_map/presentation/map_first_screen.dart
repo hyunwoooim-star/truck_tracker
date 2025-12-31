@@ -10,6 +10,7 @@ import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 
 import '../../../core/constants/food_types.dart';
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/snackbar_helper.dart';
 import '../services/marker_service.dart';
 import '../../../shared/widgets/toss_card.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
@@ -982,18 +983,14 @@ class _ReapplyScreenState extends ConsumerState<_ReapplyScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('이미지 선택에 실패했습니다')),
-        );
+        SnackBarHelper.showError(context, '이미지 선택에 실패했습니다');
       }
     }
   }
 
   Future<void> _submitReapply() async {
     if (_businessLicenseImagePath == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('사업자등록증을 업로드해주세요')),
-      );
+      SnackBarHelper.showWarning(context, '사업자등록증을 업로드해주세요');
       return;
     }
 
@@ -1014,21 +1011,11 @@ class _ReapplyScreenState extends ConsumerState<_ReapplyScreen> {
 
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('재신청이 접수되었습니다'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, '재신청이 접수되었습니다');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('재신청 실패: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, '재신청 실패: $e');
       }
     } finally {
       if (mounted) {

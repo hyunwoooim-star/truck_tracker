@@ -39,8 +39,9 @@ class OwnerOperatingStatus extends _$OwnerOperatingStatus {
         // Update state based on truck status
         state = truck.status == TruckStatus.onRoute || truck.status == TruckStatus.resting;
       }
-    } catch (e) {
-      // If error, keep default state
+    } catch (e, stackTrace) {
+      // Keep default state but log the error
+      AppLogger.error('Failed to load owner truck status', error: e, stackTrace: stackTrace, tag: 'OwnerStatus');
     }
   }
 
@@ -111,8 +112,10 @@ class OwnerOperatingStatus extends _$OwnerOperatingStatus {
             });
             AppLogger.debug('Push notification triggered', tag: 'OwnerStatus');
           }
-        } catch (e) {
-          AppLogger.warning('Error triggering notification', tag: 'OwnerStatus');
+        } catch (e, stackTrace) {
+          // Notification is non-critical, log but don't fail the main operation
+          AppLogger.warning('Error triggering notification: $e', tag: 'OwnerStatus');
+          AppLogger.debug('Stack: $stackTrace', tag: 'OwnerStatus');
         }
       }
 

@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../data/chat_repository.dart';
 import '../domain/chat_message.dart';
@@ -73,18 +74,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     });
   }
 
-  void _setTypingStatus(bool isTyping) {
+  Future<void> _setTypingStatus(bool isTyping) async {
     if (_isTyping == isTyping) return;
     _isTyping = isTyping;
 
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    ref.read(chatRepositoryProvider).setTypingStatus(
-      chatRoomId: widget.chatRoomId,
-      userId: user.uid,
-      isTyping: isTyping,
-    );
+    try {
+      await ref.read(chatRepositoryProvider).setTypingStatus(
+        chatRoomId: widget.chatRoomId,
+        userId: user.uid,
+        isTyping: isTyping,
+      );
+    } catch (e) {
+      // Typing status is non-critical, just log the error
+      AppLogger.warning('Failed to update typing status', tag: 'ChatScreen');
+    }
   }
 
   void _listenToTypingStatus() {
