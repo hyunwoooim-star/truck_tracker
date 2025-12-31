@@ -695,7 +695,6 @@ exports.updateAdminStats = functions.firestore
  * Used for web-based Kakao login
  */
 exports.exchangeKakaoCode = functions
-  .runWith({ secrets: [kakaoClientSecret] })
   .https.onRequest(async (req, res) => {
   setCorsHeaders(req, res);
 
@@ -712,13 +711,12 @@ exports.exchangeKakaoCode = functions
   }
 
   try {
-    // 1. Exchange code for access token
+    // 1. Exchange code for access token (Client Secret OFF이므로 제외)
     const tokenResponse = await axios.post(
       'https://kauth.kakao.com/oauth/token',
       new URLSearchParams({
         grant_type: 'authorization_code',
         client_id: KAKAO_CLIENT_ID,
-        client_secret: kakaoClientSecret.value(),
         redirect_uri: redirectUri,
         code: code,
       }),

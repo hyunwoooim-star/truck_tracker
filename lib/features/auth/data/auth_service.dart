@@ -275,12 +275,12 @@ class AuthService {
   Future<UserCredential> _signInWithKakaoWeb() async {
     AppLogger.debug('Starting Kakao Web OAuth flow', tag: 'AuthService');
 
-    // Build OAuth URL
+    // Build OAuth URL (account_email 권한 없으므로 scope에서 제외)
     final authUrl = Uri.https('kauth.kakao.com', '/oauth/authorize', {
       'client_id': _kakaoClientId,
       'redirect_uri': _kakaoRedirectUri,
       'response_type': 'code',
-      'scope': 'profile_nickname profile_image account_email',
+      'scope': 'profile_nickname profile_image',
     });
 
     AppLogger.debug('Kakao OAuth URL: $authUrl', tag: 'AuthService');
