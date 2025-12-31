@@ -94,6 +94,26 @@ Future<bool> needsOwnerOnboarding(Ref ref) async {
   return authService.checkNeedsOnboarding(truckId);
 }
 
+/// 프로필 완성 여부 확인 (닉네임 설정 여부)
+@riverpod
+Future<bool> isProfileComplete(Ref ref) async {
+  final userId = ref.watch(currentUserIdProvider);
+
+  if (userId == null) {
+    return false;
+  }
+
+  final authService = ref.watch(authServiceProvider);
+  return authService.isProfileComplete(userId);
+}
+
+/// 현재 사용자 닉네임 가져오기
+@riverpod
+Future<String?> currentUserNickname(Ref ref) async {
+  final authService = ref.watch(authServiceProvider);
+  return authService.getCurrentUserNickname();
+}
+
 /// Check if current user is admin and manage FCM topic subscription
 /// This provider should be watched in the main app to handle admin notifications
 @riverpod

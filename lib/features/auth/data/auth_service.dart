@@ -886,5 +886,96 @@ class AuthService {
       return false; // Default to not requiring onboarding on error
     }
   }
+
+  // ═══════════════════════════════════════════════════════════
+  // NICKNAME MANAGEMENT
+  // ═══════════════════════════════════════════════════════════
+
+  /// 닉네임 유효성 검사 정규식 (한글/영문/숫자 2-10자)
+  static final RegExp _nicknameRegex = RegExp(r'^[가-힣a-zA-Z0-9]{2,10}$');
+
+  /// 닉네임 유효성 검사
+  bool isValidNickname(String nickname) {
+    if (nickname.length < 2 || nickname.length > 10) return false;
+    return _nicknameRegex.hasMatch(nickname);
+  }
+
+  /// 닉네임 중복 검사
+  Future<bool> isNicknameAvailable(String nickname) async {
+    try {
+      final query = await _firestore
+          .collection('users')
+          .where('nickname', isEqualTo: nickname)
+          .limit(1)
+          .get();
+
+      return query.docs.isEmpty;
+    } catch (e, stackTrace) {
+      AppLogger.error('Nickname availability check failed',
+          error: e, stackTrace: stackTrace, tag: 'AuthService');
+      return false;
+    }
+  }
+
+  /// 닉네임 업데이트 및 프로필 완성 처리
+  Future<void> updateNickname(String uid, String nickname) async {
+    try {
+      // 유효성 검사
+      if (!isValidNickname(nickname)) {
+        throw Exception('Invalid nickname format');
+      }
+
+      // 중복 검사
+      final isAvailable = await isNicknameAvailable(nickname);
+      if (!isAvailable) {
+        throw Exception('Nickname already taken');
+      }
+
+      // Firestore 업데이트
+      await _firestore.collection('users').doc(uid).update({
+        'nickname': nickname,
+        'isProfileComplete': true,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      AppLogger.success('Nickname updated: $nickname', tag: 'AuthService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Nickname update failed',
+          error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
+  }
+
+  /// 프로필 완성 여부 확인
+  Future<bool> isProfileComplete(String uid) async {
+    try {
+      final doc = await _firestore.collection('users').doc(uid).get();
+      if (!doc.exists) return false;
+
+      final data = doc.data();
+      return data?['isProfileComplete'] == true;
+    } catch (e, stackTrace) {
+      AppLogger.error('Profile completion check failed',
+          error: e, stackTrace: stackTrace, tag: 'AuthService');
+      return false;
+    }
+  }
+
+  /// 현재 사용자의 닉네임 가져오기
+  Future<String?> getCurrentUserNickname() async {
+    final uid = currentUserId;
+    if (uid == null) return null;
+
+    try {
+      final doc = await _firestore.collection('users').doc(uid).get();
+      if (!doc.exists) return null;
+
+      return doc.data()?['nickname'] as String?;
+    } catch (e, stackTrace) {
+      AppLogger.error('Get nickname failed',
+          error: e, stackTrace: stackTrace, tag: 'AuthService');
+      return null;
+    }
+  }
 }
 

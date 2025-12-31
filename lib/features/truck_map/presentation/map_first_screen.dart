@@ -341,6 +341,57 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
             },
           ),
 
+          // 👋 Top-left greeting card with nickname
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 16,
+            left: 16,
+            child: Consumer(
+              builder: (context, ref, child) {
+                final nicknameAsync = ref.watch(currentUserNicknameProvider);
+                return nicknameAsync.when(
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, __) => const SizedBox.shrink(),
+                  data: (nickname) {
+                    if (nickname == null || nickname.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+                    return Material(
+                      color: AppTheme.charcoalMedium95,
+                      borderRadius: BorderRadius.circular(12),
+                      elevation: 8,
+                      shadowColor: AppTheme.black50,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.waving_hand,
+                              color: AppTheme.mustardYellow,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '$nickname님 안녕하세요!',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+
           // 🔄 Top-right menu button (hamburger style)
           Positioned(
             top: MediaQuery.of(context).padding.top + 16,

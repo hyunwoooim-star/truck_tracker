@@ -15,7 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppUser {
 
- String get uid; String get email; String get displayName; String? get photoURL; String get loginMethod; String get role;// 'customer' or 'owner'
+ String get uid; String get email; String get displayName; String? get photoURL; String? get nickname;// 사용자 지정 닉네임 (2-10자, 한글/영문/숫자)
+ bool get isProfileComplete;// 닉네임 설정 완료 여부
+ String get loginMethod; String get role;// 'customer' or 'owner'
  int? get ownedTruckId;// 1-100, null if not an owner
  String? get fcmToken;// FCM token for push notifications
  DateTime? get createdAt; DateTime? get updatedAt;
@@ -31,16 +33,16 @@ $AppUserCopyWith<AppUser> get copyWith => _$AppUserCopyWithImpl<AppUser>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUser&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoURL, photoURL) || other.photoURL == photoURL)&&(identical(other.loginMethod, loginMethod) || other.loginMethod == loginMethod)&&(identical(other.role, role) || other.role == role)&&(identical(other.ownedTruckId, ownedTruckId) || other.ownedTruckId == ownedTruckId)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUser&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoURL, photoURL) || other.photoURL == photoURL)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.isProfileComplete, isProfileComplete) || other.isProfileComplete == isProfileComplete)&&(identical(other.loginMethod, loginMethod) || other.loginMethod == loginMethod)&&(identical(other.role, role) || other.role == role)&&(identical(other.ownedTruckId, ownedTruckId) || other.ownedTruckId == ownedTruckId)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,uid,email,displayName,photoURL,loginMethod,role,ownedTruckId,fcmToken,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,uid,email,displayName,photoURL,nickname,isProfileComplete,loginMethod,role,ownedTruckId,fcmToken,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'AppUser(uid: $uid, email: $email, displayName: $displayName, photoURL: $photoURL, loginMethod: $loginMethod, role: $role, ownedTruckId: $ownedTruckId, fcmToken: $fcmToken, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'AppUser(uid: $uid, email: $email, displayName: $displayName, photoURL: $photoURL, nickname: $nickname, isProfileComplete: $isProfileComplete, loginMethod: $loginMethod, role: $role, ownedTruckId: $ownedTruckId, fcmToken: $fcmToken, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -51,7 +53,7 @@ abstract mixin class $AppUserCopyWith<$Res>  {
   factory $AppUserCopyWith(AppUser value, $Res Function(AppUser) _then) = _$AppUserCopyWithImpl;
 @useResult
 $Res call({
- String uid, String email, String displayName, String? photoURL, String loginMethod, String role, int? ownedTruckId, String? fcmToken, DateTime? createdAt, DateTime? updatedAt
+ String uid, String email, String displayName, String? photoURL, String? nickname, bool isProfileComplete, String loginMethod, String role, int? ownedTruckId, String? fcmToken, DateTime? createdAt, DateTime? updatedAt
 });
 
 
@@ -68,13 +70,15 @@ class _$AppUserCopyWithImpl<$Res>
 
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? uid = null,Object? email = null,Object? displayName = null,Object? photoURL = freezed,Object? loginMethod = null,Object? role = null,Object? ownedTruckId = freezed,Object? fcmToken = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? uid = null,Object? email = null,Object? displayName = null,Object? photoURL = freezed,Object? nickname = freezed,Object? isProfileComplete = null,Object? loginMethod = null,Object? role = null,Object? ownedTruckId = freezed,Object? fcmToken = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_self.copyWith(
 uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String,photoURL: freezed == photoURL ? _self.photoURL : photoURL // ignore: cast_nullable_to_non_nullable
-as String?,loginMethod: null == loginMethod ? _self.loginMethod : loginMethod // ignore: cast_nullable_to_non_nullable
+as String?,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
+as String?,isProfileComplete: null == isProfileComplete ? _self.isProfileComplete : isProfileComplete // ignore: cast_nullable_to_non_nullable
+as bool,loginMethod: null == loginMethod ? _self.loginMethod : loginMethod // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as String,ownedTruckId: freezed == ownedTruckId ? _self.ownedTruckId : ownedTruckId // ignore: cast_nullable_to_non_nullable
 as int?,fcmToken: freezed == fcmToken ? _self.fcmToken : fcmToken // ignore: cast_nullable_to_non_nullable
@@ -162,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String uid,  String email,  String displayName,  String? photoURL,  String loginMethod,  String role,  int? ownedTruckId,  String? fcmToken,  DateTime? createdAt,  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String uid,  String email,  String displayName,  String? photoURL,  String? nickname,  bool isProfileComplete,  String loginMethod,  String role,  int? ownedTruckId,  String? fcmToken,  DateTime? createdAt,  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppUser() when $default != null:
-return $default(_that.uid,_that.email,_that.displayName,_that.photoURL,_that.loginMethod,_that.role,_that.ownedTruckId,_that.fcmToken,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.uid,_that.email,_that.displayName,_that.photoURL,_that.nickname,_that.isProfileComplete,_that.loginMethod,_that.role,_that.ownedTruckId,_that.fcmToken,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -183,10 +187,10 @@ return $default(_that.uid,_that.email,_that.displayName,_that.photoURL,_that.log
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String uid,  String email,  String displayName,  String? photoURL,  String loginMethod,  String role,  int? ownedTruckId,  String? fcmToken,  DateTime? createdAt,  DateTime? updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String uid,  String email,  String displayName,  String? photoURL,  String? nickname,  bool isProfileComplete,  String loginMethod,  String role,  int? ownedTruckId,  String? fcmToken,  DateTime? createdAt,  DateTime? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _AppUser():
-return $default(_that.uid,_that.email,_that.displayName,_that.photoURL,_that.loginMethod,_that.role,_that.ownedTruckId,_that.fcmToken,_that.createdAt,_that.updatedAt);}
+return $default(_that.uid,_that.email,_that.displayName,_that.photoURL,_that.nickname,_that.isProfileComplete,_that.loginMethod,_that.role,_that.ownedTruckId,_that.fcmToken,_that.createdAt,_that.updatedAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -200,10 +204,10 @@ return $default(_that.uid,_that.email,_that.displayName,_that.photoURL,_that.log
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String uid,  String email,  String displayName,  String? photoURL,  String loginMethod,  String role,  int? ownedTruckId,  String? fcmToken,  DateTime? createdAt,  DateTime? updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String uid,  String email,  String displayName,  String? photoURL,  String? nickname,  bool isProfileComplete,  String loginMethod,  String role,  int? ownedTruckId,  String? fcmToken,  DateTime? createdAt,  DateTime? updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _AppUser() when $default != null:
-return $default(_that.uid,_that.email,_that.displayName,_that.photoURL,_that.loginMethod,_that.role,_that.ownedTruckId,_that.fcmToken,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.uid,_that.email,_that.displayName,_that.photoURL,_that.nickname,_that.isProfileComplete,_that.loginMethod,_that.role,_that.ownedTruckId,_that.fcmToken,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -215,13 +219,17 @@ return $default(_that.uid,_that.email,_that.displayName,_that.photoURL,_that.log
 @JsonSerializable()
 
 class _AppUser implements AppUser {
-  const _AppUser({required this.uid, required this.email, required this.displayName, this.photoURL, this.loginMethod = 'email', this.role = 'customer', this.ownedTruckId, this.fcmToken, this.createdAt, this.updatedAt});
+  const _AppUser({required this.uid, required this.email, required this.displayName, this.photoURL, this.nickname, this.isProfileComplete = false, this.loginMethod = 'email', this.role = 'customer', this.ownedTruckId, this.fcmToken, this.createdAt, this.updatedAt});
   factory _AppUser.fromJson(Map<String, dynamic> json) => _$AppUserFromJson(json);
 
 @override final  String uid;
 @override final  String email;
 @override final  String displayName;
 @override final  String? photoURL;
+@override final  String? nickname;
+// 사용자 지정 닉네임 (2-10자, 한글/영문/숫자)
+@override@JsonKey() final  bool isProfileComplete;
+// 닉네임 설정 완료 여부
 @override@JsonKey() final  String loginMethod;
 @override@JsonKey() final  String role;
 // 'customer' or 'owner'
@@ -245,16 +253,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUser&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoURL, photoURL) || other.photoURL == photoURL)&&(identical(other.loginMethod, loginMethod) || other.loginMethod == loginMethod)&&(identical(other.role, role) || other.role == role)&&(identical(other.ownedTruckId, ownedTruckId) || other.ownedTruckId == ownedTruckId)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUser&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoURL, photoURL) || other.photoURL == photoURL)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.isProfileComplete, isProfileComplete) || other.isProfileComplete == isProfileComplete)&&(identical(other.loginMethod, loginMethod) || other.loginMethod == loginMethod)&&(identical(other.role, role) || other.role == role)&&(identical(other.ownedTruckId, ownedTruckId) || other.ownedTruckId == ownedTruckId)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,uid,email,displayName,photoURL,loginMethod,role,ownedTruckId,fcmToken,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,uid,email,displayName,photoURL,nickname,isProfileComplete,loginMethod,role,ownedTruckId,fcmToken,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'AppUser(uid: $uid, email: $email, displayName: $displayName, photoURL: $photoURL, loginMethod: $loginMethod, role: $role, ownedTruckId: $ownedTruckId, fcmToken: $fcmToken, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'AppUser(uid: $uid, email: $email, displayName: $displayName, photoURL: $photoURL, nickname: $nickname, isProfileComplete: $isProfileComplete, loginMethod: $loginMethod, role: $role, ownedTruckId: $ownedTruckId, fcmToken: $fcmToken, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -265,7 +273,7 @@ abstract mixin class _$AppUserCopyWith<$Res> implements $AppUserCopyWith<$Res> {
   factory _$AppUserCopyWith(_AppUser value, $Res Function(_AppUser) _then) = __$AppUserCopyWithImpl;
 @override @useResult
 $Res call({
- String uid, String email, String displayName, String? photoURL, String loginMethod, String role, int? ownedTruckId, String? fcmToken, DateTime? createdAt, DateTime? updatedAt
+ String uid, String email, String displayName, String? photoURL, String? nickname, bool isProfileComplete, String loginMethod, String role, int? ownedTruckId, String? fcmToken, DateTime? createdAt, DateTime? updatedAt
 });
 
 
@@ -282,13 +290,15 @@ class __$AppUserCopyWithImpl<$Res>
 
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? uid = null,Object? email = null,Object? displayName = null,Object? photoURL = freezed,Object? loginMethod = null,Object? role = null,Object? ownedTruckId = freezed,Object? fcmToken = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? uid = null,Object? email = null,Object? displayName = null,Object? photoURL = freezed,Object? nickname = freezed,Object? isProfileComplete = null,Object? loginMethod = null,Object? role = null,Object? ownedTruckId = freezed,Object? fcmToken = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_AppUser(
 uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String,photoURL: freezed == photoURL ? _self.photoURL : photoURL // ignore: cast_nullable_to_non_nullable
-as String?,loginMethod: null == loginMethod ? _self.loginMethod : loginMethod // ignore: cast_nullable_to_non_nullable
+as String?,nickname: freezed == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
+as String?,isProfileComplete: null == isProfileComplete ? _self.isProfileComplete : isProfileComplete // ignore: cast_nullable_to_non_nullable
+as bool,loginMethod: null == loginMethod ? _self.loginMethod : loginMethod // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as String,ownedTruckId: freezed == ownedTruckId ? _self.ownedTruckId : ownedTruckId // ignore: cast_nullable_to_non_nullable
 as int?,fcmToken: freezed == fcmToken ? _self.fcmToken : fcmToken // ignore: cast_nullable_to_non_nullable

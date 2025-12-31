@@ -400,6 +400,83 @@ final class NeedsOwnerOnboardingProvider
 String _$needsOwnerOnboardingHash() =>
     r'8d3bed127126ad6e2af7cd99056f0d79d793f86b';
 
+/// 프로필 완성 여부 확인 (닉네임 설정 여부)
+
+@ProviderFor(isProfileComplete)
+final isProfileCompleteProvider = IsProfileCompleteProvider._();
+
+/// 프로필 완성 여부 확인 (닉네임 설정 여부)
+
+final class IsProfileCompleteProvider
+    extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
+    with $FutureModifier<bool>, $FutureProvider<bool> {
+  /// 프로필 완성 여부 확인 (닉네임 설정 여부)
+  IsProfileCompleteProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'isProfileCompleteProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$isProfileCompleteHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<bool> create(Ref ref) {
+    return isProfileComplete(ref);
+  }
+}
+
+String _$isProfileCompleteHash() => r'884821d97f8079fab1079ba337385a89b5c1711c';
+
+/// 현재 사용자 닉네임 가져오기
+
+@ProviderFor(currentUserNickname)
+final currentUserNicknameProvider = CurrentUserNicknameProvider._();
+
+/// 현재 사용자 닉네임 가져오기
+
+final class CurrentUserNicknameProvider
+    extends $FunctionalProvider<AsyncValue<String?>, String?, FutureOr<String?>>
+    with $FutureModifier<String?>, $FutureProvider<String?> {
+  /// 현재 사용자 닉네임 가져오기
+  CurrentUserNicknameProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentUserNicknameProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentUserNicknameHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<String?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<String?> create(Ref ref) {
+    return currentUserNickname(ref);
+  }
+}
+
+String _$currentUserNicknameHash() =>
+    r'c1a0314124799c01e6b6cc39e67c42e04542525f';
+
 /// Check if current user is admin and manage FCM topic subscription
 /// This provider should be watched in the main app to handle admin notifications
 

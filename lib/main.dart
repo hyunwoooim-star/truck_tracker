@@ -33,6 +33,7 @@ import 'features/notifications/fcm_service.dart';
 import 'features/ads/data/ad_service.dart';
 import 'features/pickup_navigation/presentation/pickup_ready_listener.dart';
 import 'features/auth/presentation/oauth_callback_screen.dart';
+import 'features/auth/presentation/nickname_setup_screen.dart';
 import 'firebase_options.dart';
 
 /// Global key for showing foreground notifications
@@ -192,6 +193,11 @@ final _router = GoRouter(
       path: '/admin',
       builder: (context, state) => const AdminDashboardScreen(),
     ),
+    // 닉네임 설정 화면
+    GoRoute(
+      path: '/profile-setup',
+      builder: (context, state) => const NicknameSetupScreen(),
+    ),
     // OAuth callback routes for web social login
     GoRoute(
       path: '/kakao',
@@ -266,6 +272,7 @@ class AuthWrapper extends ConsumerWidget {
     final authState = ref.watch(authStateChangesProvider);
     final truckIdAsync = ref.watch(currentUserTruckIdProvider);
     final ownerRequestAsync = ref.watch(ownerRequestStatusProvider);
+    final profileCompleteAsync = ref.watch(isProfileCompleteProvider);
 
     return authState.when(
       data: (user) {
@@ -275,66 +282,93 @@ class AuthWrapper extends ConsumerWidget {
           return const LoginScreen();
         }
 
-        AppLogger.debug('User logged in (${user.uid}) → Checking truck ownership', tag: 'AuthWrapper');
+        AppLogger.debug('User logged in (${user.uid}) → Checking profile completion', tag: 'AuthWrapper');
 
-        // Logged in → check if owner or customer using Provider
-        return truckIdAsync.when(
-          data: (ownedTruckId) {
-            AppLogger.debug('Owned truck ID = $ownedTruckId', tag: 'AuthWrapper');
-
-            if (ownedTruckId != null) {
-              // User owns a truck → check if onboarding is needed
-              return _OwnerRoutingWidget(truckId: ownedTruckId);
-            } else {
-              // Check if there's a pending owner request
-              return ownerRequestAsync.when(
-                data: (requestData) {
-                  if (requestData != null) {
-                    final status = requestData['status'] as String?;
-                    final rejectionReason = requestData['rejectionReason'] as String?;
-
-                    if (status == 'pending') {
-                      AppLogger.debug('Owner request pending → OwnerPendingScreen', tag: 'AuthWrapper');
-                      return const OwnerPendingScreen(status: 'pending');
-                    } else if (status == 'rejected') {
-                      AppLogger.debug('Owner request rejected → OwnerPendingScreen', tag: 'AuthWrapper');
-                      return OwnerPendingScreen(
-                        status: 'rejected',
-                        rejectionReason: rejectionReason,
-                      );
-                    }
-                    // If approved, ownedTruckId should be set, but if not, fall through to customer
-                  }
-
-                  AppLogger.debug('User is customer → MapFirstScreen', tag: 'AuthWrapper');
-                  // Regular customer → map-first screen (Street Tycoon)
-                  // Wrap with PickupReadyListener to monitor order status
-                  return const PickupReadyListener(
-                    child: MapFirstScreen(),
-                  );
-                },
-                loading: () {
-                  AppLogger.debug('Loading owner request status...', tag: 'AuthWrapper');
-                  return const Scaffold(
-                    body: Center(
-                      child: CircularProgressIndicator(
-                        color: AppTheme.mustardYellow,
-                      ),
-                    ),
-                  );
-                },
-                error: (error, stack) {
-                  AppLogger.error('Error checking owner request', error: error, stackTrace: stack, tag: 'AuthWrapper');
-                  // On error, show customer screen
-                  return const PickupReadyListener(
-                    child: MapFirstScreen(),
-                  );
-                },
-              );
+        // 프로필 완성 여부 먼저 확인
+        return profileCompleteAsync.when(
+          data: (isProfileComplete) {
+            if (!isProfileComplete) {
+              AppLogger.debug('Profile not complete → NicknameSetupScreen', tag: 'AuthWrapper');
+              return const NicknameSetupScreen();
             }
+
+            AppLogger.debug('Profile complete → Checking truck ownership', tag: 'AuthWrapper');
+
+            // Logged in + profile complete → check if owner or customer
+            return truckIdAsync.when(
+              data: (ownedTruckId) {
+                AppLogger.debug('Owned truck ID = $ownedTruckId', tag: 'AuthWrapper');
+
+                if (ownedTruckId != null) {
+                  // User owns a truck → check if onboarding is needed
+                  return _OwnerRoutingWidget(truckId: ownedTruckId);
+                } else {
+                  // Check if there's a pending owner request
+                  return ownerRequestAsync.when(
+                    data: (requestData) {
+                      if (requestData != null) {
+                        final status = requestData['status'] as String?;
+                        final rejectionReason = requestData['rejectionReason'] as String?;
+
+                        if (status == 'pending') {
+                          AppLogger.debug('Owner request pending → OwnerPendingScreen', tag: 'AuthWrapper');
+                          return const OwnerPendingScreen(status: 'pending');
+                        } else if (status == 'rejected') {
+                          AppLogger.debug('Owner request rejected → OwnerPendingScreen', tag: 'AuthWrapper');
+                          return OwnerPendingScreen(
+                            status: 'rejected',
+                            rejectionReason: rejectionReason,
+                          );
+                        }
+                        // If approved, ownedTruckId should be set, but if not, fall through to customer
+                      }
+
+                      AppLogger.debug('User is customer → MapFirstScreen', tag: 'AuthWrapper');
+                      // Regular customer → map-first screen (Street Tycoon)
+                      // Wrap with PickupReadyListener to monitor order status
+                      return const PickupReadyListener(
+                        child: MapFirstScreen(),
+                      );
+                    },
+                    loading: () {
+                      AppLogger.debug('Loading owner request status...', tag: 'AuthWrapper');
+                      return const Scaffold(
+                        body: Center(
+                          child: CircularProgressIndicator(
+                            color: AppTheme.mustardYellow,
+                          ),
+                        ),
+                      );
+                    },
+                    error: (error, stack) {
+                      AppLogger.error('Error checking owner request', error: error, stackTrace: stack, tag: 'AuthWrapper');
+                      // On error, show customer screen
+                      return const PickupReadyListener(
+                        child: MapFirstScreen(),
+                      );
+                    },
+                  );
+                }
+              },
+              loading: () {
+                AppLogger.debug('Loading truck ownership...', tag: 'AuthWrapper');
+                return const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(
+                      color: AppTheme.mustardYellow,
+                    ),
+                  ),
+                );
+              },
+              error: (error, stack) {
+                AppLogger.error('Error checking truck ownership', error: error, stackTrace: stack, tag: 'AuthWrapper');
+                // On error, assume customer (safer default)
+                return const MapFirstScreen();
+              },
+            );
           },
           loading: () {
-            AppLogger.debug('Loading truck ownership...', tag: 'AuthWrapper');
+            AppLogger.debug('Checking profile completion...', tag: 'AuthWrapper');
             return const Scaffold(
               body: Center(
                 child: CircularProgressIndicator(
@@ -344,9 +378,9 @@ class AuthWrapper extends ConsumerWidget {
             );
           },
           error: (error, stack) {
-            AppLogger.error('Error checking truck ownership', error: error, stackTrace: stack, tag: 'AuthWrapper');
-            // On error, assume customer (safer default)
-            return const MapFirstScreen();
+            AppLogger.error('Error checking profile', error: error, stackTrace: stack, tag: 'AuthWrapper');
+            // On error, show nickname setup (safer - ensures profile is complete)
+            return const NicknameSetupScreen();
           },
         );
       },

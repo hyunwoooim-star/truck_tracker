@@ -568,6 +568,42 @@ class _AppDrawer extends ConsumerWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
+                // 👋 Nickname greeting
+                Consumer(
+                  builder: (context, ref, child) {
+                    final nicknameAsync = ref.watch(currentUserNicknameProvider);
+                    return nicknameAsync.when(
+                      loading: () => const SizedBox.shrink(),
+                      error: (_, __) => const SizedBox.shrink(),
+                      data: (nickname) {
+                        if (nickname == null || nickname.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.waving_hand,
+                                color: AppTheme.mustardYellow,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '$nickname님 환영합니다!',
+                                style: TextStyle(
+                                  color: AppTheme.textPrimary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ],
             ),
           ),
