@@ -53,10 +53,15 @@
 | Flutter 3.24.5 다운그레이드 | ❌ 실패 | SDK 버전 충돌 |
 | Flutter 3.27.4 다운그레이드 | ⏳ 테스트 중 | - |
 
-### 대안 (빌드 실패 시)
-1. **SDK 제약 낮추기**: `sdk: ^3.6.0` 으로 변경
-2. **iOS 사용자 안내**: "Chrome 사용" 메시지 표시
-3. **웹만 React로 분리**: 모바일 Flutter + 웹 React
+### 최종 해결책 (2025-12-31 적용)
+**iOS Safari 사용자에게 Chrome 사용 안내 메시지 표시**
+- `index.html`에 iOS Safari 감지 로직 추가
+- Safari 감지 시 "Safari 미지원" 경고 + Chrome 다운로드 링크 표시
+- iOS Chrome 사용자는 정상적으로 앱 로드
+
+### 추가 대안 (필요 시)
+1. **웹만 React로 분리**: 모바일 Flutter + 웹 React
+2. Flutter 팀의 CanvasKit iOS 수정 대기
 
 ### 중복 버튼 문제 (index.html)
 - iOS에서 `#openSafari`와 `#copyUrl` 버튼이 둘 다 표시됨
