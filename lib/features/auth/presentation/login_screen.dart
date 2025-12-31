@@ -53,6 +53,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleEmailAuth() async {
+    // Debug: Print to console for web debugging
+    print('🔵 _handleEmailAuth called');
+    print('🔵 isLogin: $_isLogin');
+    print('🔵 email: ${_emailController.text.trim()}');
+    print('🔵 password length: ${_passwordController.text.length}');
+
     AppLogger.debug('_handleEmailAuth called', tag: 'LoginScreen');
     AppLogger.debug('isLogin: $_isLogin', tag: 'LoginScreen');
     AppLogger.debug('email: ${_emailController.text.trim()}', tag: 'LoginScreen');
@@ -62,9 +68,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     AppLogger.debug('_agreedToPrivacy: $_agreedToPrivacy', tag: 'LoginScreen');
 
     if (!_formKey.currentState!.validate()) {
+      print('🔴 Form validation failed');
       AppLogger.warning('Form validation failed', tag: 'LoginScreen');
       return;
     }
+    print('🟢 Form validation passed');
 
     // Validate legal agreements for sign-up
     if (!_isLogin && (!_agreedToTerms || !_agreedToPrivacy)) {
@@ -82,17 +90,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     setState(() => _isLoading = true);
+    print('🔵 Loading started');
 
     try {
       final authService = ref.read(authServiceProvider);
+      print('🔵 Got authService');
 
       if (_isLogin) {
+        print('🔵 Attempting email sign in...');
         AppLogger.debug('Attempting email sign in...', tag: 'LoginScreen');
         // Sign in
         await authService.signInWithEmail(
           _emailController.text.trim(),
           _passwordController.text,
         );
+        print('🟢 Email sign in successful!');
         AppLogger.success('Email sign in successful', tag: 'LoginScreen');
       } else {
         AppLogger.debug('Attempting email sign up...', tag: 'LoginScreen');
@@ -149,12 +161,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         AppLogger.success('FCM token saved', tag: 'LoginScreen');
       }
 
-      AppLogger.success('Auth completed - navigating to root', tag: 'LoginScreen');
-      // Force refresh auth state and navigate to root
-      // This ensures AuthWrapper picks up the new auth state
+      AppLogger.success('Auth completed - refreshing auth state', tag: 'LoginScreen');
+      // Force refresh auth state - AuthWrapper will automatically rebuild
       if (mounted) {
+        // Invalidate all auth-related providers to trigger rebuild
         ref.invalidate(authStateChangesProvider);
-        context.go('/');
+        ref.invalidate(currentUserProvider);
+        ref.invalidate(currentUserIdProvider);
+        ref.invalidate(currentUserTruckIdProvider);
       }
     } catch (e, stackTrace) {
       AppLogger.error('Auth error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
