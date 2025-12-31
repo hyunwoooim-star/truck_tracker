@@ -258,12 +258,25 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
 
   /// Show settings dialog for owner profile
   void _showSettingsDialog(BuildContext context, WidgetRef ref) {
-    final ownerTruck = ref.read(ownerTruckProvider).value;
-    if (ownerTruck == null) return;
+    final ownerTruckAsync = ref.read(ownerTruckProvider);
 
-    showDialog(
-      context: context,
-      builder: (context) => _TruckSettingsDialog(truck: ownerTruck),
+    ownerTruckAsync.when(
+      data: (truck) {
+        if (truck == null) {
+          SnackBarHelper.showWarning(context, '트럭 정보를 불러올 수 없습니다');
+          return;
+        }
+        showDialog(
+          context: context,
+          builder: (context) => _TruckSettingsDialog(truck: truck),
+        );
+      },
+      loading: () {
+        SnackBarHelper.showInfo(context, '트럭 정보를 불러오는 중...');
+      },
+      error: (error, _) {
+        SnackBarHelper.showError(context, '오류: $error');
+      },
     );
   }
 
