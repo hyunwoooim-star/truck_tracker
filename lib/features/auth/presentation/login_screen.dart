@@ -241,6 +241,41 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  Future<void> _handleGoogleLogin() async {
+    AppLogger.debug('Google login button pressed', tag: 'LoginScreen');
+    setState(() => _isLoading = true);
+
+    try {
+      final authService = ref.read(authServiceProvider);
+      await authService.signInWithGoogle();
+
+      AppLogger.success('Google login successful', tag: 'LoginScreen');
+
+      // Save FCM token for push notifications
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FcmService().saveFcmTokenToUser(user.uid);
+      }
+
+      // Refresh auth state - AuthWrapper will handle routing
+      if (mounted) {
+        ref.invalidate(authStateChangesProvider);
+        ref.invalidate(currentUserProvider);
+        ref.invalidate(currentUserIdProvider);
+        ref.invalidate(currentUserTruckIdProvider);
+      }
+    } catch (e, stackTrace) {
+      AppLogger.error('Google login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
+      if (mounted) {
+        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   String _getErrorMessage(String error) {
     if (error.contains('user-not-found')) {
       return '등록되지 않은 이메일입니다';
@@ -987,6 +1022,53 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         const SizedBox(width: 12),
                         const Text(
                           '네이버로 계속하기',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Google Sign In Button
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _handleGoogleLogin,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black87,
+                      disabledBackgroundColor: Colors.white.withValues(alpha: 0.5),
+                      disabledForegroundColor: Colors.black87.withValues(alpha: 0.5),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 20,
+                          width: 20,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          child: Image.network(
+                            'https://www.google.com/favicon.ico',
+                            width: 20,
+                            height: 20,
+                            errorBuilder: (context, error, stackTrace) => const Icon(
+                              Icons.g_mobiledata,
+                              size: 20,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Google로 계속하기',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
