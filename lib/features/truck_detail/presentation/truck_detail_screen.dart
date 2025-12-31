@@ -511,13 +511,41 @@ class TruckDetailScreen extends ConsumerWidget {
                         final reviewsAsync = ref.watch(truckReviewsProvider(truck.id));
 
                         return reviewsAsync.when(
-                          loading: () => const Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Center(child: CircularProgressIndicator()),
+                          loading: () => Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              children: [
+                                Text(
+                                  l10n.reviewsTitle,
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  '리뷰를 불러오는 중...',
+                                  style: TextStyle(color: Colors.grey[600]),
+                                ),
+                              ],
+                            ),
                           ),
                           error: (e, stackTrace) => Padding(
                             padding: const EdgeInsets.all(20),
-                            child: Text(l10n.errorLoadingReviews),
+                            child: Column(
+                              children: [
+                                Text(
+                                  l10n.reviewsTitle,
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  '아직 리뷰가 없습니다',
+                                  style: TextStyle(color: Colors.grey[600]),
+                                ),
+                              ],
+                            ),
                           ),
                           data: (reviews) => Padding(
                             padding: const EdgeInsets.all(20),
