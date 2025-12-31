@@ -12,7 +12,7 @@ import '../../../core/utils/snackbar_helper.dart';
 import '../../notifications/fcm_service.dart';
 import '../../settings/presentation/privacy_policy_screen.dart';
 import '../../settings/presentation/terms_of_service_screen.dart';
-import '../../truck_list/presentation/truck_list_screen.dart';
+import '../../truck_map/presentation/map_first_screen.dart';
 import 'auth_provider.dart';
 import 'email_verification_screen.dart';
 
@@ -974,13 +974,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   TextButton(
                     onPressed: () {
                       AppLogger.debug('Guest mode button pressed', tag: 'LoginScreen');
-                      AppLogger.debug('Navigating to TruckListScreen...', tag: 'LoginScreen');
+                      AppLogger.debug('Navigating to MapFirstScreen...', tag: 'LoginScreen');
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
-                          builder: (_) => const TruckListScreen(),
+                          builder: (_) => const MapFirstScreen(),
                         ),
                       );
-                      AppLogger.debug('Navigation to TruckListScreen initiated', tag: 'LoginScreen');
+                      AppLogger.debug('Navigation to MapFirstScreen initiated', tag: 'LoginScreen');
                     },
                     child: const Text(
                       '둘러보기',

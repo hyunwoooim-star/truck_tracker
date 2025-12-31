@@ -22,6 +22,7 @@ import '../../truck_list/presentation/truck_provider.dart';
 import '../../chat/presentation/chat_list_screen.dart';
 import '../../chat/presentation/chat_provider.dart';
 import '../../notifications/presentation/notification_settings_screen.dart';
+import '../../settings/presentation/app_settings_screen.dart';
 
 /// Map-First Screen with 3-tier DraggableScrollableSheet
 /// Street Tycoon Architecture
@@ -358,12 +359,39 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
             },
           ),
 
-          // 🔄 Notification, Chat and Logout buttons (top-right corner, always visible)
+          // 🔄 Settings, Notification, Chat and Logout buttons (top-right corner, always visible)
           Positioned(
             top: MediaQuery.of(context).padding.top + 16,
             right: 16,
             child: Row(
               children: [
+                // Settings Button
+                Material(
+                  color: AppTheme.charcoalMedium95,
+                  borderRadius: BorderRadius.circular(12),
+                  elevation: 10,
+                  shadowColor: AppTheme.black50,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AppSettingsScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      child: const Icon(
+                        Icons.settings_outlined,
+                        color: AppTheme.mustardYellow,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 // Notification Settings Button
                 Material(
                   color: AppTheme.charcoalMedium95,
