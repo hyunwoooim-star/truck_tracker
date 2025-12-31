@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/services/app_version_service.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/themes/theme_provider.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../core/widgets/network_status_banner.dart';
 import '../../notifications/presentation/notification_settings_screen.dart';
 import 'help_screen.dart';
@@ -121,6 +123,17 @@ class AppSettingsScreen extends ConsumerWidget {
                   title: const Text('피드백 보내기'),
                   trailing: const Icon(Icons.open_in_new, size: 20),
                   onTap: () => _launchUrl('mailto:support@truckajeossi.com'),
+                ),
+
+                // Debug: Sentry Test (개발자용 - 나중에 제거)
+                const Divider(),
+                _buildSectionHeader(context, '개발자 도구'),
+                ListTile(
+                  leading: const Icon(Icons.bug_report, color: Colors.orange),
+                  title: const Text('Sentry 에러 테스트'),
+                  subtitle: const Text('테스트 에러를 Sentry로 전송'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _testSentryError(context),
                 ),
 
                 const SizedBox(height: 32),
@@ -273,5 +286,55 @@ class AppSettingsScreen extends ConsumerWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
+  }
+
+  /// Sentry 테스트용 에러 발생
+  void _testSentryError(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Sentry 테스트'),
+        content: const Text('테스트 에러를 Sentry로 전송합니다.\n\nSentry 대시보드에서 확인해보세요.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('취소'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+
+              // 테스트 에러 전송
+              try {
+                throw Exception('🧪 Sentry 테스트 에러 - ${DateTime.now()}');
+              } catch (error, stackTrace) {
+                // Sentry로 직접 전송
+                Sentry.captureException(error, stackTrace: stackTrace);
+
+                // AppLogger로도 전송 (Sentry + Crashlytics)
+                AppLogger.error(
+                  'Sentry 테스트 에러',
+                  error: error,
+                  stackTrace: stackTrace,
+                  tag: 'SentryTest',
+                );
+              }
+
+              // 성공 메시지 표시
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('✅ 테스트 에러가 Sentry로 전송되었습니다!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            },
+            child: const Text('에러 전송', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 }
