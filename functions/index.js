@@ -1,15 +1,16 @@
 const functions = require('firebase-functions');
+const { defineSecret } = require('firebase-functions/params');
 const admin = require('firebase-admin');
 const axios = require('axios');
 admin.initializeApp();
 
 // Kakao OAuth 설정
 const KAKAO_CLIENT_ID = '94f51c4e0e4c0bbb43ac5a2bdec12a00'; // REST API 키
-const KAKAO_CLIENT_SECRET = process.env.KAKAO_CLIENT_SECRET || ''; // 카카오 개발자 콘솔에서 설정
+const kakaoClientSecret = defineSecret('KAKAO_CLIENT_SECRET');
 
 // Naver OAuth 설정
 const NAVER_CLIENT_ID = 'oe1hs2sNPKPn4EYEVhsb';
-const NAVER_CLIENT_SECRET = process.env.NAVER_CLIENT_SECRET || ''; // 네이버 개발자 센터에서 설정
+const naverClientSecret = defineSecret('NAVER_CLIENT_SECRET');
 
 // CORS whitelist for security
 const allowedOrigins = [
@@ -693,7 +694,9 @@ exports.updateAdminStats = functions.firestore
  * Cloud Function: Exchange Kakao OAuth code for Firebase custom token
  * Used for web-based Kakao login
  */
-exports.exchangeKakaoCode = functions.https.onRequest(async (req, res) => {
+exports.exchangeKakaoCode = functions
+  .runWith({ secrets: [kakaoClientSecret] })
+  .https.onRequest(async (req, res) => {
   setCorsHeaders(req, res);
 
   if (req.method === 'OPTIONS') {
@@ -715,7 +718,7 @@ exports.exchangeKakaoCode = functions.https.onRequest(async (req, res) => {
       new URLSearchParams({
         grant_type: 'authorization_code',
         client_id: KAKAO_CLIENT_ID,
-        client_secret: KAKAO_CLIENT_SECRET,
+        client_secret: kakaoClientSecret.value(),
         redirect_uri: redirectUri,
         code: code,
       }),
@@ -771,7 +774,9 @@ exports.exchangeKakaoCode = functions.https.onRequest(async (req, res) => {
  * Cloud Function: Exchange Naver OAuth code for Firebase custom token
  * Used for web-based Naver login
  */
-exports.exchangeNaverCode = functions.https.onRequest(async (req, res) => {
+exports.exchangeNaverCode = functions
+  .runWith({ secrets: [naverClientSecret] })
+  .https.onRequest(async (req, res) => {
   setCorsHeaders(req, res);
 
   if (req.method === 'OPTIONS') {
@@ -792,7 +797,7 @@ exports.exchangeNaverCode = functions.https.onRequest(async (req, res) => {
       params: {
         grant_type: 'authorization_code',
         client_id: NAVER_CLIENT_ID,
-        client_secret: NAVER_CLIENT_SECRET,
+        client_secret: naverClientSecret.value(),
         code: code,
         state: state,
       },
