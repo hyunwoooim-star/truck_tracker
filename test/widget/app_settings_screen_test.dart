@@ -65,6 +65,14 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
+      // Scroll down to see support section
+      await tester.scrollUntilVisible(
+        find.text('도움말'),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+
       expect(find.text('지원'), findsOneWidget);
       expect(find.text('도움말'), findsOneWidget);
       expect(find.text('피드백 보내기'), findsOneWidget);
@@ -72,6 +80,14 @@ void main() {
 
     testWidgets('displays app branding', (tester) async {
       await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Scroll down to see app branding at the bottom
+      await tester.scrollUntilVisible(
+        find.text('트럭아저씨'),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('트럭아저씨'), findsOneWidget);
