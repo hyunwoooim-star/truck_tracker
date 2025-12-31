@@ -164,11 +164,19 @@
     <div class="content">
       <div class="emoji">🚚</div>
       <h1>트럭아저씨</h1>
-      <p>인앱 브라우저에서는 앱이 제대로 작동하지 않습니다.<br><strong>크롬 또는 사파리</strong>에서 열어주세요!</p>
-      <button class="btn" id="copyUrl">주소 복사하기</button>
-      <p class="hint">복사 후 크롬/사파리에서 붙여넣기 하세요</p>
+      <p>인앱 브라우저에서는 앱이 제대로 작동하지 않습니다.<br><strong>외부 브라우저</strong>로 열어주세요!</p>
+
+      <!-- iOS: Safari로 열기 -->
+      <a id="openSafari" class="btn" style="display:none;">Safari로 열기</a>
+
+      <!-- Android: Chrome으로 열기 -->
+      <a id="openChrome" class="btn" style="display:none;">Chrome으로 열기</a>
+
+      <button class="btn" id="copyUrl" style="background:#666;">주소 복사하기</button>
+
+      <p class="hint" style="margin-top:12px;">버튼이 작동하지 않으면:</p>
       <div class="url-box" id="urlDisplay"></div>
-      <p class="hint" style="margin-top:24px;">또는 우측 상단 ⋮ 메뉴 →<br>"다른 브라우저로 열기"</p>
+      <p class="hint">위 주소를 <strong>길게 눌러 복사</strong> →<br>Safari/Chrome 주소창에 <strong>붙여넣기</strong></p>
     </div>
   </div>
 
@@ -187,29 +195,86 @@
       var warning = document.getElementById('inapp-warning');
       var urlDisplay = document.getElementById('urlDisplay');
       var copyBtn = document.getElementById('copyUrl');
+      var safariBtn = document.getElementById('openSafari');
+      var chromeBtn = document.getElementById('openChrome');
+
+      var currentUrl = window.location.href;
+      var ua = navigator.userAgent.toLowerCase();
+      var isIOS = /iphone|ipad|ipod/.test(ua);
+      var isAndroid = /android/.test(ua);
 
       // Show current URL
       if (urlDisplay) {
-        urlDisplay.textContent = window.location.href;
+        urlDisplay.textContent = currentUrl;
+      }
+
+      // iOS: Safari 버튼 표시 및 링크 설정
+      if (isIOS && safariBtn) {
+        safariBtn.style.display = 'inline-block';
+        // x-safari-https:// 스킴으로 Safari 열기 시도
+        safariBtn.href = 'x-safari-' + currentUrl;
+        safariBtn.addEventListener('click', function(e) {
+          // 먼저 x-safari 스킴 시도
+          setTimeout(function() {
+            // 실패하면 일반 URL로 시도 (새 탭)
+            window.open(currentUrl, '_blank');
+          }, 500);
+        });
+      }
+
+      // Android: Chrome 버튼 표시 및 Intent 설정
+      if (isAndroid && chromeBtn) {
+        chromeBtn.style.display = 'inline-block';
+        // Android Intent로 Chrome 열기
+        var intentUrl = 'intent://' + currentUrl.replace(/https?:\/\//, '') +
+          '#Intent;scheme=https;package=com.android.chrome;end';
+        chromeBtn.href = intentUrl;
       }
 
       // Copy URL button
       if (copyBtn) {
         copyBtn.addEventListener('click', function() {
-          var url = window.location.href;
           if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(url).then(function() {
-              copyBtn.textContent = '복사 완료!';
+            navigator.clipboard.writeText(currentUrl).then(function() {
+              copyBtn.textContent = '복사 완료! ✓';
               copyBtn.style.background = '#4CAF50';
               setTimeout(function() {
                 copyBtn.textContent = '주소 복사하기';
-                copyBtn.style.background = '#FFD43B';
+                copyBtn.style.background = '#666';
               }, 2000);
             }).catch(function() {
-              prompt('주소를 복사하세요:', url);
+              fallbackCopy();
             });
           } else {
-            prompt('주소를 복사하세요:', url);
+            fallbackCopy();
+          }
+
+          function fallbackCopy() {
+            // 폴백: 선택 가능한 인풋 생성
+            var input = document.createElement('input');
+            input.value = currentUrl;
+            input.style.position = 'fixed';
+            input.style.top = '50%';
+            input.style.left = '10%';
+            input.style.width = '80%';
+            input.style.padding = '10px';
+            input.style.fontSize = '14px';
+            input.style.zIndex = '999999';
+            document.body.appendChild(input);
+            input.select();
+            input.setSelectionRange(0, 99999);
+            try {
+              document.execCommand('copy');
+              copyBtn.textContent = '복사 완료! ✓';
+              copyBtn.style.background = '#4CAF50';
+            } catch (err) {
+              alert('주소를 길게 눌러 복사하세요:\n' + currentUrl);
+            }
+            document.body.removeChild(input);
+            setTimeout(function() {
+              copyBtn.textContent = '주소 복사하기';
+              copyBtn.style.background = '#666';
+            }, 2000);
           }
         });
       }
