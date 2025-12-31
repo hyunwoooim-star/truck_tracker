@@ -216,6 +216,7 @@
       // iOS: Safari 버튼 - 자동 복사 후 안내
       if (isIOS && safariBtn) {
         safariBtn.style.display = 'inline-block';
+        safariBtn.textContent = '📋 주소 복사하기';
         safariBtn.href = '#';
         safariBtn.addEventListener('click', function(e) {
           e.preventDefault();
@@ -223,44 +224,36 @@
           // 클립보드에 URL 복사 시도
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(currentUrl).then(function() {
-              // 복사 성공 - Safari 열기 시도
-              safariBtn.textContent = '✅ 주소 복사됨!';
+              safariBtn.textContent = '✅ 복사 완료!';
               safariBtn.style.background = '#4CAF50';
 
-              // Safari 앱 열기 시도 (빈 페이지)
-              setTimeout(function() {
-                window.location.href = 'x-web-search://?';
-              }, 300);
+              alert('주소가 복사되었습니다!\n\n1. Safari 앱을 여세요\n2. 주소창을 길게 누르세요\n3. "붙여넣기 후 이동" 선택');
 
               setTimeout(function() {
-                alert('Safari가 열리면 주소창에 붙여넣기(길게 누르기) 하세요!');
-              }, 500);
-
-              setTimeout(function() {
-                safariBtn.textContent = '📤 Safari로 열기';
+                safariBtn.textContent = '📋 주소 복사하기';
                 safariBtn.style.background = '#FFD43B';
               }, 3000);
             }).catch(function() {
-              showCopyInstructions();
+              showCopyModal();
             });
           } else {
-            showCopyInstructions();
+            showCopyModal();
           }
 
-          function showCopyInstructions() {
-            // 직접 선택할 수 있는 모달 표시
+          function showCopyModal() {
             var modal = document.createElement('div');
             modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
             modal.innerHTML = '<div style="background:#1a1a1a;padding:24px;border-radius:16px;max-width:320px;text-align:center;">' +
-              '<p style="color:white;margin-bottom:16px;font-size:16px;">아래 주소를 <strong>길게 눌러</strong> 복사하세요:</p>' +
-              '<input type="text" value="' + currentUrl + '" readonly style="width:100%;padding:12px;font-size:14px;border-radius:8px;border:2px solid #FFD43B;background:#333;color:white;text-align:center;margin-bottom:16px;" onclick="this.select();" />' +
-              '<p style="color:#999;font-size:14px;margin-bottom:16px;">복사 후 Safari 앱을 열고<br>주소창에 붙여넣기</p>' +
-              '<button style="background:#FFD43B;color:black;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:bold;cursor:pointer;">확인</button>' +
+              '<p style="color:white;margin-bottom:16px;font-size:16px;">아래 주소를 <strong>길게 눌러</strong> 복사:</p>' +
+              '<input type="text" value="' + currentUrl + '" readonly style="width:100%;padding:12px;font-size:13px;border-radius:8px;border:2px solid #FFD43B;background:#333;color:#FFD43B;text-align:center;margin-bottom:16px;" onclick="this.select();this.setSelectionRange(0,99999);" />' +
+              '<p style="color:#999;font-size:14px;margin-bottom:16px;">복사 후 <strong>Safari</strong> 앱 열고<br>주소창에 붙여넣기</p>' +
+              '<button style="background:#FFD43B;color:black;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:bold;cursor:pointer;width:100%;">확인</button>' +
               '</div>';
             document.body.appendChild(modal);
             modal.querySelector('button').addEventListener('click', function() {
               document.body.removeChild(modal);
             });
+            modal.querySelector('input').focus();
             modal.querySelector('input').select();
           }
         });
