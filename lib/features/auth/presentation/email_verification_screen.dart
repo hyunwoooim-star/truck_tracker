@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
@@ -64,8 +65,9 @@ class _EmailVerificationScreenState
         if (widget.onVerified != null) {
           widget.onVerified!();
         } else {
-          // Default: go back or navigate to main
-          Navigator.of(context).pop(true);
+          // Navigate to root - AuthWrapper will handle routing
+          ref.invalidate(authStateChangesProvider);
+          context.go('/');
         }
       } else if (!silent && mounted) {
         SnackBarHelper.showWarning(context, '아직 이메일이 인증되지 않았습니다');
@@ -307,7 +309,11 @@ class _EmailVerificationScreenState
               // Skip for now (if allowed)
               if (!widget.isOwnerSignup)
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
+                  onPressed: () {
+                    // Navigate to root - user is logged in but not verified
+                    ref.invalidate(authStateChangesProvider);
+                    context.go('/');
+                  },
                   child: Text(
                     '나중에 인증하기',
                     style: TextStyle(

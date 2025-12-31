@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:truck_tracker/generated/l10n/app_localizations.dart';
@@ -148,10 +149,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         AppLogger.success('FCM token saved', tag: 'LoginScreen');
       }
 
-      AppLogger.success('Auth completed - AuthWrapper will handle navigation', tag: 'LoginScreen');
-      // Don't manually navigate - let AuthWrapper handle it
-      // AuthWrapper will automatically detect the login state change
-      // and navigate to the appropriate screen
+      AppLogger.success('Auth completed - navigating to root', tag: 'LoginScreen');
+      // Force refresh auth state and navigate to root
+      // This ensures AuthWrapper picks up the new auth state
+      if (mounted) {
+        ref.invalidate(authStateChangesProvider);
+        context.go('/');
+      }
     } catch (e, stackTrace) {
       AppLogger.error('Auth error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
       if (mounted) {
@@ -179,6 +183,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (user != null) {
         await FcmService().saveFcmTokenToUser(user.uid);
       }
+
+      // Navigate to root - AuthWrapper will handle routing
+      if (mounted) {
+        ref.invalidate(authStateChangesProvider);
+        context.go('/');
+      }
     } catch (e, stackTrace) {
       AppLogger.error('Kakao login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
       if (mounted) {
@@ -205,6 +215,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         await FcmService().saveFcmTokenToUser(user.uid);
+      }
+
+      // Navigate to root - AuthWrapper will handle routing
+      if (mounted) {
+        ref.invalidate(authStateChangesProvider);
+        context.go('/');
       }
     } catch (e, stackTrace) {
       AppLogger.error('Naver login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
