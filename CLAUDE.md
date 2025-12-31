@@ -344,6 +344,30 @@ See PROJECT_CONTEXT.md § Development Commands for:
   ```
 - **Firebase CDN 캐시**: `firebase.json`에 `no-cache` 헤더 설정
 
+### 2026-01-01: 웹 빌드는 반드시 WSL 사용 (필수!)
+- **Windows impellerc 버그**: Windows에서 `flutter build web` 시 셰이더 컴파일 크래시
+- **해결책**: WSL Ubuntu에서 빌드 → Windows로 복사 → Firebase 배포
+- **WSL 빌드 명령어** (필수로 사용할 것!):
+  ```bash
+  # 1. WSL에서 빌드
+  wsl -d Ubuntu -- bash -c "export PATH=\"\$HOME/flutter/bin:\$PATH\" && cd ~/truck_tracker && git pull && flutter build web --release"
+
+  # 2. Windows로 복사
+  wsl -d Ubuntu -- bash -c "cp -r ~/truck_tracker/build/web/* '/mnt/c/Users/임현우/Desktop/현우 작업폴더/truck_tracker/truck ver.1/truck_tracker/build/web/'"
+
+  # 3. Firebase 배포
+  cd "C:\Users\임현우\Desktop\현우 작업폴더\truck_tracker\truck ver.1\truck_tracker" && npx firebase-tools deploy --only hosting
+  ```
+- **절대 Windows에서 flutter build web 하지 말 것!**
+
+### 2026-01-01: 카카오/네이버 웹 OAuth 설정
+- **카카오 REST API 키**: `9b29da5ab6db839b37a65c79afe9b52e`
+- **카카오 Client Secret**: Firebase Secret에 저장 (`KAKAO_CLIENT_SECRET`)
+- **카카오 Redirect URI**: `https://truck-tracker-fa0b0.web.app/kakao`
+- **네이버 Client ID**: `9szh6EOxjf8b40x9ZHKH`
+- **네이버 Client Secret**: Firebase Secret에 저장 (`NAVER_CLIENT_SECRET`)
+- **네이버 Redirect URI**: `https://truck-tracker-fa0b0.web.app/oauth/naver/callback`
+
 ---
 
 ## 6. 🔧 Emergency Procedures
