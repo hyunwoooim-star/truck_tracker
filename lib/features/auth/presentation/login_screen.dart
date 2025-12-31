@@ -380,6 +380,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('🔷 LoginScreen build - isLoading: $_isLoading, isLogin: $_isLogin');
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       body: SafeArea(
@@ -819,7 +820,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                   // Email Login/Sign Up Button
                   ElevatedButton(
-                    onPressed: _isLoading ? null : _handleEmailAuth,
+                    onPressed: _isLoading ? null : () {
+                      print('🟡 Button pressed directly!');
+                      _handleEmailAuth();
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.mustardYellow,
                       foregroundColor: Colors.black,
