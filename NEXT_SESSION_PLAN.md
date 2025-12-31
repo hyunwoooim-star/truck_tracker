@@ -23,6 +23,61 @@
 
 ---
 
+## 🚨 iOS Safari 흰 화면 문제 (2025-12-31 심층 분석)
+
+### 근본 원인
+**CanvasKit 렌더러가 iOS Safari에서 작동하지 않음**
+- iOS Safari는 WebGL 2.0 지원이 불완전
+- CanvasKit은 iOS에서 빈 화면, 크래시, 메모리 누수 발생
+- Flutter 3.29+에서 HTML 렌더러가 deprecated됨
+
+### Flutter 버전별 호환성
+
+| Flutter 버전 | Dart SDK | HTML 렌더러 | iOS Safari |
+|-------------|----------|------------|------------|
+| 3.38.5 | 3.10.x | ❌ 지원 안 함 (exit code 64) | ❌ 흰 화면 |
+| 3.29+ | 3.7+ | ❌ deprecated | ❌ 흰 화면 |
+| 3.27.4 | 3.6.x | ✅ 지원 | ✅ (테스트 필요) |
+| 3.24.5 | 3.5.x | ✅ 지원 | ⚠️ SDK 충돌 (^3.10.4 필요) |
+
+### 현재 프로젝트 제약
+- `pubspec.yaml`: `sdk: ^3.10.4` (Dart 3.10.4+ 필요)
+- Flutter 3.24.5 (Dart 3.5.x) → SDK 버전 충돌로 빌드 실패
+- Flutter 3.27.4 시도 중...
+
+### 해결 시도 기록
+
+| 시도 | 결과 | 에러 |
+|-----|------|------|
+| `--web-renderer html` (3.38.5) | ❌ 실패 | exit code 64 |
+| Flutter 3.24.5 다운그레이드 | ❌ 실패 | SDK 버전 충돌 |
+| Flutter 3.27.4 다운그레이드 | ⏳ 테스트 중 | - |
+
+### 대안 (빌드 실패 시)
+1. **SDK 제약 낮추기**: `sdk: ^3.6.0` 으로 변경
+2. **iOS 사용자 안내**: "Chrome 사용" 메시지 표시
+3. **웹만 React로 분리**: 모바일 Flutter + 웹 React
+
+### 중복 버튼 문제 (index.html)
+- iOS에서 `#openSafari`와 `#copyUrl` 버튼이 둘 다 표시됨
+- 수정: iOS에서 `copyUrl.style.display = 'none'` 추가
+- 위치: `web/index.html` 212-214줄
+
+### Firebase CDN 캐시 문제
+- 기존: `Cache-Control: max-age=3600` (1시간 캐시)
+- 수정: `firebase.json`에 headers 추가
+  - `index.html`: `no-cache, no-store, must-revalidate`
+  - `flutter_bootstrap.js`: `no-cache`
+  - 정적 파일 (JS/CSS): `max-age=31536000, immutable`
+
+### 관련 GitHub 이슈
+- [#89655](https://github.com/flutter/flutter/issues/89655): iOS 15 Safari 렌더링 문제
+- [#91414](https://github.com/flutter/flutter/issues/91414): CanvasKit iOS 15 실패
+- [#178524](https://github.com/flutter/flutter/issues/178524): CanvasKit 메모리 누수
+- [#163199](https://github.com/flutter/flutter/issues/163199): `--web-renderer` 옵션 제거됨
+
+---
+
 ## 📋 2025-12-31 작업 기록
 
 ### ✅ 완료된 작업
