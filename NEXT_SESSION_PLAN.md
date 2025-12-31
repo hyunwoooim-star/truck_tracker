@@ -2,6 +2,60 @@
 
 > **이 파일만 읽으면 됨** | 앱: 푸드트럭 위치 찾기 + 선결제 + 픽업
 
+---
+
+## 🔴 윈도우 재설치 후 해야 할 것 (2025-12-31 기록)
+
+### 1️⃣ 프로그램 설치
+```bash
+# 1. Git 설치
+# https://git-scm.com/download/win
+
+# 2. Flutter 설치 (3.38.x 권장)
+# https://docs.flutter.dev/get-started/install/windows
+
+# 3. Node.js 설치 (v20 LTS)
+# https://nodejs.org/
+
+# 4. VS Code 설치
+# https://code.visualstudio.com/
+
+# 5. Claude Code 설치
+npm install -g @anthropic-ai/claude-code
+```
+
+### 2️⃣ 프로젝트 클론
+```bash
+git clone https://github.com/hyunwoooim-star/truck_tracker.git
+cd truck_tracker
+flutter pub get
+```
+
+### 3️⃣ Firebase 설정
+```bash
+# Firebase CLI 설치 & 로그인
+npm install -g firebase-tools
+firebase login
+
+# service-account-key.json 복원 (백업해둔 파일)
+# 프로젝트 루트에 복사
+```
+
+### 4️⃣ 환경 변수 확인
+- Flutter PATH 추가
+- Android SDK PATH (Android 빌드 시)
+
+### 5️⃣ 로그인 필요한 서비스
+- [ ] GitHub (git config --global user.name / user.email)
+- [ ] Firebase (`firebase login`)
+- [ ] Tailscale (tailscale.com 로그인)
+- [ ] VS Code Settings Sync (Microsoft/GitHub 계정)
+
+### 📁 백업 파일 복원
+- `service-account-key.json` → 프로젝트 루트에 복사
+
+---
+
 ## 링크
 - **Live**: https://truck-tracker.web.app/ (Firebase)
 - **GitHub**: https://github.com/hyunwoooim-star/truck_tracker
