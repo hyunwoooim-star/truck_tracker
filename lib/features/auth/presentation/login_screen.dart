@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:truck_tracker/generated/l10n/app_localizations.dart';
@@ -53,26 +52,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleEmailAuth() async {
-    // Debug: Print to console for web debugging
-    print('🔵 _handleEmailAuth called');
-    print('🔵 isLogin: $_isLogin');
-    print('🔵 email: ${_emailController.text.trim()}');
-    print('🔵 password length: ${_passwordController.text.length}');
-
     AppLogger.debug('_handleEmailAuth called', tag: 'LoginScreen');
-    AppLogger.debug('isLogin: $_isLogin', tag: 'LoginScreen');
-    AppLogger.debug('email: ${_emailController.text.trim()}', tag: 'LoginScreen');
-    AppLogger.debug('password length: ${_passwordController.text.length}', tag: 'LoginScreen');
-    AppLogger.debug('_isLoading: $_isLoading', tag: 'LoginScreen');
-    AppLogger.debug('_agreedToTerms: $_agreedToTerms', tag: 'LoginScreen');
-    AppLogger.debug('_agreedToPrivacy: $_agreedToPrivacy', tag: 'LoginScreen');
 
     if (!_formKey.currentState!.validate()) {
-      print('🔴 Form validation failed');
       AppLogger.warning('Form validation failed', tag: 'LoginScreen');
       return;
     }
-    print('🟢 Form validation passed');
 
     // Validate legal agreements for sign-up
     if (!_isLogin && (!_agreedToTerms || !_agreedToPrivacy)) {
@@ -90,21 +75,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     setState(() => _isLoading = true);
-    print('🔵 Loading started');
 
     try {
       final authService = ref.read(authServiceProvider);
-      print('🔵 Got authService');
 
       if (_isLogin) {
-        print('🔵 Attempting email sign in...');
         AppLogger.debug('Attempting email sign in...', tag: 'LoginScreen');
-        // Sign in
         await authService.signInWithEmail(
           _emailController.text.trim(),
           _passwordController.text,
         );
-        print('🟢 Email sign in successful!');
         AppLogger.success('Email sign in successful', tag: 'LoginScreen');
       } else {
         AppLogger.debug('Attempting email sign up...', tag: 'LoginScreen');
@@ -171,11 +151,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ref.invalidate(currentUserTruckIdProvider);
       }
     } catch (e, stackTrace) {
-      print('🔴 Auth error: $e');
       AppLogger.error('Auth error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
       if (mounted) {
-        // Show full error for debugging
-        SnackBarHelper.showError(context, '에러: ${e.toString().substring(0, e.toString().length > 100 ? 100 : e.toString().length)}');
+        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
       }
     } finally {
       if (mounted) {
@@ -200,10 +178,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         await FcmService().saveFcmTokenToUser(user.uid);
       }
 
-      // Navigate to root - AuthWrapper will handle routing
+      // Refresh auth state - AuthWrapper will handle routing
       if (mounted) {
         ref.invalidate(authStateChangesProvider);
-        context.go('/');
+        ref.invalidate(currentUserProvider);
+        ref.invalidate(currentUserIdProvider);
+        ref.invalidate(currentUserTruckIdProvider);
       }
     } catch (e, stackTrace) {
       AppLogger.error('Kakao login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
@@ -233,10 +213,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         await FcmService().saveFcmTokenToUser(user.uid);
       }
 
-      // Navigate to root - AuthWrapper will handle routing
+      // Refresh auth state - AuthWrapper will handle routing
       if (mounted) {
         ref.invalidate(authStateChangesProvider);
-        context.go('/');
+        ref.invalidate(currentUserProvider);
+        ref.invalidate(currentUserIdProvider);
+        ref.invalidate(currentUserTruckIdProvider);
       }
     } catch (e, stackTrace) {
       AppLogger.error('Naver login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
@@ -382,7 +364,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('🔷 LoginScreen build - isLoading: $_isLoading, isLogin: $_isLogin');
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       body: SafeArea(
@@ -822,11 +803,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                   // Email Login/Sign Up Button
                   ElevatedButton(
-                    onPressed: _isLoading ? null : () {
-                      print('🟡 Button pressed directly!');
-                      SnackBarHelper.showInfo(context, '로그인 시도 중...');
-                      _handleEmailAuth();
-                    },
+                    onPressed: _isLoading ? null : _handleEmailAuth,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.mustardYellow,
                       foregroundColor: Colors.black,
