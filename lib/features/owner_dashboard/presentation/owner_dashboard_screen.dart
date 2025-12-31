@@ -23,6 +23,7 @@ import 'schedule_management_screen.dart';
 import '../../checkin/presentation/owner_qr_screen.dart';
 import '../../analytics/presentation/revenue_dashboard_screen.dart';
 import '../../notifications/presentation/push_notification_tool.dart';
+import '../../truck_map/presentation/map_first_screen.dart';
 import '../../../scripts/migrate_mock_data.dart';
 import 'widgets/widgets.dart';
 
@@ -172,6 +173,18 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             icon: const Icon(Icons.cloud_upload),
             tooltip: l10n.uploadDataTooltip,
             onPressed: () => _showMigrationDialog(context, ref),
+          ),
+          // 손님 화면 미리보기 (지도에서 내 트럭이 어떻게 보이는지)
+          IconButton(
+            icon: const Icon(Icons.visibility),
+            tooltip: '손님 화면 보기',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const MapFirstScreen(),
+                ),
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.settings),
