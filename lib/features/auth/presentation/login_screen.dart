@@ -822,6 +822,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ElevatedButton(
                     onPressed: _isLoading ? null : () {
                       print('🟡 Button pressed directly!');
+                      SnackBarHelper.showInfo(context, '로그인 시도 중...');
                       _handleEmailAuth();
                     },
                     style: ElevatedButton.styleFrom(
