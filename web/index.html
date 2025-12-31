@@ -126,7 +126,7 @@
     }
   </style>
 
-  <!-- Auto-detect renderer: HTML for WebView, CanvasKit for modern browsers -->
+  <!-- Auto-detect renderer: HTML for mobile, CanvasKit for desktop -->
   <script>
     (function() {
       var ua = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
@@ -141,18 +141,23 @@
 
       var isInAppBrowser = isKakao || isLine || isFacebook || isInstagram || isNaverApp || isGenericWebView;
 
+      // Detect mobile devices (iOS and Android)
+      var isIOS = /iphone|ipad|ipod/.test(ua);
+      var isAndroid = /android/.test(ua);
+      var isMobile = isIOS || isAndroid;
+
       // Store for later use
       window.isInAppBrowser = isInAppBrowser;
 
-      // Use HTML renderer for WebView (more compatible), CanvasKit for normal browsers
-      if (isInAppBrowser) {
+      // Use HTML renderer for mobile (more compatible), CanvasKit for desktop only
+      if (isInAppBrowser || isMobile) {
         window.flutterConfiguration = {
           renderer: "html"
         };
       } else {
+        // Desktop browsers: use CanvasKit for better performance
         window.flutterConfiguration = {
-          renderer: "canvaskit",
-          canvasKitBaseUrl: "https://www.gstatic.com/flutter-canvaskit/1527ae0ec577a4ef50e65f6fefcfc1326707d9bf/"
+          renderer: "canvaskit"
         };
       }
     })();
