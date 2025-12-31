@@ -5,11 +5,11 @@ const axios = require('axios');
 admin.initializeApp();
 
 // Kakao OAuth 설정
-const KAKAO_CLIENT_ID = '94f51c4e0e4c0bbb43ac5a2bdec12a00'; // REST API 키
+const KAKAO_CLIENT_ID = '9b29da5ab6db839b37a65c79afe9b52e'; // REST API 키
 const kakaoClientSecret = defineSecret('KAKAO_CLIENT_SECRET');
 
 // Naver OAuth 설정
-const NAVER_CLIENT_ID = 'oe1hs2sNPKPn4EYEVhsb';
+const NAVER_CLIENT_ID = '9szh6EOxjf8b40x9ZHKH';
 const naverClientSecret = defineSecret('NAVER_CLIENT_SECRET');
 
 // CORS whitelist for security

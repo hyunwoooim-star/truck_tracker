@@ -203,7 +203,7 @@ class AuthService {
       'https://us-central1-truck-tracker-fa0b0.cloudfunctions.net/createCustomToken';
 
   /// Kakao OAuth settings
-  static const String _kakaoClientId = '94f51c4e0e4c0bbb43ac5a2bdec12a00'; // REST API 키
+  static const String _kakaoClientId = '9b29da5ab6db839b37a65c79afe9b52e'; // REST API 키
   static const String _kakaoRedirectUri = 'https://truck-tracker-fa0b0.web.app/oauth/kakao/callback';
 
   /// Sign in with Kakao
@@ -333,7 +333,7 @@ class AuthService {
   // ═══════════════════════════════════════════════════════════
 
   /// Naver OAuth settings
-  static const String _naverClientId = 'oe1hs2sNPKPn4EYEVhsb';
+  static const String _naverClientId = '9szh6EOxjf8b40x9ZHKH';
   static const String _naverRedirectUri = 'https://truck-tracker-fa0b0.web.app/oauth/naver/callback';
 
   /// Sign in with Naver
