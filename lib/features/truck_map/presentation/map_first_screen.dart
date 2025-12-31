@@ -23,6 +23,7 @@ import '../../truck_list/presentation/truck_provider.dart';
 import '../../chat/presentation/chat_list_screen.dart';
 import '../../notifications/presentation/notification_settings_screen.dart';
 import '../../settings/presentation/app_settings_screen.dart';
+import '../../location/presentation/location_provider.dart';
 
 /// Map-First Screen with 3-tier DraggableScrollableSheet
 /// Street Tycoon Architecture
@@ -438,6 +439,55 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                     ),
                   ];
                 },
+              ),
+            ),
+          ),
+
+          // 🎯 Custom "내 위치" button (웹에서 기본 myLocationButton 작동 안 해서 추가)
+          Positioned(
+            right: 16,
+            bottom: MediaQuery.of(context).size.height * _currentSheetSize + 16,
+            child: Material(
+              color: AppTheme.charcoalMedium95,
+              borderRadius: BorderRadius.circular(12),
+              elevation: 8,
+              shadowColor: AppTheme.black50,
+              child: InkWell(
+                onTap: () async {
+                  try {
+                    final position = await ref.read(currentPositionProvider.future);
+                    if (position != null) {
+                      final controller = await _mapController.future;
+                      await controller.animateCamera(
+                        CameraUpdate.newLatLngZoom(
+                          LatLng(position.latitude, position.longitude),
+                          16,
+                        ),
+                      );
+                    } else {
+                      if (context.mounted) {
+                        SnackBarHelper.showWarning(context, '위치를 가져올 수 없습니다');
+                      }
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      SnackBarHelper.showError(context, '위치 권한이 필요합니다');
+                    }
+                  }
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.my_location,
+                    color: AppTheme.mustardYellow,
+                    size: 24,
+                  ),
+                ),
               ),
             ),
           ),
