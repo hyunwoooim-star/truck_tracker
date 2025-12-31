@@ -87,6 +87,60 @@
   </script>
 </head>
 <body>
+  <!-- In-App Browser Detection -->
+  <script>
+    (function() {
+      var ua = navigator.userAgent || navigator.vendor || window.opera;
+
+      // Detect in-app browsers
+      var isKakao = ua.indexOf('KAKAOTALK') > -1;
+      var isLine = ua.indexOf('Line') > -1;
+      var isFacebook = ua.indexOf('FBAN') > -1 || ua.indexOf('FBAV') > -1;
+      var isInstagram = ua.indexOf('Instagram') > -1;
+      var isNaverApp = ua.indexOf('NAVER') > -1;
+
+      var isInAppBrowser = isKakao || isLine || isFacebook || isInstagram || isNaverApp;
+
+      if (isInAppBrowser) {
+        // Create overlay
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#121212;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+
+        var content = document.createElement('div');
+        content.style.cssText = 'text-align:center;color:white;max-width:320px;';
+
+        content.innerHTML = '<div style="font-size:48px;margin-bottom:20px;">🚚</div>' +
+          '<h1 style="font-size:24px;margin-bottom:12px;color:#FFD43B;">트럭아저씨</h1>' +
+          '<p style="font-size:16px;color:#999;margin-bottom:24px;">인앱 브라우저에서는 일부 기능이 제한됩니다.<br>외부 브라우저로 열어주세요!</p>' +
+          '<a id="openExternal" style="display:inline-block;background:#FFD43B;color:#000;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:bold;font-size:16px;margin-bottom:16px;">크롬/사파리로 열기</a>' +
+          '<p style="font-size:12px;color:#666;margin-top:16px;">우측 상단 ⋮ 메뉴 → "다른 브라우저로 열기"</p>';
+
+        overlay.appendChild(content);
+        document.body.appendChild(overlay);
+
+        // Try to open in external browser
+        document.getElementById('openExternal').addEventListener('click', function(e) {
+          e.preventDefault();
+          var currentUrl = window.location.href;
+
+          // Android intent for Chrome
+          if (/android/i.test(ua)) {
+            window.location.href = 'intent://' + currentUrl.replace(/https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+          }
+          // iOS Safari
+          else if (/iphone|ipad|ipod/i.test(ua)) {
+            // Copy URL and show instruction
+            navigator.clipboard.writeText(currentUrl).then(function() {
+              alert('주소가 복사되었습니다!\\n사파리에서 붙여넣기 해주세요.');
+            }).catch(function() {
+              alert('주소: ' + currentUrl + '\\n\\n주소를 복사해서 사파리에서 열어주세요.');
+            });
+          }
+        });
+      }
+    })();
+  </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
