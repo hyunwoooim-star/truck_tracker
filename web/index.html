@@ -166,15 +166,15 @@
       <h1>트럭아저씨</h1>
       <p>인앱 브라우저에서는 앱이 제대로 작동하지 않습니다.<br><strong>외부 브라우저</strong>로 열어주세요!</p>
 
-      <!-- iOS: Safari로 열기 -->
-      <a id="openSafari" class="btn" style="display:none;">Safari로 열기</a>
+      <!-- iOS: Safari로 열기 (공유 메뉴) -->
+      <a id="openSafari" class="btn" style="display:none;">📤 공유 → Safari로 열기</a>
 
       <!-- Android: Chrome으로 열기 -->
       <a id="openChrome" class="btn" style="display:none;">Chrome으로 열기</a>
 
-      <button class="btn" id="copyUrl" style="background:#666;">주소 복사하기</button>
+      <button class="btn" id="copyUrl" style="background:#666;">📋 주소 복사하기</button>
 
-      <p class="hint" style="margin-top:12px;">버튼이 작동하지 않으면:</p>
+      <p class="hint" style="margin-top:12px;">공유 메뉴가 뜨면 <strong>"Safari로 열기"</strong>를 선택하세요!</p>
       <div class="url-box" id="urlDisplay"></div>
       <p class="hint">위 주소를 <strong>길게 눌러 복사</strong> →<br>Safari/Chrome 주소창에 <strong>붙여넣기</strong></p>
     </div>
@@ -208,17 +208,27 @@
         urlDisplay.textContent = currentUrl;
       }
 
-      // iOS: Safari 버튼 표시 및 링크 설정
+      // iOS: Safari 버튼 - Web Share API 사용 (가장 확실한 방법)
       if (isIOS && safariBtn) {
         safariBtn.style.display = 'inline-block';
-        // x-safari-https:// 스킴으로 Safari 열기 시도
-        safariBtn.href = 'x-safari-' + currentUrl;
+        safariBtn.href = '#';
         safariBtn.addEventListener('click', function(e) {
-          // 먼저 x-safari 스킴 시도
-          setTimeout(function() {
-            // 실패하면 일반 URL로 시도 (새 탭)
-            window.open(currentUrl, '_blank');
-          }, 500);
+          e.preventDefault();
+
+          // Web Share API 지원 시 (iOS 12.2+)
+          if (navigator.share) {
+            navigator.share({
+              title: '트럭아저씨',
+              text: 'Safari에서 열기',
+              url: currentUrl
+            }).catch(function() {
+              // 공유 취소 시 - 복사 안내
+              alert('공유 메뉴에서 "Safari로 열기"를 선택하세요.\n\n또는 주소를 복사해서 Safari에 붙여넣기:\n' + currentUrl);
+            });
+          } else {
+            // Web Share API 미지원 시
+            alert('Safari에서 열려면:\n\n1. 아래 주소를 길게 눌러 복사\n2. Safari 앱 열기\n3. 주소창에 붙여넣기\n\n' + currentUrl);
+          }
         });
       }
 
