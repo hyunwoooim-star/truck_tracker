@@ -90,16 +90,23 @@
   <!-- In-App Browser Detection -->
   <script>
     (function() {
-      var ua = navigator.userAgent || navigator.vendor || window.opera;
+      var ua = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
 
-      // Detect in-app browsers
-      var isKakao = ua.indexOf('KAKAOTALK') > -1;
-      var isLine = ua.indexOf('Line') > -1;
-      var isFacebook = ua.indexOf('FBAN') > -1 || ua.indexOf('FBAV') > -1;
-      var isInstagram = ua.indexOf('Instagram') > -1;
-      var isNaverApp = ua.indexOf('NAVER') > -1;
+      // Detect in-app browsers (case-insensitive)
+      var isKakao = ua.indexOf('kakaotalk') > -1 || ua.indexOf('kakao') > -1;
+      var isLine = ua.indexOf('line') > -1;
+      var isFacebook = ua.indexOf('fban') > -1 || ua.indexOf('fbav') > -1 || ua.indexOf('fb_iab') > -1;
+      var isInstagram = ua.indexOf('instagram') > -1;
+      var isNaverApp = ua.indexOf('naver') > -1 || ua.indexOf('whale') > -1;
 
-      var isInAppBrowser = isKakao || isLine || isFacebook || isInstagram || isNaverApp;
+      // Also detect generic WebView indicators
+      var isWebView = ua.indexOf('wv') > -1 || ua.indexOf('webview') > -1;
+
+      var isInAppBrowser = isKakao || isLine || isFacebook || isInstagram || isNaverApp || isWebView;
+
+      // Debug: Log user agent to console
+      console.log('User Agent:', ua);
+      console.log('Is In-App Browser:', isInAppBrowser);
 
       if (isInAppBrowser) {
         // Create overlay
