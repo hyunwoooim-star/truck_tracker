@@ -31,6 +31,7 @@ import 'features/admin/presentation/admin_dashboard_screen.dart';
 import 'features/notifications/fcm_service.dart';
 import 'features/ads/data/ad_service.dart';
 import 'features/pickup_navigation/presentation/pickup_ready_listener.dart';
+import 'features/auth/presentation/oauth_callback_screen.dart';
 import 'firebase_options.dart';
 
 /// Global key for showing foreground notifications
@@ -186,6 +187,29 @@ final _router = GoRouter(
     GoRoute(
       path: '/admin',
       builder: (context, state) => const AdminDashboardScreen(),
+    ),
+    // OAuth callback routes for web social login
+    GoRoute(
+      path: '/oauth/kakao/callback',
+      builder: (context, state) {
+        final code = state.uri.queryParameters['code'] ?? '';
+        return OAuthCallbackScreen(
+          provider: 'kakao',
+          code: code,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/oauth/naver/callback',
+      builder: (context, state) {
+        final code = state.uri.queryParameters['code'] ?? '';
+        final stateParam = state.uri.queryParameters['state'];
+        return OAuthCallbackScreen(
+          provider: 'naver',
+          code: code,
+          state: stateParam,
+        );
+      },
     ),
   ],
 );

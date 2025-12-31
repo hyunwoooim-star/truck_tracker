@@ -1,6 +1,15 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const axios = require('axios');
 admin.initializeApp();
+
+// Kakao OAuth 설정
+const KAKAO_CLIENT_ID = '94f51c4e0e4c0bbb43ac5a2bdec12a00'; // REST API 키
+const KAKAO_CLIENT_SECRET = process.env.KAKAO_CLIENT_SECRET || ''; // 카카오 개발자 콘솔에서 설정
+
+// Naver OAuth 설정
+const NAVER_CLIENT_ID = 'oe1hs2sNPKPn4EYEVhsb';
+const NAVER_CLIENT_SECRET = process.env.NAVER_CLIENT_SECRET || ''; // 네이버 개발자 센터에서 설정
 
 // CORS whitelist for security
 const allowedOrigins = [
@@ -679,3 +688,157 @@ exports.updateAdminStats = functions.firestore
       return { success: false, error: error.message };
     }
   });
+
+/**
+ * Cloud Function: Exchange Kakao OAuth code for Firebase custom token
+ * Used for web-based Kakao login
+ */
+exports.exchangeKakaoCode = functions.https.onRequest(async (req, res) => {
+  setCorsHeaders(req, res);
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    return;
+  }
+
+  const { code, redirectUri } = req.body;
+
+  if (!code || !redirectUri) {
+    res.status(400).json({ error: 'Missing code or redirectUri' });
+    return;
+  }
+
+  try {
+    // 1. Exchange code for access token
+    const tokenResponse = await axios.post(
+      'https://kauth.kakao.com/oauth/token',
+      new URLSearchParams({
+        grant_type: 'authorization_code',
+        client_id: KAKAO_CLIENT_ID,
+        client_secret: KAKAO_CLIENT_SECRET,
+        redirect_uri: redirectUri,
+        code: code,
+      }),
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+    );
+
+    const accessToken = tokenResponse.data.access_token;
+    console.log('📱 Kakao access token obtained');
+
+    // 2. Get user info from Kakao
+    const userResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    const kakaoUser = userResponse.data;
+    const kakaoId = kakaoUser.id.toString();
+    const email = kakaoUser.kakao_account?.email;
+    const displayName = kakaoUser.kakao_account?.profile?.nickname || '카카오 사용자';
+    const photoURL = kakaoUser.kakao_account?.profile?.profile_image_url;
+
+    console.log(`👤 Kakao user: ${kakaoId}, ${displayName}, ${email}`);
+
+    // 3. Create or get Firebase user
+    const uid = `kakao_${kakaoId}`;
+
+    try {
+      await admin.auth().getUser(uid);
+    } catch (error) {
+      if (error.code === 'auth/user-not-found') {
+        await admin.auth().createUser({
+          uid: uid,
+          email: email || undefined,
+          displayName: displayName,
+          photoURL: photoURL || undefined,
+        });
+      } else {
+        throw error;
+      }
+    }
+
+    // 4. Create custom token
+    const customToken = await admin.auth().createCustomToken(uid);
+
+    console.log('✅ Kakao web login successful');
+    res.json({ token: customToken });
+  } catch (error) {
+    console.error('❌ Kakao code exchange failed:', error.response?.data || error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * Cloud Function: Exchange Naver OAuth code for Firebase custom token
+ * Used for web-based Naver login
+ */
+exports.exchangeNaverCode = functions.https.onRequest(async (req, res) => {
+  setCorsHeaders(req, res);
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    return;
+  }
+
+  const { code, state, redirectUri } = req.body;
+
+  if (!code || !state) {
+    res.status(400).json({ error: 'Missing code or state' });
+    return;
+  }
+
+  try {
+    // 1. Exchange code for access token
+    const tokenResponse = await axios.get('https://nid.naver.com/oauth2.0/token', {
+      params: {
+        grant_type: 'authorization_code',
+        client_id: NAVER_CLIENT_ID,
+        client_secret: NAVER_CLIENT_SECRET,
+        code: code,
+        state: state,
+      },
+    });
+
+    const accessToken = tokenResponse.data.access_token;
+    console.log('📱 Naver access token obtained');
+
+    // 2. Get user info from Naver
+    const userResponse = await axios.get('https://openapi.naver.com/v1/nid/me', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    const naverUser = userResponse.data.response;
+    const naverId = naverUser.id;
+    const email = naverUser.email;
+    const displayName = naverUser.name || naverUser.nickname || '네이버 사용자';
+    const photoURL = naverUser.profile_image;
+
+    console.log(`👤 Naver user: ${naverId}, ${displayName}, ${email}`);
+
+    // 3. Create or get Firebase user
+    const uid = `naver_${naverId}`;
+
+    try {
+      await admin.auth().getUser(uid);
+    } catch (error) {
+      if (error.code === 'auth/user-not-found') {
+        await admin.auth().createUser({
+          uid: uid,
+          email: email || undefined,
+          displayName: displayName,
+          photoURL: photoURL || undefined,
+        });
+      } else {
+        throw error;
+      }
+    }
+
+    // 4. Create custom token
+    const customToken = await admin.auth().createCustomToken(uid);
+
+    console.log('✅ Naver web login successful');
+    res.json({ token: customToken });
+  } catch (error) {
+    console.error('❌ Naver code exchange failed:', error.response?.data || error.message);
+    res.status(500).json({ error: error.message });
+  }
+});

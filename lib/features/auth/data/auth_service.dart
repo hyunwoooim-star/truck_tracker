@@ -5,11 +5,14 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import '../../../core/utils/app_logger.dart';
+import 'web_auth_helper_io.dart'
+    if (dart.library.html) 'web_auth_helper.dart';
 
 /// Unified Authentication Service
 /// Supports Email, Google, and prepared for Kakao/Naver
@@ -199,10 +202,23 @@ class AuthService {
   static const String _cloudFunctionsUrl =
       'https://us-central1-truck-tracker-fa0b0.cloudfunctions.net/createCustomToken';
 
+  /// Kakao OAuth settings
+  static const String _kakaoClientId = '94f51c4e0e4c0bbb43ac5a2bdec12a00'; // REST API 키
+  static const String _kakaoRedirectUri = 'https://truck-tracker-fa0b0.web.app/oauth/kakao/callback';
+
   /// Sign in with Kakao
   Future<UserCredential> signInWithKakao() async {
-    AppLogger.debug('Starting Kakao Sign In', tag: 'AuthService');
+    AppLogger.debug('Starting Kakao Sign In (isWeb: $kIsWeb)', tag: 'AuthService');
 
+    if (kIsWeb) {
+      return _signInWithKakaoWeb();
+    } else {
+      return _signInWithKakaoMobile();
+    }
+  }
+
+  /// Kakao login for mobile (uses SDK)
+  Future<UserCredential> _signInWithKakaoMobile() async {
     try {
       // 1. Try Kakao Talk login first, fall back to web login
       if (await kakao.isKakaoTalkInstalled()) {
@@ -250,7 +266,64 @@ class AuthService {
 
       return userCredential;
     } catch (e, stackTrace) {
-      AppLogger.error('Kakao Sign In failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      AppLogger.error('Kakao Sign In (mobile) failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
+  }
+
+  /// Kakao login for web (OAuth 2.0 redirect flow)
+  Future<UserCredential> _signInWithKakaoWeb() async {
+    AppLogger.debug('Starting Kakao Web OAuth flow', tag: 'AuthService');
+
+    // Build OAuth URL
+    final authUrl = Uri.https('kauth.kakao.com', '/oauth/authorize', {
+      'client_id': _kakaoClientId,
+      'redirect_uri': _kakaoRedirectUri,
+      'response_type': 'code',
+      'scope': 'profile_nickname profile_image account_email',
+    });
+
+    AppLogger.debug('Kakao OAuth URL: $authUrl', tag: 'AuthService');
+
+    // Redirect to Kakao login page
+    WebAuthHelper.redirectToOAuth(authUrl.toString());
+
+    // This won't be reached due to redirect, but needed for return type
+    throw Exception('카카오 로그인 페이지로 이동 중...');
+  }
+
+  /// Process Kakao OAuth callback (called from web callback page)
+  Future<UserCredential> processKakaoCallback(String code) async {
+    AppLogger.debug('Processing Kakao callback with code: ${code.substring(0, 10)}...', tag: 'AuthService');
+
+    try {
+      // Exchange code for token via Cloud Functions
+      final response = await http.post(
+        Uri.parse('https://us-central1-truck-tracker-fa0b0.cloudfunctions.net/exchangeKakaoCode'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'code': code,
+          'redirectUri': _kakaoRedirectUri,
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('카카오 토큰 교환 실패: ${response.body}');
+      }
+
+      final data = jsonDecode(response.body);
+      final customToken = data['token'] as String;
+
+      // Sign in with custom token
+      final userCredential = await _auth.signInWithCustomToken(customToken);
+
+      AppLogger.success('Kakao Web Sign In successful!', tag: 'AuthService');
+
+      await _updateUserInfo(userCredential.user!, 'kakao');
+
+      return userCredential;
+    } catch (e, stackTrace) {
+      AppLogger.error('Kakao callback processing failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
       rethrow;
     }
   }
@@ -259,10 +332,23 @@ class AuthService {
   // NAVER AUTHENTICATION
   // ═══════════════════════════════════════════════════════════
 
+  /// Naver OAuth settings
+  static const String _naverClientId = 'oe1hs2sNPKPn4EYEVhsb';
+  static const String _naverRedirectUri = 'https://truck-tracker-fa0b0.web.app/oauth/naver/callback';
+
   /// Sign in with Naver
   Future<UserCredential> signInWithNaver() async {
-    AppLogger.debug('Starting Naver Sign In', tag: 'AuthService');
+    AppLogger.debug('Starting Naver Sign In (isWeb: $kIsWeb)', tag: 'AuthService');
 
+    if (kIsWeb) {
+      return _signInWithNaverWeb();
+    } else {
+      return _signInWithNaverMobile();
+    }
+  }
+
+  /// Naver login for mobile (uses SDK)
+  Future<UserCredential> _signInWithNaverMobile() async {
     try {
       // 1. Trigger Naver login
       final NaverLoginResult result = await FlutterNaverLogin.logIn();
@@ -304,7 +390,68 @@ class AuthService {
 
       return userCredential;
     } catch (e, stackTrace) {
-      AppLogger.error('Naver Sign In failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      AppLogger.error('Naver Sign In (mobile) failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
+  }
+
+  /// Naver login for web (OAuth 2.0 redirect flow)
+  Future<UserCredential> _signInWithNaverWeb() async {
+    AppLogger.debug('Starting Naver Web OAuth flow', tag: 'AuthService');
+
+    // Generate state for CSRF protection
+    final state = DateTime.now().millisecondsSinceEpoch.toString();
+
+    // Build OAuth URL
+    final authUrl = Uri.https('nid.naver.com', '/oauth2.0/authorize', {
+      'client_id': _naverClientId,
+      'redirect_uri': _naverRedirectUri,
+      'response_type': 'code',
+      'state': state,
+    });
+
+    AppLogger.debug('Naver OAuth URL: $authUrl', tag: 'AuthService');
+
+    // Redirect to Naver login page
+    WebAuthHelper.redirectToOAuth(authUrl.toString());
+
+    // This won't be reached due to redirect, but needed for return type
+    throw Exception('네이버 로그인 페이지로 이동 중...');
+  }
+
+  /// Process Naver OAuth callback (called from web callback page)
+  Future<UserCredential> processNaverCallback(String code, String state) async {
+    AppLogger.debug('Processing Naver callback with code: ${code.substring(0, 10)}...', tag: 'AuthService');
+
+    try {
+      // Exchange code for token via Cloud Functions
+      final response = await http.post(
+        Uri.parse('https://us-central1-truck-tracker-fa0b0.cloudfunctions.net/exchangeNaverCode'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'code': code,
+          'state': state,
+          'redirectUri': _naverRedirectUri,
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('네이버 토큰 교환 실패: ${response.body}');
+      }
+
+      final data = jsonDecode(response.body);
+      final customToken = data['token'] as String;
+
+      // Sign in with custom token
+      final userCredential = await _auth.signInWithCustomToken(customToken);
+
+      AppLogger.success('Naver Web Sign In successful!', tag: 'AuthService');
+
+      await _updateUserInfo(userCredential.user!, 'naver');
+
+      return userCredential;
+    } catch (e, stackTrace) {
+      AppLogger.error('Naver callback processing failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
       rethrow;
     }
   }
