@@ -52,6 +52,10 @@ git add . && git commit -m "message" && git push
 - [x] 관리자 통계 대시보드 (`admin_dashboard_screen.dart`)
 - [x] 사용자 관리 화면 (`user_management_screen.dart`)
 - [x] 관리자 실시간 푸시 알림 (Cloud Function + FCM 토픽)
+- [x] FCM 서비스 워커 추가 (`web/firebase-messaging-sw.js`)
+- [x] 사장님 승인 대기 화면 (`owner_pending_screen.dart`)
+- [x] 사장님 가입 플로우 수정: 승인 전 "승인 대기 중" 표시
+- [x] 웹 이미지 업로드 오류 수정 (putFile → putData)
 
 ### 선택적 기능
 - [ ] **관리자 외부 알림 (텔레그램 + 이메일)** - 계획 완료, 구현 대기
@@ -69,14 +73,20 @@ git add . && git commit -m "message" && git push
 lib/
 ├── core/           # 테마, 상수
 ├── features/       # 기능 모듈 (23개)
-│   └── admin/      # 관리자 기능
-│       ├── data/admin_stats_repository.dart
+│   ├── admin/      # 관리자 기능
+│   │   ├── data/admin_stats_repository.dart
+│   │   └── presentation/
+│   │       ├── admin_dashboard_screen.dart  # 메인 대시보드
+│   │       ├── user_management_screen.dart  # 사용자 관리
+│   │       └── widgets/admin_stats_card.dart
+│   └── auth/       # 인증 기능
+│       ├── data/auth_service.dart           # 로그인/회원가입
 │       └── presentation/
-│           ├── admin_dashboard_screen.dart  # 메인 대시보드
-│           ├── user_management_screen.dart  # 사용자 관리
-│           └── widgets/admin_stats_card.dart
+│           ├── login_screen.dart            # 로그인/회원가입 화면
+│           ├── owner_pending_screen.dart    # 사장님 승인 대기 화면
+│           └── email_verification_screen.dart
 ├── shared/         # 공유 위젯
-└── main.dart
+└── main.dart       # AuthWrapper에서 사장님 요청 상태 확인
 
 web/index.html      # iOS Safari 감지 + 인앱브라우저 감지
 firebase.json       # CDN 캐시 설정
