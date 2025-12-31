@@ -204,7 +204,7 @@ class AuthService {
 
   /// Kakao OAuth settings
   static const String _kakaoClientId = '9b29da5ab6db839b37a65c79afe9b52e'; // REST API 키
-  static const String _kakaoRedirectUri = 'https://truck-tracker-fa0b0.web.app/oauth/kakao/callback';
+  static const String _kakaoRedirectUri = 'https://truck-tracker-fa0b0.web.app/kakao';
 
   /// Sign in with Kakao
   Future<UserCredential> signInWithKakao() async {
