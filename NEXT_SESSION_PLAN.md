@@ -12,10 +12,11 @@
 
 | 항목 | 상태 |
 |------|------|
-| 완성도 | 99%+ |
+| 완성도 | 100% |
 | 빌드 | GitHub Actions 자동 배포 |
 | flutter analyze | No issues |
 | iOS Safari | Chrome 사용 안내 메시지 표시 |
+| 관리자 대시보드 | ✅ 완료 |
 
 ---
 
@@ -44,6 +45,13 @@ git add . && git commit -m "message" && git push
 ### 사용자 수동 작업
 - [ ] GitHub Secrets: `KAKAO_NATIVE_APP_KEY`, `GOOGLE_MAPS_API_KEY`
 - [ ] Firebase Console: Firestore 규칙, Cloud Functions 배포
+  - `notifyAdminOwnerRequest`: 새 사장님 인증 요청 시 관리자 알림
+  - `updateAdminStats`: 통계 자동 업데이트
+
+### 최근 완료 (2025-12-31)
+- [x] 관리자 통계 대시보드 (`admin_dashboard_screen.dart`)
+- [x] 사용자 관리 화면 (`user_management_screen.dart`)
+- [x] 관리자 실시간 푸시 알림 (Cloud Function + FCM 토픽)
 
 ### 선택적 기능
 - [ ] 멤버십/구독 (Phase 6)
@@ -57,11 +65,18 @@ git add . && git commit -m "message" && git push
 lib/
 ├── core/           # 테마, 상수
 ├── features/       # 기능 모듈 (23개)
+│   └── admin/      # 관리자 기능
+│       ├── data/admin_stats_repository.dart
+│       └── presentation/
+│           ├── admin_dashboard_screen.dart  # 메인 대시보드
+│           ├── user_management_screen.dart  # 사용자 관리
+│           └── widgets/admin_stats_card.dart
 ├── shared/         # 공유 위젯
 └── main.dart
 
 web/index.html      # iOS Safari 감지 + 인앱브라우저 감지
 firebase.json       # CDN 캐시 설정
+functions/index.js  # Cloud Functions (FCM 알림)
 ```
 
 ---
