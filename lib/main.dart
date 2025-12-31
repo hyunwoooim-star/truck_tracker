@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -38,6 +39,9 @@ import 'firebase_options.dart';
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 void main() async {
+  // 🌐 WEB: Remove hash (#) from URLs for OAuth callback compatibility
+  usePathUrlStrategy();
+
   // 🔍 SENTRY: Get DSN from environment (set in GitHub Actions secrets)
   // Create free account at sentry.io → Create Flutter project → Get DSN
   const sentryDsn = String.fromEnvironment(
@@ -189,6 +193,16 @@ final _router = GoRouter(
       builder: (context, state) => const AdminDashboardScreen(),
     ),
     // OAuth callback routes for web social login
+    GoRoute(
+      path: '/kakao',
+      builder: (context, state) {
+        final code = state.uri.queryParameters['code'] ?? '';
+        return OAuthCallbackScreen(
+          provider: 'kakao',
+          code: code,
+        );
+      },
+    ),
     GoRoute(
       path: '/oauth/kakao/callback',
       builder: (context, state) {
