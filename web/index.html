@@ -283,9 +283,16 @@
       if (!window.isInAppBrowser && warning) {
         warning.classList.add('hidden');
       }
+
+      // Only load Flutter if NOT in-app browser
+      // This prevents errors and crashes in incompatible browsers
+      if (!window.isInAppBrowser) {
+        var script = document.createElement('script');
+        script.src = 'flutter_bootstrap.js';
+        script.async = true;
+        document.body.appendChild(script);
+      }
     })();
   </script>
-
-  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
