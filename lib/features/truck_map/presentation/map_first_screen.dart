@@ -20,7 +20,6 @@ import '../../truck_list/domain/truck.dart';
 import '../../truck_list/domain/truck_with_distance.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../chat/presentation/chat_list_screen.dart';
-import '../../chat/presentation/chat_provider.dart';
 import '../../notifications/presentation/notification_settings_screen.dart';
 import '../../settings/presentation/app_settings_screen.dart';
 
