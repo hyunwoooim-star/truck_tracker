@@ -528,3 +528,154 @@ exports.notifyNearbyTrucks = functions.firestore
     console.log(`✅ Sent ${notificationsSent} nearby truck notifications`);
     return { success: true, count: notificationsSent };
   });
+
+/**
+ * Cloud Function: Notify admins when a new owner verification request is submitted
+ * Trigger: Firestore onCreate on owner_requests/{requestId}
+ * Logic: Send FCM to all admins via topic 'admin_notifications'
+ */
+exports.notifyAdminOwnerRequest = functions.firestore
+  .document('owner_requests/{requestId}')
+  .onCreate(async (snap, context) => {
+    const requestId = context.params.requestId;
+    const requestData = snap.data();
+
+    console.log(`📋 New owner verification request: ${requestId}`);
+
+    // Get request details
+    const displayName = requestData.displayName || '이름 없음';
+    const email = requestData.email || '';
+
+    try {
+      // Send notification to admin topic
+      const message = {
+        topic: 'admin_notifications',
+        notification: {
+          title: '🏪 새로운 사장님 인증 요청',
+          body: `${displayName}님이 사장님 인증을 요청했습니다.`,
+        },
+        data: {
+          type: 'owner_verification_request',
+          requestId: requestId,
+          email: email,
+          displayName: displayName,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        android: {
+          notification: {
+            icon: '@mipmap/ic_launcher',
+            color: '#FFC107',
+            sound: 'default',
+            clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+          },
+          priority: 'high',
+        },
+        apns: {
+          payload: {
+            aps: {
+              sound: 'default',
+              badge: 1,
+            },
+          },
+        },
+      };
+
+      await admin.messaging().send(message);
+      console.log(`✅ Admin notification sent for request ${requestId}`);
+
+      // Also store in notifications collection for in-app display
+      const adminsSnapshot = await admin.firestore()
+        .collection('users')
+        .where('role', '==', 'admin')
+        .get();
+
+      const batch = admin.firestore().batch();
+      adminsSnapshot.docs.forEach(adminDoc => {
+        const notificationRef = admin.firestore()
+          .collection('notifications')
+          .doc();
+        batch.set(notificationRef, {
+          userId: adminDoc.id,
+          type: 'owner_verification_request',
+          title: '새로운 사장님 인증 요청',
+          body: `${displayName}님이 사장님 인증을 요청했습니다.`,
+          data: { requestId, email, displayName },
+          isRead: false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      });
+
+      await batch.commit();
+      console.log(`✅ Stored notifications for ${adminsSnapshot.docs.length} admins`);
+
+      return { success: true };
+    } catch (error) {
+      console.error('❌ Error sending admin notification:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
+/**
+ * Cloud Function: Update admin stats when owner_requests changes
+ * Trigger: Firestore onWrite on owner_requests/{requestId}
+ * Logic: Recalculate and update stats/admin_overview document
+ */
+exports.updateAdminStats = functions.firestore
+  .document('owner_requests/{requestId}')
+  .onWrite(async (change, context) => {
+    console.log('📊 Updating admin stats...');
+
+    try {
+      const db = admin.firestore();
+
+      // Count pending requests
+      const pendingSnapshot = await db
+        .collection('owner_requests')
+        .where('status', '==', 'pending')
+        .count()
+        .get();
+
+      // Count approved requests
+      const approvedSnapshot = await db
+        .collection('owner_requests')
+        .where('status', '==', 'approved')
+        .count()
+        .get();
+
+      // Count rejected requests
+      const rejectedSnapshot = await db
+        .collection('owner_requests')
+        .where('status', '==', 'rejected')
+        .count()
+        .get();
+
+      // Count total users
+      const usersSnapshot = await db
+        .collection('users')
+        .count()
+        .get();
+
+      // Count total trucks
+      const trucksSnapshot = await db
+        .collection('trucks')
+        .count()
+        .get();
+
+      const stats = {
+        pendingOwnerRequests: pendingSnapshot.data().count,
+        totalApprovedOwners: approvedSnapshot.data().count,
+        totalRejectedOwners: rejectedSnapshot.data().count,
+        totalUsers: usersSnapshot.data().count,
+        totalTrucks: trucksSnapshot.data().count,
+        lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
+      };
+
+      await db.collection('stats').doc('admin_overview').set(stats, { merge: true });
+
+      console.log('✅ Admin stats updated:', stats);
+      return { success: true, stats };
+    } catch (error) {
+      console.error('❌ Error updating admin stats:', error);
+      return { success: false, error: error.message };
+    }
+  });

@@ -26,7 +26,7 @@ import 'features/owner_dashboard/presentation/owner_onboarding_screen.dart';
 import 'features/truck_map/presentation/map_first_screen.dart';
 import 'features/checkin/presentation/customer_checkin_screen.dart';
 import 'features/checkin/presentation/owner_qr_screen.dart';
-import 'features/admin/presentation/admin_screen.dart';
+import 'features/admin/presentation/admin_dashboard_screen.dart';
 import 'features/notifications/fcm_service.dart';
 import 'features/ads/data/ad_service.dart';
 import 'features/pickup_navigation/presentation/pickup_ready_listener.dart';
@@ -184,7 +184,7 @@ final _router = GoRouter(
     ),
     GoRoute(
       path: '/admin',
-      builder: (context, state) => const AdminScreen(),
+      builder: (context, state) => const AdminDashboardScreen(),
     ),
   ],
 );

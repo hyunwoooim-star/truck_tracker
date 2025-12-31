@@ -399,3 +399,45 @@ final class NeedsOwnerOnboardingProvider
 
 String _$needsOwnerOnboardingHash() =>
     r'8d3bed127126ad6e2af7cd99056f0d79d793f86b';
+
+/// Check if current user is admin and manage FCM topic subscription
+/// This provider should be watched in the main app to handle admin notifications
+
+@ProviderFor(isCurrentUserAdmin)
+final isCurrentUserAdminProvider = IsCurrentUserAdminProvider._();
+
+/// Check if current user is admin and manage FCM topic subscription
+/// This provider should be watched in the main app to handle admin notifications
+
+final class IsCurrentUserAdminProvider
+    extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
+    with $FutureModifier<bool>, $FutureProvider<bool> {
+  /// Check if current user is admin and manage FCM topic subscription
+  /// This provider should be watched in the main app to handle admin notifications
+  IsCurrentUserAdminProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'isCurrentUserAdminProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$isCurrentUserAdminHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<bool> create(Ref ref) {
+    return isCurrentUserAdmin(ref);
+  }
+}
+
+String _$isCurrentUserAdminHash() =>
+    r'd530d2bb9730be690200dd4fd4547bd7f27c2107';

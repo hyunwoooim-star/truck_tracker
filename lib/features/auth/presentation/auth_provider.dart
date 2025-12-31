@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/utils/app_logger.dart';
+import '../../notifications/fcm_service.dart';
 import '../data/auth_service.dart';
 
 part 'auth_provider.g.dart';
@@ -90,5 +92,32 @@ Future<bool> needsOwnerOnboarding(Ref ref) async {
 
   final authService = ref.watch(authServiceProvider);
   return authService.checkNeedsOnboarding(truckId);
+}
+
+/// Check if current user is admin and manage FCM topic subscription
+/// This provider should be watched in the main app to handle admin notifications
+@riverpod
+Future<bool> isCurrentUserAdmin(Ref ref) async {
+  final userId = ref.watch(currentUserIdProvider);
+
+  if (userId == null) {
+    return false;
+  }
+
+  final authService = ref.watch(authServiceProvider);
+  final fcmService = ref.watch(fcmServiceProvider);
+
+  final isAdmin = await authService.isCurrentUserAdmin();
+
+  // Subscribe/unsubscribe from admin notifications based on role
+  if (isAdmin) {
+    await fcmService.subscribeToAdminNotifications();
+    AppLogger.debug('Admin user detected - subscribed to admin notifications', tag: 'AuthProvider');
+  } else {
+    // Ensure non-admins are not subscribed
+    await fcmService.unsubscribeFromAdminNotifications();
+  }
+
+  return isAdmin;
 }
 

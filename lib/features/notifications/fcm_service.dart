@@ -172,6 +172,31 @@ class FcmService {
   }
 
   // ═══════════════════════════════════════════════════════════
+  // ADMIN NOTIFICATIONS
+  // ═══════════════════════════════════════════════════════════
+
+  /// Subscribe to admin notifications topic (for admins only)
+  /// Cloud Function sends notifications when new owner requests are submitted
+  Future<void> subscribeToAdminNotifications() async {
+    try {
+      await _messaging.subscribeToTopic('admin_notifications');
+      AppLogger.success('Subscribed to admin_notifications topic', tag: 'FcmService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error subscribing to admin topic', error: e, stackTrace: stackTrace, tag: 'FcmService');
+    }
+  }
+
+  /// Unsubscribe from admin notifications topic
+  Future<void> unsubscribeFromAdminNotifications() async {
+    try {
+      await _messaging.unsubscribeFromTopic('admin_notifications');
+      AppLogger.success('Unsubscribed from admin_notifications topic', tag: 'FcmService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Error unsubscribing from admin topic', error: e, stackTrace: stackTrace, tag: 'FcmService');
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
   // TOKEN REFRESH
   // ═══════════════════════════════════════════════════════════
 
