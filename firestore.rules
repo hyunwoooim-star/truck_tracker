@@ -19,13 +19,71 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
+    // Helper function: Check if user is owner of this truck
+    function isOwnerOfThisTruck() {
+      return isAuthenticated()
+        && resource.data.ownerId == request.auth.uid;
+    }
+
     // ═══════════════════════════════════════════════════════════
     // TRUCKS
     // ═══════════════════════════════════════════════════════════
     match /trucks/{truckId} {
+      allow read: if true;  // Public read for customers
+
+      // Create: Admins only (truck registration via admin approval)
+      allow create: if isAdmin();
+
+      // Update: Truck owner or admin
+      allow update: if isOwnerOfThisTruck() || isAdmin();
+
+      // Delete: Admin only
+      allow delete: if isAdmin();
+    }
+
+    // Truck menus subcollection
+    match /trucks/{truckId}/menus/{menuId} {
       allow read: if true;  // Public read
+      allow write: if isTruckOwner(truckId) || isAdmin();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // STAMP CARDS (Customer loyalty)
+    // ═══════════════════════════════════════════════════════════
+    match /stampCards/{cardId} {
+      // Read: User can read their own stamp cards
+      allow read: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+
+      // Create: Authenticated users (when first visit)
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid;
+
+      // Update: System only (via check-in), or truck owner (issuing coupon)
+      allow update: if isAuthenticated()
+        && (resource.data.userId == request.auth.uid
+            || isTruckOwner(resource.data.truckId));
+
+      allow delete: if false;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // USER COUPONS (Earned coupons)
+    // ═══════════════════════════════════════════════════════════
+    match /userCoupons/{couponId} {
+      // Read: User can read their own coupons
+      allow read: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+
+      // Create: System only (via stamp completion)
       allow create: if isAuthenticated();
-      allow update, delete: if isTruckOwner(truckId);
+
+      // Update: Truck owner can mark as used
+      allow update: if isAuthenticated()
+        && (resource.data.userId == request.auth.uid
+            || isTruckOwner(resource.data.truckId));
+
+      allow delete: if false;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -33,9 +91,18 @@ service cloud.firestore {
     // ═══════════════════════════════════════════════════════════
     match /reviews/{reviewId} {
       allow read: if true;  // Public read
-      allow create: if isAuthenticated();
-      allow update, delete: if isAuthenticated()
+
+      // Create: Authenticated users only, must be the author
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid;
+
+      // Update: Only the author
+      allow update: if isAuthenticated()
         && resource.data.userId == request.auth.uid;
+
+      // Delete: Author or admin
+      allow delete: if isAuthenticated()
+        && (resource.data.userId == request.auth.uid || isAdmin());
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -47,8 +114,9 @@ service cloud.firestore {
         && (resource.data.userId == request.auth.uid
             || isTruckOwner(resource.data.truckId));
 
-      // Create: Any authenticated user
-      allow create: if isAuthenticated();
+      // Create: Authenticated users, must be the orderer
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid;
 
       // Update: Only truck owner (for status changes)
       allow update: if isTruckOwner(resource.data.truckId);
@@ -61,13 +129,20 @@ service cloud.firestore {
     // FAVORITES
     // ═══════════════════════════════════════════════════════════
     match /favorites/{favoriteId} {
-      allow read: if isAuthenticated();
-      allow create, delete: if isAuthenticated();
-      allow update: if false;  // Not needed
+      allow read: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid;
+
+      allow delete: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+
+      allow update: if false;
     }
 
     // ═══════════════════════════════════════════════════════════
-    // PHASE 11: FOLLOWS (Social Features)
+    // FOLLOWS (Social Features)
     // ═══════════════════════════════════════════════════════════
     match /follows/{followId} {
       allow read: if isAuthenticated();
@@ -96,7 +171,7 @@ service cloud.firestore {
     }
 
     // ═══════════════════════════════════════════════════════════
-    // PHASE 12: COUPONS
+    // COUPONS (Owner-defined)
     // ═══════════════════════════════════════════════════════════
     match /coupons/{couponId} {
       // Read: Any authenticated user (customers need to see valid coupons)
@@ -108,7 +183,7 @@ service cloud.firestore {
     }
 
     // ═══════════════════════════════════════════════════════════
-    // PHASE 13: CHAT (Real-time messaging)
+    // CHAT (Real-time messaging)
     // ═══════════════════════════════════════════════════════════
     match /chatRooms/{roomId} {
       // Read: User or truck owner can read
@@ -116,8 +191,9 @@ service cloud.firestore {
         && (resource.data.userId == request.auth.uid
             || isTruckOwner(resource.data.truckId));
 
-      // Create: Any authenticated user
-      allow create: if isAuthenticated();
+      // Create: Authenticated user, must be participant
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid;
 
       // Update: Participants only (for unreadCount, lastMessage)
       allow update: if isAuthenticated()
@@ -148,15 +224,23 @@ service cloud.firestore {
     // ═══════════════════════════════════════════════════════════
     match /schedules/{scheduleId} {
       allow read: if true;  // Public read
-      allow create, update, delete: if isAuthenticated();
+
+      // Write: Truck owner only
+      allow create, update, delete: if isAuthenticated()
+        && isTruckOwner(resource.data.truckId);
     }
 
     // ═══════════════════════════════════════════════════════════
     // ANALYTICS
     // ═══════════════════════════════════════════════════════════
     match /analytics/{analyticsId} {
-      allow read: if isAuthenticated();
+      // Read: Truck owner or admin
+      allow read: if isAuthenticated()
+        && (isTruckOwner(resource.data.truckId) || isAdmin());
+
+      // Create/Update: System or truck owner
       allow create, update: if isAuthenticated();
+
       allow delete: if false;
     }
 
@@ -164,13 +248,20 @@ service cloud.firestore {
     // CHECK-INS
     // ═══════════════════════════════════════════════════════════
     match /checkins/{checkinId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
+      // Read: User can see their own check-ins, owner can see their truck's
+      allow read: if isAuthenticated()
+        && (resource.data.userId == request.auth.uid
+            || isTruckOwner(resource.data.truckId));
+
+      // Create: Authenticated user, must be the checker
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid;
+
       allow update, delete: if false;
     }
 
     // ═══════════════════════════════════════════════════════════
-    // PHASE 15: NOTIFICATION SETTINGS
+    // NOTIFICATION SETTINGS
     // ═══════════════════════════════════════════════════════════
     match /notificationSettings/{userId} {
       // Read: User can only read their own settings
@@ -189,9 +280,16 @@ service cloud.firestore {
     // USERS (Profile data)
     // ═══════════════════════════════════════════════════════════
     match /users/{userId} {
+      // Read: Authenticated users (for public profiles like owner info)
       allow read: if isAuthenticated();
+
+      // Create/Update: Only the user themselves
       allow create, update: if isAuthenticated()
-        && request.auth.uid == userId;
+        && request.auth.uid == userId
+        // Prevent users from changing their own role
+        && (!('role' in request.resource.data)
+            || request.resource.data.role == resource.data.role);
+
       allow delete: if false;
     }
 
@@ -203,7 +301,7 @@ service cloud.firestore {
       allow read: if isAuthenticated()
         && resource.data.userId == request.auth.uid;
 
-      // Create: Only system/admin (via Cloud Functions or admin SDK)
+      // Create: System/admin only (via Cloud Functions or admin SDK)
       allow create: if isAuthenticated() && isAdmin();
 
       // Update: User can mark as read
@@ -231,6 +329,54 @@ service cloud.firestore {
       allow update: if isAuthenticated() && isAdmin();
 
       // Delete: Not allowed
+      allow delete: if false;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // POSTS (Social Feed)
+    // ═══════════════════════════════════════════════════════════
+    match /posts/{postId} {
+      allow read: if true;  // Public read
+
+      // Create: Truck owner only
+      allow create: if isAuthenticated()
+        && isTruckOwner(request.resource.data.truckId);
+
+      // Update/Delete: Post author or admin
+      allow update, delete: if isAuthenticated()
+        && (resource.data.authorId == request.auth.uid || isAdmin());
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // COMMENTS
+    // ═══════════════════════════════════════════════════════════
+    match /comments/{commentId} {
+      allow read: if true;  // Public read
+
+      // Create: Authenticated user
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid;
+
+      // Update/Delete: Comment author or admin
+      allow update, delete: if isAuthenticated()
+        && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // BUSINESS APPROVALS (New - for owner business approval)
+    // ═══════════════════════════════════════════════════════════
+    match /business_approvals/{truckId} {
+      // Read: Truck owner or admin
+      allow read: if isAuthenticated()
+        && (isTruckOwner(truckId) || isAdmin());
+
+      // Create: Truck owner only
+      allow create: if isAuthenticated()
+        && isTruckOwner(truckId);
+
+      // Update: Admin only (for approval/rejection)
+      allow update: if isAuthenticated() && isAdmin();
+
       allow delete: if false;
     }
   }
