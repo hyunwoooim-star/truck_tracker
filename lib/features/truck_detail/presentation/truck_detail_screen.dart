@@ -1674,9 +1674,9 @@ Future<void> _launchNaverMap(BuildContext context, Truck truck, AppLocalizations
     'nmap://route/destination?dlat=${truck.latitude}&dlng=${truck.longitude}&dname=${Uri.encodeComponent(destinationName)}&appname=com.example.truck_tracker',
   );
   
-  // Web fallback - 목적지로 길찾기
+  // Web fallback - 좌표 기반 목적지로 길찾기
   final naverWebUrl = Uri.parse(
-    'https://map.naver.com/v5/search/${Uri.encodeComponent(truck.locationDescription)}?c=${truck.longitude},${truck.latitude},15,0,0,0,dh',
+    'https://map.naver.com/v5/directions/-/-/-/transit?c=${truck.longitude},${truck.latitude},15,0,0,0,dh&destination=${truck.latitude},${truck.longitude},${Uri.encodeComponent(destinationName)}',
   );
 
   try {

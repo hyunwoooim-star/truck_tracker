@@ -82,8 +82,14 @@ class AppSettingsScreen extends ConsumerWidget {
                   ),
                 ),
 
-                // 사장님으로 전환 메뉴 (일반 사용자만 표시)
-                _buildOwnerRequestTile(context, ref),
+                // 사장님으로 전환 메뉴 (일반 사용자만 표시, 관리자 제외)
+                isAdminAsync.when(
+                  data: (isAdmin) => isAdmin
+                      ? const SizedBox.shrink()
+                      : _buildOwnerRequestTile(context, ref),
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, __) => _buildOwnerRequestTile(context, ref),
+                ),
 
                 const SizedBox(height: 16),
 

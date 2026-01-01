@@ -106,7 +106,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
     }
 
     final statsAsync = ref.watch(adminStatsProvider);
-    final pendingRequestsAsync = ref.watch(pendingOwnerRequestsProvider);
 
     return Scaffold(
       backgroundColor: AppTheme.charcoalDark,
@@ -120,7 +119,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
             tooltip: '새로고침',
             onPressed: () {
               ref.invalidate(adminStatsProvider);
-              ref.invalidate(pendingOwnerRequestsProvider);
               SnackBarHelper.showInfo(context, '새로고침 중...');
             },
           ),
@@ -131,7 +129,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
         backgroundColor: AppTheme.charcoalMedium,
         onRefresh: () async {
           ref.invalidate(adminStatsProvider);
-          ref.invalidate(pendingOwnerRequestsProvider);
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -146,22 +143,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
                 loading: () => const _StatsLoadingGrid(),
                 error: (error, _) => _buildErrorCard('통계 로드 실패: $error'),
                 data: (stats) => _buildStatsGrid(stats),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Pending Requests Section
-              _buildSectionHeader('대기 중인 사장님 인증 요청'),
-              const SizedBox(height: 12),
-              pendingRequestsAsync.when(
-                loading: () => const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(24),
-                    child: CircularProgressIndicator(color: AppTheme.mustardYellow),
-                  ),
-                ),
-                error: (error, _) => _buildErrorCard('요청 로드 실패: $error'),
-                data: (requests) => _buildPendingRequestsSection(requests),
               ),
 
               const SizedBox(height: 24),
@@ -244,145 +225,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
           color: stats.approvalRate >= 50 ? Colors.green : Colors.orange,
         ),
       ],
-    );
-  }
-
-  Widget _buildPendingRequestsSection(List<Map<String, dynamic>> requests) {
-    if (requests.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: AppTheme.charcoalMedium,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.charcoalLight),
-        ),
-        child: const Column(
-          children: [
-            Icon(
-              Icons.check_circle_outline,
-              size: 48,
-              color: Colors.green,
-            ),
-            SizedBox(height: 12),
-            Text(
-              '대기 중인 요청이 없습니다',
-              style: TextStyle(
-                color: AppTheme.textSecondary,
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Column(
-      children: [
-        // Show first 3 requests
-        ...requests.take(3).map((request) => _buildRequestPreviewCard(request)),
-
-        if (requests.length > 3) ...[
-          const SizedBox(height: 12),
-          TextButton.icon(
-            onPressed: _navigateToOwnerRequests,
-            icon: const Icon(Icons.visibility),
-            label: Text('${requests.length - 3}개 더 보기'),
-            style: TextButton.styleFrom(
-              foregroundColor: AppTheme.mustardYellow,
-            ),
-          ),
-        ],
-
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: _navigateToOwnerRequests,
-            icon: const Icon(Icons.manage_accounts),
-            label: const Text('요청 관리하기'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.mustardYellow,
-              foregroundColor: Colors.black,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRequestPreviewCard(Map<String, dynamic> request) {
-    final email = request['email'] as String? ?? '';
-    final displayName = request['displayName'] as String? ?? '이름 없음';
-    final createdAt = request['createdAt'];
-    String timeAgo = '';
-
-    if (createdAt != null) {
-      final date = (createdAt as dynamic).toDate() as DateTime;
-      final diff = DateTime.now().difference(date);
-      if (diff.inDays > 0) {
-        timeAgo = '${diff.inDays}일 전';
-      } else if (diff.inHours > 0) {
-        timeAgo = '${diff.inHours}시간 전';
-      } else {
-        timeAgo = '${diff.inMinutes}분 전';
-      }
-    }
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppTheme.charcoalMedium,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.orange.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.person_add,
-              color: Colors.orange,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  displayName,
-                  style: const TextStyle(
-                    color: AppTheme.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  email,
-                  style: const TextStyle(
-                    color: AppTheme.textTertiary,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (timeAgo.isNotEmpty)
-            Text(
-              timeAgo,
-              style: const TextStyle(
-                color: AppTheme.textTertiary,
-                fontSize: 12,
-              ),
-            ),
-        ],
-      ),
     );
   }
 
