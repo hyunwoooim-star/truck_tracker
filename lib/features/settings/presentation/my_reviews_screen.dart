@@ -138,7 +138,7 @@ class _ReviewCard extends StatelessWidget {
 
             // Review content
             Text(
-              review.content,
+              review.comment,
               style: TextStyle(
                 fontSize: 14,
                 color: AppTheme.textSecondary,
