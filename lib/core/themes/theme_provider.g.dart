@@ -9,21 +9,24 @@ part of 'theme_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 /// Provider for managing app theme mode with persistence
+/// Uses keepAlive to prevent theme reset during navigation
 
 @ProviderFor(AppThemeModeNotifier)
 final appThemeModeProvider = AppThemeModeNotifierProvider._();
 
 /// Provider for managing app theme mode with persistence
+/// Uses keepAlive to prevent theme reset during navigation
 final class AppThemeModeNotifierProvider
     extends $NotifierProvider<AppThemeModeNotifier, AppThemeMode> {
   /// Provider for managing app theme mode with persistence
+  /// Uses keepAlive to prevent theme reset during navigation
   AppThemeModeNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'appThemeModeProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -45,9 +48,10 @@ final class AppThemeModeNotifierProvider
 }
 
 String _$appThemeModeNotifierHash() =>
-    r'5e0f336f9cc0b7ab219b09bf5e2479d4e742012d';
+    r'b9122382725d2357c3151dfc5020eb1673987726';
 
 /// Provider for managing app theme mode with persistence
+/// Uses keepAlive to prevent theme reset during navigation
 
 abstract class _$AppThemeModeNotifier extends $Notifier<AppThemeMode> {
   AppThemeMode build();

@@ -8,25 +8,25 @@ part of 'truck_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Repository provider
+/// Repository provider (keepAlive to reuse instance)
 
 @ProviderFor(truckRepository)
 final truckRepositoryProvider = TruckRepositoryProvider._();
 
-/// Repository provider
+/// Repository provider (keepAlive to reuse instance)
 
 final class TruckRepositoryProvider
     extends
         $FunctionalProvider<TruckRepository, TruckRepository, TruckRepository>
     with $Provider<TruckRepository> {
-  /// Repository provider
+  /// Repository provider (keepAlive to reuse instance)
   TruckRepositoryProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'truckRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -53,14 +53,16 @@ final class TruckRepositoryProvider
   }
 }
 
-String _$truckRepositoryHash() => r'8b1e16782766263a676c4d16bd32f7446f663995';
+String _$truckRepositoryHash() => r'1896499d0d260043342286743b331805e92fa374';
 
 /// Firestore stream provider for real-time updates
+/// Uses keepAlive to prevent stream reconnection on navigation
 
 @ProviderFor(firestoreTruckStream)
 final firestoreTruckStreamProvider = FirestoreTruckStreamProvider._();
 
 /// Firestore stream provider for real-time updates
+/// Uses keepAlive to prevent stream reconnection on navigation
 
 final class FirestoreTruckStreamProvider
     extends
@@ -71,13 +73,14 @@ final class FirestoreTruckStreamProvider
         >
     with $FutureModifier<List<Truck>>, $StreamProvider<List<Truck>> {
   /// Firestore stream provider for real-time updates
+  /// Uses keepAlive to prevent stream reconnection on navigation
   FirestoreTruckStreamProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'firestoreTruckStreamProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -98,7 +101,7 @@ final class FirestoreTruckStreamProvider
 }
 
 String _$firestoreTruckStreamHash() =>
-    r'52a7440e0871ab21ea54bed99c10dc58ce458ba5';
+    r'7dc7f01c9a4e463fd0447869666b6b18ad7a8678';
 
 /// Filter state provider
 
