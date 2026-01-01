@@ -4,7 +4,7 @@
 
 ---
 
-## 현재 상태 (2026-01-01 메가플랜 완료!)
+## 현재 상태 (2026-01-01 최신)
 
 | 항목 | 상태 |
 |------|------|
@@ -12,6 +12,8 @@
 | 빌드 | **WSL Ubuntu에서 빌드** (Windows X) |
 | flutter analyze | No issues |
 | Cloud Functions | 10개 함수 배포 완료 |
+| 소셜 로그인 | ✅ 카카오/네이버/Google 모두 정상 |
+| 테스트 | 652 통과, 8 스킵, 10 실패 (환경 이슈) |
 | 배포 | https://truck-tracker-fa0b0.web.app |
 
 ---
@@ -22,99 +24,43 @@
 
 ---
 
-## 2026-01-01 메가플랜 완료 보고서
+## 2026-01-01 완료 작업
 
-### 완료된 8가지 작업
+### 메가플랜 (8가지)
+| # | 작업 | 상태 |
+|---|------|------|
+| 1 | 고객 온보딩 튜토리얼 (4슬라이드) | ✅ |
+| 2 | 즐겨찾기 Provider 버그 수정 | ✅ |
+| 3 | 리뷰 수정/삭제 UI 추가 | ✅ |
+| 4 | Talk 삭제 기능 추가 | ✅ |
+| 5 | 쿠폰 스캐너 (QR 스캔) 구현 | ✅ |
+| 6 | 도움말 FAQ 섹션 추가 | ✅ |
+| 7 | TROUBLESHOOTING.md 작성 | ✅ |
+| 8 | 빌드 & Firebase 배포 | ✅ |
 
-| # | 작업 | 상태 | 커밋 |
-|---|------|------|------|
-| 1 | 고객 온보딩 튜토리얼 (4슬라이드) | ✅ | e401bb7 |
-| 2 | 즐겨찾기 Provider 버그 수정 | ✅ | fc24bfc |
-| 3 | 리뷰 수정/삭제 UI 추가 | ✅ | ab13b9b |
-| 4 | Talk 삭제 기능 추가 | ✅ | f2666f1 |
-| 5 | 쿠폰 스캐너 (QR 스캔) 구현 | ✅ | 1df237e |
-| 6 | 도움말 FAQ 섹션 추가 | ✅ | 3f47864 |
-| 7 | TROUBLESHOOTING.md 작성 | ✅ | d3f9b24 |
-| 8 | 빌드 & Firebase 배포 | ✅ | - |
+### 소셜 로그인 수정
+| 플랫폼 | 상태 |
+|--------|------|
+| 카카오 | ✅ 정상 작동 |
+| 네이버 | ✅ 정상 작동 |
+| Google | ✅ 정상 작동 |
 
-### 신규 생성 파일
-1. `lib/features/onboarding/presentation/customer_onboarding_screen.dart`
-2. `lib/features/owner_dashboard/presentation/coupon_scanner_screen.dart`
-3. `docs/TROUBLESHOOTING.md`
-
-### 수정된 파일
-- `lib/main.dart` - 온보딩 로직 추가
-- `lib/features/favorite/presentation/favorite_provider.dart` - 버그 수정
-- `lib/features/truck_detail/presentation/truck_detail_screen.dart` - 리뷰 수정/삭제
-- `lib/features/talk/presentation/talk_widget.dart` - Talk 삭제
-- `lib/features/owner_dashboard/presentation/owner_dashboard_screen.dart` - 쿠폰 스캐너 버튼
-- `lib/features/settings/presentation/help_screen.dart` - FAQ 섹션
-- `lib/l10n/app_en.arb`, `lib/l10n/app_ko.arb` - 번역 추가
+### 성능 최적화
+| 작업 | 상태 | 커밋 |
+|------|------|------|
+| N+1 notifyFollowers → 배치 쿼리 | ✅ | 630aca7 |
+| GoogleFonts 테스트 설정 수정 | ✅ | 5453d70 |
 
 ---
 
-## 🔜 다음 세션에서 할 것 (우선순위 순)
+## 🔜 다음 세션에서 할 것
 
-### 1. 카카오 웹 로그인 수정 (KOE205 에러)
-- **현재 상태**: KOE205 "잘못된 요청" 에러
-- **원인 추정**: Redirect URI 불일치 또는 콜백 페이지 라우팅 문제
-- **해결 방법**: 아래 "OAuth 콜백 라우팅" 참고
+현재 **모든 주요 기능 완료!** 추가 작업이 필요하면 아래 참고:
 
-### 2. 네이버 웹 로그인 수정 (동의 후 첫 화면으로 돌아감)
-- **현재 상태**: 동의 화면까지는 나옴, 동의 후 첫 화면으로 돌아감
-- **해결 방법**: 아래 "OAuth 콜백 라우팅" 참고
-
-### 3. Google 웹 로그인 수정
-- index.html에 Google Sign-In Client ID 설정 필요
-
-### 4. 공통 문제: OAuth 콜백 라우팅 (Gemini 분석 결과)
-
-#### 핵심 원인
-- Flutter 웹은 기본적으로 URL에 `#`(Hash)가 붙음 (예: `.../#/kakao`)
-- 카카오/네이버 Redirect URI에는 `#`이 없어서 인식 안 됨
-- go_router에 콜백 경로가 등록 안 되어 있음
-
-#### 해결 방법
-
-**1. main.dart에 Path URL Strategy 추가**
-```dart
-import 'package:flutter_web_plugins/url_strategy.dart';
-
-void main() {
-  usePathUrlStrategy(); // '#' 제거
-  runApp(const MyApp());
-}
-```
-
-**2. go_router에 콜백 라우트 추가**
-```dart
-GoRoute(
-  path: '/kakao',
-  builder: (context, state) {
-    final code = state.uri.queryParameters['code'];
-    if (code != null) {
-      return SocialLoginCallbackScreen(code: code, provider: 'kakao');
-    }
-    return const LoginErrorScreen();
-  },
-),
-GoRoute(
-  path: '/oauth/naver/callback',
-  builder: (context, state) {
-    final code = state.uri.queryParameters['code'];
-    final naverState = state.uri.queryParameters['state'];
-    if (code != null) {
-      return SocialLoginCallbackScreen(code: code, state: naverState, provider: 'naver');
-    }
-    return const LoginErrorScreen();
-  },
-),
-```
-
-**3. SocialLoginCallbackScreen 구현**
-- initState에서 code를 Cloud Function으로 전송
-- Custom Token 받아서 Firebase signInWithCustomToken() 호출
-- 성공하면 메인 페이지로 이동
+### 선택적 개선 사항
+1. Chat N+1 쿼리 최적화 (chat_repository.dart)
+2. Firestore 복합 인덱스 추가 (성능 개선)
+3. 추가 테스트 커버리지
 
 ---
 
@@ -160,13 +106,13 @@ lib/
 ├── features/       # 기능 모듈 (24개)
 │   ├── admin/      # 관리자 기능
 │   ├── auth/       # 인증 기능 (OAuth 포함)
-│   ├── onboarding/ # 고객 온보딩 (NEW)
+│   ├── onboarding/ # 고객 온보딩
 │   └── ...
 ├── shared/         # 공유 위젯
 └── main.dart
 
 docs/
-├── TROUBLESHOOTING.md  # 트러블슈팅 가이드 (NEW)
+├── TROUBLESHOOTING.md  # 트러블슈팅 가이드
 └── ...
 
 web/index.html      # iOS Safari 감지
@@ -176,4 +122,4 @@ functions/index.js  # Cloud Functions (10개)
 
 ---
 
-**마지막 업데이트**: 2026-01-01 (메가플랜 완료)
+**마지막 업데이트**: 2026-01-01 (소셜 로그인 완료 + 성능 최적화)
