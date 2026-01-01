@@ -18,6 +18,7 @@ import 'analytics_screen.dart';
 import 'coupon_management_screen.dart';
 import 'coupon_scanner_screen.dart';
 import 'menu_management_screen.dart';
+import 'owner_management_screen.dart';
 import 'owner_status_provider.dart';
 import 'review_management_screen.dart';
 import 'schedule_management_screen.dart';
@@ -75,6 +76,20 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                   builder: (_) => const ScheduleManagementScreen(),
                 ),
               );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.dashboard_customize),
+            tooltip: l10n.truckManagement,
+            onPressed: () {
+              final ownerTruck = ref.read(ownerTruckProvider).value;
+              if (ownerTruck != null) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => OwnerManagementScreen(truckId: ownerTruck.id),
+                  ),
+                );
+              }
             },
           ),
           IconButton(

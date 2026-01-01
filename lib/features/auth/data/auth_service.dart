@@ -626,6 +626,66 @@ class AuthService {
     }
   }
 
+  /// Delete user account and all associated data
+  Future<void> deleteUserAccount(String userId) async {
+    AppLogger.debug('Deleting user account: $userId', tag: 'AuthService');
+
+    try {
+      final batch = _firestore.batch();
+
+      // 1. Delete user's checkins
+      final checkins = await _firestore
+          .collection('checkins')
+          .where('userId', isEqualTo: userId)
+          .get();
+      for (final doc in checkins.docs) {
+        batch.delete(doc.reference);
+      }
+
+      // 2. Delete user's coupons
+      final coupons = await _firestore
+          .collection('userCoupons')
+          .where('userId', isEqualTo: userId)
+          .get();
+      for (final doc in coupons.docs) {
+        batch.delete(doc.reference);
+      }
+
+      // 3. Delete user's notifications
+      final notifications = await _firestore
+          .collection('notifications')
+          .where('userId', isEqualTo: userId)
+          .get();
+      for (final doc in notifications.docs) {
+        batch.delete(doc.reference);
+      }
+
+      // 4. Delete owner request if exists
+      final ownerRequest = _firestore.collection('owner_requests').doc(userId);
+      batch.delete(ownerRequest);
+
+      // 5. Delete user document
+      final userDoc = _firestore.collection('users').doc(userId);
+      batch.delete(userDoc);
+
+      // Commit batch delete
+      await batch.commit();
+      AppLogger.debug('Firestore data deleted', tag: 'AuthService');
+
+      // 6. Delete Firebase Auth account
+      final user = _auth.currentUser;
+      if (user != null) {
+        await user.delete();
+        AppLogger.success('Firebase Auth account deleted', tag: 'AuthService');
+      }
+
+      AppLogger.success('User account fully deleted: $userId', tag: 'AuthService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Delete user account failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
+  }
+
   /// Send password reset email
   Future<void> sendPasswordResetEmail(String email) async {
     AppLogger.debug('Sending password reset email to: $email', tag: 'AuthService');
@@ -742,10 +802,11 @@ class AuthService {
     final userId = _auth.currentUser?.uid;
     if (userId == null) throw Exception('로그인이 필요합니다');
 
-    AppLogger.debug('Starting owner application for: $userId', tag: 'AuthService');
+    AppLogger.debug('[1/3] Starting owner application for: $userId', tag: 'AuthService');
 
     try {
       // 1. 이미지 업로드
+      AppLogger.debug('[2/3] Uploading image...', tag: 'AuthService');
       final storageRef = FirebaseStorage.instance
           .ref()
           .child('owner_requests')
@@ -753,17 +814,32 @@ class AuthService {
 
       String imageUrl;
       if (imageData is Uint8List) {
-        await storageRef.putData(imageData, SettableMetadata(contentType: 'image/jpeg'));
+        AppLogger.debug('[2/3] Image type: Uint8List (${imageData.length} bytes)', tag: 'AuthService');
+        final uploadTask = storageRef.putData(
+          imageData,
+          SettableMetadata(contentType: 'image/jpeg'),
+        );
+
+        // 업로드 진행률 모니터링
+        uploadTask.snapshotEvents.listen((snapshot) {
+          final progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          AppLogger.debug('[2/3] Upload progress: ${progress.toStringAsFixed(1)}%', tag: 'AuthService');
+        });
+
+        // 업로드 완료 대기
+        await uploadTask;
         imageUrl = await storageRef.getDownloadURL();
       } else if (imageData is String) {
+        AppLogger.debug('[2/3] Image type: File path', tag: 'AuthService');
         await storageRef.putFile(File(imageData));
         imageUrl = await storageRef.getDownloadURL();
       } else {
         throw Exception('지원하지 않는 이미지 형식입니다.');
       }
-      AppLogger.debug('License image uploaded: $imageUrl', tag: 'AuthService');
+      AppLogger.debug('[2/3] Image uploaded: $imageUrl', tag: 'AuthService');
 
       // 2. 데이터 한 번에 저장 (덮어쓰기 방지)
+      AppLogger.debug('[3/3] Saving to Firestore...', tag: 'AuthService');
       await _firestore.collection('owner_requests').doc(userId).set({
         'userId': userId,
         'email': _auth.currentUser?.email ?? '',
@@ -779,9 +855,9 @@ class AuthService {
         'rejectionReason': null,
       });
 
-      AppLogger.success('Owner application submitted successfully', tag: 'AuthService');
+      AppLogger.success('[3/3] Owner application submitted successfully!', tag: 'AuthService');
     } catch (e, stackTrace) {
-      AppLogger.error('Owner application failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      AppLogger.error('Owner application failed at step', error: e, stackTrace: stackTrace, tag: 'AuthService');
       rethrow;
     }
   }
@@ -1114,6 +1190,102 @@ class AuthService {
       AppLogger.error('Get nickname failed',
           error: e, stackTrace: stackTrace, tag: 'AuthService');
       return null;
+    }
+  }
+
+  /// 닉네임 변경 정보 가져오기 (이번 달 변경 횟수)
+  Future<Map<String, dynamic>?> getNicknameChangeInfo(String userId) async {
+    try {
+      final doc = await _firestore.collection('users').doc(userId).get();
+      if (!doc.exists) return null;
+
+      final data = doc.data();
+      final nicknameChanges = data?['nicknameChanges'] as List<dynamic>? ?? [];
+
+      // 이번 달 변경 횟수 계산
+      final now = DateTime.now();
+      final thisMonthStart = DateTime(now.year, now.month, 1);
+
+      int thisMonthCount = 0;
+      for (final change in nicknameChanges) {
+        if (change is Map<String, dynamic>) {
+          final changedAt = change['changedAt'];
+          if (changedAt != null) {
+            DateTime changeDate;
+            if (changedAt is Timestamp) {
+              changeDate = changedAt.toDate();
+            } else {
+              continue;
+            }
+            if (changeDate.isAfter(thisMonthStart)) {
+              thisMonthCount++;
+            }
+          }
+        }
+      }
+
+      return {
+        'currentNickname': data?['nickname'] as String?,
+        'thisMonthChanges': thisMonthCount,
+        'maxChangesPerMonth': 3,
+        'canChange': thisMonthCount < 3,
+        'remainingChanges': 3 - thisMonthCount,
+      };
+    } catch (e, stackTrace) {
+      AppLogger.error('Get nickname change info failed',
+          error: e, stackTrace: stackTrace, tag: 'AuthService');
+      return null;
+    }
+  }
+
+  /// 닉네임 변경 (월 3회 제한 적용)
+  Future<void> updateNicknameWithLimit(String userId, String newNickname) async {
+    try {
+      // 유효성 검사
+      if (!isValidNickname(newNickname)) {
+        throw Exception('닉네임은 한글/영문/숫자 2-10자만 가능합니다');
+      }
+
+      // 현재 닉네임과 동일한지 체크
+      final currentNickname = await getCurrentUserNickname();
+      if (currentNickname == newNickname) {
+        throw Exception('현재 닉네임과 동일합니다');
+      }
+
+      // 중복 검사
+      final isAvailable = await isNicknameAvailable(newNickname);
+      if (!isAvailable) {
+        throw Exception('이미 사용 중인 닉네임입니다');
+      }
+
+      // 변경 횟수 체크
+      final changeInfo = await getNicknameChangeInfo(userId);
+      if (changeInfo == null) {
+        throw Exception('사용자 정보를 찾을 수 없습니다');
+      }
+      if (changeInfo['canChange'] != true) {
+        throw Exception('이번 달 닉네임 변경 횟수(3회)를 초과했습니다');
+      }
+
+      // 변경 기록 추가
+      final now = DateTime.now();
+      await _firestore.collection('users').doc(userId).update({
+        'nickname': newNickname,
+        'nicknameChanges': FieldValue.arrayUnion([
+          {
+            'from': currentNickname ?? '',
+            'to': newNickname,
+            'changedAt': Timestamp.fromDate(now),
+          }
+        ]),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      AppLogger.success('Nickname updated with limit: $currentNickname -> $newNickname', tag: 'AuthService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Update nickname with limit failed',
+          error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
     }
   }
 }

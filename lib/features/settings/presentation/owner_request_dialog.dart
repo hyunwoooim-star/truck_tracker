@@ -69,12 +69,18 @@ class _OwnerRequestDialogState extends ConsumerState<OwnerRequestDialog> {
       final authService = ref.read(authServiceProvider);
 
       // [FIX] 통합 메서드 사용 - 이미지와 정보를 한 번에 저장
+      // 60초 타임아웃 추가
       await authService.submitOwnerApplication(
         businessName: _businessNameController.text.trim(),
         description: _descriptionController.text.trim().isNotEmpty
             ? _descriptionController.text.trim()
             : null,
         imageData: _selectedImageBytes,
+      ).timeout(
+        const Duration(seconds: 60),
+        onTimeout: () {
+          throw Exception('업로드 시간이 초과되었습니다. 네트워크를 확인해주세요.');
+        },
       );
 
       ref.invalidate(ownerRequestStatusProvider);
@@ -85,7 +91,16 @@ class _OwnerRequestDialogState extends ConsumerState<OwnerRequestDialog> {
       }
     } catch (e) {
       if (mounted) {
-        SnackBarHelper.showError(context, '신청 실패: $e');
+        // 상세 에러 메시지 표시
+        String errorMsg = '신청 실패';
+        if (e.toString().contains('permission')) {
+          errorMsg = '권한 오류: 로그인 상태를 확인해주세요';
+        } else if (e.toString().contains('network') || e.toString().contains('timeout')) {
+          errorMsg = '네트워크 오류: 인터넷 연결을 확인해주세요';
+        } else {
+          errorMsg = '신청 실패: ${e.toString().replaceAll('Exception: ', '')}';
+        }
+        SnackBarHelper.showError(context, errorMsg);
       }
     } finally {
       if (mounted) {

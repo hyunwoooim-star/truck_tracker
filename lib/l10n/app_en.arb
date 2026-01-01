@@ -546,5 +546,41 @@
   "couponWrongTruck": "This coupon is for a different truck",
   "couponUseFailed": "Failed to process coupon",
   "couponScanFailed": "Failed to scan coupon",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+
+  "truckManagement": "Truck Management",
+  "publicTalk": "Public Talk",
+  "publicTalkDescription": "Public conversation visible to all customers",
+  "customerChats": "Customer Chats",
+  "customerChatsDescription": "Private chats with customers",
+  "noCustomerChats": "No customer chats yet",
+  "errorLoadingChats": "Failed to load chats",
+
+  "contactAdmin": "Contact Admin",
+  "supportChatDescription": "Contact admin for any operational questions",
+  "errorCreatingChat": "Failed to create chat room",
+  "startSupportChat": "Please enter your question",
+  "adminSupport": "Admin Support",
+  "contactAdminDescription": "Contact admin if you need help with operations",
+
+  "myCoupons": "My Coupons",
+  "noCoupons": "No coupons available",
+  "earnCouponsHint": "Visit trucks and collect stamps to earn coupons!",
+  "couponReady": "Ready to use!",
+  "stamps": "stamps",
+  "useNow": "Use Now",
+  "expiresOn": "Expires on",
+  "showQR": "Show QR",
+  "couponQR": "Coupon QR",
+  "showQRToOwner": "Show this QR code to the truck owner",
+  "close": "Close",
+
+  "visitHistory": "Visit History",
+  "noVisitHistory": "No visit history",
+  "visitTrucksHint": "Visit trucks and check in!",
+
+  "deleteAccount": "Delete Account",
+  "deleteAccountWarning": "Are you sure you want to delete your account?\\nAll data will be permanently deleted.",
+  "accountDeleted": "Account has been deleted",
+  "loginRequired": "Login required"
 }

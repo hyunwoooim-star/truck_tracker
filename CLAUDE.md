@@ -368,6 +368,30 @@ See PROJECT_CONTEXT.md § Development Commands for:
 - **네이버 Client Secret**: Firebase Secret에 저장 (`NAVER_CLIENT_SECRET`)
 - **네이버 Redirect URI**: `https://truck-tracker-fa0b0.web.app/oauth/naver/callback`
 
+### 2026-01-01: 웹앱 테스트 워크플로우 (필수!)
+- **매번 빌드 배포하지 말 것!** 시간이 너무 오래 걸림
+- **로컬 테스트 먼저** → 버그 확인/수정 → 완성 후 배포
+- **워크플로우**:
+  ```
+  1. 코드 수정 후 → flutter run -d chrome (로컬 테스트)
+     - 핫 리로드: r 키
+     - 핫 리스타트: R 키
+     - 코드 수정 즉시 반영됨!
+
+  2. 버그 확인/수정 반복 (로컬에서)
+
+  3. 완성되면 → WSL 빌드 & Firebase 배포
+  ```
+- **로컬 테스트 명령어**:
+  ```bash
+  cd "C:\Users\임현우\Desktop\현우 작업폴더\truck_tracker\truck ver.1\truck_tracker"
+  "C:\Users\임현우\Downloads\flutter_windows_3.38.5-stable\flutter\bin\flutter.bat" run -d chrome
+  ```
+- **Windows 앱 테스트** (대안):
+  ```bash
+  "C:\Users\임현우\Downloads\flutter_windows_3.38.5-stable\flutter\bin\flutter.bat" run -d windows
+  ```
+
 ---
 
 ## 6. 🔧 Emergency Procedures

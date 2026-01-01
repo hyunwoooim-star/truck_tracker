@@ -2365,6 +2365,186 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'확인'**
   String get confirm;
+
+  /// No description provided for @truckManagement.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭 관리'**
+  String get truckManagement;
+
+  /// No description provided for @publicTalk.
+  ///
+  /// In ko, this message translates to:
+  /// **'공개 Talk'**
+  String get publicTalk;
+
+  /// No description provided for @publicTalkDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'모든 고객이 볼 수 있는 공개 대화입니다'**
+  String get publicTalkDescription;
+
+  /// No description provided for @customerChats.
+  ///
+  /// In ko, this message translates to:
+  /// **'1:1 고객 채팅'**
+  String get customerChats;
+
+  /// No description provided for @customerChatsDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'고객과의 개인 채팅 목록입니다'**
+  String get customerChatsDescription;
+
+  /// No description provided for @noCustomerChats.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 채팅이 없습니다'**
+  String get noCustomerChats;
+
+  /// No description provided for @errorLoadingChats.
+  ///
+  /// In ko, this message translates to:
+  /// **'채팅을 불러올 수 없습니다'**
+  String get errorLoadingChats;
+
+  /// No description provided for @contactAdmin.
+  ///
+  /// In ko, this message translates to:
+  /// **'관리자 문의'**
+  String get contactAdmin;
+
+  /// No description provided for @supportChatDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'운영 관련 문의사항을 관리자에게 직접 문의하세요'**
+  String get supportChatDescription;
+
+  /// No description provided for @errorCreatingChat.
+  ///
+  /// In ko, this message translates to:
+  /// **'채팅방을 생성할 수 없습니다'**
+  String get errorCreatingChat;
+
+  /// No description provided for @startSupportChat.
+  ///
+  /// In ko, this message translates to:
+  /// **'문의사항을 입력해주세요'**
+  String get startSupportChat;
+
+  /// No description provided for @adminSupport.
+  ///
+  /// In ko, this message translates to:
+  /// **'관리자 지원'**
+  String get adminSupport;
+
+  /// No description provided for @contactAdminDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'운영 관련 도움이 필요하시면 관리자에게 문의하세요'**
+  String get contactAdminDescription;
+
+  /// No description provided for @myCoupons.
+  ///
+  /// In ko, this message translates to:
+  /// **'내 쿠폰함'**
+  String get myCoupons;
+
+  /// No description provided for @noCoupons.
+  ///
+  /// In ko, this message translates to:
+  /// **'보유한 쿠폰이 없습니다'**
+  String get noCoupons;
+
+  /// No description provided for @earnCouponsHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭 방문 시 스탬프를 모아 쿠폰을 받으세요!'**
+  String get earnCouponsHint;
+
+  /// No description provided for @couponReady.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용 가능!'**
+  String get couponReady;
+
+  /// No description provided for @stamps.
+  ///
+  /// In ko, this message translates to:
+  /// **'스탬프'**
+  String get stamps;
+
+  /// No description provided for @useNow.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용하기'**
+  String get useNow;
+
+  /// No description provided for @expiresOn.
+  ///
+  /// In ko, this message translates to:
+  /// **'유효기간'**
+  String get expiresOn;
+
+  /// No description provided for @showQR.
+  ///
+  /// In ko, this message translates to:
+  /// **'QR 보기'**
+  String get showQR;
+
+  /// No description provided for @couponQR.
+  ///
+  /// In ko, this message translates to:
+  /// **'쿠폰 QR'**
+  String get couponQR;
+
+  /// No description provided for @showQRToOwner.
+  ///
+  /// In ko, this message translates to:
+  /// **'사장님에게 이 QR 코드를 보여주세요'**
+  String get showQRToOwner;
+
+  /// No description provided for @close.
+  ///
+  /// In ko, this message translates to:
+  /// **'닫기'**
+  String get close;
+
+  /// No description provided for @visitHistory.
+  ///
+  /// In ko, this message translates to:
+  /// **'방문 기록'**
+  String get visitHistory;
+
+  /// No description provided for @noVisitHistory.
+  ///
+  /// In ko, this message translates to:
+  /// **'방문 기록이 없습니다'**
+  String get noVisitHistory;
+
+  /// No description provided for @visitTrucksHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭을 방문하고 체크인해보세요!'**
+  String get visitTrucksHint;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In ko, this message translates to:
+  /// **'회원 탈퇴'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In ko, this message translates to:
+  /// **'정말로 탈퇴하시겠습니까?\\n모든 데이터가 삭제되며 복구할 수 없습니다.'**
+  String get deleteAccountWarning;
+
+  /// No description provided for @accountDeleted.
+  ///
+  /// In ko, this message translates to:
+  /// **'회원 탈퇴가 완료되었습니다'**
+  String get accountDeleted;
 }
 
 class _AppLocalizationsDelegate

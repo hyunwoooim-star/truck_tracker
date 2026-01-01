@@ -444,5 +444,41 @@
   "couponWrongTruck": "다른 트럭의 쿠폰입니다",
   "couponUseFailed": "쿠폰 사용에 실패했습니다",
   "couponScanFailed": "쿠폰 스캔에 실패했습니다",
-  "confirm": "확인"
+  "confirm": "확인",
+
+  "truckManagement": "트럭 관리",
+  "publicTalk": "공개 Talk",
+  "publicTalkDescription": "모든 고객이 볼 수 있는 공개 대화입니다",
+  "customerChats": "1:1 고객 채팅",
+  "customerChatsDescription": "고객과의 개인 채팅 목록입니다",
+  "noCustomerChats": "아직 채팅이 없습니다",
+  "errorLoadingChats": "채팅을 불러올 수 없습니다",
+
+  "contactAdmin": "관리자 문의",
+  "supportChatDescription": "운영 관련 문의사항을 관리자에게 직접 문의하세요",
+  "errorCreatingChat": "채팅방을 생성할 수 없습니다",
+  "startSupportChat": "문의사항을 입력해주세요",
+  "adminSupport": "관리자 지원",
+  "contactAdminDescription": "운영 관련 도움이 필요하시면 관리자에게 문의하세요",
+
+  "myCoupons": "내 쿠폰함",
+  "noCoupons": "보유한 쿠폰이 없습니다",
+  "earnCouponsHint": "트럭 방문 시 스탬프를 모아 쿠폰을 받으세요!",
+  "couponReady": "사용 가능!",
+  "stamps": "스탬프",
+  "useNow": "사용하기",
+  "expiresOn": "유효기간",
+  "showQR": "QR 보기",
+  "couponQR": "쿠폰 QR",
+  "showQRToOwner": "사장님에게 이 QR 코드를 보여주세요",
+  "close": "닫기",
+
+  "visitHistory": "방문 기록",
+  "noVisitHistory": "방문 기록이 없습니다",
+  "visitTrucksHint": "트럭을 방문하고 체크인해보세요!",
+
+  "deleteAccount": "회원 탈퇴",
+  "deleteAccountWarning": "정말로 탈퇴하시겠습니까?\\n모든 데이터가 삭제되며 복구할 수 없습니다.",
+  "accountDeleted": "회원 탈퇴가 완료되었습니다",
+  "loginRequired": "로그인이 필요합니다"
 }

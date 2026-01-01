@@ -1193,4 +1193,94 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get confirm => '확인';
+
+  @override
+  String get truckManagement => '트럭 관리';
+
+  @override
+  String get publicTalk => '공개 Talk';
+
+  @override
+  String get publicTalkDescription => '모든 고객이 볼 수 있는 공개 대화입니다';
+
+  @override
+  String get customerChats => '1:1 고객 채팅';
+
+  @override
+  String get customerChatsDescription => '고객과의 개인 채팅 목록입니다';
+
+  @override
+  String get noCustomerChats => '아직 채팅이 없습니다';
+
+  @override
+  String get errorLoadingChats => '채팅을 불러올 수 없습니다';
+
+  @override
+  String get contactAdmin => '관리자 문의';
+
+  @override
+  String get supportChatDescription => '운영 관련 문의사항을 관리자에게 직접 문의하세요';
+
+  @override
+  String get errorCreatingChat => '채팅방을 생성할 수 없습니다';
+
+  @override
+  String get startSupportChat => '문의사항을 입력해주세요';
+
+  @override
+  String get adminSupport => '관리자 지원';
+
+  @override
+  String get contactAdminDescription => '운영 관련 도움이 필요하시면 관리자에게 문의하세요';
+
+  @override
+  String get myCoupons => '내 쿠폰함';
+
+  @override
+  String get noCoupons => '보유한 쿠폰이 없습니다';
+
+  @override
+  String get earnCouponsHint => '트럭 방문 시 스탬프를 모아 쿠폰을 받으세요!';
+
+  @override
+  String get couponReady => '사용 가능!';
+
+  @override
+  String get stamps => '스탬프';
+
+  @override
+  String get useNow => '사용하기';
+
+  @override
+  String get expiresOn => '유효기간';
+
+  @override
+  String get showQR => 'QR 보기';
+
+  @override
+  String get couponQR => '쿠폰 QR';
+
+  @override
+  String get showQRToOwner => '사장님에게 이 QR 코드를 보여주세요';
+
+  @override
+  String get close => '닫기';
+
+  @override
+  String get visitHistory => '방문 기록';
+
+  @override
+  String get noVisitHistory => '방문 기록이 없습니다';
+
+  @override
+  String get visitTrucksHint => '트럭을 방문하고 체크인해보세요!';
+
+  @override
+  String get deleteAccount => '회원 탈퇴';
+
+  @override
+  String get deleteAccountWarning => '정말로 탈퇴하시겠습니까?\\n모든 데이터가 삭제되며 복구할 수 없습니다.';
+
+  @override
+  String get accountDeleted => '회원 탈퇴가 완료되었습니다';
 }

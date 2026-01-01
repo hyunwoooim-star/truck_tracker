@@ -556,3 +556,50 @@ final class CurrentUserRoleProvider
 }
 
 String _$currentUserRoleHash() => r'b39e6d93eafa6f68688d4d09b3bdc20b0debea84';
+
+/// 닉네임 변경 정보 가져오기 (이번 달 변경 횟수)
+
+@ProviderFor(nicknameChangeInfo)
+final nicknameChangeInfoProvider = NicknameChangeInfoProvider._();
+
+/// 닉네임 변경 정보 가져오기 (이번 달 변경 횟수)
+
+final class NicknameChangeInfoProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Map<String, dynamic>?>,
+          Map<String, dynamic>?,
+          FutureOr<Map<String, dynamic>?>
+        >
+    with
+        $FutureModifier<Map<String, dynamic>?>,
+        $FutureProvider<Map<String, dynamic>?> {
+  /// 닉네임 변경 정보 가져오기 (이번 달 변경 횟수)
+  NicknameChangeInfoProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'nicknameChangeInfoProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$nicknameChangeInfoHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<Map<String, dynamic>?> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Map<String, dynamic>?> create(Ref ref) {
+    return nicknameChangeInfo(ref);
+  }
+}
+
+String _$nicknameChangeInfoHash() =>
+    r'8e50def22ea18f4c8fc06bb60fa7c3af9d71ed45';

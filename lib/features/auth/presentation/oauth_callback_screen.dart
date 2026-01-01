@@ -26,6 +26,7 @@ class OAuthCallbackScreen extends ConsumerStatefulWidget {
 class _OAuthCallbackScreenState extends ConsumerState<OAuthCallbackScreen> {
   bool _isProcessing = true;
   String? _error;
+  static final Set<String> _processedCodes = {};
 
   @override
   void initState() {
@@ -34,6 +35,22 @@ class _OAuthCallbackScreenState extends ConsumerState<OAuthCallbackScreen> {
   }
 
   Future<void> _processCallback() async {
+    // 중복 처리 방지 (동일한 코드가 이미 처리되었으면 스킵)
+    if (_processedCodes.contains(widget.code)) {
+      setState(() {
+        _isProcessing = false;
+        _error = '이미 처리된 로그인 요청입니다. 다시 시도해주세요.';
+      });
+      return;
+    }
+    _processedCodes.add(widget.code);
+
+    // 오래된 코드들 정리 (10개 이상이면 전체 삭제)
+    if (_processedCodes.length > 10) {
+      _processedCodes.clear();
+      _processedCodes.add(widget.code);
+    }
+
     try {
       final authService = ref.read(authServiceProvider);
 

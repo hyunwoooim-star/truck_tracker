@@ -155,9 +155,10 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen> {
     try {
       final authService = ref.read(authServiceProvider);
       final userId = authService.currentUserId;
-      final userEmail = authService.currentUserEmail;
+      final userEmail = authService.currentUserEmail ?? '';
+      final userName = authService.currentUser?.displayName ?? '';
 
-      if (userId == null || userEmail == null) {
+      if (userId == null) {
         throw Exception('로그인 정보를 찾을 수 없습니다');
       }
 
@@ -168,7 +169,7 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen> {
           .set({
         'id': widget.truckId,
         'ownerId': userId,
-        'ownerEmail': userEmail,
+        'ownerEmail': userEmail.isNotEmpty ? userEmail : userName,
         'truckNumber': _truckNameController.text.trim(),
         'driverName': _driverNameController.text.trim(),
         'contactPhone': _phoneController.text.trim(),

@@ -61,10 +61,17 @@ class AppSettingsScreen extends ConsumerWidget {
                 ),
 
                 // ═══════════════════════════════════════════════════════
-                // 내 정보
+                // 개인정보
                 // ═══════════════════════════════════════════════════════
-                _buildSectionHeader(context, '내 정보'),
-                _buildProfileTile(context, ref),
+                _buildSectionHeader(context, '개인정보'),
+                _buildPersonalInfoSection(context, ref),
+
+                const SizedBox(height: 16),
+
+                // ═══════════════════════════════════════════════════════
+                // 내 활동
+                // ═══════════════════════════════════════════════════════
+                _buildSectionHeader(context, '내 활동'),
                 _buildSettingsTile(
                   icon: Icons.favorite_outline,
                   title: '즐겨찾기',
@@ -269,6 +276,207 @@ class AppSettingsScreen extends ConsumerWidget {
         // TODO: 프로필 수정 화면으로 이동
         SnackBarHelper.showInfo(context, '프로필 수정 기능 준비 중');
       },
+    );
+  }
+
+  /// 개인정보 섹션 (역할, 닉네임, 이메일)
+  Widget _buildPersonalInfoSection(BuildContext context, WidgetRef ref) {
+    final nicknameAsync = ref.watch(currentUserNicknameProvider);
+    final emailAsync = ref.watch(currentUserEmailProvider);
+    final roleAsync = ref.watch(currentUserRoleProvider);
+    final nicknameChangeInfoAsync = ref.watch(nicknameChangeInfoProvider);
+
+    return Column(
+      children: [
+        // 내 역할
+        ListTile(
+          leading: const Icon(Icons.badge_outlined),
+          title: const Text('내 역할'),
+          trailing: roleAsync.when(
+            data: (role) {
+              String roleText;
+              Color roleColor;
+              IconData roleIcon;
+              switch (role) {
+                case 'admin':
+                  roleText = '관리자';
+                  roleColor = Colors.purple;
+                  roleIcon = Icons.admin_panel_settings;
+                  break;
+                case 'owner':
+                  roleText = '사장님';
+                  roleColor = Colors.green;
+                  roleIcon = Icons.store;
+                  break;
+                default:
+                  roleText = '손님';
+                  roleColor = AppTheme.mustardYellow;
+                  roleIcon = Icons.person;
+              }
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: roleColor.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(roleIcon, size: 16, color: roleColor),
+                    const SizedBox(width: 4),
+                    Text(
+                      roleText,
+                      style: TextStyle(
+                        color: roleColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+            loading: () => const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            error: (_, __) => const Text('확인 불가'),
+          ),
+        ),
+
+        // 닉네임 수정
+        ListTile(
+          leading: const Icon(Icons.edit_outlined),
+          title: const Text('닉네임'),
+          subtitle: nicknameChangeInfoAsync.when(
+            data: (info) {
+              final remaining = info?['remainingChanges'] ?? 3;
+              return Text('이번 달 수정 가능: $remaining회');
+            },
+            loading: () => null,
+            error: (_, __) => null,
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              nicknameAsync.when(
+                data: (nickname) => Text(
+                  nickname ?? '없음',
+                  style: const TextStyle(color: Colors.grey),
+                ),
+                loading: () => const Text('...'),
+                error: (_, __) => const Text('없음'),
+              ),
+              const SizedBox(width: 8),
+              const Icon(Icons.chevron_right),
+            ],
+          ),
+          onTap: () => _showNicknameEditDialog(context, ref),
+        ),
+
+        // 이메일 (표시만)
+        ListTile(
+          leading: const Icon(Icons.email_outlined),
+          title: const Text('이메일'),
+          trailing: Text(
+            emailAsync,
+            style: const TextStyle(color: Colors.grey),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 닉네임 수정 다이얼로그
+  void _showNicknameEditDialog(BuildContext context, WidgetRef ref) {
+    final nicknameChangeInfoAsync = ref.read(nicknameChangeInfoProvider);
+
+    nicknameChangeInfoAsync.when(
+      data: (info) {
+        final remaining = info?['remainingChanges'] ?? 3;
+
+        if (remaining <= 0) {
+          SnackBarHelper.showError(context, '이번 달 닉네임 수정 횟수를 모두 사용했습니다 (월 3회)');
+          return;
+        }
+
+        final controller = TextEditingController();
+        final currentNickname = ref.read(currentUserNicknameProvider).value;
+        controller.text = currentNickname ?? '';
+
+        showDialog(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            title: const Text('닉네임 수정'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: controller,
+                  decoration: const InputDecoration(
+                    labelText: '새 닉네임',
+                    hintText: '2-10자 입력',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLength: 10,
+                  autofocus: true,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '이번 달 수정 가능 횟수: $remaining회',
+                  style: TextStyle(
+                    color: remaining <= 1 ? Colors.orange : Colors.grey,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('취소'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final newNickname = controller.text.trim();
+                  if (newNickname.length < 2) {
+                    SnackBarHelper.showError(dialogContext, '닉네임은 2자 이상이어야 합니다');
+                    return;
+                  }
+                  if (newNickname == currentNickname) {
+                    Navigator.pop(dialogContext);
+                    return;
+                  }
+
+                  Navigator.pop(dialogContext);
+
+                  try {
+                    final authService = ref.read(authServiceProvider);
+                    final userId = ref.read(currentUserIdProvider);
+                    if (userId == null) throw Exception('로그인 필요');
+
+                    await authService.updateNicknameWithLimit(userId, newNickname);
+                    ref.invalidate(currentUserNicknameProvider);
+                    ref.invalidate(nicknameChangeInfoProvider);
+
+                    if (context.mounted) {
+                      SnackBarHelper.showSuccess(context, '닉네임이 변경되었습니다');
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      SnackBarHelper.showError(context, '닉네임 변경 실패: $e');
+                    }
+                  }
+                },
+                child: const Text('변경'),
+              ),
+            ],
+          ),
+        );
+      },
+      loading: () => SnackBarHelper.showInfo(context, '로딩 중...'),
+      error: (e, _) => SnackBarHelper.showError(context, '정보 로드 실패'),
     );
   }
 

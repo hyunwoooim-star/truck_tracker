@@ -154,3 +154,16 @@ Future<String> currentUserRole(Ref ref) async {
   return authService.getUserRole(userId);
 }
 
+/// 닉네임 변경 정보 가져오기 (이번 달 변경 횟수)
+@riverpod
+Future<Map<String, dynamic>?> nicknameChangeInfo(Ref ref) async {
+  final userId = ref.watch(currentUserIdProvider);
+
+  if (userId == null) {
+    return null;
+  }
+
+  final authService = ref.watch(authServiceProvider);
+  return authService.getNicknameChangeInfo(userId);
+}
+

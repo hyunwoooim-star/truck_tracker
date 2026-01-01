@@ -58,72 +58,63 @@ class AdminStatsRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   /// Stream admin statistics in real-time
+  /// Always computes from collections for accuracy (ignores cached stats doc)
   Stream<AdminStats> watchAdminStats() {
-    AppLogger.debug('Watching admin stats', tag: 'AdminStats');
+    AppLogger.debug('Watching admin stats (live computation)', tag: 'AdminStats');
 
-    return _firestore
-        .collection('stats')
-        .doc('admin_overview')
-        .snapshots()
-        .asyncMap((snapshot) async {
-      if (snapshot.exists && snapshot.data() != null) {
-        return AdminStats.fromFirestore(snapshot.data()!);
-      }
-
-      // If stats document doesn't exist, compute from collections
+    // Watch users collection for changes and recompute stats
+    return _firestore.collection('users').snapshots().asyncMap((_) async {
       return _computeStatsFromCollections();
     });
   }
 
-  /// Compute stats by querying collections (fallback)
+  /// Compute stats by querying collections (uses actual documents, not count())
   Future<AdminStats> _computeStatsFromCollections() async {
-    AppLogger.debug('Computing stats from collections', tag: 'AdminStats');
+    AppLogger.debug('Computing stats from collections (live)', tag: 'AdminStats');
 
     try {
-      // Get pending owner requests count
-      final pendingQuery = await _firestore
+      // Get owner requests (fetch actual docs to avoid cache issues)
+      final ownerRequestsSnapshot = await _firestore
           .collection('owner_requests')
-          .where('status', isEqualTo: 'pending')
-          .count()
-          .get();
+          .get(const GetOptions(source: Source.server));
 
-      // Get approved owner requests count
-      final approvedQuery = await _firestore
-          .collection('owner_requests')
-          .where('status', isEqualTo: 'approved')
-          .count()
-          .get();
+      int pending = 0;
+      int approved = 0;
+      int rejected = 0;
 
-      // Get rejected owner requests count
-      final rejectedQuery = await _firestore
-          .collection('owner_requests')
-          .where('status', isEqualTo: 'rejected')
-          .count()
-          .get();
+      for (final doc in ownerRequestsSnapshot.docs) {
+        final status = doc.data()['status'] as String?;
+        if (status == 'pending') {
+          pending++;
+        } else if (status == 'approved') {
+          approved++;
+        } else if (status == 'rejected') {
+          rejected++;
+        }
+      }
 
-      // Get total users count
-      final usersQuery = await _firestore
+      // Get total users count (fetch from server to avoid cache)
+      final usersSnapshot = await _firestore
           .collection('users')
-          .count()
-          .get();
+          .get(const GetOptions(source: Source.server));
+      final totalUsers = usersSnapshot.docs.length;
 
-      // Get total trucks count
-      final trucksQuery = await _firestore
+      // Get total trucks count (fetch from server to avoid cache)
+      final trucksSnapshot = await _firestore
           .collection('trucks')
-          .count()
-          .get();
+          .get(const GetOptions(source: Source.server));
+      final totalTrucks = trucksSnapshot.docs.length;
 
-      final pending = pendingQuery.count ?? 0;
-      final approved = approvedQuery.count ?? 0;
-      final rejected = rejectedQuery.count ?? 0;
       final total = approved + rejected;
+
+      AppLogger.debug('Stats computed: users=$totalUsers, trucks=$totalTrucks, pending=$pending, approved=$approved', tag: 'AdminStats');
 
       return AdminStats(
         pendingOwnerRequests: pending,
         totalApprovedOwners: approved,
         totalRejectedOwners: rejected,
-        totalUsers: usersQuery.count ?? 0,
-        totalTrucks: trucksQuery.count ?? 0,
+        totalUsers: totalUsers,
+        totalTrucks: totalTrucks,
         approvalRate: total > 0 ? (approved / total * 100) : 0.0,
         lastUpdated: DateTime.now(),
       );

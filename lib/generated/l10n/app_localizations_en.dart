@@ -1213,4 +1213,99 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirm => 'Confirm';
+
+  @override
+  String get truckManagement => 'Truck Management';
+
+  @override
+  String get publicTalk => 'Public Talk';
+
+  @override
+  String get publicTalkDescription =>
+      'Public conversation visible to all customers';
+
+  @override
+  String get customerChats => 'Customer Chats';
+
+  @override
+  String get customerChatsDescription => 'Private chats with customers';
+
+  @override
+  String get noCustomerChats => 'No customer chats yet';
+
+  @override
+  String get errorLoadingChats => 'Failed to load chats';
+
+  @override
+  String get contactAdmin => 'Contact Admin';
+
+  @override
+  String get supportChatDescription =>
+      'Contact admin for any operational questions';
+
+  @override
+  String get errorCreatingChat => 'Failed to create chat room';
+
+  @override
+  String get startSupportChat => 'Please enter your question';
+
+  @override
+  String get adminSupport => 'Admin Support';
+
+  @override
+  String get contactAdminDescription =>
+      'Contact admin if you need help with operations';
+
+  @override
+  String get myCoupons => 'My Coupons';
+
+  @override
+  String get noCoupons => 'No coupons available';
+
+  @override
+  String get earnCouponsHint =>
+      'Visit trucks and collect stamps to earn coupons!';
+
+  @override
+  String get couponReady => 'Ready to use!';
+
+  @override
+  String get stamps => 'stamps';
+
+  @override
+  String get useNow => 'Use Now';
+
+  @override
+  String get expiresOn => 'Expires on';
+
+  @override
+  String get showQR => 'Show QR';
+
+  @override
+  String get couponQR => 'Coupon QR';
+
+  @override
+  String get showQRToOwner => 'Show this QR code to the truck owner';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get visitHistory => 'Visit History';
+
+  @override
+  String get noVisitHistory => 'No visit history';
+
+  @override
+  String get visitTrucksHint => 'Visit trucks and check in!';
+
+  @override
+  String get deleteAccount => 'Delete Account';
+
+  @override
+  String get deleteAccountWarning =>
+      'Are you sure you want to delete your account?\\nAll data will be permanently deleted.';
+
+  @override
+  String get accountDeleted => 'Account has been deleted';
 }
