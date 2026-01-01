@@ -100,25 +100,52 @@ class FcmService {
   // ═══════════════════════════════════════════════════════════
 
   /// Notify all followers when truck opens
+  /// OPTIMIZED: Uses batch fetching instead of N+1 queries
   Future<void> notifyFollowers(String truckId, String truckName) async {
     AppLogger.debug('Notifying followers of truck $truckId ($truckName)', tag: 'FcmService');
 
     try {
-      // Get all users who have this truck in their favorites
       final favoritesSnapshot = await _firestore
           .collection('favorites')
           .where('truckId', isEqualTo: truckId)
           .get();
 
-      AppLogger.debug('Found ${favoritesSnapshot.docs.length} followers', tag: 'FcmService');
+      final followerCount = favoritesSnapshot.docs.length;
+      AppLogger.debug('Found $followerCount followers', tag: 'FcmService');
 
-      // Get FCM tokens for all followers
+      if (followerCount == 0) {
+        AppLogger.warning('No followers to notify', tag: 'FcmService');
+        return;
+      }
+
+      // OPTIMIZED: Batch fetch user tokens instead of N+1 queries
+      final userIds = favoritesSnapshot.docs
+          .map((doc) => doc.data()['userId'] as String?)
+          .where((id) => id != null)
+          .cast<String>()
+          .toList();
+
+      if (userIds.isEmpty) {
+        AppLogger.warning('No valid user IDs found', tag: 'FcmService');
+        return;
+      }
+
+      // Batch fetch users in chunks of 30 (Firestore 'in' query limit)
       final List<String> tokens = [];
-      for (final doc in favoritesSnapshot.docs) {
-        final userId = doc.data()['userId'] as String?;
-        if (userId != null) {
-          final userDoc = await _firestore.collection('users').doc(userId).get();
-          final fcmToken = userDoc.data()?['fcmToken'] as String?;
+      const batchSize = 30;
+      for (var i = 0; i < userIds.length; i += batchSize) {
+        final batchIds = userIds.sublist(
+          i,
+          (i + batchSize > userIds.length) ? userIds.length : i + batchSize,
+        );
+
+        final usersSnapshot = await _firestore
+            .collection('users')
+            .where(FieldPath.documentId, whereIn: batchIds)
+            .get();
+
+        for (final userDoc in usersSnapshot.docs) {
+          final fcmToken = userDoc.data()['fcmToken'] as String?;
           if (fcmToken != null && fcmToken.isNotEmpty) {
             tokens.add(fcmToken);
           }
@@ -126,23 +153,7 @@ class FcmService {
       }
 
       AppLogger.debug('Found ${tokens.length} valid FCM tokens', tag: 'FcmService');
-
-      if (tokens.isEmpty) {
-        AppLogger.warning('No tokens to send notifications to', tag: 'FcmService');
-        return;
-      }
-
-      // Note: Notifications are handled automatically by Cloud Functions
-      // The `notifyTruckOpening` function triggers on Firestore document update
-      // when truck.isOpen changes from false to true.
-      // Users subscribed to topic `truck_{truckId}` will receive push notifications.
-      //
-      // Cloud Function: functions/index.js#notifyTruckOpening
-      // Trigger: Firestore onUpdate('trucks/{truckId}')
-      //
-      // This client-side method is kept for logging/debugging purposes.
       AppLogger.debug('Truck opened - Cloud Function will send notifications', tag: 'FcmService');
-      AppLogger.debug('Followers count: ${tokens.length}', tag: 'FcmService');
     } catch (e, stackTrace) {
       AppLogger.error('Error notifying followers', error: e, stackTrace: stackTrace, tag: 'FcmService');
     }
