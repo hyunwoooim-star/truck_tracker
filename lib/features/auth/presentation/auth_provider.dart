@@ -176,3 +176,33 @@ Future<Map<String, dynamic>?> nicknameChangeInfo(Ref ref) async {
   return authService.getNicknameChangeInfo(userId);
 }
 
+/// 로그인 방법 정보 가져오기 (kakao, naver, google, email)
+@riverpod
+String loginProvider(Ref ref) {
+  final user = ref.watch(currentUserProvider);
+
+  if (user == null) {
+    return 'unknown';
+  }
+
+  final email = user.email ?? '';
+
+  // providerData 확인
+  for (final provider in user.providerData) {
+    if (provider.providerId == 'google.com') {
+      return 'google';
+    }
+  }
+
+  // 이메일 도메인으로 판단 (카카오/네이버 커스텀 토큰 사용 시)
+  if (email.contains('kakao')) {
+    return 'kakao';
+  }
+  if (email.contains('naver')) {
+    return 'naver';
+  }
+
+  // 이메일/비밀번호 로그인
+  return 'email';
+}
+

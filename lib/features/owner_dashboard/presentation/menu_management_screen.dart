@@ -10,9 +10,9 @@ import 'package:image_picker/image_picker.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
-import '../../auth/presentation/auth_provider.dart';
 import '../../truck_detail/domain/menu_item.dart';
 import '../../truck_detail/presentation/truck_detail_provider.dart';
+import 'owner_status_provider.dart';
 
 /// Screen for managing menu items
 class MenuManagementScreen extends ConsumerWidget {
@@ -21,7 +21,7 @@ class MenuManagementScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final truckIdAsync = ref.watch(currentUserTruckIdProvider);
+    final ownerTruckAsync = ref.watch(ownerTruckProvider);
 
     return Scaffold(
       backgroundColor: AppTheme.midnightCharcoal,
@@ -30,25 +30,27 @@ class MenuManagementScreen extends ConsumerWidget {
         backgroundColor: AppTheme.midnightCharcoal,
         foregroundColor: AppTheme.mustardYellow,
       ),
-      body: truckIdAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+      body: ownerTruckAsync.when(
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: AppTheme.mustardYellow),
+        ),
         error: (e, _) => Center(
           child: Text(l10n.errorOccurred, style: const TextStyle(color: Colors.red)),
         ),
-        data: (truckId) {
-          if (truckId == null) {
+        data: (truck) {
+          if (truck == null) {
             return Center(
               child: Text(l10n.noTruckRegistered,
                   style: const TextStyle(color: Colors.white70)),
             );
           }
-          return _MenuList(truckId: truckId.toString());
+          return _MenuList(truckId: truck.id);
         },
       ),
-      floatingActionButton: truckIdAsync.maybeWhen(
-        data: (truckId) => truckId != null
+      floatingActionButton: ownerTruckAsync.maybeWhen(
+        data: (truck) => truck != null
             ? FloatingActionButton.extended(
-                onPressed: () => _showAddEditDialog(context, ref, truckId.toString(), null),
+                onPressed: () => _showAddEditDialog(context, ref, truck.id, null),
                 backgroundColor: AppTheme.mustardYellow,
                 foregroundColor: Colors.black,
                 icon: const Icon(Icons.add),

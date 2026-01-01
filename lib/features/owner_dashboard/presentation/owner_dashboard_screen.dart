@@ -55,9 +55,14 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
         backgroundColor: _charcoal,
         foregroundColor: _mustard,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: [
+          // 핵심 기능만 AppBar에 표시
           IconButton(
-            icon: const Icon(Icons.qr_code),
+            icon: const Icon(Icons.qr_code, size: 28),
             tooltip: l10n.qrCheckInTooltip,
             onPressed: () {
               Navigator.of(context).push(
@@ -68,32 +73,7 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.calendar_today),
-            tooltip: l10n.scheduleTooltip,
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const ScheduleManagementScreen(),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.dashboard_customize),
-            tooltip: l10n.truckManagement,
-            onPressed: () {
-              final ownerTruck = ref.read(ownerTruckProvider).value;
-              if (ownerTruck != null) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => OwnerManagementScreen(truckId: ownerTruck.id),
-                  ),
-                );
-              }
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.restaurant_menu),
+            icon: const Icon(Icons.restaurant_menu, size: 28),
             tooltip: l10n.menuManagement,
             onPressed: () {
               Navigator.of(context).push(
@@ -103,129 +83,93 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
               );
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.local_offer),
-            tooltip: '쿠폰 관리',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const CouponManagementScreen(),
-                ),
-              );
-            },
-          ),
-          // 스탬프 쿠폰 스캐너
-          IconButton(
-            icon: const Icon(Icons.qr_code_scanner),
-            tooltip: l10n.couponScanner,
-            onPressed: () {
-              final ownerTruck = ref.read(ownerTruckProvider).value;
-              if (ownerTruck != null) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => CouponScannerScreen(truckId: ownerTruck.id),
-                  ),
-                );
-              }
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.rate_review),
-            tooltip: l10n.manageReviews,
-            onPressed: () {
-              final ownerTruck = ref.read(ownerTruckProvider).value;
-              if (ownerTruck != null) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ReviewManagementScreen(truckId: ownerTruck.id),
-                  ),
-                );
-              }
-            },
-          ),
-          // 매출/분석 메뉴
+          // 더보기 메뉴 (나머지 기능들)
           PopupMenuButton<String>(
-            icon: const Icon(Icons.analytics),
-            tooltip: l10n.analyticsTooltip,
+            icon: const Icon(Icons.more_vert, size: 28),
+            tooltip: '더보기',
             onSelected: (value) {
+              final ownerTruck = ref.read(ownerTruckProvider).value;
               switch (value) {
+                case 'schedule':
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const ScheduleManagementScreen()),
+                  );
+                  break;
+                case 'management':
+                  if (ownerTruck != null) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => OwnerManagementScreen(truckId: ownerTruck.id)),
+                    );
+                  }
+                  break;
+                case 'coupon':
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const CouponManagementScreen()),
+                  );
+                  break;
+                case 'coupon_scanner':
+                  if (ownerTruck != null) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => CouponScannerScreen(truckId: ownerTruck.id)),
+                    );
+                  }
+                  break;
+                case 'review':
+                  if (ownerTruck != null) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => ReviewManagementScreen(truckId: ownerTruck.id)),
+                    );
+                  }
+                  break;
                 case 'revenue':
                   Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const RevenueDashboardScreen(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const RevenueDashboardScreen()),
                   );
                   break;
                 case 'analytics':
                   Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const AnalyticsScreen(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const AnalyticsScreen()),
                   );
+                  break;
+                case 'notification':
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const PushNotificationTool()),
+                  );
+                  break;
+                case 'upload':
+                  _showMigrationDialog(context, ref);
+                  break;
+                case 'preview':
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const MapFirstScreen()),
+                  );
+                  break;
+                case 'settings':
+                  _showSettingsDialog(context, ref);
+                  break;
+                case 'logout':
+                  _showLogoutDialog(context, ref);
                   break;
               }
             },
             itemBuilder: (_) => [
-              const PopupMenuItem(
-                value: 'revenue',
-                child: Row(
-                  children: [
-                    Icon(Icons.attach_money, size: 20),
-                    SizedBox(width: 8),
-                    Text('매출 대시보드'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'analytics',
-                child: Row(
-                  children: [
-                    Icon(Icons.bar_chart, size: 20),
-                    SizedBox(width: 8),
-                    Text('조회/리뷰 분석'),
-                  ],
-                ),
-              ),
+              _buildPopupMenuItem('schedule', Icons.calendar_today, '영업 일정'),
+              _buildPopupMenuItem('management', Icons.dashboard_customize, '트럭 관리'),
+              const PopupMenuDivider(),
+              _buildPopupMenuItem('coupon', Icons.local_offer, '쿠폰 관리'),
+              _buildPopupMenuItem('coupon_scanner', Icons.qr_code_scanner, '쿠폰 스캐너'),
+              _buildPopupMenuItem('review', Icons.rate_review, '리뷰 관리'),
+              const PopupMenuDivider(),
+              _buildPopupMenuItem('revenue', Icons.attach_money, '매출 대시보드'),
+              _buildPopupMenuItem('analytics', Icons.bar_chart, '조회/리뷰 분석'),
+              _buildPopupMenuItem('notification', Icons.notifications_active, '알림 발송'),
+              const PopupMenuDivider(),
+              _buildPopupMenuItem('preview', Icons.storefront, '손님 화면 보기'),
+              _buildPopupMenuItem('settings', Icons.settings, '트럭 정보 수정'),
+              _buildPopupMenuItem('upload', Icons.cloud_upload, '데이터 업로드'),
+              const PopupMenuDivider(),
+              _buildPopupMenuItem('logout', Icons.logout, '로그아웃', isDestructive: true),
             ],
-          ),
-          // 푸시 알림 발송
-          IconButton(
-            icon: const Icon(Icons.notifications_active),
-            tooltip: '알림 발송',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const PushNotificationTool(),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.cloud_upload),
-            tooltip: l10n.uploadDataTooltip,
-            onPressed: () => _showMigrationDialog(context, ref),
-          ),
-          // 손님 화면 미리보기 (지도에서 내 트럭이 어떻게 보이는지)
-          IconButton(
-            icon: const Icon(Icons.storefront, color: Colors.cyan),
-            tooltip: '손님 화면 보기',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const MapFirstScreen(),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            tooltip: '설정',
-            onPressed: () => _showSettingsDialog(context, ref),
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: l10n.logout,
-            onPressed: () => _showLogoutDialog(context, ref),
           ),
         ],
       ),
@@ -283,6 +227,35 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             style: const TextStyle(color: Colors.red),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Build popup menu item helper
+  PopupMenuItem<String> _buildPopupMenuItem(
+    String value,
+    IconData icon,
+    String label, {
+    bool isDestructive = false,
+  }) {
+    return PopupMenuItem(
+      value: value,
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 22,
+            color: isDestructive ? Colors.red : _mustard,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 15,
+              color: isDestructive ? Colors.red : null,
+            ),
+          ),
+        ],
       ),
     );
   }

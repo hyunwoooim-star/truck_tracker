@@ -15,6 +15,7 @@ import '../../owner_dashboard/presentation/owner_dashboard_screen.dart';
 import 'help_screen.dart';
 import 'my_reviews_screen.dart';
 import 'privacy_policy_screen.dart';
+import '../../customer/presentation/visit_history_screen.dart';
 import 'terms_of_service_screen.dart';
 import 'owner_request_dialog.dart';
 
@@ -87,6 +88,14 @@ class AppSettingsScreen extends ConsumerWidget {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const MyReviewsScreen()),
+                  ),
+                ),
+                _buildSettingsTile(
+                  icon: Icons.history,
+                  title: '방문기록',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const VisitHistoryScreen()),
                   ),
                 ),
 
@@ -280,41 +289,41 @@ class AppSettingsScreen extends ConsumerWidget {
     );
   }
 
-  /// 개인정보 섹션 (역할, 닉네임, 이메일)
+  /// 개인정보 섹션 (역할, 닉네임, 로그인 정보)
   Widget _buildPersonalInfoSection(BuildContext context, WidgetRef ref) {
     final nicknameAsync = ref.watch(currentUserNicknameProvider);
-    final emailAsync = ref.watch(currentUserEmailProvider);
     final roleAsync = ref.watch(currentUserRoleProvider);
     final nicknameChangeInfoAsync = ref.watch(nicknameChangeInfoProvider);
+    final loginProviderValue = ref.watch(loginProviderProvider);
 
     return Column(
       children: [
-        // 현재 모드
-        ListTile(
-          leading: const Icon(Icons.verified_user_outlined),
-          title: const Text('현재 모드'),
-          trailing: roleAsync.when(
-            data: (role) {
-              String roleText;
-              Color roleColor;
-              IconData roleIcon;
-              switch (role) {
-                case 'admin':
-                  roleText = '관리자 모드';
-                  roleColor = Colors.purple;
-                  roleIcon = Icons.admin_panel_settings;
-                  break;
-                case 'owner':
-                  roleText = '사장님 모드';
-                  roleColor = Colors.green;
-                  roleIcon = Icons.store;
-                  break;
-                default:
-                  roleText = '손님 모드';
-                  roleColor = AppTheme.mustardYellow;
-                  roleIcon = Icons.person;
-              }
-              return Container(
+        // 현재 모드 (아이콘 동적)
+        roleAsync.when(
+          data: (role) {
+            String roleText;
+            Color roleColor;
+            IconData roleIcon;
+            switch (role) {
+              case 'admin':
+                roleText = '관리자 모드';
+                roleColor = Colors.purple;
+                roleIcon = Icons.admin_panel_settings;
+                break;
+              case 'owner':
+                roleText = '사장님 모드';
+                roleColor = Colors.green;
+                roleIcon = Icons.store;
+                break;
+              default:
+                roleText = '손님 모드';
+                roleColor = AppTheme.mustardYellow;
+                roleIcon = Icons.person;
+            }
+            return ListTile(
+              leading: Icon(roleIcon, color: roleColor),
+              title: const Text('현재 모드'),
+              trailing: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: roleColor.withValues(alpha: 0.2),
@@ -334,14 +343,22 @@ class AppSettingsScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-              );
-            },
-            loading: () => const SizedBox(
+              ),
+            );
+          },
+          loading: () => const ListTile(
+            leading: Icon(Icons.person),
+            title: Text('현재 모드'),
+            trailing: SizedBox(
               width: 20,
               height: 20,
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
-            error: (_, __) => const Text('확인 불가'),
+          ),
+          error: (_, __) => const ListTile(
+            leading: Icon(Icons.person),
+            title: Text('현재 모드'),
+            trailing: Text('확인 불가'),
           ),
         ),
 
@@ -375,17 +392,59 @@ class AppSettingsScreen extends ConsumerWidget {
           onTap: () => _showNicknameEditDialog(context, ref),
         ),
 
-        // 이메일 (표시만)
+        // 로그인 정보 (provider별 표시)
         ListTile(
-          leading: const Icon(Icons.email_outlined),
-          title: const Text('이메일'),
+          leading: Icon(_getLoginProviderIcon(loginProviderValue)),
+          title: const Text('로그인 정보'),
           trailing: Text(
-            emailAsync,
-            style: const TextStyle(color: Colors.grey),
+            _getLoginProviderText(loginProviderValue),
+            style: TextStyle(
+              color: _getLoginProviderColor(loginProviderValue),
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],
     );
+  }
+
+  IconData _getLoginProviderIcon(String provider) {
+    switch (provider) {
+      case 'kakao':
+        return Icons.chat_bubble;
+      case 'naver':
+        return Icons.north_east;
+      case 'google':
+        return Icons.g_mobiledata;
+      default:
+        return Icons.email_outlined;
+    }
+  }
+
+  String _getLoginProviderText(String provider) {
+    switch (provider) {
+      case 'kakao':
+        return '카카오 계정';
+      case 'naver':
+        return '네이버 계정';
+      case 'google':
+        return '구글 계정';
+      default:
+        return '이메일 로그인';
+    }
+  }
+
+  Color _getLoginProviderColor(String provider) {
+    switch (provider) {
+      case 'kakao':
+        return const Color(0xFFFEE500);
+      case 'naver':
+        return const Color(0xFF03C75A);
+      case 'google':
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
   }
 
   /// 닉네임 수정 다이얼로그

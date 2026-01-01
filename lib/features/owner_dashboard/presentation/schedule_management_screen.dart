@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
-import '../../auth/presentation/auth_provider.dart';
 import '../../schedule/data/schedule_repository.dart';
 import '../../schedule/domain/daily_schedule.dart';
+import 'owner_status_provider.dart';
 
 /// Screen for managing weekly schedule
 class ScheduleManagementScreen extends ConsumerStatefulWidget {
@@ -29,15 +29,16 @@ class _ScheduleManagementScreenState
   }
 
   Future<void> _loadSchedule() async {
-    final truckId = await ref.read(currentUserTruckIdProvider.future);
-    if (truckId == null) {
+    // ownerTruckProvider는 Stream이므로 현재 값을 읽음
+    final truck = ref.read(ownerTruckProvider).value;
+    if (truck == null) {
       setState(() => _isLoading = false);
       return;
     }
 
     try {
       final repository = ref.read(scheduleRepositoryProvider);
-      final schedule = await repository.getWeeklySchedule(truckId.toString());
+      final schedule = await repository.getWeeklySchedule(truck.id);
       setState(() {
         _schedule = schedule;
         _isLoading = false;
@@ -48,12 +49,12 @@ class _ScheduleManagementScreenState
   }
 
   Future<void> _saveSchedule() async {
-    final truckId = await ref.read(currentUserTruckIdProvider.future);
-    if (truckId == null || _schedule == null) return;
+    final truck = ref.read(ownerTruckProvider).value;
+    if (truck == null || _schedule == null) return;
 
     try {
       final repository = ref.read(scheduleRepositoryProvider);
-      await repository.updateWeeklySchedule(truckId.toString(), _schedule!);
+      await repository.updateWeeklySchedule(truck.id, _schedule!);
 
       if (mounted) {
         final l10n = AppLocalizations.of(context);

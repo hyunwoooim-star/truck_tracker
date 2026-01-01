@@ -606,3 +606,49 @@ final class NicknameChangeInfoProvider
 
 String _$nicknameChangeInfoHash() =>
     r'8e50def22ea18f4c8fc06bb60fa7c3af9d71ed45';
+
+/// 로그인 방법 정보 가져오기 (kakao, naver, google, email)
+
+@ProviderFor(loginProvider)
+final loginProviderProvider = LoginProviderProvider._();
+
+/// 로그인 방법 정보 가져오기 (kakao, naver, google, email)
+
+final class LoginProviderProvider
+    extends $FunctionalProvider<String, String, String>
+    with $Provider<String> {
+  /// 로그인 방법 정보 가져오기 (kakao, naver, google, email)
+  LoginProviderProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'loginProviderProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$loginProviderHash();
+
+  @$internal
+  @override
+  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String create(Ref ref) {
+    return loginProvider(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$loginProviderHash() => r'528e3950f10da65e7048584940df5c10c8fc7ab5';

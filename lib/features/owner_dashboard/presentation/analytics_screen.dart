@@ -10,7 +10,7 @@ import '../../../core/utils/snackbar_helper.dart';
 import '../../../core/utils/web_download.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../analytics/data/analytics_repository.dart';
-import '../../auth/presentation/auth_provider.dart';
+import 'owner_status_provider.dart';
 
 /// Analytics Dashboard Screen with Date Range Support
 class AnalyticsScreen extends ConsumerWidget {
@@ -18,16 +18,16 @@ class AnalyticsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final truckIdAsync = ref.watch(currentUserTruckIdProvider);
+    final ownerTruckAsync = ref.watch(ownerTruckProvider);
     final l10n = AppLocalizations.of(context);
 
     // Watch the date range state
     final dateRange = ref.watch(analyticsDateRangeProvider);
 
-    // Fetch analytics for the date range - wait for truckId to load first
-    final analyticsAsync = truckIdAsync.when(
-      data: (truckId) => truckId != null
-          ? ref.watch(analyticsRangeProvider(truckId.toString(), dateRange))
+    // Fetch analytics for the date range - wait for truck to load first
+    final analyticsAsync = ownerTruckAsync.when(
+      data: (truck) => truck != null
+          ? ref.watch(analyticsRangeProvider(truck.id, dateRange))
           : const AsyncValue<TruckAnalyticsRange>.loading(),
       loading: () => const AsyncValue<TruckAnalyticsRange>.loading(),
       error: (error, stackTrace) => const AsyncValue<TruckAnalyticsRange>.loading(),

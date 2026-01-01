@@ -52,6 +52,8 @@ class CouponManagementScreen extends ConsumerWidget {
           final truck = ref.read(ownerTruckProvider).value;
           if (truck != null) {
             _showCouponDialog(context, ref, truck.id, null);
+          } else {
+            SnackBarHelper.showError(context, '트럭 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
           }
         },
         backgroundColor: AppTheme.mustardYellow,
