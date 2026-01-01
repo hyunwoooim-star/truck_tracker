@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -491,12 +492,56 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
               spacing: 8,
               runSpacing: 8,
               children: [
-                if (role != 'user')
-                  _buildRoleButton('일반으로 변경', 'user', Colors.blue, userId, role),
+                if (role != 'customer')
+                  _buildRoleButton('일반으로 변경', 'customer', Colors.blue, userId, role),
                 if (role != 'owner')
                   _buildRoleButton('사장님으로 변경', 'owner', Colors.green, userId, role),
                 if (role != 'admin')
                   _buildRoleButton('관리자로 변경', 'admin', Colors.purple, userId, role),
+              ],
+            ),
+
+            const SizedBox(height: 24),
+            const Divider(color: AppTheme.charcoalLight),
+            const SizedBox(height: 16),
+
+            // Account Management Section
+            const Text(
+              '계정 관리',
+              style: TextStyle(
+                color: AppTheme.textSecondary,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _sendPasswordResetEmail(email),
+                    icon: const Icon(Icons.lock_reset, size: 18),
+                    label: const Text('비밀번호 재설정'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppTheme.tossBlue,
+                      side: const BorderSide(color: AppTheme.tossBlue),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _deleteUser(userId, displayName, email),
+                    icon: const Icon(Icons.delete_forever, size: 18),
+                    label: const Text('계정 삭제'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.red,
+                      side: const BorderSide(color: Colors.red),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -504,6 +549,162 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
         ),
       ),
     );
+  }
+
+  /// 비밀번호 재설정 이메일 발송
+  Future<void> _sendPasswordResetEmail(String email) async {
+    Navigator.pop(context); // Close bottom sheet
+
+    if (email.isEmpty) {
+      SnackBarHelper.showError(context, '이메일이 없어서 비밀번호 재설정을 할 수 없습니다');
+      return;
+    }
+
+    // Confirm dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.charcoalMedium,
+        title: const Text('비밀번호 재설정', style: TextStyle(color: Colors.white)),
+        content: Text(
+          '$email 으로 비밀번호 재설정 이메일을 발송하시겠습니까?',
+          style: const TextStyle(color: AppTheme.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('취소', style: TextStyle(color: AppTheme.textTertiary)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.tossBlue),
+            child: const Text('발송', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      if (mounted) {
+        SnackBarHelper.showSuccess(context, '비밀번호 재설정 이메일을 발송했습니다');
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        String message = '비밀번호 재설정 실패';
+        if (e.code == 'user-not-found') {
+          message = '해당 이메일의 사용자를 찾을 수 없습니다';
+        } else if (e.code == 'invalid-email') {
+          message = '유효하지 않은 이메일 형식입니다';
+        }
+        SnackBarHelper.showError(context, message);
+      }
+    } catch (e) {
+      if (mounted) {
+        SnackBarHelper.showError(context, '비밀번호 재설정 실패: $e');
+      }
+    }
+  }
+
+  /// 사용자 계정 삭제 (Firestore 문서만 삭제, Firebase Auth는 Cloud Function 필요)
+  Future<void> _deleteUser(String userId, String displayName, String email) async {
+    Navigator.pop(context); // Close bottom sheet
+
+    // Confirm dialog with strong warning
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.charcoalMedium,
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 28),
+            const SizedBox(width: 8),
+            const Text('계정 삭제', style: TextStyle(color: Colors.red)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '정말로 "$displayName" 계정을 삭제하시겠습니까?',
+              style: const TextStyle(color: Colors.white, fontSize: 16),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '이메일: $email',
+              style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.red.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+              ),
+              child: const Text(
+                '⚠️ 이 작업은 취소할 수 없습니다!\n'
+                '• Firestore 사용자 데이터가 삭제됩니다\n'
+                '• 관련 리뷰, 즐겨찾기 등도 삭제될 수 있습니다',
+                style: TextStyle(color: Colors.red, fontSize: 13),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('취소', style: TextStyle(color: AppTheme.textTertiary)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('삭제', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      // Delete user's related data
+      final batch = _firestore.batch();
+
+      // 1. Delete favorites
+      final favoritesSnapshot = await _firestore
+          .collection('favorites')
+          .where('userId', isEqualTo: userId)
+          .get();
+      for (final doc in favoritesSnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+
+      // 2. Delete reviews
+      final reviewsSnapshot = await _firestore
+          .collection('reviews')
+          .where('userId', isEqualTo: userId)
+          .get();
+      for (final doc in reviewsSnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+
+      // 3. Delete the user document
+      batch.delete(_firestore.collection('users').doc(userId));
+
+      await batch.commit();
+
+      if (mounted) {
+        SnackBarHelper.showSuccess(context, '사용자 데이터가 삭제되었습니다');
+      }
+    } catch (e) {
+      if (mounted) {
+        SnackBarHelper.showError(context, '삭제 실패: $e');
+      }
+    }
   }
 
   Widget _buildInfoRow(String label, String value) {

@@ -153,7 +153,14 @@ class FcmService {
   // ═══════════════════════════════════════════════════════════
 
   /// Subscribe to truck topic (alternative to individual tokens)
+  /// NOTE: Topic subscription is NOT supported on web - only works on mobile
   Future<void> subscribeToTruck(String truckId) async {
+    // 웹에서는 topic 구독이 지원되지 않음
+    if (kIsWeb) {
+      AppLogger.debug('Topic subscription not supported on web', tag: 'FcmService');
+      return;
+    }
+
     try {
       await _messaging.subscribeToTopic('truck_$truckId');
       AppLogger.success('Subscribed to truck_$truckId topic', tag: 'FcmService');
@@ -163,7 +170,14 @@ class FcmService {
   }
 
   /// Unsubscribe from truck topic
+  /// NOTE: Topic subscription is NOT supported on web - only works on mobile
   Future<void> unsubscribeFromTruck(String truckId) async {
+    // 웹에서는 topic 구독이 지원되지 않음
+    if (kIsWeb) {
+      AppLogger.debug('Topic unsubscription not supported on web', tag: 'FcmService');
+      return;
+    }
+
     try {
       await _messaging.unsubscribeFromTopic('truck_$truckId');
       AppLogger.success('Unsubscribed from truck_$truckId topic', tag: 'FcmService');
