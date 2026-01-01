@@ -10,7 +10,7 @@ void main() {
 
   // Disable Google Fonts HTTP fetching for tests
   setUpAll(() {
-    GoogleFonts.config.allowRuntimeFetching = false;
+    GoogleFonts.config.allowRuntimeFetching = true;
   });
   group('AppThemeMode', () {
     test('has all expected values', () {
