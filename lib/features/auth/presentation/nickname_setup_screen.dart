@@ -26,6 +26,9 @@ class _NicknameSetupScreenState extends ConsumerState<NicknameSetupScreen> {
   bool? _isNicknameAvailable;
   String? _validationError;
 
+  // 역할 선택 (customer = 손님, owner = 사장님)
+  String _selectedRole = 'customer';
+
   // 닉네임 유효성 검사 정규식
   static final RegExp _nicknameRegex = RegExp(r'^[가-힣a-zA-Z0-9]{2,10}$');
 
@@ -124,10 +127,11 @@ class _NicknameSetupScreenState extends ConsumerState<NicknameSetupScreen> {
         throw Exception('로그인이 필요합니다');
       }
 
-      await authService.updateNickname(uid, nickname);
+      await authService.updateNicknameAndRole(uid, nickname, _selectedRole);
 
       if (mounted) {
-        SnackBarHelper.showSuccess(context, '$nickname님, 환영합니다!');
+        final roleText = _selectedRole == 'owner' ? '사장' : '';
+        SnackBarHelper.showSuccess(context, '$nickname$roleText님, 환영합니다!');
         // Invalidate auth state to trigger redirect
         ref.invalidate(authStateChangesProvider);
         context.go('/');
@@ -191,7 +195,79 @@ class _NicknameSetupScreenState extends ConsumerState<NicknameSetupScreen> {
                           ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
+
+                    // 역할 선택
+                    Text(
+                      '가입 유형을 선택해주세요',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppTheme.textSecondary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    SegmentedButton<String>(
+                      segments: const [
+                        ButtonSegment<String>(
+                          value: 'customer',
+                          label: Text('손님'),
+                          icon: Icon(Icons.person),
+                        ),
+                        ButtonSegment<String>(
+                          value: 'owner',
+                          label: Text('사장님'),
+                          icon: Icon(Icons.store),
+                        ),
+                      ],
+                      selected: {_selectedRole},
+                      onSelectionChanged: (Set<String> selected) {
+                        setState(() {
+                          _selectedRole = selected.first;
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.resolveWith((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return AppTheme.baeminMint;
+                          }
+                          return AppTheme.charcoalMedium;
+                        }),
+                      ),
+                    ),
+                    if (_selectedRole == 'owner') ...[
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppTheme.mustardYellow.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: AppTheme.mustardYellow.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              size: 16,
+                              color: AppTheme.mustardYellow,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                '사장님 가입 후 설정에서 사업자등록증을 제출하면\n트럭 관리 기능을 사용할 수 있습니다.',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppTheme.mustardYellow,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 24),
 
                     // 닉네임 입력 필드
                     TextFormField(

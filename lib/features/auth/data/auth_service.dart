@@ -948,6 +948,39 @@ class AuthService {
     }
   }
 
+  /// 닉네임 및 역할 업데이트 (온보딩 완료 시)
+  Future<void> updateNicknameAndRole(String uid, String nickname, String role) async {
+    try {
+      // 유효성 검사
+      if (!isValidNickname(nickname)) {
+        throw Exception('Invalid nickname format');
+      }
+
+      // 중복 검사
+      final isAvailable = await isNicknameAvailable(nickname);
+      if (!isAvailable) {
+        throw Exception('Nickname already taken');
+      }
+
+      // role 검증 (customer 또는 owner만 허용)
+      final validRole = (role == 'owner') ? 'pending_owner' : 'customer';
+
+      // Firestore 업데이트
+      await _firestore.collection('users').doc(uid).update({
+        'nickname': nickname,
+        'role': validRole,
+        'isProfileComplete': true,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      AppLogger.success('Nickname and role updated: $nickname ($validRole)', tag: 'AuthService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Nickname and role update failed',
+          error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
+  }
+
   /// 프로필 완성 여부 확인
   Future<bool> isProfileComplete(String uid) async {
     try {
