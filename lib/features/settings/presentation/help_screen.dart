@@ -198,6 +198,60 @@ class HelpScreen extends StatelessWidget {
             ],
           ),
 
+          const SizedBox(height: 24),
+
+          // FAQ Section
+          _FaqSection(
+            icon: Icons.help_outline,
+            title: '자주 묻는 질문 (FAQ)',
+            items: [
+              _FaqItem(
+                question: '방문 인증이 안 돼요',
+                answer: '방문 인증을 위해서는 다음 조건이 필요합니다:\n'
+                    '• 트럭과 50m 이내에 있어야 합니다\n'
+                    '• 하루에 같은 트럭은 1회만 인증 가능합니다\n'
+                    '• GPS 권한이 필요합니다 (설정에서 위치 권한을 허용해주세요)\n'
+                    '• 트럭이 "영업 중" 상태여야 합니다',
+              ),
+              _FaqItem(
+                question: '스탬프가 안 쌓여요',
+                answer: '스탬프가 쌓이지 않는 경우:\n'
+                    '• 방문 인증이 정상적으로 완료되었는지 확인하세요\n'
+                    '• 같은 트럭은 하루 1회만 스탬프가 적립됩니다\n'
+                    '• 인터넷 연결 상태를 확인하세요\n'
+                    '• 앱을 재시작해보세요',
+              ),
+              _FaqItem(
+                question: '쿠폰은 어떻게 사용하나요?',
+                answer: '스탬프 10개를 모으면 쿠폰이 발급됩니다:\n'
+                    '• "내 정보" 탭에서 "내 쿠폰함"을 확인하세요\n'
+                    '• 쿠폰을 탭하면 QR 코드가 표시됩니다\n'
+                    '• 사장님께 QR 코드를 보여주시면 사용 처리됩니다',
+              ),
+              _FaqItem(
+                question: '즐겨찾기가 안 돼요',
+                answer: '즐겨찾기 문제 해결:\n'
+                    '• 로그인이 되어있는지 확인하세요\n'
+                    '• 인터넷 연결 상태를 확인하세요\n'
+                    '• 앱을 종료 후 다시 시작해보세요',
+              ),
+              _FaqItem(
+                question: '푸시 알림이 안 와요',
+                answer: '푸시 알림 설정 확인:\n'
+                    '• 기기 설정에서 앱 알림이 허용되어있는지 확인하세요\n'
+                    '• 앱 내 "설정 > 알림 설정"에서 알림이 켜져있는지 확인하세요\n'
+                    '• 배터리 절약 모드가 켜져있으면 알림이 지연될 수 있습니다',
+              ),
+              _FaqItem(
+                question: '리뷰 작성이 안 돼요',
+                answer: '리뷰를 작성하려면:\n'
+                    '• 해당 트럭에서 주문을 완료해야 합니다\n'
+                    '• 로그인이 되어있어야 합니다\n'
+                    '• 리뷰 내용은 최소 5글자 이상이어야 합니다',
+              ),
+            ],
+          ),
+
           const SizedBox(height: 32),
 
           // Contact Section
@@ -363,6 +417,162 @@ class _HelpItem extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// FAQ section widget
+class _FaqSection extends StatelessWidget {
+  const _FaqSection({
+    required this.icon,
+    required this.title,
+    required this.items,
+  });
+
+  final IconData icon;
+  final String title;
+  final List<_FaqItem> items;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: (isDark ? AppTheme.mustardYellow : AppTheme.mustardYellowDark)
+                    .withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                size: 20,
+                color: isDark ? AppTheme.mustardYellow : AppTheme.mustardYellowDark,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        ...items.map((item) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: item,
+            )),
+      ],
+    );
+  }
+}
+
+/// Individual FAQ item widget with expandable answer
+class _FaqItem extends StatefulWidget {
+  const _FaqItem({
+    required this.question,
+    required this.answer,
+  });
+
+  final String question;
+  final String answer;
+
+  @override
+  State<_FaqItem> createState() => _FaqItemState();
+}
+
+class _FaqItemState extends State<_FaqItem> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Question header (tappable)
+          InkWell(
+            onTap: () => setState(() => _isExpanded = !_isExpanded),
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.help_outline,
+                      size: 18,
+                      color: Colors.orange,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      widget.question,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    _isExpanded ? Icons.expand_less : Icons.expand_more,
+                    color: Colors.grey[600],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Answer (expandable)
+          AnimatedCrossFade(
+            firstChild: const SizedBox.shrink(),
+            secondChild: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.03),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  widget.answer,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey[600],
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ),
+            crossFadeState: _isExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 200),
           ),
         ],
       ),
