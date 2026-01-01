@@ -153,39 +153,47 @@ class AuthService {
 
   /// Sign in with Google
   Future<UserCredential> signInWithGoogle() async {
-    AppLogger.debug('Starting Google Sign In', tag: 'AuthService');
+    AppLogger.debug('Starting Google Sign In (isWeb: $kIsWeb)', tag: 'AuthService');
 
     try {
-      // 1. Create GoogleSignIn instance
-      final googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
+      UserCredential userCredential;
 
-      // 2. Trigger Google Sign In flow
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (kIsWeb) {
+        // 웹: Firebase Auth의 signInWithPopup 사용 (redirect_uri 문제 해결)
+        AppLogger.debug('Using Firebase signInWithPopup for web', tag: 'AuthService');
+        final googleProvider = GoogleAuthProvider();
+        googleProvider.addScope('email');
+        googleProvider.addScope('profile');
+        googleProvider.setCustomParameters({'prompt': 'select_account'});
 
-      if (googleUser == null) {
-        AppLogger.warning('Google Sign-In was cancelled by user', tag: 'AuthService');
-        throw Exception('Google 로그인이 취소되었습니다');
+        userCredential = await _auth.signInWithPopup(googleProvider);
+      } else {
+        // 모바일: google_sign_in 패키지 사용
+        AppLogger.debug('Using GoogleSignIn package for mobile', tag: 'AuthService');
+        final googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
+        final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+        if (googleUser == null) {
+          AppLogger.warning('Google Sign-In was cancelled by user', tag: 'AuthService');
+          throw Exception('Google 로그인이 취소되었습니다');
+        }
+
+        AppLogger.debug('Google user obtained: ${googleUser.email}', tag: 'AuthService');
+
+        final googleAuth = await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        userCredential = await _auth.signInWithCredential(credential);
       }
-
-      AppLogger.debug('Google user obtained: ${googleUser.email}', tag: 'AuthService');
-
-      // 3. Get authentication details
-      final googleAuth = await googleUser.authentication;
-
-      // 4. Create Firebase credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // 5. Sign in to Firebase
-      final userCredential = await _auth.signInWithCredential(credential);
 
       AppLogger.success('Google Sign In successful!', tag: 'AuthService');
       AppLogger.debug('User ID: ${userCredential.user?.uid}', tag: 'AuthService');
       AppLogger.debug('Email: ${userCredential.user?.email}', tag: 'AuthService');
 
-      // 6. Update user info in Firestore
+      // Update user info in Firestore
       await _updateUserInfo(userCredential.user!, 'google');
 
       return userCredential;
