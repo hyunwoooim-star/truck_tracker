@@ -56,7 +56,7 @@ final class BusinessApprovalRepositoryProvider
 }
 
 String _$businessApprovalRepositoryHash() =>
-    r'c0367b8db52b95ee925c65a63adfbaa279a267c5';
+    r'405cc1258b36b387dd330a59e8ba9618a8d74630';
 
 @ProviderFor(businessApproval)
 final businessApprovalProvider = BusinessApprovalFamily._();
@@ -115,7 +115,7 @@ final class BusinessApprovalProvider
   }
 }
 
-String _$businessApprovalHash() => r'105bb5c1757fc624f93f1bf56b06fe932f621d3b';
+String _$businessApprovalHash() => r'480be646aa97e6bdb8fcd3841c199496b7cfdd59';
 
 final class BusinessApprovalFamily extends $Family
     with $FunctionalFamilyOverride<Stream<BusinessApproval?>, String> {
@@ -174,7 +174,7 @@ final class PendingApprovalsProvider
   }
 }
 
-String _$pendingApprovalsHash() => r'945762088195058c022bfb3a7d965ee2a88e7bff';
+String _$pendingApprovalsHash() => r'fa881415bb1145ab49bb2d19875f1e719d872197';
 
 @ProviderFor(allApprovals)
 final allApprovalsProvider = AllApprovalsProvider._();
@@ -215,4 +215,4 @@ final class AllApprovalsProvider
   }
 }
 
-String _$allApprovalsHash() => r'2d71144cf63b7d192c3378dd80bb3f386939eb1c';
+String _$allApprovalsHash() => r'47f54eed97af5ff89563e2a8bfa91efaffe35efe';
