@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/services/app_version_service.dart';
@@ -23,6 +24,7 @@ class AppSettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(appThemeModeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isAdminAsync = ref.watch(isCurrentUserAdminProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -34,6 +36,29 @@ class AppSettingsScreen extends ConsumerWidget {
           Expanded(
             child: ListView(
               children: [
+                // ═══════════════════════════════════════════════════════
+                // 관리자 메뉴 (관리자만 표시)
+                // ═══════════════════════════════════════════════════════
+                isAdminAsync.when(
+                  data: (isAdmin) => isAdmin
+                      ? Column(
+                          children: [
+                            _buildSectionHeader(context, '관리자'),
+                            _buildSettingsTile(
+                              icon: Icons.admin_panel_settings,
+                              iconColor: Colors.purple,
+                              title: '관리자 대시보드',
+                              subtitle: '사용자 관리, 사장님 인증',
+                              onTap: () => context.push('/admin'),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        )
+                      : const SizedBox.shrink(),
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, __) => const SizedBox.shrink(),
+                ),
+
                 // ═══════════════════════════════════════════════════════
                 // 내 정보
                 // ═══════════════════════════════════════════════════════
