@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/utils/app_logger.dart';
@@ -177,7 +178,14 @@ class FcmService {
 
   /// Subscribe to admin notifications topic (for admins only)
   /// Cloud Function sends notifications when new owner requests are submitted
+  /// NOTE: Topic subscription is NOT supported on web - only works on mobile
   Future<void> subscribeToAdminNotifications() async {
+    // 웹에서는 topic 구독이 지원되지 않음
+    if (kIsWeb) {
+      AppLogger.debug('Topic subscription not supported on web', tag: 'FcmService');
+      return;
+    }
+
     try {
       await _messaging.subscribeToTopic('admin_notifications');
       AppLogger.success('Subscribed to admin_notifications topic', tag: 'FcmService');
@@ -187,7 +195,14 @@ class FcmService {
   }
 
   /// Unsubscribe from admin notifications topic
+  /// NOTE: Topic subscription is NOT supported on web - only works on mobile
   Future<void> unsubscribeFromAdminNotifications() async {
+    // 웹에서는 topic 구독이 지원되지 않음
+    if (kIsWeb) {
+      AppLogger.debug('Topic unsubscription not supported on web', tag: 'FcmService');
+      return;
+    }
+
     try {
       await _messaging.unsubscribeFromTopic('admin_notifications');
       AppLogger.success('Unsubscribed from admin_notifications topic', tag: 'FcmService');
