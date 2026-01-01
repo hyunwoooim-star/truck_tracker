@@ -14,14 +14,15 @@ import '../domain/truck_with_distance.dart';
 
 part 'truck_provider.g.dart';
 
-/// Repository provider
-@riverpod
+/// Repository provider (keepAlive to reuse instance)
+@Riverpod(keepAlive: true)
 TruckRepository truckRepository(Ref ref) {
   return TruckRepository();
 }
 
 /// Firestore stream provider for real-time updates
-@riverpod
+/// Uses keepAlive to prevent stream reconnection on navigation
+@Riverpod(keepAlive: true)
 Stream<List<Truck>> firestoreTruckStream(Ref ref) {
   AppLogger.debug('Creating new stream subscription', tag: 'FirestoreTruckStream');
   final repository = ref.watch(truckRepositoryProvider);

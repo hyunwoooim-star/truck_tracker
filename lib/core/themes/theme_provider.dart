@@ -17,7 +17,8 @@ enum AppThemeMode {
 const String _themePreferenceKey = 'app_theme_mode';
 
 /// Provider for managing app theme mode with persistence
-@riverpod
+/// Uses keepAlive to prevent theme reset during navigation
+@Riverpod(keepAlive: true)
 class AppThemeModeNotifier extends _$AppThemeModeNotifier {
   @override
   AppThemeMode build() {
