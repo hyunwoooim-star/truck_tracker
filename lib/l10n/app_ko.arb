@@ -480,5 +480,26 @@
   "deleteAccount": "회원 탈퇴",
   "deleteAccountWarning": "정말로 탈퇴하시겠습니까?\\n모든 데이터가 삭제되며 복구할 수 없습니다.",
   "accountDeleted": "회원 탈퇴가 완료되었습니다",
-  "loginRequired": "로그인이 필요합니다"
+  "loginRequired": "로그인이 필요합니다",
+
+  "home": "홈",
+  "orders": "주문",
+  "stats": "통계",
+  "more": "더보기",
+  "orderManagement": "주문 관리",
+  "todayStats": "오늘 통계",
+  "couponAndReview": "쿠폰 & 리뷰",
+  "statsAndAnalytics": "통계 & 분석",
+  "other": "기타",
+  "orderCount": "주문 수",
+  "visits": "방문",
+  "realtime": "실시간",
+  "todayOrders": "오늘 주문",
+  "orderStatus": "주문 현황",
+  "soldOutStatus": "품절 현황",
+  "couponManagement": "쿠폰 관리",
+  "menuManagement": "메뉴 관리",
+  "settings": "설정",
+  "uploadData": "데이터 업로드",
+  "businessClosed": "영업 종료"
 }

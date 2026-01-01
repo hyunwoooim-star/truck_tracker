@@ -913,7 +913,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get confirmCloseBusiness => '정말 영업을 종료하시겠습니까?';
 
   @override
-  String get businessClosed => '영업이 종료되었습니다.';
+  String get businessClosed => '영업 종료';
 
   @override
   String get todaysOrderStatus => '오늘의 주문 현황';
@@ -1283,4 +1283,58 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get accountDeleted => '회원 탈퇴가 완료되었습니다';
+
+  @override
+  String get home => '홈';
+
+  @override
+  String get orders => '주문';
+
+  @override
+  String get stats => '통계';
+
+  @override
+  String get more => '더보기';
+
+  @override
+  String get orderManagement => '주문 관리';
+
+  @override
+  String get todayStats => '오늘 통계';
+
+  @override
+  String get couponAndReview => '쿠폰 & 리뷰';
+
+  @override
+  String get statsAndAnalytics => '통계 & 분석';
+
+  @override
+  String get other => '기타';
+
+  @override
+  String get orderCount => '주문 수';
+
+  @override
+  String get visits => '방문';
+
+  @override
+  String get realtime => '실시간';
+
+  @override
+  String get todayOrders => '오늘 주문';
+
+  @override
+  String get orderStatus => '주문 현황';
+
+  @override
+  String get soldOutStatus => '품절 현황';
+
+  @override
+  String get couponManagement => '쿠폰 관리';
+
+  @override
+  String get settings => '설정';
+
+  @override
+  String get uploadData => '데이터 업로드';
 }

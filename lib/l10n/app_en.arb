@@ -582,5 +582,25 @@
   "deleteAccount": "Delete Account",
   "deleteAccountWarning": "Are you sure you want to delete your account?\\nAll data will be permanently deleted.",
   "accountDeleted": "Account has been deleted",
-  "loginRequired": "Login required"
+  "loginRequired": "Login required",
+
+  "home": "Home",
+  "orders": "Orders",
+  "stats": "Stats",
+  "more": "More",
+  "orderManagement": "Order Management",
+  "todayStats": "Today''s Stats",
+  "couponAndReview": "Coupons & Reviews",
+  "statsAndAnalytics": "Stats & Analytics",
+  "other": "Other",
+  "orderCount": "Orders",
+  "visits": "Visits",
+  "realtime": "Realtime",
+  "todayOrders": "Today''s Orders",
+  "orderStatus": "Order Status",
+  "soldOutStatus": "Sold Out Status",
+  "couponManagement": "Coupon Management",
+  "settings": "Settings",
+  "uploadData": "Upload Data",
+  "businessClosed": "Closed"
 }

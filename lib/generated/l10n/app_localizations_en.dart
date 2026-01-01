@@ -932,7 +932,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmCloseBusiness => 'Are you sure you want to close business?';
 
   @override
-  String get businessClosed => 'Business has been closed.';
+  String get businessClosed => 'Closed';
 
   @override
   String get todaysOrderStatus => 'Today\'s Order Status';
@@ -1310,4 +1310,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountDeleted => 'Account has been deleted';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get orders => 'Orders';
+
+  @override
+  String get stats => 'Stats';
+
+  @override
+  String get more => 'More';
+
+  @override
+  String get orderManagement => 'Order Management';
+
+  @override
+  String get todayStats => 'Today\'s Stats';
+
+  @override
+  String get couponAndReview => 'Coupons & Reviews';
+
+  @override
+  String get statsAndAnalytics => 'Stats & Analytics';
+
+  @override
+  String get other => 'Other';
+
+  @override
+  String get orderCount => 'Orders';
+
+  @override
+  String get visits => 'Visits';
+
+  @override
+  String get realtime => 'Realtime';
+
+  @override
+  String get todayOrders => 'Today\'s Orders';
+
+  @override
+  String get orderStatus => 'Order Status';
+
+  @override
+  String get soldOutStatus => 'Sold Out Status';
+
+  @override
+  String get couponManagement => 'Coupon Management';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get uploadData => 'Upload Data';
 }

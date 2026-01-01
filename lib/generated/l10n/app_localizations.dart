@@ -1829,7 +1829,7 @@ abstract class AppLocalizations {
   /// No description provided for @businessClosed.
   ///
   /// In ko, this message translates to:
-  /// **'영업이 종료되었습니다.'**
+  /// **'영업 종료'**
   String get businessClosed;
 
   /// No description provided for @todaysOrderStatus.
@@ -2545,6 +2545,114 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'회원 탈퇴가 완료되었습니다'**
   String get accountDeleted;
+
+  /// No description provided for @home.
+  ///
+  /// In ko, this message translates to:
+  /// **'홈'**
+  String get home;
+
+  /// No description provided for @orders.
+  ///
+  /// In ko, this message translates to:
+  /// **'주문'**
+  String get orders;
+
+  /// No description provided for @stats.
+  ///
+  /// In ko, this message translates to:
+  /// **'통계'**
+  String get stats;
+
+  /// No description provided for @more.
+  ///
+  /// In ko, this message translates to:
+  /// **'더보기'**
+  String get more;
+
+  /// No description provided for @orderManagement.
+  ///
+  /// In ko, this message translates to:
+  /// **'주문 관리'**
+  String get orderManagement;
+
+  /// No description provided for @todayStats.
+  ///
+  /// In ko, this message translates to:
+  /// **'오늘 통계'**
+  String get todayStats;
+
+  /// No description provided for @couponAndReview.
+  ///
+  /// In ko, this message translates to:
+  /// **'쿠폰 & 리뷰'**
+  String get couponAndReview;
+
+  /// No description provided for @statsAndAnalytics.
+  ///
+  /// In ko, this message translates to:
+  /// **'통계 & 분석'**
+  String get statsAndAnalytics;
+
+  /// No description provided for @other.
+  ///
+  /// In ko, this message translates to:
+  /// **'기타'**
+  String get other;
+
+  /// No description provided for @orderCount.
+  ///
+  /// In ko, this message translates to:
+  /// **'주문 수'**
+  String get orderCount;
+
+  /// No description provided for @visits.
+  ///
+  /// In ko, this message translates to:
+  /// **'방문'**
+  String get visits;
+
+  /// No description provided for @realtime.
+  ///
+  /// In ko, this message translates to:
+  /// **'실시간'**
+  String get realtime;
+
+  /// No description provided for @todayOrders.
+  ///
+  /// In ko, this message translates to:
+  /// **'오늘 주문'**
+  String get todayOrders;
+
+  /// No description provided for @orderStatus.
+  ///
+  /// In ko, this message translates to:
+  /// **'주문 현황'**
+  String get orderStatus;
+
+  /// No description provided for @soldOutStatus.
+  ///
+  /// In ko, this message translates to:
+  /// **'품절 현황'**
+  String get soldOutStatus;
+
+  /// No description provided for @couponManagement.
+  ///
+  /// In ko, this message translates to:
+  /// **'쿠폰 관리'**
+  String get couponManagement;
+
+  /// No description provided for @settings.
+  ///
+  /// In ko, this message translates to:
+  /// **'설정'**
+  String get settings;
+
+  /// No description provided for @uploadData.
+  ///
+  /// In ko, this message translates to:
+  /// **'데이터 업로드'**
+  String get uploadData;
 }
 
 class _AppLocalizationsDelegate
