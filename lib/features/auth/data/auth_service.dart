@@ -11,6 +11,8 @@ import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
+
+import '../../../core/config/api_config.dart';
 import '../../../core/utils/app_logger.dart';
 import 'web_auth_helper_io.dart'
     if (dart.library.html) 'web_auth_helper.dart';
@@ -208,12 +210,11 @@ class AuthService {
   // ═══════════════════════════════════════════════════════════
 
   /// Cloud Functions URL for custom token generation
-  static const String _cloudFunctionsUrl =
-      'https://us-central1-truck-tracker-fa0b0.cloudfunctions.net/createCustomToken';
+  static String get _cloudFunctionsUrl => ApiConfig.createCustomTokenUrl;
 
-  /// Kakao OAuth settings
-  static const String _kakaoClientId = '9b29da5ab6db839b37a65c79afe9b52e'; // REST API 키
-  static const String _kakaoRedirectUri = 'https://truck-tracker-fa0b0.web.app/kakao';
+  /// Kakao OAuth settings (from ApiConfig)
+  static String get _kakaoClientId => ApiConfig.kakaoClientId;
+  static String get _kakaoRedirectUri => ApiConfig.kakaoRedirectUri;
 
   /// Sign in with Kakao
   Future<UserCredential> signInWithKakao() async {
@@ -340,9 +341,9 @@ class AuthService {
   // NAVER AUTHENTICATION
   // ═══════════════════════════════════════════════════════════
 
-  /// Naver OAuth settings
-  static const String _naverClientId = '9szh6EOxjf8b40x9ZHKH';
-  static const String _naverRedirectUri = 'https://truck-tracker-fa0b0.web.app/oauth/naver/callback';
+  /// Naver OAuth settings (from ApiConfig)
+  static String get _naverClientId => ApiConfig.naverClientId;
+  static String get _naverRedirectUri => ApiConfig.naverRedirectUri;
 
   /// Sign in with Naver
   Future<UserCredential> signInWithNaver() async {
