@@ -206,19 +206,6 @@
   </script>
 </head>
 <body>
-  <!-- iOS Safari Warning (Safari doesn't support Flutter Web properly) -->
-  <div id="ios-safari-warning" style="display:none;">
-    <div class="content">
-      <div class="emoji">🍎</div>
-      <h1>Safari 미지원</h1>
-      <p>죄송합니다. Safari에서는 앱이 제대로 작동하지 않습니다.<br><strong>Chrome 브라우저</strong>를 사용해주세요!</p>
-      <a href="https://apps.apple.com/app/google-chrome/id535886823" class="btn" style="background:#4285F4;color:white;">Chrome 다운로드</a>
-      <button class="btn" id="copyUrlSafari" style="background:#666;">📋 주소 복사 후 Chrome에서 열기</button>
-      <div class="url-box" id="urlDisplaySafari"></div>
-      <p class="hint">Chrome 설치 후 위 주소를 붙여넣기 하세요</p>
-    </div>
-  </div>
-
   <!-- In-App Browser Warning (visible by default, hidden by JS if normal browser) -->
   <div id="inapp-warning">
     <div class="content">
@@ -380,44 +367,12 @@
         warning.classList.add('hidden');
       }
 
-      // iOS Safari Warning
-      var iosSafariWarning = document.getElementById('ios-safari-warning');
-      var copyUrlSafari = document.getElementById('copyUrlSafari');
-      var urlDisplaySafari = document.getElementById('urlDisplaySafari');
+      // iOS Safari/Chrome - Flutter 로드 허용 (테스트)
+      // 이전에 iOS Safari를 막았었는데, Flutter Web은 원래 iOS에서도 작동해야 함
+      // 차단 해제하고 테스트
 
-      if (window.isIOSSafari && iosSafariWarning) {
-        // Show iOS Safari warning
-        iosSafariWarning.style.display = 'flex';
-        if (urlDisplaySafari) {
-          urlDisplaySafari.textContent = currentUrl;
-        }
-
-        // Copy button for Safari users
-        if (copyUrlSafari) {
-          copyUrlSafari.addEventListener('click', function() {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-              navigator.clipboard.writeText(currentUrl).then(function() {
-                copyUrlSafari.textContent = '✅ 복사 완료!';
-                copyUrlSafari.style.background = '#4CAF50';
-                setTimeout(function() {
-                  copyUrlSafari.textContent = '📋 주소 복사 후 Chrome에서 열기';
-                  copyUrlSafari.style.background = '#666';
-                }, 2000);
-              }).catch(function() {
-                alert('주소를 길게 눌러 복사하세요:\n' + currentUrl);
-              });
-            } else {
-              alert('주소를 길게 눌러 복사하세요:\n' + currentUrl);
-            }
-          });
-        }
-
-        // Don't load Flutter for iOS Safari
-        return;
-      }
-
-      // Only load Flutter if NOT in-app browser AND NOT iOS Safari
-      if (!window.isInAppBrowser && !window.isIOSSafari) {
+      // Only load Flutter if NOT in-app browser
+      if (!window.isInAppBrowser) {
         var script = document.createElement('script');
         script.src = 'flutter_bootstrap.js';
         script.async = true;
