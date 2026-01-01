@@ -191,13 +191,17 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
   }
 
   Widget _buildStatsGrid(AdminStats stats) {
+    // 화면 너비에 따라 열 수 조정
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = screenWidth > 800 ? 3 : 2;
+
     return GridView.count(
-      crossAxisCount: 2,
+      crossAxisCount: crossAxisCount,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      childAspectRatio: 1.3,
+      mainAxisSpacing: 8,
+      crossAxisSpacing: 8,
+      childAspectRatio: screenWidth > 800 ? 2.2 : 1.8,
       children: [
         AdminStatsCard(
           icon: Icons.pending_actions,
@@ -511,13 +515,16 @@ class _StatsLoadingGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = screenWidth > 800 ? 3 : 2;
+
     return GridView.count(
-      crossAxisCount: 2,
+      crossAxisCount: crossAxisCount,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      childAspectRatio: 1.3,
+      mainAxisSpacing: 8,
+      crossAxisSpacing: 8,
+      childAspectRatio: screenWidth > 800 ? 2.2 : 1.8,
       children: List.generate(6, (index) => _buildLoadingCard()),
     );
   }
