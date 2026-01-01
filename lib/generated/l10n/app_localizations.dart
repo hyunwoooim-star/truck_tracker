@@ -2305,6 +2305,66 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'점검 중'**
   String get maintenance;
+
+  /// No description provided for @couponScanner.
+  ///
+  /// In ko, this message translates to:
+  /// **'쿠폰 스캐너'**
+  String get couponScanner;
+
+  /// No description provided for @couponScanGuide.
+  ///
+  /// In ko, this message translates to:
+  /// **'고객 쿠폰 QR 코드 스캔'**
+  String get couponScanGuide;
+
+  /// No description provided for @couponScanDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'고객의 QR 코드를 카메라에 비춰주세요'**
+  String get couponScanDescription;
+
+  /// No description provided for @couponUsedSuccess.
+  ///
+  /// In ko, this message translates to:
+  /// **'쿠폰이 사용되었습니다!'**
+  String get couponUsedSuccess;
+
+  /// No description provided for @couponNotFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'쿠폰을 찾을 수 없습니다'**
+  String get couponNotFound;
+
+  /// No description provided for @couponAlreadyUsed.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 사용된 쿠폰입니다'**
+  String get couponAlreadyUsed;
+
+  /// No description provided for @couponWrongTruck.
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 트럭의 쿠폰입니다'**
+  String get couponWrongTruck;
+
+  /// No description provided for @couponUseFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'쿠폰 사용에 실패했습니다'**
+  String get couponUseFailed;
+
+  /// No description provided for @couponScanFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'쿠폰 스캔에 실패했습니다'**
+  String get couponScanFailed;
+
+  /// No description provided for @confirm.
+  ///
+  /// In ko, this message translates to:
+  /// **'확인'**
+  String get confirm;
 }
 
 class _AppLocalizationsDelegate

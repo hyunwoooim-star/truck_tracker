@@ -16,6 +16,7 @@ import '../../truck_list/domain/truck.dart';
 import '../../order/data/order_repository.dart';
 import 'analytics_screen.dart';
 import 'coupon_management_screen.dart';
+import 'coupon_scanner_screen.dart';
 import 'menu_management_screen.dart';
 import 'owner_status_provider.dart';
 import 'review_management_screen.dart';
@@ -96,6 +97,21 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
                   builder: (_) => const CouponManagementScreen(),
                 ),
               );
+            },
+          ),
+          // 스탬프 쿠폰 스캐너
+          IconButton(
+            icon: const Icon(Icons.qr_code_scanner),
+            tooltip: l10n.couponScanner,
+            onPressed: () {
+              final ownerTruck = ref.read(ownerTruckProvider).value;
+              if (ownerTruck != null) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => CouponScannerScreen(truckId: ownerTruck.id),
+                  ),
+                );
+              }
             },
           ),
           IconButton(

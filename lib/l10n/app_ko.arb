@@ -433,5 +433,16 @@
   },
   "operating": "운행 중",
   "resting": "휴식 중",
-  "maintenance": "점검 중"
+  "maintenance": "점검 중",
+
+  "couponScanner": "쿠폰 스캐너",
+  "couponScanGuide": "고객 쿠폰 QR 코드 스캔",
+  "couponScanDescription": "고객의 QR 코드를 카메라에 비춰주세요",
+  "couponUsedSuccess": "쿠폰이 사용되었습니다!",
+  "couponNotFound": "쿠폰을 찾을 수 없습니다",
+  "couponAlreadyUsed": "이미 사용된 쿠폰입니다",
+  "couponWrongTruck": "다른 트럭의 쿠폰입니다",
+  "couponUseFailed": "쿠폰 사용에 실패했습니다",
+  "couponScanFailed": "쿠폰 스캔에 실패했습니다",
+  "confirm": "확인"
 }

@@ -1163,4 +1163,34 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get maintenance => '점검 중';
+
+  @override
+  String get couponScanner => '쿠폰 스캐너';
+
+  @override
+  String get couponScanGuide => '고객 쿠폰 QR 코드 스캔';
+
+  @override
+  String get couponScanDescription => '고객의 QR 코드를 카메라에 비춰주세요';
+
+  @override
+  String get couponUsedSuccess => '쿠폰이 사용되었습니다!';
+
+  @override
+  String get couponNotFound => '쿠폰을 찾을 수 없습니다';
+
+  @override
+  String get couponAlreadyUsed => '이미 사용된 쿠폰입니다';
+
+  @override
+  String get couponWrongTruck => '다른 트럭의 쿠폰입니다';
+
+  @override
+  String get couponUseFailed => '쿠폰 사용에 실패했습니다';
+
+  @override
+  String get couponScanFailed => '쿠폰 스캔에 실패했습니다';
+
+  @override
+  String get confirm => '확인';
 }

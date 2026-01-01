@@ -535,5 +535,16 @@
   },
   "operating": "Operating",
   "resting": "Resting",
-  "maintenance": "Maintenance"
+  "maintenance": "Maintenance",
+
+  "couponScanner": "Coupon Scanner",
+  "couponScanGuide": "Scan customer coupon QR code",
+  "couponScanDescription": "Point the camera at the customer''s QR code",
+  "couponUsedSuccess": "Coupon used successfully!",
+  "couponNotFound": "Coupon not found",
+  "couponAlreadyUsed": "This coupon has already been used",
+  "couponWrongTruck": "This coupon is for a different truck",
+  "couponUseFailed": "Failed to process coupon",
+  "couponScanFailed": "Failed to scan coupon",
+  "confirm": "Confirm"
 }

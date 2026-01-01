@@ -1182,4 +1182,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get maintenance => 'Maintenance';
+
+  @override
+  String get couponScanner => 'Coupon Scanner';
+
+  @override
+  String get couponScanGuide => 'Scan customer coupon QR code';
+
+  @override
+  String get couponScanDescription =>
+      'Point the camera at the customer\'s QR code';
+
+  @override
+  String get couponUsedSuccess => 'Coupon used successfully!';
+
+  @override
+  String get couponNotFound => 'Coupon not found';
+
+  @override
+  String get couponAlreadyUsed => 'This coupon has already been used';
+
+  @override
+  String get couponWrongTruck => 'This coupon is for a different truck';
+
+  @override
+  String get couponUseFailed => 'Failed to process coupon';
+
+  @override
+  String get couponScanFailed => 'Failed to scan coupon';
+
+  @override
+  String get confirm => 'Confirm';
 }
