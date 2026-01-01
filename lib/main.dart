@@ -34,6 +34,7 @@ import 'features/ads/data/ad_service.dart';
 import 'features/pickup_navigation/presentation/pickup_ready_listener.dart';
 import 'features/auth/presentation/oauth_callback_screen.dart';
 import 'features/auth/presentation/nickname_setup_screen.dart';
+import 'features/onboarding/presentation/customer_onboarding_screen.dart';
 import 'firebase_options.dart';
 
 /// Global key for showing foreground notifications
@@ -323,12 +324,9 @@ class AuthWrapper extends ConsumerWidget {
                         // If approved, ownedTruckId should be set, but if not, fall through to customer
                       }
 
-                      AppLogger.debug('User is customer → MapFirstScreen', tag: 'AuthWrapper');
-                      // Regular customer → map-first screen (Street Tycoon)
-                      // Wrap with PickupReadyListener to monitor order status
-                      return const PickupReadyListener(
-                        child: MapFirstScreen(),
-                      );
+                      AppLogger.debug('User is customer → Check onboarding', tag: 'AuthWrapper');
+                      // Regular customer → check if onboarding needed first
+                      return const _CustomerWithOnboardingWidget();
                     },
                     loading: () {
                       AppLogger.debug('Loading owner request status...', tag: 'AuthWrapper');
@@ -342,10 +340,8 @@ class AuthWrapper extends ConsumerWidget {
                     },
                     error: (error, stack) {
                       AppLogger.error('Error checking owner request', error: error, stackTrace: stack, tag: 'AuthWrapper');
-                      // On error, show customer screen
-                      return const PickupReadyListener(
-                        child: MapFirstScreen(),
-                      );
+                      // On error, show customer screen with onboarding check
+                      return const _CustomerWithOnboardingWidget();
                     },
                   );
                 }
@@ -446,6 +442,66 @@ class _OwnerRoutingWidget extends ConsumerWidget {
         // On error, go to dashboard (safer - they can access onboarding from there if needed)
         return const OwnerDashboardScreen();
       },
+    );
+  }
+}
+
+/// Widget to handle customer routing with onboarding check
+class _CustomerWithOnboardingWidget extends StatefulWidget {
+  const _CustomerWithOnboardingWidget();
+
+  @override
+  State<_CustomerWithOnboardingWidget> createState() => _CustomerWithOnboardingWidgetState();
+}
+
+class _CustomerWithOnboardingWidgetState extends State<_CustomerWithOnboardingWidget> {
+  bool _isLoading = true;
+  bool _showOnboarding = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFirstLaunch();
+  }
+
+  Future<void> _checkFirstLaunch() async {
+    final isFirstLaunch = await OnboardingHelper.isFirstLaunch();
+    if (mounted) {
+      setState(() {
+        _showOnboarding = isFirstLaunch;
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _onOnboardingComplete() {
+    setState(() {
+      _showOnboarding = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(
+            color: AppTheme.mustardYellow,
+          ),
+        ),
+      );
+    }
+
+    if (_showOnboarding) {
+      AppLogger.debug('First launch → CustomerOnboardingScreen', tag: 'AuthWrapper');
+      return CustomerOnboardingScreen(
+        onComplete: _onOnboardingComplete,
+      );
+    }
+
+    AppLogger.debug('Onboarding complete → MapFirstScreen', tag: 'AuthWrapper');
+    return const PickupReadyListener(
+      child: MapFirstScreen(),
     );
   }
 }
