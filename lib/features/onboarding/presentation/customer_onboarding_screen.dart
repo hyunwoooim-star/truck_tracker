@@ -70,14 +70,28 @@ class _CustomerOnboardingScreenState extends State<CustomerOnboardingScreen> {
   }
 
   void _skipOnboarding() {
-    _completeOnboarding();
+    // 건너뛰기 - 다음에 다시 표시될 수 있음
+    widget.onComplete();
+  }
+
+  Future<void> _skipForToday() async {
+    // 오늘 하루 보지 않기
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('onboardingSkipUntil', DateTime.now().add(const Duration(days: 1)).millisecondsSinceEpoch);
+    widget.onComplete();
+  }
+
+  Future<void> _neverShowAgain() async {
+    // 다시 보지 않기
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isFirstLaunch', false);
+    widget.onComplete();
   }
 
   Future<void> _completeOnboarding() async {
-    // SharedPreferences에 온보딩 완료 저장
+    // 온보딩 완료 (시작하기 버튼)
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isFirstLaunch', false);
-
     widget.onComplete();
   }
 
@@ -100,22 +114,38 @@ class _CustomerOnboardingScreenState extends State<CustomerOnboardingScreen> {
             },
           ),
 
-          // 상단 건너뛰기 버튼
+          // 상단 버튼들
           Positioned(
             top: MediaQuery.of(context).padding.top + 16,
+            left: 16,
             right: 16,
-            child: _currentPage < _pages.length - 1
-                ? TextButton(
-                    onPressed: _skipOnboarding,
-                    child: const Text(
-                      '건너뛰기',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 16,
-                      ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // 하루동안 보지 않기
+                TextButton(
+                  onPressed: _skipForToday,
+                  child: const Text(
+                    '오늘 하루 안 보기',
+                    style: TextStyle(
+                      color: Colors.white54,
+                      fontSize: 13,
                     ),
-                  )
-                : const SizedBox.shrink(),
+                  ),
+                ),
+                // 다시 보지 않기
+                TextButton(
+                  onPressed: _neverShowAgain,
+                  child: const Text(
+                    '다시 보지 않기',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
 
           // 하단 인디케이터 및 버튼
@@ -268,11 +298,30 @@ class OnboardingPage {
 /// 온보딩 완료 여부 확인 유틸리티
 class OnboardingHelper {
   static const String _key = 'isFirstLaunch';
+  static const String _skipUntilKey = 'onboardingSkipUntil';
 
-  /// 첫 실행 여부 확인
-  static Future<bool> isFirstLaunch() async {
+  /// 온보딩을 표시해야 하는지 확인
+  static Future<bool> shouldShowOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_key) ?? true;
+
+    // "다시 보지 않기"를 선택한 경우
+    final isFirstLaunch = prefs.getBool(_key) ?? true;
+    if (!isFirstLaunch) return false;
+
+    // "오늘 하루 안 보기"를 선택한 경우
+    final skipUntil = prefs.getInt(_skipUntilKey);
+    if (skipUntil != null) {
+      if (DateTime.now().millisecondsSinceEpoch < skipUntil) {
+        return false; // 아직 스킵 기간 중
+      }
+    }
+
+    return true;
+  }
+
+  /// 첫 실행 여부 확인 (레거시 호환)
+  static Future<bool> isFirstLaunch() async {
+    return shouldShowOnboarding();
   }
 
   /// 온보딩 완료 처리
@@ -285,5 +334,6 @@ class OnboardingHelper {
   static Future<void> resetOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_key);
+    await prefs.remove(_skipUntilKey);
   }
 }
