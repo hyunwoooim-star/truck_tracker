@@ -232,7 +232,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e, stackTrace) {
       AppLogger.error('Naver login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
       if (mounted) {
-        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
+        // 디버그: 상세 에러 메시지 표시
+        final errorStr = e.toString();
+        debugPrint('🔴 Naver Login Error: $errorStr');
+
+        // OAuth 에러인 경우 상세 정보 표시
+        if (errorStr.contains('redirect_uri') ||
+            errorStr.contains('invalid_request') ||
+            errorStr.contains('access_denied') ||
+            errorStr.contains('callback')) {
+          _showErrorDialog('Naver OAuth 오류', errorStr);
+        } else {
+          SnackBarHelper.showError(context, _getErrorMessage(errorStr));
+        }
       }
     } finally {
       if (mounted) {
@@ -267,7 +279,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e, stackTrace) {
       AppLogger.error('Google login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
       if (mounted) {
-        SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
+        // 디버그: 상세 에러 메시지 표시
+        final errorStr = e.toString();
+        debugPrint('🔴 Google Login Error: $errorStr');
+
+        // OAuth 에러인 경우 상세 정보 표시
+        if (errorStr.contains('redirect_uri_mismatch') ||
+            errorStr.contains('invalid_request') ||
+            errorStr.contains('access_denied')) {
+          _showErrorDialog('Google OAuth 오류', errorStr);
+        } else {
+          SnackBarHelper.showError(context, _getErrorMessage(errorStr));
+        }
       }
     } finally {
       if (mounted) {
@@ -291,6 +314,73 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       return '로그인이 취소되었습니다';
     }
     return '로그인 중 오류가 발생했습니다';
+  }
+
+  /// 상세 에러 다이얼로그 표시
+  void _showErrorDialog(String title, String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.red),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: const TextStyle(color: Colors.red, fontSize: 18),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '상세 에러 정보:',
+                style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: SelectableText(
+                  errorMessage,
+                  style: const TextStyle(
+                    color: Colors.white60,
+                    fontSize: 12,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                '해결 방법:',
+                style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                '• Google Cloud Console에서 승인된 JavaScript 원본에 도메인 추가\n'
+                '• 승인된 리디렉션 URI 확인\n'
+                '• 5분 후 다시 시도',
+                style: TextStyle(color: Colors.white54, fontSize: 13),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('확인', style: TextStyle(color: AppTheme.mustardYellow)),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _showForgotPasswordDialog() async {
