@@ -7,11 +7,12 @@ import '../../../core/utils/snackbar_helper.dart';
 import '../../auth/presentation/auth_provider.dart';
 
 /// User role enum for filtering
+/// Firestore에 저장된 role 값: 'customer', 'owner', 'admin'
 enum UserRole {
   all('전체'),
-  user('일반 사용자'),
-  owner('사장님'),
-  admin('관리자');
+  customer('일반 사용자'),  // Firestore: 'customer'
+  owner('사장님'),          // Firestore: 'owner'
+  admin('관리자');          // Firestore: 'admin'
 
   const UserRole(this.label);
   final String label;
