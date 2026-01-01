@@ -9,8 +9,11 @@ import '../../../core/themes/theme_provider.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../core/widgets/network_status_banner.dart';
+import '../../auth/presentation/auth_provider.dart';
+import '../../favorite/presentation/favorites_screen.dart';
 import '../../notifications/presentation/notification_settings_screen.dart';
 import 'help_screen.dart';
+import 'my_reviews_screen.dart';
 import 'privacy_policy_screen.dart';
 import 'terms_of_service_screen.dart';
 
@@ -33,6 +36,40 @@ class AppSettingsScreen extends ConsumerWidget {
           Expanded(
             child: ListView(
               children: [
+                // My Profile Section
+                _buildSectionHeader(context, '내 정보'),
+                _buildProfileTile(context, ref),
+                ListTile(
+                  leading: const Icon(Icons.favorite_outline),
+                  title: const Text('즐겨찾기'),
+                  subtitle: const Text('저장한 트럭 목록'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const FavoritesScreen(),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.rate_review_outlined),
+                  title: const Text('내가 쓴 리뷰'),
+                  subtitle: const Text('작성한 리뷰 목록'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const MyReviewsScreen(),
+                      ),
+                    );
+                  },
+                ),
+
+                const Divider(),
+
                 // Theme Section
                 _buildSectionHeader(context, '화면'),
                 ListTile(
@@ -189,6 +226,46 @@ class AppSettingsScreen extends ConsumerWidget {
           color: Theme.of(context).colorScheme.primary,
         ),
       ),
+    );
+  }
+
+  Widget _buildProfileTile(BuildContext context, WidgetRef ref) {
+    final nicknameAsync = ref.watch(currentUserNicknameProvider);
+    final emailAsync = ref.watch(currentUserEmailProvider);
+
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: AppTheme.mustardYellow,
+        child: nicknameAsync.when(
+          data: (nickname) => Text(
+            nickname?.isNotEmpty == true ? nickname![0].toUpperCase() : '?',
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          loading: () => const SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+          ),
+          error: (_, __) => const Text('?', style: TextStyle(color: Colors.black)),
+        ),
+      ),
+      title: nicknameAsync.when(
+        data: (nickname) => Text(
+          nickname ?? '닉네임 없음',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        loading: () => const Text('로딩 중...'),
+        error: (_, __) => const Text('닉네임 없음'),
+      ),
+      subtitle: Text(emailAsync),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () {
+        // TODO: 프로필 수정 화면으로 이동
+        SnackBarHelper.showInfo(context, '프로필 수정 기능 준비 중');
+      },
     );
   }
 
