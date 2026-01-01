@@ -602,5 +602,24 @@
   "couponManagement": "Coupon Management",
   "settings": "Settings",
   "uploadData": "Upload Data",
-  "businessClosed": "Closed"
+  "businessClosed": "Closed",
+
+  "businessApprovalRequired": "Business Approval Required",
+  "businessApprovalDescription": "Review your truck info and submit for approval",
+  "submitApprovalRequest": "Submit for Approval",
+  "approvalPending": "Approval Pending",
+  "approvalPendingDescription": "Admin is reviewing your request. Please wait.",
+  "approvalApproved": "Business Approved",
+  "approvalApprovedDescription": "Congratulations! You can now start your business.",
+  "approvalRejected": "Approval Rejected",
+  "approvalRejectedDescription": "Your request was rejected. See the reason below.",
+  "rejectionReason": "Rejection Reason",
+  "resubmitApproval": "Resubmit",
+  "businessApprovals": "Business Approvals",
+  "noApprovalRequests": "No approval requests",
+  "approveButton": "Approve",
+  "rejectButton": "Reject",
+  "enterRejectionReason": "Enter rejection reason",
+  "approvalSuccess": "Approved successfully",
+  "rejectionSuccess": "Rejected successfully"
 }

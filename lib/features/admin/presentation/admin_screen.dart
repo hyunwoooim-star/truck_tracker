@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../auth/presentation/auth_provider.dart';
+import '../../business_approval/presentation/admin_business_approval_tab.dart';
 
 /// Admin screen for managing owner verification requests
 class AdminScreen extends ConsumerStatefulWidget {
@@ -14,14 +16,17 @@ class AdminScreen extends ConsumerStatefulWidget {
   ConsumerState<AdminScreen> createState() => _AdminScreenState();
 }
 
-class _AdminScreenState extends ConsumerState<AdminScreen> {
+class _AdminScreenState extends ConsumerState<AdminScreen>
+    with SingleTickerProviderStateMixin {
   final _truckIdController = TextEditingController();
   bool? _isAdmin;
   bool _isCheckingAdmin = true;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     _checkAdminAccess();
   }
 
@@ -38,6 +43,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen> {
 
   @override
   void dispose() {
+    _tabController.dispose();
     _truckIdController.dispose();
     super.dispose();
   }
@@ -109,66 +115,95 @@ class _AdminScreenState extends ConsumerState<AdminScreen> {
     }
 
     final authService = ref.watch(authServiceProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: AppTheme.charcoalDark,
       appBar: AppBar(
         title: const Text('관리자 페이지'),
         backgroundColor: AppTheme.charcoalMedium,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: AppTheme.mustardYellow,
+          labelColor: AppTheme.mustardYellow,
+          unselectedLabelColor: Colors.grey,
+          tabs: [
+            const Tab(
+              icon: Icon(Icons.person_add),
+              text: '사장님 인증',
+            ),
+            Tab(
+              icon: const Icon(Icons.storefront),
+              text: l10n.businessApprovals,
+            ),
+          ],
+        ),
       ),
-      body: StreamBuilder<List<Map<String, dynamic>>>(
-        stream: authService.getPendingOwnerRequests(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppTheme.mustardYellow),
-            );
-          }
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // 탭 1: 사장님 인증 요청
+          _buildOwnerRequestsTab(authService),
+          // 탭 2: 영업 승인 요청
+          const AdminBusinessApprovalTab(),
+        ],
+      ),
+    );
+  }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                '오류: ${snapshot.error}',
-                style: const TextStyle(color: Colors.red),
-              ),
-            );
-          }
-
-          final requests = snapshot.data ?? [];
-
-          if (requests.isEmpty) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.check_circle_outline,
-                    size: 64,
-                    color: Colors.green,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    '대기 중인 요청이 없습니다',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: requests.length,
-            itemBuilder: (context, index) {
-              final request = requests[index];
-              return _buildRequestCard(request);
-            },
+  Widget _buildOwnerRequestsTab(dynamic authService) {
+    return StreamBuilder<List<Map<String, dynamic>>>(
+      stream: authService.getPendingOwnerRequests(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(color: AppTheme.mustardYellow),
           );
-        },
-      ),
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              '오류: ${snapshot.error}',
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        }
+
+        final requests = snapshot.data ?? [];
+
+        if (requests.isEmpty) {
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.check_circle_outline,
+                  size: 64,
+                  color: Colors.green,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '대기 중인 요청이 없습니다',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: requests.length,
+          itemBuilder: (context, index) {
+            final request = requests[index];
+            return _buildRequestCard(request);
+          },
+        );
+      },
     );
   }
 

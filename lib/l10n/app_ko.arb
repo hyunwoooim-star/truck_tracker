@@ -501,5 +501,24 @@
   "menuManagement": "메뉴 관리",
   "settings": "설정",
   "uploadData": "데이터 업로드",
-  "businessClosed": "영업 종료"
+  "businessClosed": "영업 종료",
+
+  "businessApprovalRequired": "영업 승인이 필요합니다",
+  "businessApprovalDescription": "트럭 정보를 확인하고 영업 승인을 요청하세요",
+  "submitApprovalRequest": "승인 요청하기",
+  "approvalPending": "승인 대기 중",
+  "approvalPendingDescription": "관리자가 요청을 검토 중입니다. 잠시만 기다려주세요.",
+  "approvalApproved": "영업 승인 완료",
+  "approvalApprovedDescription": "축하합니다! 이제 영업을 시작할 수 있습니다.",
+  "approvalRejected": "승인 반려됨",
+  "approvalRejectedDescription": "요청이 반려되었습니다. 아래 사유를 확인해주세요.",
+  "rejectionReason": "반려 사유",
+  "resubmitApproval": "재신청하기",
+  "businessApprovals": "영업 승인",
+  "noApprovalRequests": "승인 요청이 없습니다",
+  "approveButton": "승인",
+  "rejectButton": "반려",
+  "enterRejectionReason": "반려 사유를 입력하세요",
+  "approvalSuccess": "승인되었습니다",
+  "rejectionSuccess": "반려되었습니다"
 }
