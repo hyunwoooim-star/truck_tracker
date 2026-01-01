@@ -1364,4 +1364,62 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get uploadData => 'Upload Data';
+
+  @override
+  String get businessApprovalRequired => 'Business Approval Required';
+
+  @override
+  String get businessApprovalDescription =>
+      'Review your truck info and submit for approval';
+
+  @override
+  String get submitApprovalRequest => 'Submit for Approval';
+
+  @override
+  String get approvalPending => 'Approval Pending';
+
+  @override
+  String get approvalPendingDescription =>
+      'Admin is reviewing your request. Please wait.';
+
+  @override
+  String get approvalApproved => 'Business Approved';
+
+  @override
+  String get approvalApprovedDescription =>
+      'Congratulations! You can now start your business.';
+
+  @override
+  String get approvalRejected => 'Approval Rejected';
+
+  @override
+  String get approvalRejectedDescription =>
+      'Your request was rejected. See the reason below.';
+
+  @override
+  String get rejectionReason => 'Rejection Reason';
+
+  @override
+  String get resubmitApproval => 'Resubmit';
+
+  @override
+  String get businessApprovals => 'Business Approvals';
+
+  @override
+  String get noApprovalRequests => 'No approval requests';
+
+  @override
+  String get approveButton => 'Approve';
+
+  @override
+  String get rejectButton => 'Reject';
+
+  @override
+  String get enterRejectionReason => 'Enter rejection reason';
+
+  @override
+  String get approvalSuccess => 'Approved successfully';
+
+  @override
+  String get rejectionSuccess => 'Rejected successfully';
 }

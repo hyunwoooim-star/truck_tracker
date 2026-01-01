@@ -1337,4 +1337,58 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get uploadData => '데이터 업로드';
+
+  @override
+  String get businessApprovalRequired => '영업 승인이 필요합니다';
+
+  @override
+  String get businessApprovalDescription => '트럭 정보를 확인하고 영업 승인을 요청하세요';
+
+  @override
+  String get submitApprovalRequest => '승인 요청하기';
+
+  @override
+  String get approvalPending => '승인 대기 중';
+
+  @override
+  String get approvalPendingDescription => '관리자가 요청을 검토 중입니다. 잠시만 기다려주세요.';
+
+  @override
+  String get approvalApproved => '영업 승인 완료';
+
+  @override
+  String get approvalApprovedDescription => '축하합니다! 이제 영업을 시작할 수 있습니다.';
+
+  @override
+  String get approvalRejected => '승인 반려됨';
+
+  @override
+  String get approvalRejectedDescription => '요청이 반려되었습니다. 아래 사유를 확인해주세요.';
+
+  @override
+  String get rejectionReason => '반려 사유';
+
+  @override
+  String get resubmitApproval => '재신청하기';
+
+  @override
+  String get businessApprovals => '영업 승인';
+
+  @override
+  String get noApprovalRequests => '승인 요청이 없습니다';
+
+  @override
+  String get approveButton => '승인';
+
+  @override
+  String get rejectButton => '반려';
+
+  @override
+  String get enterRejectionReason => '반려 사유를 입력하세요';
+
+  @override
+  String get approvalSuccess => '승인되었습니다';
+
+  @override
+  String get rejectionSuccess => '반려되었습니다';
 }

@@ -99,29 +99,24 @@ class BusinessApprovalRepository {
 }
 
 @riverpod
-BusinessApprovalRepository businessApprovalRepository(
-  BusinessApprovalRepositoryRef ref,
-) {
+BusinessApprovalRepository businessApprovalRepository(Ref ref) {
   return BusinessApprovalRepository(FirebaseFirestore.instance);
 }
 
 @riverpod
-Stream<BusinessApproval?> businessApproval(
-  BusinessApprovalRef ref,
-  String truckId,
-) {
+Stream<BusinessApproval?> businessApproval(Ref ref, String truckId) {
   final repository = ref.watch(businessApprovalRepositoryProvider);
   return repository.watchApproval(truckId);
 }
 
 @riverpod
-Stream<List<BusinessApproval>> pendingApprovals(PendingApprovalsRef ref) {
+Stream<List<BusinessApproval>> pendingApprovals(Ref ref) {
   final repository = ref.watch(businessApprovalRepositoryProvider);
   return repository.watchPendingApprovals();
 }
 
 @riverpod
-Stream<List<BusinessApproval>> allApprovals(AllApprovalsRef ref) {
+Stream<List<BusinessApproval>> allApprovals(Ref ref) {
   final repository = ref.watch(businessApprovalRepositoryProvider);
   return repository.watchAllApprovals();
 }

@@ -2653,6 +2653,114 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'데이터 업로드'**
   String get uploadData;
+
+  /// No description provided for @businessApprovalRequired.
+  ///
+  /// In ko, this message translates to:
+  /// **'영업 승인이 필요합니다'**
+  String get businessApprovalRequired;
+
+  /// No description provided for @businessApprovalDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'트럭 정보를 확인하고 영업 승인을 요청하세요'**
+  String get businessApprovalDescription;
+
+  /// No description provided for @submitApprovalRequest.
+  ///
+  /// In ko, this message translates to:
+  /// **'승인 요청하기'**
+  String get submitApprovalRequest;
+
+  /// No description provided for @approvalPending.
+  ///
+  /// In ko, this message translates to:
+  /// **'승인 대기 중'**
+  String get approvalPending;
+
+  /// No description provided for @approvalPendingDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'관리자가 요청을 검토 중입니다. 잠시만 기다려주세요.'**
+  String get approvalPendingDescription;
+
+  /// No description provided for @approvalApproved.
+  ///
+  /// In ko, this message translates to:
+  /// **'영업 승인 완료'**
+  String get approvalApproved;
+
+  /// No description provided for @approvalApprovedDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'축하합니다! 이제 영업을 시작할 수 있습니다.'**
+  String get approvalApprovedDescription;
+
+  /// No description provided for @approvalRejected.
+  ///
+  /// In ko, this message translates to:
+  /// **'승인 반려됨'**
+  String get approvalRejected;
+
+  /// No description provided for @approvalRejectedDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'요청이 반려되었습니다. 아래 사유를 확인해주세요.'**
+  String get approvalRejectedDescription;
+
+  /// No description provided for @rejectionReason.
+  ///
+  /// In ko, this message translates to:
+  /// **'반려 사유'**
+  String get rejectionReason;
+
+  /// No description provided for @resubmitApproval.
+  ///
+  /// In ko, this message translates to:
+  /// **'재신청하기'**
+  String get resubmitApproval;
+
+  /// No description provided for @businessApprovals.
+  ///
+  /// In ko, this message translates to:
+  /// **'영업 승인'**
+  String get businessApprovals;
+
+  /// No description provided for @noApprovalRequests.
+  ///
+  /// In ko, this message translates to:
+  /// **'승인 요청이 없습니다'**
+  String get noApprovalRequests;
+
+  /// No description provided for @approveButton.
+  ///
+  /// In ko, this message translates to:
+  /// **'승인'**
+  String get approveButton;
+
+  /// No description provided for @rejectButton.
+  ///
+  /// In ko, this message translates to:
+  /// **'반려'**
+  String get rejectButton;
+
+  /// No description provided for @enterRejectionReason.
+  ///
+  /// In ko, this message translates to:
+  /// **'반려 사유를 입력하세요'**
+  String get enterRejectionReason;
+
+  /// No description provided for @approvalSuccess.
+  ///
+  /// In ko, this message translates to:
+  /// **'승인되었습니다'**
+  String get approvalSuccess;
+
+  /// No description provided for @rejectionSuccess.
+  ///
+  /// In ko, this message translates to:
+  /// **'반려되었습니다'**
+  String get rejectionSuccess;
 }
 
 class _AppLocalizationsDelegate
