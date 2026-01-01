@@ -21,6 +21,7 @@ import '../../truck_list/domain/truck.dart';
 import '../../truck_list/domain/truck_with_distance.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../chat/presentation/chat_list_screen.dart';
+import '../../checkin/presentation/customer_checkin_screen.dart';
 import '../../customer/presentation/my_coupons_screen.dart';
 import '../../customer/presentation/visit_history_screen.dart';
 import '../../notifications/presentation/notification_settings_screen.dart';
@@ -440,6 +441,14 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                         ),
                       );
                       break;
+                    case 'qrCheckin':
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CustomerCheckinScreen(),
+                        ),
+                      );
+                      break;
                     case 'coupons':
                       Navigator.push(
                         context,
@@ -492,6 +501,17 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                             Icon(Icons.chat_bubble_outline, color: AppTheme.mustardYellow),
                             SizedBox(width: 12),
                             Text('채팅', style: TextStyle(color: Colors.white)),
+                          ],
+                        ),
+                      ),
+                    if (user != null)
+                      const PopupMenuItem(
+                        value: 'qrCheckin',
+                        child: Row(
+                          children: [
+                            Icon(Icons.qr_code_scanner, color: AppTheme.mustardYellow),
+                            SizedBox(width: 12),
+                            Text('QR 체크인', style: TextStyle(color: Colors.white)),
                           ],
                         ),
                       ),

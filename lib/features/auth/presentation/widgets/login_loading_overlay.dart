@@ -137,16 +137,6 @@ class _LoginLoadingOverlayState extends State<LoginLoadingOverlay>
               ),
             ),
 
-            const SizedBox(height: 16),
-
-            // 안내 텍스트
-            Text(
-              '잠시만 기다려주세요',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.6),
-                fontSize: 14,
-              ),
-            ),
           ],
         ),
       ),
