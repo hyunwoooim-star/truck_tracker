@@ -63,11 +63,23 @@ class FcmService {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
-  /// Get FCM token
+  /// Get FCM token with timeout to prevent infinite hanging on web
   Future<String?> getToken() async {
     try {
-      final token = await _messaging.getToken();
-      AppLogger.debug('FCM Token retrieved: $token', tag: 'FcmService');
+      // 웹에서 VAPID 키 없이 getToken() 호출 시 무한 대기 가능
+      // 5초 타임아웃 추가하여 무한 로딩 방지
+      final token = await _messaging.getToken().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          AppLogger.warning('FCM getToken timed out after 5 seconds', tag: 'FcmService');
+          return null;
+        },
+      );
+      if (token != null) {
+        AppLogger.debug('FCM Token retrieved: ${token.substring(0, 20)}...', tag: 'FcmService');
+      } else {
+        AppLogger.warning('FCM Token is null', tag: 'FcmService');
+      }
       return token;
     } catch (e, stackTrace) {
       AppLogger.error('Error getting FCM token', error: e, stackTrace: stackTrace, tag: 'FcmService');
@@ -76,6 +88,7 @@ class FcmService {
   }
 
   /// Save FCM token to user document
+  /// Uses set with merge to handle case where document doesn't exist yet
   Future<void> saveFcmTokenToUser(String userId) async {
     try {
       final token = await getToken();
@@ -84,14 +97,22 @@ class FcmService {
         return;
       }
 
-      await _firestore.collection('users').doc(userId).update({
+      // set(merge: true) 사용하여 문서가 없어도 안전하게 처리
+      // 타임아웃 추가하여 Firestore 지연 시 무한 대기 방지
+      await _firestore.collection('users').doc(userId).set({
         'fcmToken': token,
         'fcmTokenUpdatedAt': FieldValue.serverTimestamp(),
-      });
+      }, SetOptions(merge: true)).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          AppLogger.warning('Firestore FCM token save timed out', tag: 'FcmService');
+        },
+      );
 
       AppLogger.success('FCM token saved to user $userId', tag: 'FcmService');
     } catch (e, stackTrace) {
-      AppLogger.error('Error saving FCM token', error: e, stackTrace: stackTrace, tag: 'FcmService');
+      // 에러가 발생해도 회원가입 흐름은 계속 진행되어야 함
+      AppLogger.error('Error saving FCM token (non-blocking)', error: e, stackTrace: stackTrace, tag: 'FcmService');
     }
   }
 

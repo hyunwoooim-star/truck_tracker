@@ -107,6 +107,7 @@ class AuthService {
   bool get isEmailVerified => _auth.currentUser?.emailVerified ?? false;
 
   /// Send email verification to current user
+  /// 타임아웃 추가하여 이메일 발송 지연 시 무한 대기 방지
   Future<void> sendEmailVerification() async {
     final user = _auth.currentUser;
     if (user == null) {
@@ -119,11 +120,18 @@ class AuthService {
     }
 
     try {
-      await user.sendEmailVerification();
+      await user.sendEmailVerification().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          AppLogger.warning('Email verification send timed out', tag: 'AuthService');
+          // 타임아웃 시에도 계속 진행 (이메일은 나중에 재발송 가능)
+        },
+      );
       AppLogger.success('Verification email sent to: ${user.email}', tag: 'AuthService');
     } catch (e, stackTrace) {
-      AppLogger.error('Failed to send verification email', error: e, stackTrace: stackTrace, tag: 'AuthService');
-      rethrow;
+      // 이메일 발송 실패해도 회원가입은 계속 진행
+      AppLogger.error('Failed to send verification email (non-blocking)', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      // rethrow 제거 - 이메일 발송 실패가 회원가입을 막으면 안 됨
     }
   }
 
@@ -517,9 +525,10 @@ class AuthService {
   // ═══════════════════════════════════════════════════════════
 
   /// Create user document in Firestore
+  /// 타임아웃 추가하여 Firestore 지연 시 무한 대기 방지
   Future<void> _createUserDocument(User user, String loginMethod) async {
     final userDoc = _firestore.collection('users').doc(user.uid);
-    
+
     final userData = {
       'uid': user.uid,
       'email': user.email ?? '',
@@ -532,10 +541,20 @@ class AuthService {
       'updatedAt': FieldValue.serverTimestamp(),
     };
 
-    await userDoc.set(userData, SetOptions(merge: true));
-
-    AppLogger.success('User document created in Firestore', tag: 'AuthService');
-    AppLogger.debug('Collection: users/${user.uid}', tag: 'AuthService');
+    try {
+      await userDoc.set(userData, SetOptions(merge: true)).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          AppLogger.warning('User document creation timed out', tag: 'AuthService');
+        },
+      );
+      AppLogger.success('User document created in Firestore', tag: 'AuthService');
+      AppLogger.debug('Collection: users/${user.uid}', tag: 'AuthService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Failed to create user document', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      // Firestore 실패해도 Firebase Auth는 성공했으므로 계속 진행
+      // 다음 로그인 시 _updateUserInfo에서 문서 생성 시도
+    }
   }
 
   /// Update user info in Firestore
