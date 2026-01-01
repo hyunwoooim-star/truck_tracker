@@ -12,7 +12,9 @@ class AdminStats {
   final int totalRejectedOwners;
   final int totalUsers;
   final int totalTrucks;
-  final double approvalRate;
+  final int todayCheckins;
+  final int totalReviews;
+  final int activeTrucks; // 영업 중인 트럭
   final DateTime? lastUpdated;
 
   const AdminStats({
@@ -21,22 +23,22 @@ class AdminStats {
     this.totalRejectedOwners = 0,
     this.totalUsers = 0,
     this.totalTrucks = 0,
-    this.approvalRate = 0.0,
+    this.todayCheckins = 0,
+    this.totalReviews = 0,
+    this.activeTrucks = 0,
     this.lastUpdated,
   });
 
   factory AdminStats.fromFirestore(Map<String, dynamic> data) {
-    final approved = (data['totalApprovedOwners'] as num?)?.toInt() ?? 0;
-    final rejected = (data['totalRejectedOwners'] as num?)?.toInt() ?? 0;
-    final total = approved + rejected;
-
     return AdminStats(
       pendingOwnerRequests: (data['pendingOwnerRequests'] as num?)?.toInt() ?? 0,
-      totalApprovedOwners: approved,
-      totalRejectedOwners: rejected,
+      totalApprovedOwners: (data['totalApprovedOwners'] as num?)?.toInt() ?? 0,
+      totalRejectedOwners: (data['totalRejectedOwners'] as num?)?.toInt() ?? 0,
       totalUsers: (data['totalUsers'] as num?)?.toInt() ?? 0,
       totalTrucks: (data['totalTrucks'] as num?)?.toInt() ?? 0,
-      approvalRate: total > 0 ? (approved / total * 100) : 0.0,
+      todayCheckins: (data['todayCheckins'] as num?)?.toInt() ?? 0,
+      totalReviews: (data['totalReviews'] as num?)?.toInt() ?? 0,
+      activeTrucks: (data['activeTrucks'] as num?)?.toInt() ?? 0,
       lastUpdated: (data['lastUpdated'] as Timestamp?)?.toDate(),
     );
   }
@@ -48,6 +50,9 @@ class AdminStats {
       'totalRejectedOwners': totalRejectedOwners,
       'totalUsers': totalUsers,
       'totalTrucks': totalTrucks,
+      'todayCheckins': todayCheckins,
+      'totalReviews': totalReviews,
+      'activeTrucks': activeTrucks,
       'lastUpdated': FieldValue.serverTimestamp(),
     };
   }
@@ -99,15 +104,37 @@ class AdminStatsRepository {
           .get(const GetOptions(source: Source.server));
       final totalUsers = usersSnapshot.docs.length;
 
-      // Get total trucks count (fetch from server to avoid cache)
+      // Get total trucks count and active trucks (fetch from server)
       final trucksSnapshot = await _firestore
           .collection('trucks')
           .get(const GetOptions(source: Source.server));
       final totalTrucks = trucksSnapshot.docs.length;
 
-      final total = approved + rejected;
+      // Count active trucks (status == 'resting' means 영업중)
+      int activeTrucks = 0;
+      for (final doc in trucksSnapshot.docs) {
+        final status = doc.data()['status'] as String?;
+        if (status == 'resting') {
+          activeTrucks++;
+        }
+      }
 
-      AppLogger.debug('Stats computed: users=$totalUsers, trucks=$totalTrucks, pending=$pending, approved=$approved', tag: 'AdminStats');
+      // Get today's checkins
+      final now = DateTime.now();
+      final todayStart = DateTime(now.year, now.month, now.day);
+      final checkinsSnapshot = await _firestore
+          .collection('checkins')
+          .where('checkedInAt', isGreaterThanOrEqualTo: Timestamp.fromDate(todayStart))
+          .get(const GetOptions(source: Source.server));
+      final todayCheckins = checkinsSnapshot.docs.length;
+
+      // Get total reviews count
+      final reviewsSnapshot = await _firestore
+          .collection('reviews')
+          .get(const GetOptions(source: Source.server));
+      final totalReviews = reviewsSnapshot.docs.length;
+
+      AppLogger.debug('Stats computed: users=$totalUsers, trucks=$totalTrucks, active=$activeTrucks, checkins=$todayCheckins, reviews=$totalReviews', tag: 'AdminStats');
 
       return AdminStats(
         pendingOwnerRequests: pending,
@@ -115,7 +142,9 @@ class AdminStatsRepository {
         totalRejectedOwners: rejected,
         totalUsers: totalUsers,
         totalTrucks: totalTrucks,
-        approvalRate: total > 0 ? (approved / total * 100) : 0.0,
+        todayCheckins: todayCheckins,
+        totalReviews: totalReviews,
+        activeTrucks: activeTrucks,
         lastUpdated: DateTime.now(),
       );
     } catch (e, stackTrace) {

@@ -142,6 +142,7 @@ Future<bool> isCurrentUserAdmin(Ref ref) async {
 }
 
 /// 현재 사용자 role 가져오기 (customer, owner, admin)
+/// 이메일 기반 관리자도 'admin'으로 반환
 @riverpod
 Future<String> currentUserRole(Ref ref) async {
   final userId = ref.watch(currentUserIdProvider);
@@ -151,6 +152,14 @@ Future<String> currentUserRole(Ref ref) async {
   }
 
   final authService = ref.watch(authServiceProvider);
+
+  // 먼저 이메일 기반 관리자인지 확인
+  final isAdmin = await authService.isCurrentUserAdmin();
+  if (isAdmin) {
+    return 'admin';
+  }
+
+  // Firestore의 role 확인
   return authService.getUserRole(userId);
 }
 

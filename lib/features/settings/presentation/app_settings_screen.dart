@@ -11,6 +11,7 @@ import '../../../core/widgets/network_status_banner.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../favorite/presentation/favorites_screen.dart';
 import '../../notifications/presentation/notification_settings_screen.dart';
+import '../../owner_dashboard/presentation/owner_dashboard_screen.dart';
 import 'help_screen.dart';
 import 'my_reviews_screen.dart';
 import 'privacy_policy_screen.dart';
@@ -288,10 +289,10 @@ class AppSettingsScreen extends ConsumerWidget {
 
     return Column(
       children: [
-        // 내 역할
+        // 현재 모드
         ListTile(
-          leading: const Icon(Icons.badge_outlined),
-          title: const Text('내 역할'),
+          leading: const Icon(Icons.verified_user_outlined),
+          title: const Text('현재 모드'),
           trailing: roleAsync.when(
             data: (role) {
               String roleText;
@@ -299,17 +300,17 @@ class AppSettingsScreen extends ConsumerWidget {
               IconData roleIcon;
               switch (role) {
                 case 'admin':
-                  roleText = '관리자';
+                  roleText = '관리자 모드';
                   roleColor = Colors.purple;
                   roleIcon = Icons.admin_panel_settings;
                   break;
                 case 'owner':
-                  roleText = '사장님';
+                  roleText = '사장님 모드';
                   roleColor = Colors.green;
                   roleIcon = Icons.store;
                   break;
                 default:
-                  roleText = '손님';
+                  roleText = '손님 모드';
                   roleColor = AppTheme.mustardYellow;
                   roleIcon = Icons.person;
               }
@@ -577,15 +578,20 @@ class AppSettingsScreen extends ConsumerWidget {
     }
   }
 
-  /// 사장님으로 전환 타일 (일반 사용자만 표시)
+  /// 사장님으로 전환 / 내 트럭 관리 타일
   Widget _buildOwnerRequestTile(BuildContext context, WidgetRef ref) {
     final roleAsync = ref.watch(currentUserRoleProvider);
     final requestStatusAsync = ref.watch(ownerRequestStatusProvider);
 
     return roleAsync.when(
       data: (role) {
-        // 이미 사장님이거나 관리자이면 표시하지 않음
-        if (role == 'owner' || role == 'admin') {
+        // 사장님이면 "내 트럭 관리" 메뉴 표시
+        if (role == 'owner') {
+          return _buildOwnerDashboardTile(context, ref);
+        }
+
+        // 관리자이면 표시하지 않음
+        if (role == 'admin') {
           return const SizedBox.shrink();
         }
 
@@ -660,6 +666,45 @@ class AppSettingsScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => const OwnerRequestDialog(),
+    );
+  }
+
+  /// 내 트럭 관리 타일 (사장님 전용)
+  Widget _buildOwnerDashboardTile(BuildContext context, WidgetRef ref) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.green.withValues(alpha: 0.15),
+            Colors.green.withValues(alpha: 0.05),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+      ),
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.green.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.store, color: Colors.green),
+        ),
+        title: const Text(
+          '내 트럭 관리',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: const Text('메뉴, 영업상태, 리뷰 관리'),
+        trailing: const Icon(Icons.chevron_right, color: Colors.green),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const OwnerDashboardScreen()),
+          );
+        },
+      ),
     );
   }
 }

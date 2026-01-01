@@ -43,11 +43,10 @@ class MyCouponsScreen extends ConsumerWidget {
         elevation: 0,
       ),
       body: StreamBuilder<QuerySnapshot>(
+        // 단일 필드 쿼리로 변경 (인덱스 불필요)
         stream: FirebaseFirestore.instance
             .collection('userCoupons')
             .where('userId', isEqualTo: currentUser.uid)
-            .where('isUsed', isEqualTo: false)
-            .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -65,7 +64,22 @@ class MyCouponsScreen extends ConsumerWidget {
             );
           }
 
-          final coupons = snapshot.data?.docs ?? [];
+          // 클라이언트에서 필터링 및 정렬 (인덱스 불필요)
+          final allDocs = snapshot.data?.docs ?? [];
+          final coupons = allDocs.where((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            return data['isUsed'] != true;
+          }).toList();
+
+          // createdAt 기준 내림차순 정렬
+          coupons.sort((a, b) {
+            final aData = a.data() as Map<String, dynamic>;
+            final bData = b.data() as Map<String, dynamic>;
+            final aCreated = aData['createdAt'] as Timestamp?;
+            final bCreated = bData['createdAt'] as Timestamp?;
+            if (aCreated == null || bCreated == null) return 0;
+            return bCreated.compareTo(aCreated);
+          });
 
           if (coupons.isEmpty) {
             return Center(

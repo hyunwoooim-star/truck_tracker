@@ -949,9 +949,8 @@ class _FilterBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedTag = ref.watch(truckFilterProvider).selectedTag;
 
-    return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(vertical: 8),
+    return SizedBox(
+      height: 50,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -967,7 +966,7 @@ class _FilterBar extends ConsumerWidget {
                   style: TextStyle(
                     color: isSelected ? Colors.black : AppTheme.textPrimary,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                    fontSize: 14,
+                    fontSize: 13,
                   ),
                 ),
                 selected: isSelected,
@@ -987,8 +986,8 @@ class _FilterBar extends ConsumerWidget {
                   width: 1.5,
                 ),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                labelPadding: const EdgeInsets.symmetric(horizontal: 12),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                labelPadding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),

@@ -43,15 +43,23 @@ class CheckinRepository {
   Stream<List<CheckIn>> watchUserCheckins(String userId) {
     AppLogger.debug('Watching check-ins for user: $userId', tag: 'CheckinRepository');
 
+    // 단일 필드 쿼리로 변경 (인덱스 불필요), 정렬은 클라이언트에서
     return _firestore
         .collection('checkins')
         .where('userId', isEqualTo: userId)
-        .orderBy('checkedInAt', descending: true)
         .snapshots()
         .map((snapshot) {
       final checkins = snapshot.docs
           .map((doc) => CheckIn.fromFirestore(doc))
           .toList();
+
+      // 클라이언트에서 날짜순 정렬
+      checkins.sort((a, b) {
+        final aDate = a.checkedInAt;
+        final bDate = b.checkedInAt;
+        if (aDate == null || bDate == null) return 0;
+        return bDate.compareTo(aDate);
+      });
 
       AppLogger.debug('Received ${checkins.length} check-ins for user', tag: 'CheckinRepository');
       return checkins;

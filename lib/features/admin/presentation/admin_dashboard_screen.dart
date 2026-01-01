@@ -197,6 +197,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
           label: '승인된 사장님',
           value: stats.totalApprovedOwners.toString(),
           color: Colors.green,
+          onTap: () => _navigateToApprovedOwners(),
         ),
         AdminStatsCard(
           icon: Icons.people,
@@ -210,19 +211,20 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
           label: '전체 트럭',
           value: stats.totalTrucks.toString(),
           color: AppTheme.mustardYellow,
+          onTap: () => _navigateToTruckList(),
+        ),
+        // 실용적인 통계로 변경
+        AdminStatsCard(
+          icon: Icons.touch_app,
+          label: '오늘 체크인',
+          value: stats.todayCheckins.toString(),
+          color: Colors.cyan,
         ),
         AdminStatsCard(
-          icon: Icons.cancel,
-          label: '거절됨',
-          value: stats.totalRejectedOwners.toString(),
-          color: Colors.red,
-        ),
-        AdminStatsCard(
-          icon: Icons.percent,
-          label: '승인률',
-          value: stats.approvalRate.toStringAsFixed(1),
-          suffix: '%',
-          color: stats.approvalRate >= 50 ? Colors.green : Colors.orange,
+          icon: Icons.storefront,
+          label: '영업 중',
+          value: stats.activeTrucks.toString(),
+          color: Colors.teal,
         ),
       ],
     );
@@ -349,6 +351,20 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
       context,
       MaterialPageRoute(builder: (_) => const UserManagementScreen()),
     );
+  }
+
+  void _navigateToApprovedOwners() {
+    // 사용자 관리 화면에서 사장님 필터 적용
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const UserManagementScreen()),
+    );
+    // TODO: 향후 사장님 필터가 적용된 화면으로 이동
+  }
+
+  void _navigateToTruckList() {
+    // 트럭 리스트로 이동 (일단 사용자 관리로)
+    SnackBarHelper.showInfo(context, '트럭 목록 화면은 준비 중입니다');
   }
 }
 

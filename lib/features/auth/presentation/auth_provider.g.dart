@@ -520,16 +520,19 @@ String _$isCurrentUserAdminHash() =>
     r'd530d2bb9730be690200dd4fd4547bd7f27c2107';
 
 /// 현재 사용자 role 가져오기 (customer, owner, admin)
+/// 이메일 기반 관리자도 'admin'으로 반환
 
 @ProviderFor(currentUserRole)
 final currentUserRoleProvider = CurrentUserRoleProvider._();
 
 /// 현재 사용자 role 가져오기 (customer, owner, admin)
+/// 이메일 기반 관리자도 'admin'으로 반환
 
 final class CurrentUserRoleProvider
     extends $FunctionalProvider<AsyncValue<String>, String, FutureOr<String>>
     with $FutureModifier<String>, $FutureProvider<String> {
   /// 현재 사용자 role 가져오기 (customer, owner, admin)
+  /// 이메일 기반 관리자도 'admin'으로 반환
   CurrentUserRoleProvider._()
     : super(
         from: null,
@@ -555,7 +558,7 @@ final class CurrentUserRoleProvider
   }
 }
 
-String _$currentUserRoleHash() => r'b39e6d93eafa6f68688d4d09b3bdc20b0debea84';
+String _$currentUserRoleHash() => r'5f6746cc825b2f5512c13d2399a3a789370a5d0a';
 
 /// 닉네임 변경 정보 가져오기 (이번 달 변경 횟수)
 
