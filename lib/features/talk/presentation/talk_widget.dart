@@ -149,6 +149,7 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
                 // Auto-scroll to bottom when new messages arrive
                 WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
 
+                final currentUserId = ref.watch(currentUserIdProvider);
                 return ListView.builder(
                   controller: _scrollController,
                   padding: const EdgeInsets.all(16),
@@ -158,6 +159,8 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
                     return _MessageBubble(
                       message: message,
                       isCurrentUserOwner: widget.isOwner,
+                      isMyMessage: currentUserId != null && message.userId == currentUserId,
+                      truckId: widget.truckId,
                     );
                   },
                 );
@@ -224,17 +227,57 @@ class _TalkWidgetState extends ConsumerState<TalkWidget> {
   }
 }
 
-class _MessageBubble extends StatelessWidget {
+class _MessageBubble extends ConsumerWidget {
   final TalkMessage message;
   final bool isCurrentUserOwner;
+  final bool isMyMessage;
+  final String truckId;
 
   const _MessageBubble({
     required this.message,
     required this.isCurrentUserOwner,
+    required this.isMyMessage,
+    required this.truckId,
   });
 
+  void _showDeleteConfirmation(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.deleteMessage),
+        content: Text(l10n.deleteMessageConfirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              try {
+                final repository = ref.read(talkRepositoryProvider);
+                await repository.deleteMessage(truckId, message.id);
+                if (context.mounted) {
+                  SnackBarHelper.showSuccess(context, l10n.messageDeleted);
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  SnackBarHelper.showError(context, l10n.messageDeleteFailed);
+                }
+              }
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final isOwnerMessage = message.isOwner;
     final timeFormat = DateFormat('HH:mm');
 
@@ -263,47 +306,88 @@ class _MessageBubble extends StatelessWidget {
 
           // Message Bubble
           Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: bubbleColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // User Name
-                  Text(
-                    message.userName,
-                    style: TextStyle(
-                      color: textColor.withValues(alpha: 0.8),
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+            child: GestureDetector(
+              onLongPress: isMyMessage ? () => _showDeleteConfirmation(context, ref) : null,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: bubbleColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: isMyMessage
+                      ? Border.all(color: AppTheme.electricBlue.withValues(alpha: 0.5), width: 1)
+                      : null,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // User Name + My Message Indicator
+                    Row(
+                      children: [
+                        Text(
+                          message.userName,
+                          style: TextStyle(
+                            color: textColor.withValues(alpha: 0.8),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (isMyMessage) ...[
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: AppTheme.electricBlue.withValues(alpha: 0.3),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              l10n.me,
+                              style: const TextStyle(
+                                fontSize: 8,
+                                color: AppTheme.electricBlue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 4),
+                    const SizedBox(height: 4),
 
-                  // Message Text
-                  Text(
-                    message.message,
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 14,
+                    // Message Text
+                    Text(
+                      message.message,
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: 14,
+                      ),
                     ),
-                  ),
 
-                  // Timestamp
-                  const SizedBox(height: 4),
-                  Text(
-                    message.createdAt != null
-                        ? timeFormat.format(message.createdAt!)
-                        : '',
-                    style: TextStyle(
-                      color: textColor.withValues(alpha: 0.6),
-                      fontSize: 10,
+                    // Timestamp + Delete hint
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          message.createdAt != null
+                              ? timeFormat.format(message.createdAt!)
+                              : '',
+                          style: TextStyle(
+                            color: textColor.withValues(alpha: 0.6),
+                            fontSize: 10,
+                          ),
+                        ),
+                        if (isMyMessage)
+                          Text(
+                            l10n.longPressToDelete,
+                            style: TextStyle(
+                              color: textColor.withValues(alpha: 0.4),
+                              fontSize: 9,
+                            ),
+                          ),
+                      ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

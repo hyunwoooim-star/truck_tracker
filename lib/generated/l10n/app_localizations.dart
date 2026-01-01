@@ -800,6 +800,42 @@ abstract class AppLocalizations {
   /// **'메시지 로딩 실패'**
   String get errorLoadingMessages;
 
+  /// No description provided for @me.
+  ///
+  /// In ko, this message translates to:
+  /// **'나'**
+  String get me;
+
+  /// No description provided for @deleteMessage.
+  ///
+  /// In ko, this message translates to:
+  /// **'메시지 삭제'**
+  String get deleteMessage;
+
+  /// No description provided for @deleteMessageConfirmation.
+  ///
+  /// In ko, this message translates to:
+  /// **'정말 이 메시지를 삭제하시겠습니까?'**
+  String get deleteMessageConfirmation;
+
+  /// No description provided for @messageDeleted.
+  ///
+  /// In ko, this message translates to:
+  /// **'메시지가 삭제되었습니다'**
+  String get messageDeleted;
+
+  /// No description provided for @messageDeleteFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'메시지 삭제에 실패했습니다'**
+  String get messageDeleteFailed;
+
+  /// No description provided for @longPressToDelete.
+  ///
+  /// In ko, this message translates to:
+  /// **'꾹 눌러서 삭제'**
+  String get longPressToDelete;
+
   /// No description provided for @navigation.
   ///
   /// In ko, this message translates to:

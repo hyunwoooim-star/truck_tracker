@@ -375,6 +375,24 @@ class AppLocalizationsKo extends AppLocalizations {
   String get errorLoadingMessages => '메시지 로딩 실패';
 
   @override
+  String get me => '나';
+
+  @override
+  String get deleteMessage => '메시지 삭제';
+
+  @override
+  String get deleteMessageConfirmation => '정말 이 메시지를 삭제하시겠습니까?';
+
+  @override
+  String get messageDeleted => '메시지가 삭제되었습니다';
+
+  @override
+  String get messageDeleteFailed => '메시지 삭제에 실패했습니다';
+
+  @override
+  String get longPressToDelete => '꾹 눌러서 삭제';
+
+  @override
   String get navigation => '길찾기';
 
   @override

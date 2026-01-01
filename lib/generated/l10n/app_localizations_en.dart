@@ -380,6 +380,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorLoadingMessages => 'Error loading messages';
 
   @override
+  String get me => 'Me';
+
+  @override
+  String get deleteMessage => 'Delete Message';
+
+  @override
+  String get deleteMessageConfirmation =>
+      'Are you sure you want to delete this message?';
+
+  @override
+  String get messageDeleted => 'Message deleted';
+
+  @override
+  String get messageDeleteFailed => 'Failed to delete message';
+
+  @override
+  String get longPressToDelete => 'Long press to delete';
+
+  @override
   String get navigation => 'Navigation';
 
   @override
