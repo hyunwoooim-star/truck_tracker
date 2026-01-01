@@ -83,7 +83,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     setState(() => _isLoading = true);
-    showLoginLoadingOverlay(context, 'email');
+    showLoginLoadingOverlay(context);
 
     try {
       final authService = ref.read(authServiceProvider);
@@ -179,7 +179,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _handleKakaoLogin() async {
     AppLogger.debug('Kakao login button pressed', tag: 'LoginScreen');
     setState(() => _isLoading = true);
-    showLoginLoadingOverlay(context, 'kakao');
+    showLoginLoadingOverlay(context);
 
     try {
       final authService = ref.read(authServiceProvider);
@@ -217,7 +217,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _handleNaverLogin() async {
     AppLogger.debug('Naver login button pressed', tag: 'LoginScreen');
     setState(() => _isLoading = true);
-    showLoginLoadingOverlay(context, 'naver');
+    showLoginLoadingOverlay(context);
 
     try {
       final authService = ref.read(authServiceProvider);
@@ -267,7 +267,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _handleGoogleLogin() async {
     AppLogger.debug('Google login button pressed', tag: 'LoginScreen');
     setState(() => _isLoading = true);
-    showLoginLoadingOverlay(context, 'google');
+    showLoginLoadingOverlay(context);
 
     try {
       final authService = ref.read(authServiceProvider);

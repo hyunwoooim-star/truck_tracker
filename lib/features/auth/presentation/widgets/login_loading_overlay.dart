@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/themes/app_theme.dart';
 
-/// 로그인 로딩 오버레이 - 재밌는 애니메이션과 프로그레스 바
+/// 로그인 로딩 오버레이 - 심플한 애니메이션과 프로그레스 바
 class LoginLoadingOverlay extends StatefulWidget {
-  final String provider; // 'kakao', 'naver', 'google', 'email'
-
-  const LoginLoadingOverlay({
-    super.key,
-    required this.provider,
-  });
+  const LoginLoadingOverlay({super.key});
 
   @override
   State<LoginLoadingOverlay> createState() => _LoginLoadingOverlayState();
@@ -54,51 +49,6 @@ class _LoginLoadingOverlayState extends State<LoginLoadingOverlay>
     super.dispose();
   }
 
-  String get _providerName {
-    switch (widget.provider) {
-      case 'kakao':
-        return '카카오';
-      case 'naver':
-        return '네이버';
-      case 'google':
-        return '구글';
-      case 'email':
-        return '이메일';
-      default:
-        return '';
-    }
-  }
-
-  Color get _providerColor {
-    switch (widget.provider) {
-      case 'kakao':
-        return const Color(0xFFFEE500);
-      case 'naver':
-        return const Color(0xFF03C75A);
-      case 'google':
-        return Colors.white;
-      case 'email':
-        return AppTheme.mustardYellow;
-      default:
-        return AppTheme.mustardYellow;
-    }
-  }
-
-  IconData get _providerIcon {
-    switch (widget.provider) {
-      case 'kakao':
-        return Icons.chat_bubble;
-      case 'naver':
-        return Icons.north_east;
-      case 'google':
-        return Icons.g_mobiledata;
-      case 'email':
-        return Icons.email;
-      default:
-        return Icons.login;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -123,37 +73,16 @@ class _LoginLoadingOverlayState extends State<LoginLoadingOverlay>
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: _providerColor.withValues(alpha: 0.3),
+                      color: AppTheme.mustardYellow.withValues(alpha: 0.3),
                       blurRadius: 20,
                       spreadRadius: 2,
                     ),
                   ],
                 ),
-                child: Column(
-                  children: [
-                    // 트럭 아이콘
-                    const Icon(
-                      Icons.local_shipping,
-                      size: 64,
-                      color: AppTheme.mustardYellow,
-                    ),
-                    const SizedBox(height: 8),
-                    // 로그인 제공자 아이콘
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(_providerIcon, size: 20, color: _providerColor),
-                        const SizedBox(width: 4),
-                        Text(
-                          _providerName,
-                          style: TextStyle(
-                            color: _providerColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                child: const Icon(
+                  Icons.local_shipping,
+                  size: 64,
+                  color: AppTheme.mustardYellow,
                 ),
               ),
             ),
@@ -161,9 +90,9 @@ class _LoginLoadingOverlayState extends State<LoginLoadingOverlay>
             const SizedBox(height: 32),
 
             // 로딩 텍스트
-            Text(
-              '로그인 중...',
-              style: const TextStyle(
+            const Text(
+              '접속 중...',
+              style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -190,14 +119,14 @@ class _LoginLoadingOverlayState extends State<LoginLoadingOverlay>
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            _providerColor,
-                            _providerColor.withValues(alpha: 0.7),
+                            AppTheme.mustardYellow,
+                            AppTheme.mustardYellow.withValues(alpha: 0.7),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(4),
                         boxShadow: [
                           BoxShadow(
-                            color: _providerColor.withValues(alpha: 0.5),
+                            color: AppTheme.mustardYellow.withValues(alpha: 0.5),
                             blurRadius: 8,
                           ),
                         ],
@@ -226,12 +155,12 @@ class _LoginLoadingOverlayState extends State<LoginLoadingOverlay>
 }
 
 /// 로그인 로딩 오버레이를 쉽게 표시하는 헬퍼 함수
-void showLoginLoadingOverlay(BuildContext context, String provider) {
+void showLoginLoadingOverlay(BuildContext context) {
   showDialog(
     context: context,
     barrierDismissible: false,
     barrierColor: Colors.transparent,
-    builder: (context) => LoginLoadingOverlay(provider: provider),
+    builder: (context) => const LoginLoadingOverlay(),
   );
 }
 

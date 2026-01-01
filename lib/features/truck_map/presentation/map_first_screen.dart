@@ -456,9 +456,6 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                         ),
                       );
                       break;
-                    case 'deleteAccount':
-                      _showDeleteAccountDialog(context, ref);
-                      break;
                     case 'logout':
                       _showLogoutDialog(context, ref);
                       break;
@@ -521,17 +518,6 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                         ),
                       ),
                     const PopupMenuDivider(),
-                    if (user != null)
-                      const PopupMenuItem(
-                        value: 'deleteAccount',
-                        child: Row(
-                          children: [
-                            Icon(Icons.person_remove, color: Colors.orange),
-                            SizedBox(width: 12),
-                            Text('회원 탈퇴', style: TextStyle(color: Colors.orange)),
-                          ],
-                        ),
-                      ),
                     const PopupMenuItem(
                       value: 'logout',
                       child: Row(
@@ -644,122 +630,6 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
         ],
       ),
     );
-  }
-
-  /// Show delete account confirmation dialog
-  void _showDeleteAccountDialog(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.charcoalMedium,
-        title: Row(
-          children: [
-            const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
-            const SizedBox(width: 8),
-            Text(l10n.deleteAccount, style: const TextStyle(color: Colors.white)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.deleteAccountWarning,
-              style: const TextStyle(color: AppTheme.textSecondary),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.info_outline, color: Colors.red, size: 20),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      '이 작업은 되돌릴 수 없습니다',
-                      style: TextStyle(color: Colors.red, fontSize: 13),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel, style: const TextStyle(color: AppTheme.textSecondary)),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              await _deleteAccount(context, ref, l10n);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
-            child: Text(l10n.deleteAccount, style: const TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Delete user account
-  Future<void> _deleteAccount(BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
-    try {
-      final authService = ref.read(authServiceProvider);
-      final userId = authService.currentUserId;
-
-      if (userId == null) {
-        SnackBarHelper.showError(context, l10n.loginRequired);
-        return;
-      }
-
-      // Show loading indicator
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(
-          child: CircularProgressIndicator(color: AppTheme.mustardYellow),
-        ),
-      );
-
-      // Delete user data from Firestore
-      await authService.deleteUserAccount(userId);
-
-      // Close loading dialog
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
-
-      // Invalidate providers
-      ref.invalidate(currentUserTruckIdProvider);
-      ref.invalidate(currentUserProvider);
-      ref.invalidate(currentUserIdProvider);
-      ref.invalidate(currentUserEmailProvider);
-
-      // Show success and navigate to login
-      if (context.mounted) {
-        SnackBarHelper.showSuccess(context, l10n.accountDeleted);
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-          (route) => false,
-        );
-      }
-    } catch (e) {
-      // Close loading dialog if open
-      if (context.mounted) {
-        Navigator.pop(context);
-        SnackBarHelper.showError(context, '회원 탈퇴 실패: $e');
-      }
-    }
   }
 }
 

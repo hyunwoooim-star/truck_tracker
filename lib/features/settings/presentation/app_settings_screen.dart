@@ -8,7 +8,9 @@ import '../../../core/themes/app_theme.dart';
 import '../../../core/themes/theme_provider.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../core/widgets/network_status_banner.dart';
+import '../../../generated/l10n/app_localizations.dart';
 import '../../auth/presentation/auth_provider.dart';
+import '../../auth/presentation/login_screen.dart';
 import '../../favorite/presentation/favorites_screen.dart';
 import '../../notifications/presentation/notification_settings_screen.dart';
 import '../../owner_dashboard/presentation/owner_dashboard_screen.dart';
@@ -205,6 +207,23 @@ class AppSettingsScreen extends ConsumerWidget {
                   ),
                 ),
 
+                const SizedBox(height: 48),
+
+                // 회원 탈퇴 (맨 아래 숨김)
+                Center(
+                  child: TextButton(
+                    onPressed: () => _showDeleteAccountDialog(context, ref),
+                    child: Text(
+                      '회원 탈퇴',
+                      style: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 12,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+
                 const SizedBox(height: 32),
               ],
             ),
@@ -246,46 +265,6 @@ class AppSettingsScreen extends ConsumerWidget {
       subtitle: subtitle != null ? Text(subtitle) : null,
       trailing: trailing ?? const Icon(Icons.chevron_right),
       onTap: onTap,
-    );
-  }
-
-  Widget _buildProfileTile(BuildContext context, WidgetRef ref) {
-    final nicknameAsync = ref.watch(currentUserNicknameProvider);
-    final emailAsync = ref.watch(currentUserEmailProvider);
-
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: AppTheme.mustardYellow,
-        child: nicknameAsync.when(
-          data: (nickname) => Text(
-            nickname?.isNotEmpty == true ? nickname![0].toUpperCase() : '?',
-            style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          loading: () => const SizedBox(
-            width: 16,
-            height: 16,
-            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
-          ),
-          error: (_, __) => const Text('?', style: TextStyle(color: Colors.black)),
-        ),
-      ),
-      title: nicknameAsync.when(
-        data: (nickname) => Text(
-          nickname ?? '닉네임 없음',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        loading: () => const Text('로딩 중...'),
-        error: (_, __) => const Text('닉네임 없음'),
-      ),
-      subtitle: Text(emailAsync),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () {
-        // TODO: 프로필 수정 화면으로 이동
-        SnackBarHelper.showInfo(context, '프로필 수정 기능 준비 중');
-      },
     );
   }
 
@@ -765,5 +744,113 @@ class AppSettingsScreen extends ConsumerWidget {
         },
       ),
     );
+  }
+
+  /// 회원 탈퇴 확인 다이얼로그
+  void _showDeleteAccountDialog(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
+            const SizedBox(width: 8),
+            Text(l10n.deleteAccount),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.deleteAccountWarning),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.red.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.info_outline, color: Colors.red, size: 20),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '이 작업은 되돌릴 수 없습니다',
+                      style: TextStyle(color: Colors.red, fontSize: 13),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _deleteAccount(context, ref, l10n);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text(l10n.deleteAccount, style: const TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 회원 탈퇴 처리
+  Future<void> _deleteAccount(BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
+    try {
+      final authService = ref.read(authServiceProvider);
+      final userId = authService.currentUserId;
+
+      if (userId == null) {
+        SnackBarHelper.showError(context, l10n.loginRequired);
+        return;
+      }
+
+      // 로딩 표시
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(color: AppTheme.mustardYellow),
+        ),
+      );
+
+      // Firestore 데이터 삭제
+      await authService.deleteUserAccount(userId);
+
+      // 로딩 닫기
+      if (context.mounted) Navigator.pop(context);
+
+      // Provider 초기화
+      ref.invalidate(currentUserTruckIdProvider);
+      ref.invalidate(currentUserProvider);
+      ref.invalidate(currentUserIdProvider);
+      ref.invalidate(currentUserEmailProvider);
+
+      // 성공 메시지 및 로그인 화면으로 이동
+      if (context.mounted) {
+        SnackBarHelper.showSuccess(context, l10n.accountDeleted);
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context);
+        SnackBarHelper.showError(context, '회원 탈퇴 실패: $e');
+      }
+    }
   }
 }
