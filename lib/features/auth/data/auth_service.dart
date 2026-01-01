@@ -732,6 +732,60 @@ class AuthService {
     }
   }
 
+  /// [NEW] 사장님 인증 신청 통합 메서드 (이미지 + 정보 한 번에 저장)
+  /// 이미지 업로드와 비즈니스 정보를 한 번에 저장하여 덮어쓰기 버그 방지
+  Future<void> submitOwnerApplication({
+    required String businessName,
+    String? description,
+    required dynamic imageData, // Uint8List(Web) or String(Mobile path)
+  }) async {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) throw Exception('로그인이 필요합니다');
+
+    AppLogger.debug('Starting owner application for: $userId', tag: 'AuthService');
+
+    try {
+      // 1. 이미지 업로드
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('owner_requests')
+          .child('$userId.jpg');
+
+      String imageUrl;
+      if (imageData is Uint8List) {
+        await storageRef.putData(imageData, SettableMetadata(contentType: 'image/jpeg'));
+        imageUrl = await storageRef.getDownloadURL();
+      } else if (imageData is String) {
+        await storageRef.putFile(File(imageData));
+        imageUrl = await storageRef.getDownloadURL();
+      } else {
+        throw Exception('지원하지 않는 이미지 형식입니다.');
+      }
+      AppLogger.debug('License image uploaded: $imageUrl', tag: 'AuthService');
+
+      // 2. 데이터 한 번에 저장 (덮어쓰기 방지)
+      await _firestore.collection('owner_requests').doc(userId).set({
+        'userId': userId,
+        'email': _auth.currentUser?.email ?? '',
+        'displayName': _auth.currentUser?.displayName ?? '',
+        'businessName': businessName,
+        'description': description,
+        'businessLicenseUrl': imageUrl,
+        'status': 'pending',
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'reviewedBy': null,
+        'reviewedAt': null,
+        'rejectionReason': null,
+      });
+
+      AppLogger.success('Owner application submitted successfully', tag: 'AuthService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Owner application failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
+  }
+
   /// Get owner request status
   Future<Map<String, dynamic>?> getOwnerRequestStatus(String userId) async {
     try {

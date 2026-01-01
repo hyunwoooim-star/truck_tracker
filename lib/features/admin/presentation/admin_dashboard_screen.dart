@@ -199,9 +199,10 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
       crossAxisCount: crossAxisCount,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 8,
-      crossAxisSpacing: 8,
-      childAspectRatio: screenWidth > 800 ? 2.2 : 1.8,
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      // [FIX] 비율 낮춰서 카드 높이 증가 (라벨 잘림 방지)
+      childAspectRatio: screenWidth > 800 ? 1.8 : 1.3,
       children: [
         AdminStatsCard(
           icon: Icons.pending_actions,

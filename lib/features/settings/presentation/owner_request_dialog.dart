@@ -67,21 +67,14 @@ class _OwnerRequestDialogState extends ConsumerState<OwnerRequestDialog> {
 
     try {
       final authService = ref.read(authServiceProvider);
-      final userId = authService.currentUser?.uid;
 
-      if (userId == null) {
-        throw Exception('로그인이 필요합니다');
-      }
-
-      // 이미지와 함께 신청
-      await authService.submitOwnerRequestWithImage(userId, _selectedImageBytes);
-
-      // 추가 정보 업데이트 (상호명, 설명)
-      await authService.submitOwnerRequest(
+      // [FIX] 통합 메서드 사용 - 이미지와 정보를 한 번에 저장
+      await authService.submitOwnerApplication(
         businessName: _businessNameController.text.trim(),
         description: _descriptionController.text.trim().isNotEmpty
             ? _descriptionController.text.trim()
             : null,
+        imageData: _selectedImageBytes,
       );
 
       ref.invalidate(ownerRequestStatusProvider);
@@ -264,7 +257,7 @@ class _OwnerRequestDialogState extends ConsumerState<OwnerRequestDialog> {
   }
 }
 
-/// 사장님 신청 상태 다이얼로그
+/// 사장님 신청 상태 다이얼로그 (개선된 UI)
 class OwnerRequestStatusDialog extends StatelessWidget {
   final Map<String, dynamic> status;
 
@@ -272,10 +265,11 @@ class OwnerRequestStatusDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusValue = status['status'] as String?;
+    final statusValue = status['status'] as String? ?? 'pending';
     final createdAt = status['createdAt'];
     final businessName = status['businessName'] as String?;
     final businessLicenseUrl = status['businessLicenseUrl'] as String?;
+    final rejectReason = status['rejectReason'] as String?;
 
     String dateStr = '';
     if (createdAt != null) {
@@ -285,98 +279,134 @@ class OwnerRequestStatusDialog extends StatelessWidget {
       } catch (_) {}
     }
 
-    IconData icon;
-    Color iconColor;
-    String title;
-    String message;
+    // 상태별 색상 및 텍스트 정의
+    Color stateColor;
+    IconData stateIcon;
+    String mainTitle;
+    String subDescription;
 
     switch (statusValue) {
-      case 'pending':
-        icon = Icons.hourglass_top;
-        iconColor = Colors.orange;
-        title = '검토 중';
-        message = '현재 관리자가 신청서를 검토하고 있습니다.\n보통 1-2일 내에 승인 결과를 알려드립니다.';
-        break;
       case 'approved':
-        icon = Icons.check_circle;
-        iconColor = Colors.green;
-        title = '승인 완료';
-        message = '사장님 인증이 완료되었습니다!\n이제 트럭을 등록하고 관리할 수 있습니다.';
+        stateColor = Colors.green;
+        stateIcon = Icons.check_circle;
+        mainTitle = '승인 완료';
+        subDescription = '이제 사장님 전용 기능을 사용할 수 있습니다!';
         break;
       case 'rejected':
-        icon = Icons.cancel;
-        iconColor = Colors.red;
-        title = '거절됨';
-        message = status['rejectReason'] as String? ?? '신청이 거절되었습니다. 다시 신청해주세요.';
+        stateColor = Colors.red;
+        stateIcon = Icons.cancel;
+        mainTitle = '승인 거절';
+        subDescription = '아래 사유를 확인하고 다시 신청해주세요.';
         break;
-      default:
-        icon = Icons.info;
-        iconColor = Colors.grey;
-        title = '상태 확인';
-        message = '신청 상태를 확인할 수 없습니다.';
+      default: // pending
+        stateColor = Colors.orange;
+        stateIcon = Icons.hourglass_top;
+        mainTitle = '심사 중';
+        subDescription = '관리자가 서류를 검토하고 있어요.\n보통 1-2일 내에 결과를 알려드립니다.';
     }
 
-    return AlertDialog(
-      title: Row(
-        children: [
-          Icon(icon, color: iconColor),
-          const SizedBox(width: 8),
-          Text(title),
-        ],
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(message, style: const TextStyle(fontSize: 14)),
-          if (dateStr.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
-                const SizedBox(width: 8),
-                Text(
-                  '신청일: $dateStr',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
-                ),
-              ],
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 1. 상태 아이콘
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: stateColor.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(stateIcon, size: 40, color: stateColor),
             ),
-          ],
-          if (businessName != null && businessName.isNotEmpty) ...[
+            const SizedBox(height: 16),
+
+            // 2. 메인 타이틀
+            Text(
+              mainTitle,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.store, size: 16, color: Colors.grey),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '상호명: $businessName',
-                    style: TextStyle(color: Colors.grey[600], fontSize: 14),
+            Text(
+              subDescription,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey[600], fontSize: 14),
+            ),
+            const SizedBox(height: 24),
+
+            // 3. 상세 정보 카드
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  if (dateStr.isNotEmpty)
+                    _buildInfoRow('신청일', dateStr),
+                  if (businessName != null && businessName.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    _buildInfoRow('상호명', businessName),
+                  ],
+                  if (businessLicenseUrl != null && businessLicenseUrl.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    _buildInfoRow('첨부파일', '업로드 완료 ✓'),
+                  ],
+                  if (statusValue == 'rejected' && rejectReason != null) ...[
+                    const Divider(height: 24),
+                    const Text(
+                      '거절 사유',
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      rejectReason,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 4. 닫기 버튼
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: stateColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-              ],
+                child: const Text('확인'),
+              ),
             ),
           ],
-          if (businessLicenseUrl != null && businessLicenseUrl.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.attach_file, size: 16, color: Colors.grey),
-                const SizedBox(width: 8),
-                const Text(
-                  '첨부파일: 업로드됨',
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
-                ),
-                const Icon(Icons.check, size: 16, color: Colors.green),
-              ],
-            ),
-          ],
-        ],
+        ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('확인'),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(color: Colors.grey)),
+        Flexible(
+          child: Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.w500),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );
