@@ -53,7 +53,7 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.text('화면'), findsOneWidget);
+      expect(find.text('앱 설정'), findsOneWidget);
       expect(find.text('테마'), findsOneWidget);
     });
 
@@ -61,7 +61,6 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.text('알림'), findsOneWidget);
       expect(find.text('알림 설정'), findsOneWidget);
     });
 
@@ -69,7 +68,7 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.text('앱 정보'), findsOneWidget);
+      expect(find.text('앱 정보 & 지원'), findsOneWidget);
       expect(find.text('버전'), findsOneWidget);
       expect(find.text('v$kCurrentAppVersion'), findsOneWidget);
     });
@@ -86,7 +85,6 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('지원'), findsOneWidget);
       expect(find.text('도움말'), findsOneWidget);
       expect(find.text('피드백 보내기'), findsOneWidget);
     });
