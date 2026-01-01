@@ -23,16 +23,16 @@ void main() {
         expect(distance, 0);
       });
 
-      test('calculates distance between Seoul and Gangnam (approximately 10km)', () {
+      test('calculates distance between Seoul and Gangnam (approximately 9km)', () {
         final distance = service.calculateDistance(
           37.5665, // Seoul City Hall
           126.9780,
           37.4979, // Gangnam Station
           127.0276,
         );
-        // Distance should be around 10km (10,000 meters)
-        expect(distance, greaterThan(9000));
-        expect(distance, lessThan(11000));
+        // Distance should be around 8.8km (8,800 meters)
+        expect(distance, greaterThan(8000));
+        expect(distance, lessThan(10000));
       });
 
       test('distance is symmetric (A->B == B->A)', () {

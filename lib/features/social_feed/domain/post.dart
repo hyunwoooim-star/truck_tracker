@@ -68,7 +68,8 @@ abstract class Post with _$Post {
 
   /// Extract hashtags from content
   static List<String> extractHashtags(String content) {
-    final regex = RegExp(r'#(\w+)');
+    // \w는 영문자만 매칭하므로 한글(가-힣)도 포함
+    final regex = RegExp(r'#([\w가-힣]+)');
     return regex.allMatches(content).map((m) => m.group(1)!.toLowerCase()).toList();
   }
 

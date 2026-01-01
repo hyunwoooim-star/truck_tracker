@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:truck_tracker/core/services/app_version_service.dart';
 import 'package:truck_tracker/core/themes/theme_provider.dart';
 import 'package:truck_tracker/core/widgets/network_status_banner.dart';
 import 'package:truck_tracker/features/settings/presentation/app_settings_screen.dart';
+import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 
 void main() {
   group('AppSettingsScreen Widget', () {
@@ -21,6 +23,17 @@ void main() {
             versionCheckProvider.overrideWith((ref) => Future.value(versionResult)),
         ],
         child: MaterialApp(
+          locale: const Locale('ko'),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('ko'),
+            Locale('en'),
+          ],
           theme: ThemeData.light(),
           darkTheme: ThemeData.dark(),
           themeMode: themeMode == AppThemeMode.dark ? ThemeMode.dark : ThemeMode.light,
@@ -112,8 +125,19 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: const MaterialApp(
-            home: AppSettingsScreen(),
+          child: MaterialApp(
+            locale: const Locale('ko'),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('ko'),
+              Locale('en'),
+            ],
+            home: const AppSettingsScreen(),
           ),
         ),
       );

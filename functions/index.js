@@ -800,24 +800,27 @@ exports.exchangeNaverCode = functions
       state: state,
     });
 
-    // 1. Exchange code for access token
-    const tokenResponse = await axios.get('https://nid.naver.com/oauth2.0/token', {
-      params: {
-        grant_type: 'authorization_code',
-        client_id: NAVER_CLIENT_ID,
-        client_secret: secretValue,
-        code: code,
-        state: state,
-      },
-    });
+    // 1. Exchange code for access token (GET method - Naver standard)
+    const tokenUrl = `https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id=${NAVER_CLIENT_ID}&client_secret=${encodeURIComponent(secretValue)}&code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
+
+    console.log('🔗 Naver token URL (without secret):', tokenUrl.replace(secretValue, '***'));
+
+    const tokenResponse = await axios.get(tokenUrl);
+
+    console.log('📦 Naver token response:', JSON.stringify(tokenResponse.data));
 
     const accessToken = tokenResponse.data.access_token;
-    console.log('📱 Naver access token obtained');
+    if (!accessToken) {
+      throw new Error('No access token in response: ' + JSON.stringify(tokenResponse.data));
+    }
+    console.log('📱 Naver access token obtained, length:', accessToken.length);
 
     // 2. Get user info from Naver
+    console.log('🔍 Calling Naver user info API...');
     const userResponse = await axios.get('https://openapi.naver.com/v1/nid/me', {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
+    console.log('👤 Naver user info response:', JSON.stringify(userResponse.data));
 
     const naverUser = userResponse.data.response;
     const naverId = naverUser.id;
@@ -832,14 +835,31 @@ exports.exchangeNaverCode = functions
 
     try {
       await admin.auth().getUser(uid);
+      console.log('👤 Existing Naver user found:', uid);
     } catch (error) {
       if (error.code === 'auth/user-not-found') {
-        await admin.auth().createUser({
-          uid: uid,
-          email: email || undefined,
-          displayName: displayName,
-          photoURL: photoURL || undefined,
-        });
+        try {
+          await admin.auth().createUser({
+            uid: uid,
+            email: email || undefined,
+            displayName: displayName,
+            photoURL: photoURL || undefined,
+          });
+          console.log('👤 New Naver user created:', uid);
+        } catch (createError) {
+          // 이메일 중복 시 이메일 없이 생성
+          if (createError.code === 'auth/email-already-exists') {
+            console.log('⚠️ Email already exists, creating user without email');
+            await admin.auth().createUser({
+              uid: uid,
+              displayName: displayName,
+              photoURL: photoURL || undefined,
+            });
+            console.log('👤 New Naver user created (no email):', uid);
+          } else {
+            throw createError;
+          }
+        }
       } else {
         throw error;
       }
