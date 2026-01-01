@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/services/app_version_service.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/themes/theme_provider.dart';
-import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../core/widgets/network_status_banner.dart';
 import '../../auth/presentation/auth_provider.dart';
@@ -36,142 +34,91 @@ class AppSettingsScreen extends ConsumerWidget {
           Expanded(
             child: ListView(
               children: [
-                // My Profile Section
+                // ═══════════════════════════════════════════════════════
+                // 내 정보
+                // ═══════════════════════════════════════════════════════
                 _buildSectionHeader(context, '내 정보'),
                 _buildProfileTile(context, ref),
-                ListTile(
-                  leading: const Icon(Icons.favorite_outline),
-                  title: const Text('즐겨찾기'),
-                  subtitle: const Text('저장한 트럭 목록'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const FavoritesScreen(),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.rate_review_outlined),
-                  title: const Text('내가 쓴 리뷰'),
-                  subtitle: const Text('작성한 리뷰 목록'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const MyReviewsScreen(),
-                      ),
-                    );
-                  },
-                ),
-
-                const Divider(),
-
-                // Theme Section
-                _buildSectionHeader(context, '화면'),
-                ListTile(
-                  leading: Icon(
-                    isDark ? Icons.dark_mode : Icons.light_mode,
-                    color: isDark ? AppTheme.mustardYellow : AppTheme.mustardYellowDark,
+                _buildSettingsTile(
+                  icon: Icons.favorite_outline,
+                  title: '즐겨찾기',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const FavoritesScreen()),
                   ),
-                  title: const Text('테마'),
-                  subtitle: Text(_getThemeModeLabel(themeMode)),
-                  trailing: const Icon(Icons.chevron_right),
+                ),
+                _buildSettingsTile(
+                  icon: Icons.rate_review_outlined,
+                  title: '내가 쓴 리뷰',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MyReviewsScreen()),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // ═══════════════════════════════════════════════════════
+                // 앱 설정
+                // ═══════════════════════════════════════════════════════
+                _buildSectionHeader(context, '앱 설정'),
+                _buildSettingsTile(
+                  icon: isDark ? Icons.dark_mode : Icons.light_mode,
+                  iconColor: isDark ? AppTheme.mustardYellow : AppTheme.mustardYellowDark,
+                  title: '테마',
+                  subtitle: _getThemeModeLabel(themeMode),
                   onTap: () => _showThemeDialog(context, ref, themeMode),
                 ),
-
-                const Divider(),
-
-                // Notifications Section
-                _buildSectionHeader(context, '알림'),
-                ListTile(
-                  leading: const Icon(Icons.notifications_outlined),
-                  title: const Text('알림 설정'),
-                  subtitle: const Text('알림 유형별 설정'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const NotificationSettingsScreen(),
-                      ),
-                    );
-                  },
+                _buildSettingsTile(
+                  icon: Icons.notifications_outlined,
+                  title: '알림 설정',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const NotificationSettingsScreen()),
+                  ),
                 ),
 
-                const Divider(),
+                const SizedBox(height: 16),
 
-                // App Info Section
-                _buildSectionHeader(context, '앱 정보'),
+                // ═══════════════════════════════════════════════════════
+                // 앱 정보 & 지원
+                // ═══════════════════════════════════════════════════════
+                _buildSectionHeader(context, '앱 정보 & 지원'),
                 ListTile(
                   leading: const Icon(Icons.info_outline),
                   title: const Text('버전'),
                   subtitle: Text('v$kCurrentAppVersion'),
                   trailing: _buildVersionCheckButton(ref),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.policy_outlined),
-                  title: const Text('개인정보 처리방침'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const PrivacyPolicyScreen(),
-                      ),
-                    );
-                  },
+                _buildSettingsTile(
+                  icon: Icons.help_outline,
+                  title: '도움말',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const HelpScreen()),
+                  ),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.description_outlined),
-                  title: const Text('서비스 이용약관'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const TermsOfServiceScreen(),
-                      ),
-                    );
-                  },
-                ),
-
-                const Divider(),
-
-                // Support Section
-                _buildSectionHeader(context, '지원'),
-                ListTile(
-                  leading: const Icon(Icons.help_outline),
-                  title: const Text('도움말'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const HelpScreen(),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.feedback_outlined),
-                  title: const Text('피드백 보내기'),
+                _buildSettingsTile(
+                  icon: Icons.feedback_outlined,
+                  title: '피드백 보내기',
                   trailing: const Icon(Icons.open_in_new, size: 20),
                   onTap: () => _launchUrl('mailto:support@truckajeossi.com'),
                 ),
-
-                // Debug: Sentry Test (개발자용 - 나중에 제거)
-                const Divider(),
-                _buildSectionHeader(context, '개발자 도구'),
-                ListTile(
-                  leading: const Icon(Icons.bug_report, color: Colors.orange),
-                  title: const Text('Sentry 에러 테스트'),
-                  subtitle: const Text('테스트 에러를 Sentry로 전송'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _testSentryError(context),
+                _buildSettingsTile(
+                  icon: Icons.policy_outlined,
+                  title: '개인정보 처리방침',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
+                  ),
+                ),
+                _buildSettingsTile(
+                  icon: Icons.description_outlined,
+                  title: '서비스 이용약관',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const TermsOfServiceScreen()),
+                  ),
                 ),
 
                 const SizedBox(height: 32),
@@ -216,16 +163,37 @@ class AppSettingsScreen extends ConsumerWidget {
   }
 
   Widget _buildSectionHeader(BuildContext context, String title) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+      ),
       child: Text(
         title,
         style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
           color: Theme.of(context).colorScheme.primary,
+          letterSpacing: 0.5,
         ),
       ),
+    );
+  }
+
+  Widget _buildSettingsTile({
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    Color? iconColor,
+    Widget? trailing,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: iconColor),
+      title: Text(title),
+      subtitle: subtitle != null ? Text(subtitle) : null,
+      trailing: trailing ?? const Icon(Icons.chevron_right),
+      onTap: onTap,
     );
   }
 
@@ -364,50 +332,5 @@ class AppSettingsScreen extends ConsumerWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
-  }
-
-  /// Sentry 테스트용 에러 발생
-  void _testSentryError(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sentry 테스트'),
-        content: const Text('테스트 에러를 Sentry로 전송합니다.\n\nSentry 대시보드에서 확인해보세요.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-
-              // 테스트 에러 전송
-              try {
-                throw Exception('🧪 Sentry 테스트 에러 - ${DateTime.now()}');
-              } catch (error, stackTrace) {
-                // Sentry로 직접 전송
-                Sentry.captureException(error, stackTrace: stackTrace);
-
-                // AppLogger로도 전송 (Sentry + Crashlytics)
-                AppLogger.error(
-                  'Sentry 테스트 에러',
-                  error: error,
-                  stackTrace: stackTrace,
-                  tag: 'SentryTest',
-                );
-              }
-
-              // 성공 메시지 표시
-              SnackBarHelper.showSuccess(context, '테스트 에러가 Sentry로 전송되었습니다!');
-            },
-            child: const Text('에러 전송', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
   }
 }
