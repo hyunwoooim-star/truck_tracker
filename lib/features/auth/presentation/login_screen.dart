@@ -18,6 +18,7 @@ import '../../settings/presentation/terms_of_service_screen.dart';
 import '../../truck_map/presentation/map_first_screen.dart';
 import 'auth_provider.dart';
 import 'email_verification_screen.dart';
+import 'widgets/login_loading_overlay.dart';
 
 /// Login Screen with Email and Google Sign-In
 class LoginScreen extends ConsumerStatefulWidget {
@@ -82,6 +83,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     setState(() => _isLoading = true);
+    showLoginLoadingOverlay(context, 'email');
 
     try {
       final authService = ref.read(authServiceProvider);
@@ -93,6 +95,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           _passwordController.text,
         );
         AppLogger.success('Email sign in successful', tag: 'LoginScreen');
+        if (mounted) hideLoginLoadingOverlay(context);
       } else {
         AppLogger.debug('Attempting email sign up...', tag: 'LoginScreen');
         // Sign up
@@ -124,6 +127,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
         // Show email verification screen for new signups
         if (mounted) {
+          hideLoginLoadingOverlay(context);
           final message = _isOwnerSignup
               ? '회원가입이 완료되었습니다!\n이메일 인증 후 사장님 승인 절차가 진행됩니다.'
               : '회원가입이 완료되었습니다!\n이메일을 인증해주세요.';
@@ -162,6 +166,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e, stackTrace) {
       AppLogger.error('Auth error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
       if (mounted) {
+        hideLoginLoadingOverlay(context);
         SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
       }
     } finally {
@@ -174,6 +179,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _handleKakaoLogin() async {
     AppLogger.debug('Kakao login button pressed', tag: 'LoginScreen');
     setState(() => _isLoading = true);
+    showLoginLoadingOverlay(context, 'kakao');
 
     try {
       final authService = ref.read(authServiceProvider);
@@ -189,6 +195,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       // Refresh auth state - AuthWrapper will handle routing
       if (mounted) {
+        hideLoginLoadingOverlay(context);
         ref.invalidate(authStateChangesProvider);
         ref.invalidate(currentUserProvider);
         ref.invalidate(currentUserIdProvider);
@@ -197,6 +204,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e, stackTrace) {
       AppLogger.error('Kakao login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
       if (mounted) {
+        hideLoginLoadingOverlay(context);
         SnackBarHelper.showError(context, _getErrorMessage(e.toString()));
       }
     } finally {
@@ -209,6 +217,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _handleNaverLogin() async {
     AppLogger.debug('Naver login button pressed', tag: 'LoginScreen');
     setState(() => _isLoading = true);
+    showLoginLoadingOverlay(context, 'naver');
 
     try {
       final authService = ref.read(authServiceProvider);
@@ -224,6 +233,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       // Refresh auth state - AuthWrapper will handle routing
       if (mounted) {
+        hideLoginLoadingOverlay(context);
         ref.invalidate(authStateChangesProvider);
         ref.invalidate(currentUserProvider);
         ref.invalidate(currentUserIdProvider);
@@ -232,6 +242,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e, stackTrace) {
       AppLogger.error('Naver login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
       if (mounted) {
+        hideLoginLoadingOverlay(context);
         // 디버그: 상세 에러 메시지 표시
         final errorStr = e.toString();
         debugPrint('🔴 Naver Login Error: $errorStr');
@@ -256,6 +267,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _handleGoogleLogin() async {
     AppLogger.debug('Google login button pressed', tag: 'LoginScreen');
     setState(() => _isLoading = true);
+    showLoginLoadingOverlay(context, 'google');
 
     try {
       final authService = ref.read(authServiceProvider);
@@ -271,6 +283,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       // Refresh auth state - AuthWrapper will handle routing
       if (mounted) {
+        hideLoginLoadingOverlay(context);
         ref.invalidate(authStateChangesProvider);
         ref.invalidate(currentUserProvider);
         ref.invalidate(currentUserIdProvider);
@@ -279,6 +292,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e, stackTrace) {
       AppLogger.error('Google login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
       if (mounted) {
+        hideLoginLoadingOverlay(context);
         // 디버그: 상세 에러 메시지 표시
         final errorStr = e.toString();
         debugPrint('🔴 Google Login Error: $errorStr');
