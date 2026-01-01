@@ -1,3 +1,89 @@
+import 'package:intl/intl.dart';
+
+/// 날짜/시간 포맷팅 유틸리티
+///
+/// 앱 전체에서 일관된 날짜 포맷을 위해 사용합니다.
+///
+/// Example:
+/// ```dart
+/// DateTimeFormatter.formatDate(DateTime.now());     // "2026.01.01"
+/// DateTimeFormatter.formatTime(DateTime.now());     // "14:30"
+/// DateTimeFormatter.formatRelative(DateTime.now()); // "방금 전"
+/// ```
+class DateTimeFormatter {
+  const DateTimeFormatter._();
+
+  static final _dateFormat = DateFormat('yyyy.MM.dd');
+  static final _timeFormat = DateFormat('HH:mm');
+  static final _dateTimeFormat = DateFormat('yyyy.MM.dd HH:mm');
+  static final _shortDateFormat = DateFormat('M/d');
+
+  /// 날짜 포맷팅 (yyyy.MM.dd)
+  static String formatDate(DateTime date) => _dateFormat.format(date);
+
+  /// 시간 포맷팅 (HH:mm)
+  static String formatTime(DateTime time) => _timeFormat.format(time);
+
+  /// 날짜+시간 포맷팅 (yyyy.MM.dd HH:mm)
+  static String formatDateTime(DateTime dateTime) =>
+      _dateTimeFormat.format(dateTime);
+
+  /// 짧은 날짜 포맷팅 (M/d)
+  static String formatShortDate(DateTime date) => _shortDateFormat.format(date);
+
+  /// 상대적 시간 표시 (몇 분 전, 몇 시간 전 등)
+  ///
+  /// - 1분 미만: "방금 전"
+  /// - 1시간 미만: "N분 전"
+  /// - 24시간 미만: "N시간 전"
+  /// - 7일 미만: "N일 전"
+  /// - 그 외: "M/d" 형식
+  static String formatRelative(DateTime dateTime) {
+    final now = DateTime.now();
+    final diff = now.difference(dateTime);
+
+    if (diff.inMinutes < 1) {
+      return '방금 전';
+    } else if (diff.inMinutes < 60) {
+      return '${diff.inMinutes}분 전';
+    } else if (diff.inHours < 24) {
+      return '${diff.inHours}시간 전';
+    } else if (diff.inDays < 7) {
+      return '${diff.inDays}일 전';
+    } else {
+      return formatShortDate(dateTime);
+    }
+  }
+
+  /// 채팅용 날짜 그룹 라벨
+  ///
+  /// - 오늘: "오늘"
+  /// - 어제: "어제"
+  /// - 올해: "M월 d일"
+  /// - 그 외: "yyyy년 M월 d일"
+  static String formatChatDateGroup(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final dateOnly = DateTime(date.year, date.month, date.day);
+
+    if (dateOnly == today) {
+      return '오늘';
+    } else if (dateOnly == yesterday) {
+      return '어제';
+    } else if (date.year == now.year) {
+      return DateFormat('M월 d일').format(date);
+    } else {
+      return DateFormat('yyyy년 M월 d일').format(date);
+    }
+  }
+
+  /// 쿠폰 유효기간 표시용
+  static String formatCouponValidity(DateTime validFrom, DateTime validUntil) {
+    return '${formatDate(validFrom)} ~ ${formatDate(validUntil)}';
+  }
+}
+
 /// DateTime 확장 메서드
 ///
 /// 날짜 관련 유틸리티 기능을 제공합니다.

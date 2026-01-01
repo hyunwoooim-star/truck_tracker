@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../../shared/widgets/empty_state_widget.dart';
+import '../../../shared/widgets/error_state_widget.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
 import '../../../shared/widgets/status_tag.dart';
 import '../../auth/presentation/auth_provider.dart';
@@ -42,35 +44,24 @@ class FavoritesScreen extends ConsumerWidget {
       ),
       body: favoriteTruckIdsAsync.when(
         loading: () => const SkeletonTruckList(itemCount: 3),
-        error: (e, _) => Center(
-          child: Text(l10n.errorWithMessage(e), style: const TextStyle(color: Colors.red)),
+        error: (e, _) => ErrorStateWidget(
+          error: e,
+          onRetry: () => ref.invalidate(userFavoritesProvider(userId)),
         ),
         data: (favoriteIds) {
           if (favoriteIds.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.favorite_border, size: 64, color: Colors.grey[600]),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.noFavoriteTrucksYet,
-                    style: TextStyle(color: Colors.grey[400], fontSize: 16),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.addFavoritesHint,
-                    style: TextStyle(color: Colors.grey[600], fontSize: 14),
-                  ),
-                ],
-              ),
+            return EmptyStateWidget(
+              icon: Icons.favorite_border,
+              title: l10n.noFavoriteTrucksYet,
+              subtitle: l10n.addFavoritesHint,
             );
           }
 
           return allTrucksAsync.when(
             loading: () => const SkeletonTruckList(itemCount: 3),
-            error: (e, _) => Center(
-              child: Text(l10n.errorWithMessage(e), style: const TextStyle(color: Colors.red)),
+            error: (e, _) => ErrorStateWidget(
+              error: e,
+              onRetry: () => ref.invalidate(firestoreTruckStreamProvider),
             ),
             data: (allTrucks) {
               final favoriteTrucks = allTrucks
@@ -78,18 +69,9 @@ class FavoritesScreen extends ConsumerWidget {
                   .toList();
 
               if (favoriteTrucks.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.favorite_border, size: 64, color: Colors.grey[600]),
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n.favoriteTrucksNotFound,
-                        style: TextStyle(color: Colors.grey[400], fontSize: 16),
-                      ),
-                    ],
-                  ),
+                return EmptyStateWidget(
+                  icon: Icons.favorite_border,
+                  title: l10n.favoriteTrucksNotFound,
                 );
               }
 

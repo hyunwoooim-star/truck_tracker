@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/date_utils.dart';
 import '../../../core/utils/snackbar_helper.dart';
+import '../../../shared/widgets/empty_state_widget.dart';
+import '../../../shared/widgets/error_state_widget.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../domain/coupon.dart';
@@ -40,25 +42,20 @@ class CouponListScreen extends ConsumerWidget {
           itemCount: 3,
           itemBuilder: (_, index) => const SkeletonCouponCard(),
         ),
-        error: (error, _) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error_outline, size: 48, color: Colors.grey[600]),
-              const SizedBox(height: 16),
-              Text(
-                '쿠폰을 불러올 수 없습니다',
-                style: TextStyle(color: Colors.grey[400], fontSize: 16),
-              ),
-            ],
-          ),
+        error: (error, _) => ErrorStateWidget(
+          error: error,
+          onRetry: () => ref.invalidate(truckCouponsProvider(truckId)),
         ),
         data: (coupons) {
           // Filter only valid coupons
           final validCoupons = coupons.where((c) => c.isValid).toList();
 
           if (validCoupons.isEmpty) {
-            return _buildEmptyState();
+            return const EmptyStateWidget(
+              icon: Icons.local_offer_outlined,
+              title: '사용 가능한 쿠폰이 없습니다',
+              subtitle: '새로운 쿠폰이 등록되면 알려드릴게요',
+            );
           }
 
           return ListView.builder(
@@ -75,38 +72,6 @@ class CouponListScreen extends ConsumerWidget {
             },
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.local_offer_outlined,
-            size: 64,
-            color: Colors.grey[600],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            '사용 가능한 쿠폰이 없습니다',
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '새로운 쿠폰이 등록되면 알려드릴게요',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 14,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -130,8 +95,6 @@ class _CouponCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateFormat = DateFormat('yyyy.MM.dd');
-
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -210,7 +173,7 @@ class _CouponCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${dateFormat.format(coupon.validFrom)} ~ ${dateFormat.format(coupon.validUntil)}',
+                            DateTimeFormatter.formatCouponValidity(coupon.validFrom, coupon.validUntil),
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[500],

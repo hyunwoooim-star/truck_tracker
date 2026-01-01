@@ -6,6 +6,8 @@ import 'package:rxdart/rxdart.dart';
 
 import '../../../core/constants/food_types.dart';
 import '../../../core/themes/app_theme.dart';
+import '../../../shared/widgets/empty_state_widget.dart';
+import '../../../shared/widgets/error_state_widget.dart';
 import '../../../shared/widgets/skeleton_loading.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../auth/presentation/login_screen.dart';
@@ -66,11 +68,9 @@ class TruckListScreen extends ConsumerWidget {
               backgroundColor: AppTheme.charcoalMedium,
               child: trucksWithDistanceAsync.when(
                 loading: () => const SkeletonTruckList(itemCount: 5),
-                error: (e, stackTrace) => Center(
-                  child: Text(
-                    l10n.loadDataFailed,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
+                error: (e, _) => ErrorStateWidget(
+                  error: e,
+                  onRetry: () => ref.invalidate(firestoreTruckStreamProvider),
                 ),
                 data: (trucksWithDistance) {
                   // Get top ranked trucks (sync or empty list if loading)
@@ -78,43 +78,12 @@ class TruckListScreen extends ConsumerWidget {
 
                   // Empty State
                   if (trucksWithDistance.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.local_shipping_outlined,
-                            size: 80,
-                            color: AppTheme.textTertiary,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            l10n.noTrucks,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: AppTheme.textSecondary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '검색 조건을 변경해 보세요',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppTheme.textTertiary,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              ref.read(truckFilterProvider.notifier).clearAllFilters();
-                            },
-                            icon: const Icon(Icons.refresh),
-                            label: const Text('필터 초기화'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.electricBlue,
-                              foregroundColor: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
+                    return EmptyStateWidget(
+                      icon: Icons.local_shipping_outlined,
+                      title: l10n.noTrucks,
+                      subtitle: '검색 조건을 변경해 보세요',
+                      action: () => ref.read(truckFilterProvider.notifier).clearAllFilters(),
+                      actionLabel: '필터 초기화',
                     );
                   }
 
