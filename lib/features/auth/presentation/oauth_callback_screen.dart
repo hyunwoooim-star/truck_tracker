@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../truck_map/presentation/map_first_screen.dart';
 import 'auth_provider.dart';
+import 'widgets/login_loading_overlay.dart';
 
 /// OAuth callback screen for web
 /// Handles redirect from Kakao/Naver OAuth
@@ -87,22 +88,7 @@ class _OAuthCallbackScreenState extends ConsumerState<OAuthCallbackScreen> {
       backgroundColor: AppTheme.charcoalDark,
       body: Center(
         child: _isProcessing
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CircularProgressIndicator(
-                    color: AppTheme.mustardYellow,
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    '${widget.provider == 'kakao' ? '카카오' : '네이버'} 로그인 처리 중...',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              )
+            ? const LoginLoadingOverlay()
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
