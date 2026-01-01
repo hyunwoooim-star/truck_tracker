@@ -143,7 +143,7 @@ abstract class AppLocalizations {
   /// No description provided for @showCustomersQRCode.
   ///
   /// In ko, this message translates to:
-  /// **'손님에게 체크인용 QR 코드를 보여주세요'**
+  /// **'손님에게 방문인증용 QR 코드를 보여주세요'**
   String get showCustomersQRCode;
 
   /// No description provided for @todaysStatistics.
@@ -257,7 +257,7 @@ abstract class AppLocalizations {
   /// No description provided for @checkinSuccess.
   ///
   /// In ko, this message translates to:
-  /// **'체크인 성공!'**
+  /// **'방문인증 성공!'**
   String get checkinSuccess;
 
   /// No description provided for @invalidQRCode.
@@ -317,7 +317,7 @@ abstract class AppLocalizations {
   /// No description provided for @qrCheckInTooltip.
   ///
   /// In ko, this message translates to:
-  /// **'QR 체크인'**
+  /// **'QR 방문인증'**
   String get qrCheckInTooltip;
 
   /// No description provided for @scheduleTooltip.
@@ -593,13 +593,13 @@ abstract class AppLocalizations {
   /// No description provided for @checkInQRCode.
   ///
   /// In ko, this message translates to:
-  /// **'체크인 QR 코드'**
+  /// **'방문인증 QR 코드'**
   String get checkInQRCode;
 
   /// No description provided for @checkInQR.
   ///
   /// In ko, this message translates to:
-  /// **'체크인 QR'**
+  /// **'방문인증 QR'**
   String get checkInQR;
 
   /// No description provided for @bankTransfer.
@@ -617,7 +617,7 @@ abstract class AppLocalizations {
   /// No description provided for @customerscanQR.
   ///
   /// In ko, this message translates to:
-  /// **'고객이 체크인하려면 이 QR 코드를 스캔하세요'**
+  /// **'고객이 방문인증하려면 이 QR 코드를 스캔하세요'**
   String get customerscanQR;
 
   /// No description provided for @truckID.
@@ -629,13 +629,13 @@ abstract class AppLocalizations {
   /// No description provided for @checkInBenefits.
   ///
   /// In ko, this message translates to:
-  /// **'체크인 혜택'**
+  /// **'방문인증 혜택'**
   String get checkInBenefits;
 
   /// No description provided for @benefitsList.
   ///
   /// In ko, this message translates to:
-  /// **'• 방문할 때마다 10 포인트 적립\n• 즐겨찾는 트럭 추적\n• 특별 프로모션 받기'**
+  /// **'• 방문할 때마다 스탬프 적립\n• 10개 모으면 무료 쿠폰\n• 즐겨찾는 트럭 추적'**
   String get benefitsList;
 
   /// No description provided for @pleaseEnterTruckID.
@@ -659,43 +659,43 @@ abstract class AppLocalizations {
   /// No description provided for @alreadyCheckedInToday.
   ///
   /// In ko, this message translates to:
-  /// **'오늘 이미 이 트럭에 체크인했습니다!'**
+  /// **'오늘 이미 이 트럭에서 방문인증 했습니다!'**
   String get alreadyCheckedInToday;
 
   /// No description provided for @checkInFailed.
   ///
   /// In ko, this message translates to:
-  /// **'체크인 실패: {error}'**
+  /// **'방문인증 실패: {error}'**
   String checkInFailed(Object error);
 
   /// No description provided for @checkInSuccessful.
   ///
   /// In ko, this message translates to:
-  /// **'체크인 성공!'**
+  /// **'방문인증 성공!'**
   String get checkInSuccessful;
 
   /// No description provided for @loyaltyPoints.
   ///
   /// In ko, this message translates to:
-  /// **'{truck} • +10 포인트'**
+  /// **'{truck} • 스탬프 +1'**
   String loyaltyPoints(Object truck);
 
   /// No description provided for @checkIn.
   ///
   /// In ko, this message translates to:
-  /// **'체크인'**
+  /// **'QR 방문인증'**
   String get checkIn;
 
   /// No description provided for @scanQRCodeToCheckIn.
   ///
   /// In ko, this message translates to:
-  /// **'QR 코드를 스캔하여 체크인'**
+  /// **'QR 코드를 스캔하여 방문인증'**
   String get scanQRCodeToCheckIn;
 
   /// No description provided for @earnLoyaltyPoints.
   ///
   /// In ko, this message translates to:
-  /// **'방문할 때마다 포인트를 획득하세요!'**
+  /// **'스탬프를 모아 무료 쿠폰을 받으세요!'**
   String get earnLoyaltyPoints;
 
   /// No description provided for @or.
@@ -719,7 +719,7 @@ abstract class AppLocalizations {
   /// No description provided for @checkInButton.
   ///
   /// In ko, this message translates to:
-  /// **'체크인'**
+  /// **'방문인증'**
   String get checkInButton;
 
   /// No description provided for @howItWorks.
@@ -731,7 +731,7 @@ abstract class AppLocalizations {
   /// No description provided for @howItWorksList.
   ///
   /// In ko, this message translates to:
-  /// **'1. 푸드트럭의 QR 코드를 스캔하세요\n2. 방문할 때마다 10 포인트 적립\n3. 즐겨찾는 트럭을 추적하세요\n4. 하루에 트럭당 한 번만 체크인할 수 있습니다'**
+  /// **'1. 푸드트럭의 QR 코드를 스캔하세요\n2. 방문할 때마다 스탬프 1개 적립\n3. 스탬프 10개 모으면 무료 쿠폰!\n4. 하루에 트럭당 한 번만 인증 가능합니다'**
   String get howItWorksList;
 
   /// No description provided for @errorLoadingData.
@@ -2525,7 +2525,7 @@ abstract class AppLocalizations {
   /// No description provided for @visitTrucksHint.
   ///
   /// In ko, this message translates to:
-  /// **'트럭을 방문하고 체크인해보세요!'**
+  /// **'트럭을 방문하고 QR 인증해보세요!'**
   String get visitTrucksHint;
 
   /// No description provided for @deleteAccount.

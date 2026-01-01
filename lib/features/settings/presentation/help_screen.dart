@@ -79,9 +79,9 @@ class HelpScreen extends StatelessWidget {
               ),
               _HelpItem(
                 icon: Icons.qr_code_scanner,
-                title: 'QR 체크인',
-                description: '트럭 방문 시 QR 코드를 스캔하면 포인트가 적립됩니다. '
-                    '10회 방문 시 특별 혜택을 받을 수 있어요!',
+                title: 'QR 방문인증',
+                description: '트럭 방문 시 사장님의 QR 코드를 스캔하면 스탬프가 적립됩니다. '
+                    '10개 모으면 무료 쿠폰을 받을 수 있어요!',
               ),
               _HelpItem(
                 icon: Icons.star,
@@ -130,7 +130,7 @@ class HelpScreen extends StatelessWidget {
               _HelpItem(
                 icon: Icons.qr_code,
                 title: 'QR 코드',
-                description: '고객 체크인용 QR 코드를 생성하고 표시하세요.',
+                description: '고객 방문인증용 QR 코드를 생성하여 보여주세요.',
               ),
               _HelpItem(
                 icon: Icons.analytics,

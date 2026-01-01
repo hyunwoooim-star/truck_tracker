@@ -30,7 +30,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get truckQRCode => '푸드트럭 QR 코드';
 
   @override
-  String get showCustomersQRCode => '손님에게 체크인용 QR 코드를 보여주세요';
+  String get showCustomersQRCode => '손님에게 방문인증용 QR 코드를 보여주세요';
 
   @override
   String get todaysStatistics => '오늘의 통계';
@@ -87,7 +87,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get scanQRCode => 'QR 코드 스캔';
 
   @override
-  String get checkinSuccess => '체크인 성공!';
+  String get checkinSuccess => '방문인증 성공!';
 
   @override
   String get invalidQRCode => '유효하지 않은 QR 코드';
@@ -117,7 +117,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get refresh => '새로고침';
 
   @override
-  String get qrCheckInTooltip => 'QR 체크인';
+  String get qrCheckInTooltip => 'QR 방문인증';
 
   @override
   String get scheduleTooltip => '일정';
@@ -261,10 +261,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get average => '평균';
 
   @override
-  String get checkInQRCode => '체크인 QR 코드';
+  String get checkInQRCode => '방문인증 QR 코드';
 
   @override
-  String get checkInQR => '체크인 QR';
+  String get checkInQR => '방문인증 QR';
 
   @override
   String get bankTransfer => '계좌이체';
@@ -273,7 +273,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get showBankTransferQR => '계좌이체 결제를 위한 QR 코드';
 
   @override
-  String get customerscanQR => '고객이 체크인하려면 이 QR 코드를 스캔하세요';
+  String get customerscanQR => '고객이 방문인증하려면 이 QR 코드를 스캔하세요';
 
   @override
   String truckID(Object id) {
@@ -281,10 +281,10 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get checkInBenefits => '체크인 혜택';
+  String get checkInBenefits => '방문인증 혜택';
 
   @override
-  String get benefitsList => '• 방문할 때마다 10 포인트 적립\n• 즐겨찾는 트럭 추적\n• 특별 프로모션 받기';
+  String get benefitsList => '• 방문할 때마다 스탬프 적립\n• 10개 모으면 무료 쿠폰\n• 즐겨찾는 트럭 추적';
 
   @override
   String get pleaseEnterTruckID => '트럭 ID를 입력하세요';
@@ -296,29 +296,29 @@ class AppLocalizationsKo extends AppLocalizations {
   String get truckNotFound => '트럭을 찾을 수 없습니다';
 
   @override
-  String get alreadyCheckedInToday => '오늘 이미 이 트럭에 체크인했습니다!';
+  String get alreadyCheckedInToday => '오늘 이미 이 트럭에서 방문인증 했습니다!';
 
   @override
   String checkInFailed(Object error) {
-    return '체크인 실패: $error';
+    return '방문인증 실패: $error';
   }
 
   @override
-  String get checkInSuccessful => '체크인 성공!';
+  String get checkInSuccessful => '방문인증 성공!';
 
   @override
   String loyaltyPoints(Object truck) {
-    return '$truck • +10 포인트';
+    return '$truck • 스탬프 +1';
   }
 
   @override
-  String get checkIn => '체크인';
+  String get checkIn => 'QR 방문인증';
 
   @override
-  String get scanQRCodeToCheckIn => 'QR 코드를 스캔하여 체크인';
+  String get scanQRCodeToCheckIn => 'QR 코드를 스캔하여 방문인증';
 
   @override
-  String get earnLoyaltyPoints => '방문할 때마다 포인트를 획득하세요!';
+  String get earnLoyaltyPoints => '스탬프를 모아 무료 쿠폰을 받으세요!';
 
   @override
   String get or => '또는';
@@ -330,14 +330,14 @@ class AppLocalizationsKo extends AppLocalizations {
   String get enterTruckIDHint => '트럭 ID 입력 (예: truck_001)';
 
   @override
-  String get checkInButton => '체크인';
+  String get checkInButton => '방문인증';
 
   @override
   String get howItWorks => '사용 방법';
 
   @override
   String get howItWorksList =>
-      '1. 푸드트럭의 QR 코드를 스캔하세요\n2. 방문할 때마다 10 포인트 적립\n3. 즐겨찾는 트럭을 추적하세요\n4. 하루에 트럭당 한 번만 체크인할 수 있습니다';
+      '1. 푸드트럭의 QR 코드를 스캔하세요\n2. 방문할 때마다 스탬프 1개 적립\n3. 스탬프 10개 모으면 무료 쿠폰!\n4. 하루에 트럭당 한 번만 인증 가능합니다';
 
   @override
   String get errorLoadingData => '데이터를 불러올 수 없습니다';
@@ -1273,7 +1273,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get noVisitHistory => '방문 기록이 없습니다';
 
   @override
-  String get visitTrucksHint => '트럭을 방문하고 체크인해보세요!';
+  String get visitTrucksHint => '트럭을 방문하고 QR 인증해보세요!';
 
   @override
   String get deleteAccount => '회원 탈퇴';

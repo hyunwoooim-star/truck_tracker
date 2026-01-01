@@ -511,7 +511,7 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                           children: [
                             Icon(Icons.qr_code_scanner, color: AppTheme.mustardYellow),
                             SizedBox(width: 12),
-                            Text('QR 체크인', style: TextStyle(color: Colors.white)),
+                            Text('QR 방문인증', style: TextStyle(color: Colors.white)),
                           ],
                         ),
                       ),

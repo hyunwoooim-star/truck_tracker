@@ -30,7 +30,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get truckQRCode => 'Truck QR Code';
 
   @override
-  String get showCustomersQRCode => 'Show customers this QR code to check in';
+  String get showCustomersQRCode =>
+      'Show customers this QR code for visit verification';
 
   @override
   String get todaysStatistics => 'Today\'s Statistics';
@@ -87,7 +88,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanQRCode => 'Scan QR Code';
 
   @override
-  String get checkinSuccess => 'Check-in Success!';
+  String get checkinSuccess => 'Visit Verified!';
 
   @override
   String get invalidQRCode => 'Invalid QR Code';
@@ -117,7 +118,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refresh => 'Refresh';
 
   @override
-  String get qrCheckInTooltip => 'QR Check-In';
+  String get qrCheckInTooltip => 'QR Verification';
 
   @override
   String get scheduleTooltip => 'Schedule';
@@ -264,10 +265,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get average => 'AVERAGE';
 
   @override
-  String get checkInQRCode => 'Check-In QR Code';
+  String get checkInQRCode => 'Visit Verification QR Code';
 
   @override
-  String get checkInQR => 'Check-In QR';
+  String get checkInQR => 'Verification QR';
 
   @override
   String get bankTransfer => 'Bank Transfer';
@@ -276,7 +277,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showBankTransferQR => 'Show this QR for bank transfer payments';
 
   @override
-  String get customerscanQR => 'Customers scan this QR code to check in';
+  String get customerscanQR =>
+      'Customers scan this QR code to verify their visit';
 
   @override
   String truckID(Object id) {
@@ -284,11 +286,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get checkInBenefits => 'Check-in Benefits';
+  String get checkInBenefits => 'Visit Verification Benefits';
 
   @override
   String get benefitsList =>
-      '• Earn 10 loyalty points per visit\n• Track favorite trucks\n• Get special promotions';
+      '• Earn a stamp per visit\n• Collect 10 stamps for a free coupon\n• Track favorite trucks';
 
   @override
   String get pleaseEnterTruckID => 'Please enter a truck ID';
@@ -301,29 +303,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alreadyCheckedInToday =>
-      'You have already checked in to this truck today!';
+      'You have already verified your visit at this truck today!';
 
   @override
   String checkInFailed(Object error) {
-    return 'Check-in failed: $error';
+    return 'Verification failed: $error';
   }
 
   @override
-  String get checkInSuccessful => 'Check-in successful!';
+  String get checkInSuccessful => 'Visit verified!';
 
   @override
   String loyaltyPoints(Object truck) {
-    return '$truck • +10 loyalty points';
+    return '$truck • +1 stamp';
   }
 
   @override
-  String get checkIn => 'Check-In';
+  String get checkIn => 'QR Verification';
 
   @override
-  String get scanQRCodeToCheckIn => 'Scan QR Code to Check In';
+  String get scanQRCodeToCheckIn => 'Scan QR Code to Verify Visit';
 
   @override
-  String get earnLoyaltyPoints => 'Earn loyalty points with every visit!';
+  String get earnLoyaltyPoints => 'Collect stamps to earn free coupons!';
 
   @override
   String get or => 'OR';
@@ -335,14 +337,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterTruckIDHint => 'Enter truck ID (e.g., truck_001)';
 
   @override
-  String get checkInButton => 'CHECK IN';
+  String get checkInButton => 'VERIFY';
 
   @override
   String get howItWorks => 'How it works';
 
   @override
   String get howItWorksList =>
-      '1. Scan the QR code at the food truck\n2. Earn 10 loyalty points per visit\n3. Track your favorite trucks\n4. You can only check in once per day per truck';
+      '1. Scan the QR code at the food truck\n2. Earn 1 stamp per visit\n3. Collect 10 stamps for a free coupon!\n4. You can only verify once per day per truck';
 
   @override
   String get errorLoadingData => 'Cannot load data';
@@ -1297,7 +1299,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noVisitHistory => 'No visit history';
 
   @override
-  String get visitTrucksHint => 'Visit trucks and check in!';
+  String get visitTrucksHint => 'Visit trucks and scan QR codes!';
 
   @override
   String get deleteAccount => 'Delete Account';

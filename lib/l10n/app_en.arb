@@ -8,7 +8,7 @@
   "submitSale": "Submit Sale",
   "cashSaleRecordedSuccessfully": "Cash sale recorded successfully",
   "truckQRCode": "Truck QR Code",
-  "showCustomersQRCode": "Show customers this QR code to check in",
+  "showCustomersQRCode": "Show customers this QR code for visit verification",
   "todaysStatistics": "Today''s Statistics",
   "views": "Views",
   "reviews": "Reviews",
@@ -29,7 +29,7 @@
   "errorDownloadingCSV": "Error downloading CSV",
 
   "scanQRCode": "Scan QR Code",
-  "checkinSuccess": "Check-in Success!",
+  "checkinSuccess": "Visit Verified!",
   "invalidQRCode": "Invalid QR Code",
   "cameraPermissionRequired": "Camera Permission Required",
   "enableCameraToScan": "Enable camera to scan QR codes",
@@ -41,7 +41,7 @@
   "retry": "Retry",
   "refresh": "Refresh",
 
-  "qrCheckInTooltip": "QR Check-In",
+  "qrCheckInTooltip": "QR Verification",
   "scheduleTooltip": "Schedule",
   "analyticsTooltip": "Analytics",
   "uploadDataTooltip": "Upload Data",
@@ -114,11 +114,11 @@
   "total": "TOTAL",
   "average": "AVERAGE",
 
-  "checkInQRCode": "Check-In QR Code",
-  "checkInQR": "Check-In QR",
+  "checkInQRCode": "Visit Verification QR Code",
+  "checkInQR": "Verification QR",
   "bankTransfer": "Bank Transfer",
   "showBankTransferQR": "Show this QR for bank transfer payments",
-  "customerscanQR": "Customers scan this QR code to check in",
+  "customerscanQR": "Customers scan this QR code to verify their visit",
   "truckID": "Truck ID: {id}",
   "@truckID": {
     "placeholders": {
@@ -127,13 +127,13 @@
       }
     }
   },
-  "checkInBenefits": "Check-in Benefits",
-  "benefitsList": "• Earn 10 loyalty points per visit\n• Track favorite trucks\n• Get special promotions",
+  "checkInBenefits": "Visit Verification Benefits",
+  "benefitsList": "• Earn a stamp per visit\n• Collect 10 stamps for a free coupon\n• Track favorite trucks",
   "pleaseEnterTruckID": "Please enter a truck ID",
   "userNotLoggedIn": "User not logged in",
   "truckNotFound": "Truck not found",
-  "alreadyCheckedInToday": "You have already checked in to this truck today!",
-  "checkInFailed": "Check-in failed: {error}",
+  "alreadyCheckedInToday": "You have already verified your visit at this truck today!",
+  "checkInFailed": "Verification failed: {error}",
   "@checkInFailed": {
     "placeholders": {
       "error": {
@@ -141,8 +141,8 @@
       }
     }
   },
-  "checkInSuccessful": "Check-in successful!",
-  "loyaltyPoints": "{truck} • +10 loyalty points",
+  "checkInSuccessful": "Visit verified!",
+  "loyaltyPoints": "{truck} • +1 stamp",
   "@loyaltyPoints": {
     "placeholders": {
       "truck": {
@@ -150,15 +150,15 @@
       }
     }
   },
-  "checkIn": "Check-In",
-  "scanQRCodeToCheckIn": "Scan QR Code to Check In",
-  "earnLoyaltyPoints": "Earn loyalty points with every visit!",
+  "checkIn": "QR Verification",
+  "scanQRCodeToCheckIn": "Scan QR Code to Verify Visit",
+  "earnLoyaltyPoints": "Collect stamps to earn free coupons!",
   "or": "OR",
   "enterTruckID": "Enter Truck ID",
   "enterTruckIDHint": "Enter truck ID (e.g., truck_001)",
-  "checkInButton": "CHECK IN",
+  "checkInButton": "VERIFY",
   "howItWorks": "How it works",
-  "howItWorksList": "1. Scan the QR code at the food truck\n2. Earn 10 loyalty points per visit\n3. Track your favorite trucks\n4. You can only check in once per day per truck",
+  "howItWorksList": "1. Scan the QR code at the food truck\n2. Earn 1 stamp per visit\n3. Collect 10 stamps for a free coupon!\n4. You can only verify once per day per truck",
 
   "errorLoadingData": "Cannot load data",
   "todaysSpecialAnnouncement": "Today''s Special Announcement",
@@ -577,7 +577,7 @@
 
   "visitHistory": "Visit History",
   "noVisitHistory": "No visit history",
-  "visitTrucksHint": "Visit trucks and check in!",
+  "visitTrucksHint": "Visit trucks and scan QR codes!",
 
   "deleteAccount": "Delete Account",
   "deleteAccountWarning": "Are you sure you want to delete your account?\\nAll data will be permanently deleted.",
