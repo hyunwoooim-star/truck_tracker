@@ -1140,7 +1140,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Google Sign In Button
+                  // Google Sign In Button (공식 브랜딩 가이드라인)
                   ElevatedButton(
                     onPressed: _isLoading ? null : _handleGoogleLogin,
                     style: ElevatedButton.styleFrom(
@@ -1151,29 +1151,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: Colors.grey.shade300),
                       ),
                       elevation: 0,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Google 'G' 로고 (SVG 대신 커스텀 페인팅)
-                        Container(
+                        // Google 4색 G 로고
+                        SizedBox(
                           height: 20,
                           width: 20,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.grey.shade300, width: 0.5),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'G',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF4285F4), // Google Blue
-                              ),
-                            ),
+                          child: CustomPaint(
+                            painter: _GoogleLogoPainter(),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -1233,5 +1223,84 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ),
     );
   }
+}
+
+/// Google 4색 G 로고 CustomPainter
+class _GoogleLogoPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    final strokeWidth = size.width * 0.18;
+
+    // Google 색상
+    const googleBlue = Color(0xFF4285F4);
+    const googleGreen = Color(0xFF34A853);
+    const googleYellow = Color(0xFFFBBC05);
+    const googleRed = Color(0xFFEA4335);
+
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.butt;
+
+    // 파란색 (오른쪽 + 위쪽 일부) - 315도 ~ 90도
+    paint.color = googleBlue;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
+      -0.785, // -45도 (315도)
+      2.356,  // 135도
+      false,
+      paint,
+    );
+
+    // 초록색 (아래 오른쪽) - 90도 ~ 180도
+    paint.color = googleGreen;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
+      1.571, // 90도
+      1.571, // 90도
+      false,
+      paint,
+    );
+
+    // 노란색 (아래 왼쪽) - 180도 ~ 225도
+    paint.color = googleYellow;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
+      3.142, // 180도
+      0.785, // 45도
+      false,
+      paint,
+    );
+
+    // 빨간색 (왼쪽 위) - 225도 ~ 315도
+    paint.color = googleRed;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
+      3.927, // 225도
+      1.571, // 90도
+      false,
+      paint,
+    );
+
+    // G의 가로선 (파란색)
+    final linePaint = Paint()
+      ..color = googleBlue
+      ..style = PaintingStyle.fill;
+
+    canvas.drawRect(
+      Rect.fromLTWH(
+        center.dx - strokeWidth * 0.3,
+        center.dy - strokeWidth / 2,
+        radius,
+        strokeWidth,
+      ),
+      linePaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
