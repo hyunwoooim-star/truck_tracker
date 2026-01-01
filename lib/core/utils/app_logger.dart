@@ -20,21 +20,23 @@ class AppLogger {
 
   /// 일반 디버그 로그
   ///
-  /// Debug 모드에서만 출력됩니다.
+  /// Debug/Profile 모드에서 출력됩니다.
   static void debug(String message, {String? tag}) {
-    if (kDebugMode) {
+    if (kDebugMode || kProfileMode) {
       final prefix = tag != null ? '[$tag] ' : '';
-      debugPrint('$prefix$message');
+      // ignore: avoid_print
+      print('🔍 $prefix$message');
     }
   }
 
   /// 정보성 로그
   ///
-  /// Debug 모드에서만 출력됩니다.
+  /// Debug/Profile 모드에서 출력됩니다.
   static void info(String message, {String? tag}) {
-    if (kDebugMode) {
+    if (kDebugMode || kProfileMode) {
       final prefix = tag != null ? '[$tag] ' : '';
-      debugPrint('ℹ️ $prefix$message');
+      // ignore: avoid_print
+      print('ℹ️ $prefix$message');
     }
   }
 
