@@ -518,3 +518,41 @@ final class IsCurrentUserAdminProvider
 
 String _$isCurrentUserAdminHash() =>
     r'd530d2bb9730be690200dd4fd4547bd7f27c2107';
+
+/// 현재 사용자 role 가져오기 (customer, owner, admin)
+
+@ProviderFor(currentUserRole)
+final currentUserRoleProvider = CurrentUserRoleProvider._();
+
+/// 현재 사용자 role 가져오기 (customer, owner, admin)
+
+final class CurrentUserRoleProvider
+    extends $FunctionalProvider<AsyncValue<String>, String, FutureOr<String>>
+    with $FutureModifier<String>, $FutureProvider<String> {
+  /// 현재 사용자 role 가져오기 (customer, owner, admin)
+  CurrentUserRoleProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentUserRoleProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentUserRoleHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<String> create(Ref ref) {
+    return currentUserRole(ref);
+  }
+}
+
+String _$currentUserRoleHash() => r'b39e6d93eafa6f68688d4d09b3bdc20b0debea84';

@@ -1105,7 +1105,7 @@ class _ReapplyScreenState extends ConsumerState<_ReapplyScreen> {
         throw Exception('로그인이 필요합니다');
       }
 
-      await authService.submitOwnerRequest(userId, _businessLicenseImagePath!);
+      await authService.submitOwnerRequestWithImage(userId, _businessLicenseImagePath!);
 
       // Refresh the status
       ref.invalidate(ownerRequestStatusProvider);

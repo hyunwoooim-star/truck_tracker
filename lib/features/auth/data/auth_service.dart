@@ -643,9 +643,45 @@ class AuthService {
   // OWNER VERIFICATION
   // ═══════════════════════════════════════════════════════════
 
+  /// Submit simple owner request (without image, just business info)
+  Future<void> submitOwnerRequest({
+    String? businessName,
+    String? description,
+  }) async {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) {
+      throw Exception('로그인이 필요합니다');
+    }
+
+    AppLogger.debug('Submitting simple owner request for user: $userId', tag: 'AuthService');
+
+    try {
+      // Create owner request document
+      await _firestore.collection('owner_requests').doc(userId).set({
+        'userId': userId,
+        'email': _auth.currentUser?.email ?? '',
+        'displayName': _auth.currentUser?.displayName ?? '',
+        'businessName': businessName,
+        'description': description,
+        'businessLicenseUrl': null, // No image for simple request
+        'status': 'pending', // pending, approved, rejected
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'reviewedBy': null,
+        'reviewedAt': null,
+        'rejectionReason': null,
+      });
+
+      AppLogger.success('Simple owner request submitted', tag: 'AuthService');
+    } catch (e, stackTrace) {
+      AppLogger.error('Owner request submission failed', error: e, stackTrace: stackTrace, tag: 'AuthService');
+      rethrow;
+    }
+  }
+
   /// Submit owner verification request with business license
   /// [imageData] can be either a file path (String) for mobile or Uint8List for web
-  Future<void> submitOwnerRequest(String userId, dynamic imageData) async {
+  Future<void> submitOwnerRequestWithImage(String userId, dynamic imageData) async {
     AppLogger.debug('Submitting owner request for user: $userId', tag: 'AuthService');
 
     try {

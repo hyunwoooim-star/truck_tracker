@@ -107,7 +107,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           AppLogger.debug('Submitting owner verification request...', tag: 'LoginScreen');
           // Web: 바이트 전달, Mobile: 경로 전달
           final imageData = kIsWeb ? _businessLicenseImageBytes! : _businessLicenseImagePath!;
-          await authService.submitOwnerRequest(
+          await authService.submitOwnerRequestWithImage(
             userCredential.user!.uid,
             imageData,
           );

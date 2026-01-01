@@ -141,3 +141,16 @@ Future<bool> isCurrentUserAdmin(Ref ref) async {
   return isAdmin;
 }
 
+/// 현재 사용자 role 가져오기 (customer, owner, admin)
+@riverpod
+Future<String> currentUserRole(Ref ref) async {
+  final userId = ref.watch(currentUserIdProvider);
+
+  if (userId == null) {
+    return 'customer';
+  }
+
+  final authService = ref.watch(authServiceProvider);
+  return authService.getUserRole(userId);
+}
+

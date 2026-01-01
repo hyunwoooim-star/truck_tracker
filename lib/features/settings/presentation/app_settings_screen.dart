@@ -81,6 +81,9 @@ class AppSettingsScreen extends ConsumerWidget {
                   ),
                 ),
 
+                // 사장님으로 전환 메뉴 (일반 사용자만 표시)
+                _buildOwnerRequestTile(context, ref),
+
                 const SizedBox(height: 16),
 
                 // ═══════════════════════════════════════════════════════
@@ -356,6 +359,223 @@ class AppSettingsScreen extends ConsumerWidget {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  /// 사장님으로 전환 타일 (일반 사용자만 표시)
+  Widget _buildOwnerRequestTile(BuildContext context, WidgetRef ref) {
+    final roleAsync = ref.watch(currentUserRoleProvider);
+    final requestStatusAsync = ref.watch(ownerRequestStatusProvider);
+
+    return roleAsync.when(
+      data: (role) {
+        // 이미 사장님이거나 관리자이면 표시하지 않음
+        if (role == 'owner' || role == 'admin') {
+          return const SizedBox.shrink();
+        }
+
+        // 사장님 신청 상태 확인
+        return requestStatusAsync.when(
+          data: (requestStatus) {
+            if (requestStatus != null) {
+              final status = requestStatus['status'] as String?;
+              if (status == 'pending') {
+                // 대기 중인 신청이 있음
+                return ListTile(
+                  leading: const Icon(Icons.hourglass_top, color: Colors.orange),
+                  title: const Text('사장님 인증 대기 중'),
+                  subtitle: const Text('관리자 승인을 기다리고 있습니다'),
+                  trailing: const Icon(Icons.info_outline, color: Colors.orange),
+                  onTap: () => _showRequestStatusDialog(context, requestStatus),
+                );
+              } else if (status == 'rejected') {
+                // 거절된 신청
+                return ListTile(
+                  leading: const Icon(Icons.cancel_outlined, color: Colors.red),
+                  title: const Text('사장님 인증 거절됨'),
+                  subtitle: Text(requestStatus['rejectReason'] as String? ?? '다시 신청할 수 있습니다'),
+                  trailing: const Icon(Icons.refresh),
+                  onTap: () => _showOwnerRequestDialog(context, ref),
+                );
+              }
+            }
+
+            // 신청 전 상태
+            return ListTile(
+              leading: Icon(Icons.store_outlined, color: Colors.green[600]),
+              title: const Text('사장님으로 전환'),
+              subtitle: const Text('내 푸드트럭을 등록하고 관리하세요'),
+              trailing: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.green.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '신청',
+                  style: TextStyle(
+                    color: Colors.green[600],
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              onTap: () => _showOwnerRequestDialog(context, ref),
+            );
+          },
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+
+  /// 사장님 신청 상태 다이얼로그
+  void _showRequestStatusDialog(BuildContext context, Map<String, dynamic> status) {
+    final createdAt = status['createdAt'];
+    String dateStr = '';
+    if (createdAt != null) {
+      try {
+        final date = (createdAt as dynamic).toDate() as DateTime;
+        dateStr = '${date.year}.${date.month}.${date.day}';
+      } catch (_) {}
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.hourglass_top, color: Colors.orange),
+            SizedBox(width: 8),
+            Text('신청 현황'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('현재 관리자 검토 중입니다.'),
+            const SizedBox(height: 12),
+            Text(
+              '신청일: $dateStr',
+              style: TextStyle(color: Colors.grey[600], fontSize: 14),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              '보통 1-2일 내에 승인 결과를 알려드립니다.',
+              style: TextStyle(fontSize: 14),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('확인'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 사장님 신청 다이얼로그
+  void _showOwnerRequestDialog(BuildContext context, WidgetRef ref) {
+    final businessNameController = TextEditingController();
+    final descriptionController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.store, color: Colors.green),
+            SizedBox(width: 8),
+            Text('사장님 인증 신청'),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '푸드트럭 사장님이시라면 인증을 신청해주세요.\n관리자 검토 후 승인되면 트럭을 등록할 수 있습니다.',
+                style: TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: businessNameController,
+                decoration: const InputDecoration(
+                  labelText: '상호명 (선택)',
+                  hintText: '예: 맛있는 타코야끼',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: descriptionController,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: '간단한 소개 (선택)',
+                  hintText: '어떤 메뉴를 판매하시나요?',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('취소'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _submitOwnerRequest(
+                context,
+                ref,
+                businessNameController.text.trim(),
+                descriptionController.text.trim(),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('신청하기'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 사장님 신청 제출
+  Future<void> _submitOwnerRequest(
+    BuildContext context,
+    WidgetRef ref,
+    String businessName,
+    String description,
+  ) async {
+    try {
+      final authService = ref.read(authServiceProvider);
+      await authService.submitOwnerRequest(
+        businessName: businessName.isNotEmpty ? businessName : null,
+        description: description.isNotEmpty ? description : null,
+      );
+
+      // 신청 상태 다시 불러오기
+      ref.invalidate(ownerRequestStatusProvider);
+
+      if (context.mounted) {
+        SnackBarHelper.showSuccess(context, '사장님 인증 신청이 완료되었습니다!');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        SnackBarHelper.showError(context, '신청 실패: $e');
+      }
     }
   }
 }
