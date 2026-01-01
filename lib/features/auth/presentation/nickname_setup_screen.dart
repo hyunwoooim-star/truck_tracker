@@ -132,9 +132,19 @@ class _NicknameSetupScreenState extends ConsumerState<NicknameSetupScreen> {
       if (mounted) {
         final roleText = _selectedRole == 'owner' ? '사장' : '';
         SnackBarHelper.showSuccess(context, '$nickname$roleText님, 환영합니다!');
-        // Invalidate auth state to trigger redirect
+
+        // Firestore 업데이트가 반영될 시간을 줌
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        // 모든 관련 provider invalidate
+        ref.invalidate(isProfileCompleteProvider);
         ref.invalidate(authStateChangesProvider);
-        context.go('/');
+        ref.invalidate(currentUserProvider);
+        ref.invalidate(currentUserNicknameProvider);
+
+        if (mounted) {
+          context.go('/');
+        }
       }
     } catch (e) {
       if (mounted) {
