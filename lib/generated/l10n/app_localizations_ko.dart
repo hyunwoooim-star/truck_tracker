@@ -174,6 +174,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get save => '저장';
 
   @override
+  String get edit => '수정';
+
+  @override
   String get itemName => '상품명';
 
   @override
@@ -384,6 +387,30 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get writeReview => '리뷰 작성';
+
+  @override
+  String get editReview => '리뷰 수정';
+
+  @override
+  String get myReview => '내 리뷰';
+
+  @override
+  String get deleteReview => '리뷰 삭제';
+
+  @override
+  String get deleteReviewConfirmation => '정말 이 리뷰를 삭제하시겠습니까?';
+
+  @override
+  String get reviewDeleted => '리뷰가 삭제되었습니다';
+
+  @override
+  String get reviewDeleteFailed => '리뷰 삭제에 실패했습니다';
+
+  @override
+  String get reviewUpdated => '리뷰가 수정되었습니다';
+
+  @override
+  String get reviewUpdateFailed => '리뷰 수정에 실패했습니다';
 
   @override
   String get soldOut => '품절';

@@ -9,6 +9,7 @@ import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../analytics/data/analytics_repository.dart';
+import '../../auth/presentation/auth_provider.dart';
 import '../../visit_verification/presentation/visit_verification_button.dart';
 import '../../visit_verification/presentation/visit_count_badge.dart';
 import '../../stamp_card/presentation/stamp_card_widget.dart';
@@ -966,16 +967,18 @@ class _MenuItemCard extends ConsumerWidget {
   }
 }
 
-class _ReviewCard extends StatelessWidget {
+class _ReviewCard extends ConsumerWidget {
   const _ReviewCard({required this.review});
 
   final Review review;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final dateFormat = DateFormat('yyyy.MM.dd');
-    
+    final currentUserId = ref.watch(currentUserIdProvider);
+    final isMyReview = currentUserId != null && review.userId == currentUserId;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Container(
@@ -1004,12 +1007,34 @@ class _ReviewCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        review.userName,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[900],
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            review.userName,
+                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[900],
+                            ),
+                          ),
+                          if (isMyReview) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppTheme.electricBlue.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                l10n.myReview,
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  color: AppTheme.electricBlue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                       Row(
                         children: [
@@ -1038,6 +1063,34 @@ class _ReviewCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                // Edit/Delete menu for own reviews
+                if (isMyReview)
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert, color: Colors.grey),
+                    onSelected: (value) => _handleMenuAction(context, ref, value),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            const Icon(Icons.edit, size: 20),
+                            const SizedBox(width: 8),
+                            Text(l10n.edit),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            const Icon(Icons.delete, size: 20, color: Colors.red),
+                            const SizedBox(width: 8),
+                            Text(l10n.delete, style: const TextStyle(color: Colors.red)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
             const SizedBox(height: 12),
@@ -1145,6 +1198,256 @@ class _ReviewCard extends StatelessWidget {
               ),
             ],
           ],
+        ),
+      ),
+    );
+  }
+
+  void _handleMenuAction(BuildContext context, WidgetRef ref, String action) {
+    final l10n = AppLocalizations.of(context);
+
+    if (action == 'edit') {
+      _showEditDialog(context, ref);
+    } else if (action == 'delete') {
+      _showDeleteConfirmation(context, ref, l10n);
+    }
+  }
+
+  void _showEditDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => _ReviewEditDialog(review: review),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.deleteReview),
+        content: Text(l10n.deleteReviewConfirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              try {
+                final repository = ref.read(reviewRepositoryProvider);
+                await repository.deleteReview(review.id);
+                if (context.mounted) {
+                  SnackBarHelper.showSuccess(context, l10n.reviewDeleted);
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  SnackBarHelper.showError(context, l10n.reviewDeleteFailed);
+                }
+              }
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Dialog for editing a review
+class _ReviewEditDialog extends ConsumerStatefulWidget {
+  const _ReviewEditDialog({required this.review});
+
+  final Review review;
+
+  @override
+  ConsumerState<_ReviewEditDialog> createState() => _ReviewEditDialogState();
+}
+
+class _ReviewEditDialogState extends ConsumerState<_ReviewEditDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _commentController;
+  late int _rating;
+  bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _commentController = TextEditingController(text: widget.review.comment);
+    _rating = widget.review.rating;
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _updateReview() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final l10n = AppLocalizations.of(context);
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final repository = ref.read(reviewRepositoryProvider);
+      await repository.updateReview(widget.review.id, {
+        'rating': _rating,
+        'comment': _commentController.text.trim(),
+      });
+
+      if (mounted) {
+        Navigator.of(context).pop();
+        SnackBarHelper.showSuccess(context, l10n.reviewUpdated);
+      }
+    } catch (e) {
+      if (mounted) {
+        SnackBarHelper.showError(context, l10n.reviewUpdateFailed);
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 400),
+        padding: const EdgeInsets.all(24),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.editReview,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimary,
+                    ),
+              ),
+              const SizedBox(height: 24),
+
+              // Star Rating
+              Text(
+                l10n.starRating,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.textPrimary,
+                    ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(5, (index) {
+                  final starValue = index + 1;
+                  return IconButton(
+                    onPressed: () => setState(() => _rating = starValue),
+                    icon: Icon(
+                      starValue <= _rating ? Icons.star : Icons.star_border,
+                      size: 40,
+                      color: starValue <= _rating
+                          ? AppTheme.electricBlue
+                          : AppTheme.textTertiary,
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 24),
+
+              // Comment Field
+              Text(
+                l10n.reviewContent,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.textPrimary,
+                    ),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _commentController,
+                maxLines: 4,
+                style: const TextStyle(color: AppTheme.textPrimary),
+                decoration: InputDecoration(
+                  hintText: l10n.reviewPlaceholder,
+                  hintStyle: const TextStyle(color: AppTheme.textTertiary),
+                  filled: true,
+                  fillColor: AppTheme.charcoalMedium,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppTheme.charcoalLight,
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppTheme.electricBlue,
+                      width: 2,
+                    ),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return l10n.pleaseEnterReviewContent;
+                  }
+                  if (value.trim().length < 5) {
+                    return l10n.pleaseEnterAtLeast5Chars;
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+
+              // Action Buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: _isSubmitting
+                        ? null
+                        : () => Navigator.of(context).pop(),
+                    child: Text(l10n.cancel),
+                  ),
+                  const SizedBox(width: 12),
+                  ElevatedButton(
+                    onPressed: _isSubmitting ? null : _updateReview,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.electricBlue,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                    ),
+                    child: _isSubmitting
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.black,
+                            ),
+                          )
+                        : Text(l10n.save),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -177,6 +177,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get save => 'Save';
 
   @override
+  String get edit => 'Edit';
+
+  @override
   String get itemName => 'Item Name';
 
   @override
@@ -389,6 +392,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get writeReview => 'Write Review';
+
+  @override
+  String get editReview => 'Edit Review';
+
+  @override
+  String get myReview => 'My Review';
+
+  @override
+  String get deleteReview => 'Delete Review';
+
+  @override
+  String get deleteReviewConfirmation =>
+      'Are you sure you want to delete this review?';
+
+  @override
+  String get reviewDeleted => 'Review deleted successfully';
+
+  @override
+  String get reviewDeleteFailed => 'Failed to delete review';
+
+  @override
+  String get reviewUpdated => 'Review updated successfully';
+
+  @override
+  String get reviewUpdateFailed => 'Failed to update review';
 
   @override
   String get soldOut => 'Sold Out';

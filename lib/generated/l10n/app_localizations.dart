@@ -428,6 +428,12 @@ abstract class AppLocalizations {
   /// **'저장'**
   String get save;
 
+  /// No description provided for @edit.
+  ///
+  /// In ko, this message translates to:
+  /// **'수정'**
+  String get edit;
+
   /// No description provided for @itemName.
   ///
   /// In ko, this message translates to:
@@ -817,6 +823,54 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'리뷰 작성'**
   String get writeReview;
+
+  /// No description provided for @editReview.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 수정'**
+  String get editReview;
+
+  /// No description provided for @myReview.
+  ///
+  /// In ko, this message translates to:
+  /// **'내 리뷰'**
+  String get myReview;
+
+  /// No description provided for @deleteReview.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 삭제'**
+  String get deleteReview;
+
+  /// No description provided for @deleteReviewConfirmation.
+  ///
+  /// In ko, this message translates to:
+  /// **'정말 이 리뷰를 삭제하시겠습니까?'**
+  String get deleteReviewConfirmation;
+
+  /// No description provided for @reviewDeleted.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰가 삭제되었습니다'**
+  String get reviewDeleted;
+
+  /// No description provided for @reviewDeleteFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 삭제에 실패했습니다'**
+  String get reviewDeleteFailed;
+
+  /// No description provided for @reviewUpdated.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰가 수정되었습니다'**
+  String get reviewUpdated;
+
+  /// No description provided for @reviewUpdateFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 수정에 실패했습니다'**
+  String get reviewUpdateFailed;
 
   /// No description provided for @soldOut.
   ///
