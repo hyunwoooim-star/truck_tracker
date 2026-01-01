@@ -8,12 +8,12 @@
 
 | 항목 | 상태 |
 |------|------|
-| 완성도 | **100%+** (기능 완성 + 배포 완료) |
+| 완성도 | **100%** (웹앱 완성) → **150% 목표** |
 | 빌드 | **WSL Ubuntu에서 빌드** (Windows X) |
 | flutter analyze | No issues |
 | Cloud Functions | 10개 함수 배포 완료 |
 | 소셜 로그인 | ✅ 카카오/네이버/Google 모두 정상 |
-| 테스트 | 652 통과, 8 스킵, 10 실패 (환경 이슈) |
+| 테스트 | 652 통과, 8 스킵, 10 실패 |
 | 배포 | https://truck-tracker-fa0b0.web.app |
 
 ---
@@ -21,64 +21,94 @@
 ## 링크
 - **Live**: https://truck-tracker-fa0b0.web.app
 - **GitHub**: https://github.com/hyunwoooim-star/truck_tracker
+- **로드맵**: `docs/PLATFORM_ROADMAP.md`
 
 ---
 
-## 2026-01-01 완료 작업
+## 🎯 150% 완성도 로드맵
 
-### 메가플랜 (8가지)
-| # | 작업 | 상태 |
-|---|------|------|
-| 1 | 고객 온보딩 튜토리얼 (4슬라이드) | ✅ |
-| 2 | 즐겨찾기 Provider 버그 수정 | ✅ |
-| 3 | 리뷰 수정/삭제 UI 추가 | ✅ |
-| 4 | Talk 삭제 기능 추가 | ✅ |
-| 5 | 쿠폰 스캐너 (QR 스캔) 구현 | ✅ |
-| 6 | 도움말 FAQ 섹션 추가 | ✅ |
-| 7 | TROUBLESHOOTING.md 작성 | ✅ |
-| 8 | 빌드 & Firebase 배포 | ✅ |
+### 웹앱 vs 네이티브 앱 핵심 차이
 
-### 소셜 로그인 수정
-| 플랫폼 | 상태 |
-|--------|------|
-| 카카오 | ✅ 정상 작동 |
-| 네이버 | ✅ 정상 작동 |
-| Google | ✅ 정상 작동 |
+| 기능 | 웹앱 (현재) | 네이티브 앱 | 중요도 |
+|------|-------------|-------------|--------|
+| **백그라운드 GPS** | ❌ 불가 | ✅ 가능 | 🔴 최상 |
+| **푸시 알림** | ⚠️ 제한적 | ✅ 완벽 | 🔴 최상 |
+| **오프라인 모드** | ⚠️ 한계 | ✅ Hive | 🟡 높음 |
+| **카메라/QR** | ⚠️ 권한 필요 | ✅ 네이티브 | 🟡 높음 |
 
-### 성능 최적화
-| 작업 | 상태 | 커밋 |
-|------|------|------|
-| N+1 notifyFollowers → 배치 쿼리 | ✅ | 630aca7 |
-| GoogleFonts 테스트 설정 수정 | ✅ | 5453d70 |
+### Phase별 목표
 
-### 사장님 신청 폼 개선
-| 작업 | 상태 | 커밋 |
-|------|------|------|
-| 상호명 필수 입력으로 변경 | ✅ | f0a1909 |
-| 사업자등록증 파일 업로드 필수 | ✅ | f0a1909 |
-| 승인상태 다이얼로그 상세 정보 표시 | ✅ | f0a1909 |
-
-### Firestore 인덱스 최적화
-| 작업 | 상태 | 커밋 |
-|------|------|------|
-| Chat N+1 쿼리 분석 (문제 없음) | ✅ | - |
-| chatRooms 인덱스 2개 추가 | ✅ | 3327045 |
-| coupons 인덱스 2개 추가 | ✅ | 3327045 |
-| notifications 인덱스 1개 추가 | ✅ | 3327045 |
+| Phase | 내용 | 완성도 |
+|-------|------|--------|
+| **Phase 1** | 코드 품질 강화 | 100% → 110% |
+| **Phase 2** | 네이티브 기능 준비 | 110% → 120% |
+| **Phase 3** | Android 앱 출시 | 120% → 135% |
+| **Phase 4** | iOS 앱 출시 | 135% → 150% |
 
 ---
 
-## 🔜 다음 세션에서 할 것
+## 🔜 즉시 해야 할 것 (Phase 1)
 
-현재 **모든 주요 기능 완료!** 추가 작업이 필요하면 아래 참고:
+### 1. 실패 테스트 10개 수정
+```bash
+# WSL에서 테스트 실행
+wsl -d Ubuntu -- bash -c "export PATH=\"\$HOME/flutter/bin:\$PATH\" && cd ~/truck_tracker && flutter test"
+```
 
-### 선택적 개선 사항
-1. 추가 테스트 커버리지
-2. 코드 리팩토링 (중복 제거)
+### 2. 코드 중복 제거
+- [ ] 공통 위젯 추출 (`lib/shared/widgets/`)
+- [ ] 중복 로직 유틸리티화
+- [ ] 에러 핸들링 통일
+
+### 3. 에러 핸들링 강화
+- [ ] 전역 에러 바운더리
+- [ ] 재시도 로직
+- [ ] Sentry 통합 (선택)
 
 ---
 
-## 빌드 방법 (필수!)
+## 📱 앱 출시 전 필수 (Phase 2)
+
+### 백그라운드 GPS (가장 중요!)
+```
+현재: 사장님이 브라우저 닫으면 → 위치 추적 중단
+목표: 앱이 백그라운드여도 → 위치 계속 추적
+```
+
+**구현 필요**:
+- `flutter_background_geolocation` 패키지
+- Android: Foreground Service
+- iOS: Background Location
+
+### 오프라인 모드
+- Hive 로컬 DB 추가
+- Firestore ↔ Hive 동기화
+
+### 네이티브 푸시 알림
+- FCM 네이티브 통합
+- 백그라운드 메시지 핸들러
+
+---
+
+## 📊 스토어 출시 체크리스트
+
+### Google Play (Android)
+- [ ] 개발자 계정 ($25 일회성)
+- [ ] 앱 서명 키 (keystore)
+- [ ] 앱 아이콘 512x512
+- [ ] 스크린샷 2장+
+- [ ] 개인정보처리방침 URL
+
+### App Store (iOS)
+- [ ] 개발자 계정 ($99/년)
+- [ ] 인증서 & 프로비저닝
+- [ ] 앱 아이콘 1024x1024
+- [ ] 스크린샷 (6.5", 5.5")
+- [ ] 개인정보처리방침 URL
+
+---
+
+## 빌드 방법
 
 **Windows에서 직접 빌드하면 안 됨! (impellerc 크래시)**
 
@@ -95,20 +125,18 @@ cd "C:\Users\임현우\Desktop\현우 작업폴더\truck_tracker\truck ver.1\tru
 
 ---
 
-## OAuth 설정값 정리
+## OAuth 설정값
 
 ### 카카오
 | 항목 | 값 |
 |------|-----|
 | REST API 키 | `9b29da5ab6db839b37a65c79afe9b52e` |
-| Client Secret | Firebase Secret (`KAKAO_CLIENT_SECRET`) |
 | Redirect URI | `https://truck-tracker-fa0b0.web.app/kakao` |
 
 ### 네이버
 | 항목 | 값 |
 |------|-----|
 | Client ID | `9szh6EOxjf8b40x9ZHKH` |
-| Client Secret | Firebase Secret (`NAVER_CLIENT_SECRET`) |
 | Redirect URI | `https://truck-tracker-fa0b0.web.app/oauth/naver/callback` |
 
 ---
@@ -118,22 +146,15 @@ cd "C:\Users\임현우\Desktop\현우 작업폴더\truck_tracker\truck ver.1\tru
 lib/
 ├── core/           # 테마, 상수
 ├── features/       # 기능 모듈 (24개)
-│   ├── admin/      # 관리자 기능
-│   ├── auth/       # 인증 기능 (OAuth 포함)
-│   ├── onboarding/ # 고객 온보딩
-│   └── ...
 ├── shared/         # 공유 위젯
 └── main.dart
 
 docs/
-├── TROUBLESHOOTING.md  # 트러블슈팅 가이드
+├── PLATFORM_ROADMAP.md   # 150% 로드맵 (NEW)
+├── TROUBLESHOOTING.md    # 트러블슈팅 가이드
 └── ...
-
-web/index.html      # iOS Safari 감지
-firebase.json       # CDN 캐시 설정
-functions/index.js  # Cloud Functions (10개)
 ```
 
 ---
 
-**마지막 업데이트**: 2026-01-01 (사장님 신청 폼 개선 + 배포 완료)
+**마지막 업데이트**: 2026-01-01 (150% 로드맵 추가)
