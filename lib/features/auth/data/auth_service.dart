@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -287,8 +288,8 @@ class AuthService {
     // Redirect to Kakao login page
     WebAuthHelper.redirectToOAuth(authUrl.toString());
 
-    // This won't be reached due to redirect, but needed for return type
-    throw Exception('카카오 로그인 페이지로 이동 중...');
+    // Return a never-completing Future (page will redirect, so this won't matter)
+    return Completer<UserCredential>().future;
   }
 
   /// Process Kakao OAuth callback (called from web callback page)
@@ -414,8 +415,9 @@ class AuthService {
     // Redirect to Naver login page
     WebAuthHelper.redirectToOAuth(authUrl.toString());
 
-    // This won't be reached due to redirect, but needed for return type
-    throw Exception('네이버 로그인 페이지로 이동 중...');
+    // Return a never-completing Future (page will redirect, so this won't matter)
+    // Using Completer that never completes to avoid Sentry error reports
+    return Completer<UserCredential>().future;
   }
 
   /// Process Naver OAuth callback (called from web callback page)
@@ -949,11 +951,17 @@ class AuthService {
   /// 프로필 완성 여부 확인
   Future<bool> isProfileComplete(String uid) async {
     try {
+      AppLogger.debug('🔍 Checking profile completion for uid: $uid', tag: 'AuthService');
       final doc = await _firestore.collection('users').doc(uid).get();
-      if (!doc.exists) return false;
+      if (!doc.exists) {
+        AppLogger.debug('❌ User doc does not exist → returning false', tag: 'AuthService');
+        return false;
+      }
 
       final data = doc.data();
-      return data?['isProfileComplete'] == true;
+      final isComplete = data?['isProfileComplete'] == true;
+      AppLogger.debug('📋 isProfileComplete field = ${data?['isProfileComplete']}, returning: $isComplete', tag: 'AuthService');
+      return isComplete;
     } catch (e, stackTrace) {
       AppLogger.error('Profile completion check failed',
           error: e, stackTrace: stackTrace, tag: 'AuthService');
