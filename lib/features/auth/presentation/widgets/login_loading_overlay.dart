@@ -12,24 +12,24 @@ class LoginLoadingOverlay extends StatefulWidget {
 
 class _LoginLoadingOverlayState extends State<LoginLoadingOverlay>
     with TickerProviderStateMixin {
-  late AnimationController _progressController;
+  late AnimationController _shimmerController;
   late AnimationController _bounceController;
-  late Animation<double> _progressAnimation;
+  late Animation<double> _shimmerAnimation;
   late Animation<double> _bounceAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    // 프로그레스 바 애니메이션 (3초 동안 채워짐)
-    _progressController = AnimationController(
-      duration: const Duration(milliseconds: 3000),
+    // Shimmer 애니메이션 (무한 반복) - 왼쪽에서 오른쪽으로 이동
+    _shimmerController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    _progressAnimation = Tween<double>(begin: 0.0, end: 0.95).animate(
-      CurvedAnimation(parent: _progressController, curve: Curves.easeInOut),
+    _shimmerAnimation = Tween<double>(begin: -1.0, end: 2.0).animate(
+      CurvedAnimation(parent: _shimmerController, curve: Curves.easeInOut),
     );
-    _progressController.forward();
+    _shimmerController.repeat(); // 무한 반복
 
     // 트럭 바운스 애니메이션
     _bounceController = AnimationController(
@@ -44,7 +44,7 @@ class _LoginLoadingOverlayState extends State<LoginLoadingOverlay>
 
   @override
   void dispose() {
-    _progressController.dispose();
+    _shimmerController.dispose();
     _bounceController.dispose();
     super.dispose();
   }
@@ -101,7 +101,7 @@ class _LoginLoadingOverlayState extends State<LoginLoadingOverlay>
 
             const SizedBox(height: 16),
 
-            // 프로그레스 바
+            // 프로그레스 바 (Shimmer 효과 - 무한 반복)
             Container(
               width: 200,
               height: 8,
@@ -109,29 +109,44 @@ class _LoginLoadingOverlayState extends State<LoginLoadingOverlay>
                 color: AppTheme.charcoalMedium,
                 borderRadius: BorderRadius.circular(4),
               ),
+              clipBehavior: Clip.hardEdge,
               child: AnimatedBuilder(
-                animation: _progressAnimation,
+                animation: _shimmerAnimation,
                 builder: (context, child) {
-                  return FractionallySizedBox(
-                    alignment: Alignment.centerLeft,
-                    widthFactor: _progressAnimation.value,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            AppTheme.mustardYellow,
-                            AppTheme.mustardYellow.withValues(alpha: 0.7),
-                          ],
+                  return Stack(
+                    children: [
+                      // 베이스 바
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppTheme.mustardYellow.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(4),
                         ),
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.mustardYellow.withValues(alpha: 0.5),
-                            blurRadius: 8,
-                          ),
-                        ],
                       ),
-                    ),
+                      // Shimmer 효과
+                      Positioned(
+                        left: _shimmerAnimation.value * 200,
+                        child: Container(
+                          width: 80,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppTheme.mustardYellow.withValues(alpha: 0.0),
+                                AppTheme.mustardYellow,
+                                AppTheme.mustardYellow.withValues(alpha: 0.0),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(4),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.mustardYellow.withValues(alpha: 0.5),
+                                blurRadius: 8,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   );
                 },
               ),

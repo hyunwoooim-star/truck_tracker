@@ -95,7 +95,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           _passwordController.text,
         );
         AppLogger.success('Email sign in successful', tag: 'LoginScreen');
-        if (mounted) hideLoginLoadingOverlay(context);
+
+        // FCM 토큰 저장은 백그라운드에서 (로그인 흐름 블로킹 방지)
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          // unawaited - 백그라운드 실행
+          FcmService().saveFcmTokenToUser(user.uid);
+        }
+
+        // 즉시 auth 상태 리프레시 → AuthWrapper 리빌드 트리거
+        if (mounted) {
+          hideLoginLoadingOverlay(context);
+          ref.invalidate(authStateChangesProvider);
+          ref.invalidate(currentUserProvider);
+          ref.invalidate(currentUserIdProvider);
+          ref.invalidate(currentUserTruckIdProvider);
+          ref.invalidate(isProfileCompleteProvider);
+        }
+        return; // 로그인 완료 - 더 이상 진행하지 않음
       } else {
         AppLogger.debug('Attempting email sign up...', tag: 'LoginScreen');
         // Sign up
@@ -145,24 +162,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         AppLogger.success('Sign up flow completed', tag: 'LoginScreen');
         return; // Return early for signup - don't fall through to login handling
       }
-
-      // Save FCM token for push notifications (for login)
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        AppLogger.debug('Saving FCM token for user: ${user.uid}', tag: 'LoginScreen');
-        await FcmService().saveFcmTokenToUser(user.uid);
-        AppLogger.success('FCM token saved', tag: 'LoginScreen');
-      }
-
-      AppLogger.success('Auth completed - refreshing auth state', tag: 'LoginScreen');
-      // Force refresh auth state - AuthWrapper will automatically rebuild
-      if (mounted) {
-        // Invalidate all auth-related providers to trigger rebuild
-        ref.invalidate(authStateChangesProvider);
-        ref.invalidate(currentUserProvider);
-        ref.invalidate(currentUserIdProvider);
-        ref.invalidate(currentUserTruckIdProvider);
-      }
+      // 로그인은 위에서 return으로 끝남
     } catch (e, stackTrace) {
       AppLogger.error('Auth error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
       if (mounted) {
@@ -187,19 +187,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       AppLogger.success('Kakao login successful', tag: 'LoginScreen');
 
-      // Save FCM token for push notifications
+      // FCM 토큰 저장은 백그라운드에서 (로그인 흐름 블로킹 방지)
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        await FcmService().saveFcmTokenToUser(user.uid);
+        FcmService().saveFcmTokenToUser(user.uid); // unawaited
       }
 
-      // Refresh auth state - AuthWrapper will handle routing
+      // 즉시 auth 상태 리프레시 → AuthWrapper 리빌드 트리거
       if (mounted) {
         hideLoginLoadingOverlay(context);
         ref.invalidate(authStateChangesProvider);
         ref.invalidate(currentUserProvider);
         ref.invalidate(currentUserIdProvider);
         ref.invalidate(currentUserTruckIdProvider);
+        ref.invalidate(isProfileCompleteProvider);
       }
     } catch (e, stackTrace) {
       AppLogger.error('Kakao login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
@@ -225,19 +226,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       AppLogger.success('Naver login successful', tag: 'LoginScreen');
 
-      // Save FCM token for push notifications
+      // FCM 토큰 저장은 백그라운드에서 (로그인 흐름 블로킹 방지)
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        await FcmService().saveFcmTokenToUser(user.uid);
+        FcmService().saveFcmTokenToUser(user.uid); // unawaited
       }
 
-      // Refresh auth state - AuthWrapper will handle routing
+      // 즉시 auth 상태 리프레시 → AuthWrapper 리빌드 트리거
       if (mounted) {
         hideLoginLoadingOverlay(context);
         ref.invalidate(authStateChangesProvider);
         ref.invalidate(currentUserProvider);
         ref.invalidate(currentUserIdProvider);
         ref.invalidate(currentUserTruckIdProvider);
+        ref.invalidate(isProfileCompleteProvider);
       }
     } catch (e, stackTrace) {
       AppLogger.error('Naver login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
@@ -275,19 +277,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       AppLogger.success('Google login successful', tag: 'LoginScreen');
 
-      // Save FCM token for push notifications
+      // FCM 토큰 저장은 백그라운드에서 (로그인 흐름 블로킹 방지)
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        await FcmService().saveFcmTokenToUser(user.uid);
+        FcmService().saveFcmTokenToUser(user.uid); // unawaited
       }
 
-      // Refresh auth state - AuthWrapper will handle routing
+      // 즉시 auth 상태 리프레시 → AuthWrapper 리빌드 트리거
       if (mounted) {
         hideLoginLoadingOverlay(context);
         ref.invalidate(authStateChangesProvider);
         ref.invalidate(currentUserProvider);
         ref.invalidate(currentUserIdProvider);
         ref.invalidate(currentUserTruckIdProvider);
+        ref.invalidate(isProfileCompleteProvider);
       }
     } catch (e, stackTrace) {
       AppLogger.error('Google login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
