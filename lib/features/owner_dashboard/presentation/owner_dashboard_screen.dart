@@ -12,7 +12,6 @@ import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../truck_list/domain/truck.dart';
-import '../../../scripts/migrate_mock_data.dart';
 import 'owner_status_provider.dart';
 import 'tabs/tabs.dart';
 
@@ -111,27 +110,6 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             onPressed: () => _showSettingsDialog(context, ref),
           ),
         ],
-        // 데이터 업로드 (모든 탭에서)
-        PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert, size: 24),
-          onSelected: (value) {
-            if (value == 'upload') {
-              _showMigrationDialog(context, ref);
-            }
-          },
-          itemBuilder: (_) => [
-            PopupMenuItem(
-              value: 'upload',
-              child: Row(
-                children: [
-                  const Icon(Icons.cloud_upload, color: _mustard, size: 20),
-                  const SizedBox(width: 12),
-                  Text(l10n.uploadData),
-                ],
-              ),
-            ),
-          ],
-        ),
       ],
     );
   }
@@ -226,58 +204,6 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     );
   }
 
-  /// Show migration dialog to upload data to Firestore
-  void _showMigrationDialog(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.firestoreMigration),
-        content: Text(
-          '${l10n.confirmMigration}\n\n'
-          '${l10n.uploadDataWarning}',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              await _runMigration(context, ref);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.baeminMint,
-            ),
-            child: Text(l10n.upload),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Run the migration
-  Future<void> _runMigration(BuildContext context, WidgetRef ref) async {
-    final l10n = AppLocalizations.of(context);
-    // Show loading
-    if (context.mounted) {
-      SnackBarHelper.showInfo(context, l10n.uploadingData);
-    }
-
-    try {
-      final repository = ref.read(truckRepositoryProvider);
-      await runMockDataMigration(repository);
-
-      if (context.mounted) {
-        SnackBarHelper.showSuccess(context, l10n.migrationSuccess);
-      }
-    } catch (e) {
-      if (context.mounted) {
-        SnackBarHelper.showError(context, l10n.uploadFailed(e));
-      }
-    }
-  }
 }
 
 /// 하단 네비게이션 아이템
