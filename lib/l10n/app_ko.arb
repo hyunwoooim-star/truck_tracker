@@ -198,7 +198,7 @@
   "trucksWithoutLocation": "위치 정보가 없는 트럭들입니다",
   "trucksLocationNotSet": "총 {count}개 트럭의 위치가 설정되지 않았습니다",
   "searchTrucks": "트럭 검색",
-  "searchPlaceholder": "트럭 번호, 기사명, 메뉴, 위치로 검색",
+  "searchPlaceholder": "트럭명, 메뉴, 위치로 검색",
   "viewOnMap": "지도에서 보기",
   "favorite": "즐겨찾기",
 

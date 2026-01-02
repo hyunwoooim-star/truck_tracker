@@ -300,7 +300,7 @@
     }
   },
   "searchTrucks": "Search trucks",
-  "searchPlaceholder": "Search by truck number, driver name, menu, location",
+  "searchPlaceholder": "Search by truck name, menu, location",
   "viewOnMap": "View on map",
   "favorite": "Favorite",
 
