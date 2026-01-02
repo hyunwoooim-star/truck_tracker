@@ -53,10 +53,10 @@ sealed class Truck with _$Truck {
       contactPhone: data['contactPhone'] as String? ?? '',
       bankAccount: data['bankAccount'] as String?,
       announcement: data['announcement'] as String? ?? '',
-      favoriteCount: (data['favoriteCount'] as num?)?.toInt() ?? 0,
-      avgRating: (data['avgRating'] as num?)?.toDouble() ?? 0.0,
-      totalReviews: (data['totalReviews'] as num?)?.toInt() ?? 0,
-      isOpen: data['isOpen'] as bool? ?? false,
+      favoriteCount: _parseInt(data['favoriteCount']) ?? 0,
+      avgRating: _parseDouble(data['avgRating']) ?? 0.0,
+      totalReviews: _parseInt(data['totalReviews']) ?? 0,
+      isOpen: _parseBool(data['isOpen']) ?? false,
       weeklySchedule: data['weeklySchedule'] as Map<String, dynamic>?,
     );
   }
@@ -107,6 +107,22 @@ sealed class Truck with _$Truck {
     if (value == null) return null;
     if (value is num) return value.toDouble();
     if (value is String) return double.tryParse(value);
+    return null;
+  }
+
+  /// Parse int from dynamic value (handles both String and num)
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
+
+  /// Parse bool from dynamic value (handles String "true"/"false" and bool)
+  static bool? _parseBool(dynamic value) {
+    if (value == null) return null;
+    if (value is bool) return value;
+    if (value is String) return value.toLowerCase() == 'true';
     return null;
   }
 }
