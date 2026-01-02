@@ -13,6 +13,7 @@ import '../../truck_list/domain/truck.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
 import '../services/marker_service.dart';
+import 'widgets/truck_preview_bottom_sheet.dart';
 
 class TruckMapScreen extends ConsumerStatefulWidget {
   const TruckMapScreen({
@@ -316,8 +317,29 @@ class _TruckMapScreenState extends ConsumerState<TruckMapScreen> {
         const LatLng(37.5665, 126.9780);
     await controller.animateCamera(
       CameraUpdate.newCameraPosition(
-        CameraPosition(target: target, zoom: 15),
+        CameraPosition(target: target, zoom: 17), // 더 가까이 줌인
       ),
+    );
+
+    // 트럭 찾아서 바텀시트 표시
+    if (targetId != null && mounted) {
+      final truck = trucks.cast<Truck>().where((t) => t.id == targetId).firstOrNull;
+      if (truck != null) {
+        // 카메라 애니메이션 완료 후 바텀시트 표시
+        await Future.delayed(const Duration(milliseconds: 300));
+        if (mounted) {
+          _showTruckPreviewBottomSheet(truck);
+        }
+      }
+    }
+  }
+
+  void _showTruckPreviewBottomSheet(Truck truck) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => TruckPreviewBottomSheet(truck: truck),
     );
   }
 

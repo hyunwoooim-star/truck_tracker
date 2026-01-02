@@ -10,7 +10,6 @@ import '../../../../core/themes/app_theme.dart';
 import '../../../../core/utils/snackbar_helper.dart';
 import '../../../../generated/l10n/app_localizations.dart';
 import '../../../../shared/widgets/status_tag.dart';
-import '../../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../../truck_map/presentation/truck_map_screen.dart';
 import '../../domain/truck.dart';
 import '../../domain/truck_with_distance.dart';
@@ -127,9 +126,13 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
       enabled: true,
       child: GestureDetector(
         onTap: () {
+          // 카드 클릭 → 지도로 이동 + 해당 트럭으로 확대 + 바텀시트 표시
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => TruckDetailScreen(truck: truck),
+              builder: (_) => TruckMapScreen(
+                initialTruckId: truck.id,
+                initialLatLng: LatLng(truck.latitude, truck.longitude),
+              ),
             ),
           );
         },
