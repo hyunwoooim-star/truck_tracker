@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
@@ -54,6 +55,7 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
   // Step 2: Location
   double? _latitude;
   double? _longitude;
+  String? _addressText; // 주소 텍스트
   final _locationDescController = TextEditingController();
   bool _isGettingLocation = false;
 
@@ -128,9 +130,47 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
         locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
       );
 
+      // Reverse Geocoding: 좌표를 주소로 변환
+      String? address;
+      try {
+        final placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+        if (placemarks.isNotEmpty) {
+          final place = placemarks.first;
+          // 한국식 주소 형식으로 조합
+          final parts = <String>[];
+          if (place.administrativeArea?.isNotEmpty == true) {
+            parts.add(place.administrativeArea!); // 시/도
+          }
+          if (place.subAdministrativeArea?.isNotEmpty == true) {
+            parts.add(place.subAdministrativeArea!); // 구/군
+          }
+          if (place.locality?.isNotEmpty == true && place.locality != place.subAdministrativeArea) {
+            parts.add(place.locality!); // 동/읍/면
+          }
+          if (place.subLocality?.isNotEmpty == true) {
+            parts.add(place.subLocality!); // 상세 지역
+          }
+          if (place.thoroughfare?.isNotEmpty == true) {
+            parts.add(place.thoroughfare!); // 도로명
+          }
+          address = parts.join(' ');
+        }
+      } catch (e) {
+        // Geocoding 실패해도 좌표는 저장
+        debugPrint('Geocoding failed: $e');
+      }
+
       setState(() {
         _latitude = position.latitude;
         _longitude = position.longitude;
+        _addressText = address;
+        // 주소가 있으면 위치 설명에 자동 입력
+        if (address != null && _locationDescController.text.isEmpty) {
+          _locationDescController.text = address;
+        }
       });
 
       if (mounted) SnackBarHelper.showSuccess(context, '현재 위치를 가져왔습니다');
@@ -314,7 +354,9 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
         _currentStep = _totalSteps; // Go to complete view
         _isLoading = false;
       });
-      _pageController.nextPage(
+      // 명시적으로 완료 페이지(인덱스 5)로 이동
+      _pageController.animateToPage(
+        5, // Complete step page index
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
@@ -693,9 +735,19 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
                   const Icon(Icons.check_circle, color: Colors.green, size: 20),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(
-                      '위치가 설정되었습니다\n${_latitude!.toStringAsFixed(4)}, ${_longitude!.toStringAsFixed(4)}',
-                      style: TextStyle(color: Colors.green[300], fontSize: 14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '위치가 설정되었습니다',
+                          style: TextStyle(color: Colors.green[300], fontSize: 14, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          _addressText ?? '${_latitude!.toStringAsFixed(4)}, ${_longitude!.toStringAsFixed(4)}',
+                          style: TextStyle(color: Colors.green[300], fontSize: 13),
+                        ),
+                      ],
                     ),
                   ),
                 ],
