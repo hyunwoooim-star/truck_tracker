@@ -1,17 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/themes/app_theme.dart';
+import '../../../order/data/order_repository.dart';
 import '../../../order/domain/order.dart';
 
-/// 오늘의 주문 통계 카드
-class OwnerStatsCard extends StatelessWidget {
-  final List<Order> orders;
+/// 오늘의 주문 통계 카드 (수동 새로고침 방식)
+class OwnerStatsCard extends ConsumerStatefulWidget {
+  final String truckId;
 
-  const OwnerStatsCard({super.key, required this.orders});
+  const OwnerStatsCard({super.key, required this.truckId});
+
+  @override
+  ConsumerState<OwnerStatsCard> createState() => _OwnerStatsCardState();
+}
+
+class _OwnerStatsCardState extends ConsumerState<OwnerStatsCard> {
+  List<Order>? _orders;
+  bool _isLoading = true;
+  DateTime? _lastUpdated;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOrders();
+  }
+
+  Future<void> _loadOrders() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final repository = ref.read(orderRepositoryProvider);
+      final orders = await repository.getTruckOrders(widget.truckId);
+      if (mounted) {
+        setState(() {
+          _orders = orders;
+          _isLoading = false;
+          _lastUpdated = DateTime.now();
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading && _orders == null) {
+      return Container(
+        margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(40),
+        decoration: BoxDecoration(
+          color: AppTheme.charcoalMedium,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Center(
+          child: CircularProgressIndicator(color: AppTheme.mustardYellow),
+        ),
+      );
+    }
+
+    final orders = _orders ?? [];
+    return _buildStatsContent(orders);
+  }
+
+  Widget _buildStatsContent(List<Order> orders) {
     final numberFormat = NumberFormat('#,###');
     final today = DateTime.now();
 
@@ -62,20 +118,49 @@ class OwnerStatsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.today, color: AppTheme.mustardYellow, size: 28),
-              SizedBox(width: 12),
-              Text(
-                '오늘의 주문 현황',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.mustardYellow,
+              const Icon(Icons.today, color: AppTheme.mustardYellow, size: 28),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  '오늘의 주문 현황',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.mustardYellow,
+                  ),
                 ),
+              ),
+              // 새로고침 버튼
+              IconButton(
+                onPressed: _isLoading ? null : _loadOrders,
+                icon: _isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppTheme.mustardYellow,
+                        ),
+                      )
+                    : const Icon(Icons.refresh, color: AppTheme.mustardYellow),
+                tooltip: '새로고침',
               ),
             ],
           ),
+          // 마지막 업데이트 시간
+          if (_lastUpdated != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                '${_lastUpdated!.hour}:${_lastUpdated!.minute.toString().padLeft(2, '0')} 기준',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppTheme.textTertiary,
+                ),
+              ),
+            ),
           const SizedBox(height: 20),
           Row(
             children: [
