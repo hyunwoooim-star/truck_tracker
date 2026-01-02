@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:truck_tracker/generated/l10n/app_localizations.dart';
@@ -103,14 +104,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           FcmService().saveFcmTokenToUser(user.uid);
         }
 
-        // 즉시 auth 상태 리프레시 → AuthWrapper 리빌드 트리거
+        // 로그인 성공 → AuthWrapper가 auth 상태 변화를 감지하도록 잠시 대기
+        // Firebase Auth 스트림이 전파될 시간을 주고, GoRouter로 강제 리빌드
         if (mounted) {
           hideLoginLoadingOverlay(context);
-          ref.invalidate(authStateChangesProvider);
-          ref.invalidate(currentUserProvider);
-          ref.invalidate(currentUserIdProvider);
-          ref.invalidate(currentUserTruckIdProvider);
-          ref.invalidate(isProfileCompleteProvider);
+
+          // 약간의 딜레이 후 GoRouter로 루트 이동 → AuthWrapper 재평가
+          await Future.delayed(const Duration(milliseconds: 300));
+          if (mounted) {
+            AppLogger.debug('Login success - navigating to root via GoRouter', tag: 'LoginScreen');
+            context.go('/');
+          }
         }
         return; // 로그인 완료 - 더 이상 진행하지 않음
       } else {
@@ -193,14 +197,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         FcmService().saveFcmTokenToUser(user.uid); // unawaited
       }
 
-      // 즉시 auth 상태 리프레시 → AuthWrapper 리빌드 트리거
+      // 로그인 성공 → GoRouter로 강제 리빌드
       if (mounted) {
         hideLoginLoadingOverlay(context);
-        ref.invalidate(authStateChangesProvider);
-        ref.invalidate(currentUserProvider);
-        ref.invalidate(currentUserIdProvider);
-        ref.invalidate(currentUserTruckIdProvider);
-        ref.invalidate(isProfileCompleteProvider);
+        await Future.delayed(const Duration(milliseconds: 300));
+        if (mounted) {
+          AppLogger.debug('Kakao login success - navigating to root via GoRouter', tag: 'LoginScreen');
+          context.go('/');
+        }
       }
     } catch (e, stackTrace) {
       AppLogger.error('Kakao login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
@@ -232,14 +236,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         FcmService().saveFcmTokenToUser(user.uid); // unawaited
       }
 
-      // 즉시 auth 상태 리프레시 → AuthWrapper 리빌드 트리거
+      // 로그인 성공 → GoRouter로 강제 리빌드
       if (mounted) {
         hideLoginLoadingOverlay(context);
-        ref.invalidate(authStateChangesProvider);
-        ref.invalidate(currentUserProvider);
-        ref.invalidate(currentUserIdProvider);
-        ref.invalidate(currentUserTruckIdProvider);
-        ref.invalidate(isProfileCompleteProvider);
+        await Future.delayed(const Duration(milliseconds: 300));
+        if (mounted) {
+          AppLogger.debug('Naver login success - navigating to root via GoRouter', tag: 'LoginScreen');
+          context.go('/');
+        }
       }
     } catch (e, stackTrace) {
       AppLogger.error('Naver login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
@@ -283,14 +287,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         FcmService().saveFcmTokenToUser(user.uid); // unawaited
       }
 
-      // 즉시 auth 상태 리프레시 → AuthWrapper 리빌드 트리거
+      // 로그인 성공 → GoRouter로 강제 리빌드
       if (mounted) {
         hideLoginLoadingOverlay(context);
-        ref.invalidate(authStateChangesProvider);
-        ref.invalidate(currentUserProvider);
-        ref.invalidate(currentUserIdProvider);
-        ref.invalidate(currentUserTruckIdProvider);
-        ref.invalidate(isProfileCompleteProvider);
+        await Future.delayed(const Duration(milliseconds: 300));
+        if (mounted) {
+          AppLogger.debug('Google login success - navigating to root via GoRouter', tag: 'LoginScreen');
+          context.go('/');
+        }
       }
     } catch (e, stackTrace) {
       AppLogger.error('Google login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
@@ -317,20 +321,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   String _getErrorMessage(String error) {
+    // Firebase Auth 에러 코드별 메시지
     if (error.contains('user-not-found')) {
-      return '등록되지 않은 이메일입니다';
+      return '등록되지 않은 이메일입니다. 회원가입 후 이용해주세요.';
     } else if (error.contains('wrong-password')) {
-      return '비밀번호가 올바르지 않습니다';
+      return '비밀번호가 올바르지 않습니다. 다시 확인해주세요.';
+    } else if (error.contains('invalid-credential')) {
+      // Firebase Auth v9+에서 wrong-password 대신 사용되는 경우
+      return '이메일 또는 비밀번호가 올바르지 않습니다.';
     } else if (error.contains('email-already-in-use')) {
-      return '이미 사용 중인 이메일입니다';
+      return '이미 사용 중인 이메일입니다. 로그인을 시도해주세요.';
     } else if (error.contains('weak-password')) {
-      return '비밀번호는 최소 6자 이상이어야 합니다';
+      return '비밀번호가 너무 약합니다. 6자 이상으로 설정해주세요.';
     } else if (error.contains('invalid-email')) {
-      return '올바른 이메일 형식이 아닙니다';
-    } else if (error.contains('cancelled')) {
-      return '로그인이 취소되었습니다';
+      return '올바른 이메일 형식이 아닙니다.';
+    } else if (error.contains('user-disabled')) {
+      return '비활성화된 계정입니다. 관리자에게 문의해주세요.';
+    } else if (error.contains('too-many-requests')) {
+      return '너무 많은 시도가 있었습니다. 잠시 후 다시 시도해주세요.';
+    } else if (error.contains('network-request-failed')) {
+      return '네트워크 연결에 실패했습니다. 인터넷 연결을 확인해주세요.';
+    } else if (error.contains('operation-not-allowed')) {
+      return '이 로그인 방법은 현재 사용할 수 없습니다.';
+    } else if (error.contains('account-exists-with-different-credential')) {
+      return '이 이메일로 다른 방법으로 가입한 계정이 있습니다.';
+    } else if (error.contains('popup-closed-by-user') || error.contains('cancelled')) {
+      return '로그인이 취소되었습니다.';
+    } else if (error.contains('popup-blocked')) {
+      return '팝업이 차단되었습니다. 팝업 차단을 해제해주세요.';
+    } else if (error.contains('timeout')) {
+      return '요청 시간이 초과되었습니다. 다시 시도해주세요.';
+    } else if (error.contains('requires-recent-login')) {
+      return '보안을 위해 다시 로그인해주세요.';
     }
-    return '로그인 중 오류가 발생했습니다';
+    return '로그인 중 오류가 발생했습니다. 다시 시도해주세요.';
   }
 
   /// 상세 에러 다이얼로그 표시

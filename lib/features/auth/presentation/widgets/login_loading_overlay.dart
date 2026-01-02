@@ -96,6 +96,7 @@ class _LoginLoadingOverlayState extends State<LoginLoadingOverlay>
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
+                decoration: TextDecoration.none, // 밑줄 제거
               ),
             ),
 
