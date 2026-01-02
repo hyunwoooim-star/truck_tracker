@@ -12,7 +12,7 @@ import '../../../truck_list/domain/truck.dart';
 import '../../../truck_list/presentation/truck_provider.dart';
 import '../owner_status_provider.dart';
 
-/// GPS 영업 시작 버튼
+/// GPS 영업 시작 버튼 - 상태별 색상 및 텍스트 변경
 class OwnerGpsButton extends ConsumerWidget {
   final Truck truck;
 
@@ -20,8 +20,31 @@ class OwnerGpsButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isOperating = ref.watch(ownerOperatingStatusProvider);
+    final status = truck.status;
+    final isOperating = status == TruckStatus.onRoute || status == TruckStatus.resting;
     final locationService = LocationService();
+
+    // 상태별 버튼 스타일
+    final (Color bgColor, Color fgColor, String buttonText, IconData buttonIcon) = switch (status) {
+      TruckStatus.onRoute => (
+        Colors.red.shade600,
+        Colors.white,
+        '영업 종료하기',
+        Icons.stop_circle,
+      ),
+      TruckStatus.resting => (
+        Colors.orange.shade600,
+        Colors.white,
+        '휴식 종료 · 영업 재개',
+        Icons.play_circle,
+      ),
+      TruckStatus.maintenance => (
+        AppTheme.mustardYellow,
+        Colors.black,
+        '영업 시작하기',
+        Icons.my_location,
+      ),
+    };
 
     return Container(
       margin: const EdgeInsets.all(16),
@@ -57,8 +80,8 @@ class OwnerGpsButton extends ConsumerWidget {
           }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.mustardYellow,
-          foregroundColor: Colors.black,
+          backgroundColor: bgColor,
+          foregroundColor: fgColor,
           padding: const EdgeInsets.symmetric(vertical: 20),
           minimumSize: const Size(double.infinity, 60),
           shape: RoundedRectangleBorder(
@@ -68,15 +91,15 @@ class OwnerGpsButton extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.my_location, size: 28, color: Colors.black),
+            Icon(buttonIcon, size: 28, color: fgColor),
             const SizedBox(width: 12),
             Text(
-              isOperating ? '영업 중' : '영업 시작',
-              style: const TextStyle(
-                fontSize: 20,
+              buttonText,
+              style: TextStyle(
+                fontSize: 18,
                 fontWeight: FontWeight.w900,
-                letterSpacing: 1.2,
-                color: Colors.black,
+                letterSpacing: 1.0,
+                color: fgColor,
               ),
             ),
           ],

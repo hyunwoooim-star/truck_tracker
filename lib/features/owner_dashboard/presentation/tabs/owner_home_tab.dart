@@ -48,7 +48,7 @@ class OwnerHomeTab extends ConsumerWidget {
   }
 }
 
-/// 영업 상태 카드 - 현재 상태 표시 및 토글
+/// 영업 상태 카드 - 현재 상태 표시 (onRoute/resting/maintenance 구분)
 class _OwnerStatusCard extends ConsumerWidget {
   const _OwnerStatusCard({required this.truck});
 
@@ -56,26 +56,49 @@ class _OwnerStatusCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    final isOpen = truck.isOpen;
+    final status = truck.status;
+
+    // 상태별 색상 및 텍스트 설정
+    final (List<Color> gradientColors, Color dotColor, Color shadowColor, String statusText, String statusDesc, IconData statusIcon) = switch (status) {
+      TruckStatus.onRoute => (
+        [const Color(0xFF1B5E20), const Color(0xFF2E7D32)],
+        Colors.greenAccent,
+        Colors.green,
+        '영업 중',
+        '고객들에게 내 위치가 표시되고 있어요',
+        Icons.storefront,
+      ),
+      TruckStatus.resting => (
+        [const Color(0xFFE65100), const Color(0xFFF57C00)],
+        Colors.orangeAccent,
+        Colors.orange,
+        '휴식 중',
+        '잠시 쉬는 중이에요. 곧 돌아올게요!',
+        Icons.pause_circle_filled,
+      ),
+      TruckStatus.maintenance => (
+        [const Color(0xFF424242), const Color(0xFF616161)],
+        Colors.grey,
+        Colors.black,
+        '영업 종료',
+        '오늘 영업이 종료되었어요',
+        Icons.nightlight_round,
+      ),
+    };
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: isOpen
-              ? [const Color(0xFF1B5E20), const Color(0xFF2E7D32)]
-              : [AppTheme.charcoalMedium, AppTheme.charcoalDark],
+          colors: gradientColors,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: isOpen
-                ? Colors.green.withAlpha(50)
-                : Colors.black.withAlpha(30),
+            color: shadowColor.withAlpha(50),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -84,18 +107,21 @@ class _OwnerStatusCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 상태 표시 (아이콘 + 점 + 텍스트)
           Row(
             children: [
+              Icon(statusIcon, color: Colors.white, size: 28),
+              const SizedBox(width: 12),
               Container(
                 width: 12,
                 height: 12,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isOpen ? Colors.greenAccent : Colors.grey,
-                  boxShadow: isOpen
+                  color: dotColor,
+                  boxShadow: status == TruckStatus.onRoute
                       ? [
                           BoxShadow(
-                            color: Colors.greenAccent.withAlpha(128),
+                            color: dotColor.withAlpha(128),
                             blurRadius: 8,
                             spreadRadius: 2,
                           ),
@@ -103,9 +129,9 @@ class _OwnerStatusCard extends ConsumerWidget {
                       : null,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Text(
-                isOpen ? l10n.businessOpen : l10n.businessClosed,
+                statusText,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -114,7 +140,17 @@ class _OwnerStatusCard extends ConsumerWidget {
               ),
             ],
           ),
+          const SizedBox(height: 8),
+          // 상태 설명
+          Text(
+            statusDesc,
+            style: TextStyle(
+              color: Colors.white.withAlpha(200),
+              fontSize: 14,
+            ),
+          ),
           const SizedBox(height: 12),
+          // 위치 정보
           Row(
             children: [
               const Icon(Icons.location_on, color: Colors.white70, size: 18),
