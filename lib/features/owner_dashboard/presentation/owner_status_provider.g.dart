@@ -158,4 +158,4 @@ final class OwnerTruckProvider
   }
 }
 
-String _$ownerTruckHash() => r'1a60d136c356fb6f41026d81143a89a7d95ae71b';
+String _$ownerTruckHash() => r'275a73873b6f73169449a8a9d144749baf217bc8';

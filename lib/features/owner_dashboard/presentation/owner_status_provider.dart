@@ -165,9 +165,8 @@ Stream<TruckStatus?> ownerTruckStatus(Ref ref) async* {
 /// Uses ownedTruckId from user document to find the truck
 @riverpod
 Stream<Truck?> ownerTruck(Ref ref) async* {
-  final repository = ref.watch(truckRepositoryProvider);
+  final firestore = FirebaseFirestore.instance;
 
-  // Get truck ID from current user's ownedTruckId field - properly await it
   final ownedTruckId = await ref.watch(currentUserTruckIdProvider.future);
 
   AppLogger.debug('ownerTruckProvider: ownedTruckId = $ownedTruckId', tag: 'OwnerTruck');
@@ -178,14 +177,17 @@ Stream<Truck?> ownerTruck(Ref ref) async* {
     return;
   }
 
-  // Watch all trucks and filter by truck ID
-  final allTrucksStream = repository.watchTrucks();
+  final truckDoc = firestore.collection('trucks').doc(ownedTruckId.toString());
 
-  await for (final trucks in allTrucksStream) {
-    AppLogger.debug('ownerTruckProvider: Found ${trucks.length} trucks, looking for id=$ownedTruckId', tag: 'OwnerTruck');
-    final ownerTruck = trucks.where((truck) => truck.id == ownedTruckId.toString()).firstOrNull;
-    AppLogger.debug('ownerTruckProvider: Found truck = ${ownerTruck?.truckNumber ?? "null"}', tag: 'OwnerTruck');
-    yield ownerTruck;
+  await for (final snapshot in truckDoc.snapshots()) {
+    if (!snapshot.exists) {
+      AppLogger.warning('ownerTruckProvider: Truck document not found', tag: 'OwnerTruck');
+      yield null;
+      continue;
+    }
+
+    final truck = Truck.fromFirestore(snapshot);
+    AppLogger.debug('ownerTruckProvider: Found truck = ${truck.truckNumber}', tag: 'OwnerTruck');
+    yield truck;
   }
 }
-
