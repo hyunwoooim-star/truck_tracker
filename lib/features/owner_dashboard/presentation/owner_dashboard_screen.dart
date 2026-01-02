@@ -12,6 +12,7 @@ import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../truck_list/domain/truck.dart';
+import '../../truck_map/presentation/map_first_screen.dart';
 import 'owner_status_provider.dart';
 import 'tabs/tabs.dart';
 
@@ -98,8 +99,16 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
       foregroundColor: _mustard,
       elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Icons.map_outlined),
+        tooltip: '지도 보기',
+        onPressed: () {
+          // 지도 화면으로 이동 (손님 뷰)
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => const MapFirstScreen(),
+            ),
+          );
+        },
       ),
       actions: [
         if (_currentIndex == 0) ...[

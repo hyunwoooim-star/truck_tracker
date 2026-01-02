@@ -162,21 +162,25 @@ Stream<TruckStatus?> ownerTruckStatus(Ref ref) async* {
 }
 
 /// Provider to get the owner's truck data
+/// Uses ownedTruckId from user document to find the truck
 @riverpod
 Stream<Truck?> ownerTruck(Ref ref) async* {
   final repository = ref.watch(truckRepositoryProvider);
-  final userEmail = ref.watch(currentUserEmailProvider);
-  
-  if (userEmail.isEmpty) {
+
+  // Get truck ID from current user's ownedTruckId field
+  final truckIdAsync = ref.watch(currentUserTruckIdProvider);
+  final ownedTruckId = truckIdAsync.value;
+
+  if (ownedTruckId == null) {
     yield null;
     return;
   }
-  
-  // Watch all trucks and filter by owner email
+
+  // Watch all trucks and filter by truck ID
   final allTrucksStream = repository.watchTrucks();
-  
+
   await for (final trucks in allTrucksStream) {
-    final ownerTruck = trucks.where((truck) => truck.ownerEmail == userEmail).firstOrNull;
+    final ownerTruck = trucks.where((truck) => truck.id == ownedTruckId.toString()).firstOrNull;
     yield ownerTruck;
   }
 }

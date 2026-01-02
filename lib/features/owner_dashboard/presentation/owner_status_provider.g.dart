@@ -120,16 +120,19 @@ final class OwnerTruckStatusProvider
 String _$ownerTruckStatusHash() => r'a8199ec2ba9f2667c37874a7be0b0fc3d205d232';
 
 /// Provider to get the owner's truck data
+/// Uses ownedTruckId from user document to find the truck
 
 @ProviderFor(ownerTruck)
 final ownerTruckProvider = OwnerTruckProvider._();
 
 /// Provider to get the owner's truck data
+/// Uses ownedTruckId from user document to find the truck
 
 final class OwnerTruckProvider
     extends $FunctionalProvider<AsyncValue<Truck?>, Truck?, Stream<Truck?>>
     with $FutureModifier<Truck?>, $StreamProvider<Truck?> {
   /// Provider to get the owner's truck data
+  /// Uses ownedTruckId from user document to find the truck
   OwnerTruckProvider._()
     : super(
         from: null,
@@ -155,4 +158,4 @@ final class OwnerTruckProvider
   }
 }
 
-String _$ownerTruckHash() => r'afa2dbccd2f71634a1ed3cf83fba554dde46f9d6';
+String _$ownerTruckHash() => r'1d4e87049e0013022ab0e9e1d81629f21d040705';
