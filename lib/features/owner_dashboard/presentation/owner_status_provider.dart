@@ -167,11 +167,13 @@ Stream<TruckStatus?> ownerTruckStatus(Ref ref) async* {
 Stream<Truck?> ownerTruck(Ref ref) async* {
   final repository = ref.watch(truckRepositoryProvider);
 
-  // Get truck ID from current user's ownedTruckId field
-  final truckIdAsync = ref.watch(currentUserTruckIdProvider);
-  final ownedTruckId = truckIdAsync.value;
+  // Get truck ID from current user's ownedTruckId field - properly await it
+  final ownedTruckId = await ref.watch(currentUserTruckIdProvider.future);
+
+  AppLogger.debug('ownerTruckProvider: ownedTruckId = $ownedTruckId', tag: 'OwnerTruck');
 
   if (ownedTruckId == null) {
+    AppLogger.warning('ownerTruckProvider: No ownedTruckId, yielding null', tag: 'OwnerTruck');
     yield null;
     return;
   }
@@ -180,7 +182,9 @@ Stream<Truck?> ownerTruck(Ref ref) async* {
   final allTrucksStream = repository.watchTrucks();
 
   await for (final trucks in allTrucksStream) {
+    AppLogger.debug('ownerTruckProvider: Found ${trucks.length} trucks, looking for id=$ownedTruckId', tag: 'OwnerTruck');
     final ownerTruck = trucks.where((truck) => truck.id == ownedTruckId.toString()).firstOrNull;
+    AppLogger.debug('ownerTruckProvider: Found truck = ${ownerTruck?.truckNumber ?? "null"}', tag: 'OwnerTruck');
     yield ownerTruck;
   }
 }
