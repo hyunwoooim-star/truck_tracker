@@ -613,7 +613,7 @@ class _TruckSettingsDialogState extends ConsumerState<_TruckSettingsDialog> {
 
       final downloadUrl = await imageService.uploadTruckImage(
         xFile,
-        int.tryParse(widget.truck.id) ?? 0,
+        widget.truck.id,
       );
 
       return downloadUrl;

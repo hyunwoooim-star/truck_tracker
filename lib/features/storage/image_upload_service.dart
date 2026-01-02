@@ -174,7 +174,7 @@ class ImageUploadService {
   /// Upload truck main image (WebP, 1200x800, 80%)
   Future<String> uploadTruckImage(
     XFile image,
-    int truckId, {
+    String truckId, {
     void Function(double progress)? onProgress,
   }) async {
     AppLogger.debug('Uploading truck #$truckId main image', tag: 'ImageUploadService');
@@ -198,7 +198,7 @@ class ImageUploadService {
   /// Upload menu item image (WebP, 800x600, 80%)
   Future<String> uploadMenuImage(
     XFile image,
-    int truckId,
+    String truckId,
     String menuId, {
     void Function(double progress)? onProgress,
   }) async {

@@ -599,7 +599,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get searchTrucks => '트럭 검색';
 
   @override
-  String get searchPlaceholder => '트럭 번호, 기사명, 메뉴, 위치로 검색';
+  String get searchPlaceholder => '트럭명, 메뉴, 위치로 검색';
 
   @override
   String get viewOnMap => '지도에서 보기';

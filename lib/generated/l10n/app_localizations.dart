@@ -1223,7 +1223,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchPlaceholder.
   ///
   /// In ko, this message translates to:
-  /// **'트럭 번호, 기사명, 메뉴, 위치로 검색'**
+  /// **'트럭명, 메뉴, 위치로 검색'**
   String get searchPlaceholder;
 
   /// No description provided for @viewOnMap.

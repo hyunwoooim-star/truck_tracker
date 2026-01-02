@@ -802,7 +802,7 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
       // WebP 압축 및 업로드
       final downloadUrl = await imageService.uploadMenuImage(
         xFile,
-        int.tryParse(widget.truckId) ?? 0,
+        widget.truckId,
         menuId,
       );
 

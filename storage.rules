@@ -67,6 +67,20 @@ service firebase.storage {
                    && isUnder2MB();
     }
 
+    // Chat images
+    // Path: chat_images/{chatRoomId}/{timestamp}.webp
+    match /chat_images/{chatRoomId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isImageFile() && isUnder5MB();
+    }
+
+    // Social post images
+    // Path: social_posts/{postId}/image_0.webp, etc.
+    match /social_posts/{postId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isImageFile() && isUnder5MB();
+    }
+
     // Default: deny all other paths
     match /{allPaths=**} {
       allow read, write: if false;

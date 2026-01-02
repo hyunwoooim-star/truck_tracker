@@ -611,8 +611,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchTrucks => 'Search trucks';
 
   @override
-  String get searchPlaceholder =>
-      'Search by truck number, driver name, menu, location';
+  String get searchPlaceholder => 'Search by truck name, menu, location';
 
   @override
   String get viewOnMap => 'View on map';
