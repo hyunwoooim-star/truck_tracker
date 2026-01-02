@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../../../core/constants/food_types.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../../core/utils/snackbar_helper.dart';
 import '../../../../generated/l10n/app_localizations.dart';
@@ -193,15 +194,21 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // 음식 종류 (강조) + 상태
                     Row(
                       children: [
+                        Text(
+                          FoodTypes.getEmoji(truck.foodType),
+                          style: const TextStyle(fontSize: 24),
+                        ),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            truck.truckNumber,
+                            truck.foodType,
                             style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: AppTheme.mustardYellow,
                             ),
                           ),
                         ),
@@ -209,8 +216,9 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
                       ],
                     ),
                     const SizedBox(height: 4),
+                    // 트럭명
                     Text(
-                      truck.foodType,
+                      truck.truckNumber,
                       style: const TextStyle(
                         fontSize: 16,
                         color: AppTheme.white90,
@@ -287,16 +295,21 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Title + Status
+                    // 음식 종류 (강조) + 상태
                     Row(
                       children: [
+                        Text(
+                          FoodTypes.getEmoji(truck.foodType),
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                        const SizedBox(width: 6),
                         Expanded(
                           child: Text(
-                            truck.truckNumber,
+                            truck.foodType,
                             style: const TextStyle(
-                              fontSize: 15,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.textPrimary,
+                              color: AppTheme.mustardYellow,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -305,32 +318,45 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
                         StatusTag(status: truck.status),
                       ],
                     ),
-                    // Food type + Location
+                    // 트럭명 + 위치
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          truck.foodType,
+                          truck.truckNumber,
                           style: const TextStyle(
-                            fontSize: 13,
-                            color: AppTheme.textSecondary,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppTheme.textPrimary,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          truck.locationDescription,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppTheme.textTertiary,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              size: 14,
+                              color: AppTheme.textTertiary,
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                truck.locationDescription,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: AppTheme.textSecondary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    // Distance + Actions
+                    // 거리 + 액션 버튼
                     Row(
                       children: [
                         _buildDistanceChip(compact: true),
@@ -391,21 +417,34 @@ class _BentoTruckCardState extends ConsumerState<BentoTruckCard>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                // 음식 종류 (강조)
+                Row(
+                  children: [
+                    Text(
+                      FoodTypes.getEmoji(truck.foodType),
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        truck.foodType,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.mustardYellow,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                // 트럭명
                 Text(
                   truck.truckNumber,
                   style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  truck.foodType,
-                  style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: AppTheme.white80,
                   ),
                   maxLines: 1,
