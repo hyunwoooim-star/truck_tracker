@@ -160,33 +160,66 @@ class _LoginLoadingOverlayState extends State<LoginLoadingOverlay>
   }
 }
 
+/// 로딩 오버레이 상태 관리를 위한 GlobalKey
+final GlobalKey<NavigatorState> _overlayNavigatorKey = GlobalKey<NavigatorState>();
+
+/// 현재 오버레이가 표시 중인지 추적
+bool _isOverlayShowing = false;
+
 /// 로그인 로딩 오버레이를 쉽게 표시하는 헬퍼 함수
 void showLoginLoadingOverlay(BuildContext context) {
+  if (_isOverlayShowing) return; // 이미 표시 중이면 무시
+
+  _isOverlayShowing = true;
   showDialog(
     context: context,
     barrierDismissible: false,
     barrierColor: Colors.transparent,
     routeSettings: const RouteSettings(name: 'loginLoadingOverlay'),
-    builder: (context) => const LoginLoadingOverlay(),
-  );
+    builder: (dialogContext) => PopScope(
+      canPop: false,
+      child: const LoginLoadingOverlay(),
+    ),
+  ).then((_) {
+    // 다이얼로그가 닫히면 상태 초기화
+    _isOverlayShowing = false;
+  });
 }
 
 /// 로그인 로딩 오버레이 닫기
 void hideLoginLoadingOverlay(BuildContext context) {
-  // 안전하게 오버레이 닫기 - 여러 방법 시도
+  if (!_isOverlayShowing) return; // 표시 중이 아니면 무시
+
+  _isOverlayShowing = false;
+
+  // 여러 방법으로 시도
   try {
-    // 먼저 named route로 시도
-    Navigator.of(context, rootNavigator: true).popUntil((route) {
-      return route.settings.name != 'loginLoadingOverlay';
-    });
-  } catch (e) {
-    // 실패하면 일반 pop 시도
-    try {
-      if (Navigator.of(context, rootNavigator: true).canPop()) {
-        Navigator.of(context, rootNavigator: true).pop();
-      }
-    } catch (_) {
-      // 무시 - 이미 닫혔거나 context가 유효하지 않음
+    // 1. rootNavigator로 pop 시도
+    final navigator = Navigator.of(context, rootNavigator: true);
+    if (navigator.canPop()) {
+      navigator.pop();
+      return;
     }
+  } catch (_) {}
+
+  try {
+    // 2. 일반 Navigator로 pop 시도
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+      return;
+    }
+  } catch (_) {}
+
+  try {
+    // 3. popUntil로 시도
+    Navigator.of(context, rootNavigator: true).popUntil((route) {
+      if (route.settings.name == 'loginLoadingOverlay') {
+        return false; // 이 route를 pop
+      }
+      return true; // 다른 route는 유지
+    });
+  } catch (_) {
+    // 모든 방법 실패 - 무시
   }
 }

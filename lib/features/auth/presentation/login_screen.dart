@@ -5,7 +5,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:truck_tracker/generated/l10n/app_localizations.dart';
@@ -104,19 +103,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           FcmService().saveFcmTokenToUser(user.uid);
         }
 
-        // 로그인 성공 → AuthWrapper가 auth 상태 변화를 감지하도록 잠시 대기
-        // Firebase Auth 스트림이 전파될 시간을 주고, GoRouter로 강제 리빌드
+        // 로그인 성공 → 오버레이 닫기
+        // AuthWrapper가 Firebase Auth 스트림 변화를 감지하여 자동으로 화면 전환
+        AppLogger.debug('Login success - closing overlay, AuthWrapper will handle navigation', tag: 'LoginScreen');
         if (mounted) {
           hideLoginLoadingOverlay(context);
-
-          // 약간의 딜레이 후 GoRouter로 루트 이동 → AuthWrapper 재평가
-          await Future.delayed(const Duration(milliseconds: 300));
-          if (mounted) {
-            AppLogger.debug('Login success - navigating to root via GoRouter', tag: 'LoginScreen');
-            context.go('/');
-          }
         }
-        return; // 로그인 완료 - 더 이상 진행하지 않음
+        return; // 로그인 완료 - AuthWrapper가 자동으로 다음 화면으로 전환
       } else {
         AppLogger.debug('Attempting email sign up...', tag: 'LoginScreen');
         // Sign up
@@ -197,14 +190,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         FcmService().saveFcmTokenToUser(user.uid); // unawaited
       }
 
-      // 로그인 성공 → GoRouter로 강제 리빌드
+      // 로그인 성공 → 오버레이 닫기 (AuthWrapper가 자동 전환)
+      AppLogger.debug('Kakao login success - closing overlay', tag: 'LoginScreen');
       if (mounted) {
         hideLoginLoadingOverlay(context);
-        await Future.delayed(const Duration(milliseconds: 300));
-        if (mounted) {
-          AppLogger.debug('Kakao login success - navigating to root via GoRouter', tag: 'LoginScreen');
-          context.go('/');
-        }
       }
     } catch (e, stackTrace) {
       AppLogger.error('Kakao login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
@@ -236,14 +225,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         FcmService().saveFcmTokenToUser(user.uid); // unawaited
       }
 
-      // 로그인 성공 → GoRouter로 강제 리빌드
+      // 로그인 성공 → 오버레이 닫기 (AuthWrapper가 자동 전환)
+      AppLogger.debug('Naver login success - closing overlay', tag: 'LoginScreen');
       if (mounted) {
         hideLoginLoadingOverlay(context);
-        await Future.delayed(const Duration(milliseconds: 300));
-        if (mounted) {
-          AppLogger.debug('Naver login success - navigating to root via GoRouter', tag: 'LoginScreen');
-          context.go('/');
-        }
       }
     } catch (e, stackTrace) {
       AppLogger.error('Naver login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
@@ -287,14 +272,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         FcmService().saveFcmTokenToUser(user.uid); // unawaited
       }
 
-      // 로그인 성공 → GoRouter로 강제 리빌드
+      // 로그인 성공 → 오버레이 닫기 (AuthWrapper가 자동 전환)
+      AppLogger.debug('Google login success - closing overlay', tag: 'LoginScreen');
       if (mounted) {
         hideLoginLoadingOverlay(context);
-        await Future.delayed(const Duration(milliseconds: 300));
-        if (mounted) {
-          AppLogger.debug('Google login success - navigating to root via GoRouter', tag: 'LoginScreen');
-          context.go('/');
-        }
       }
     } catch (e, stackTrace) {
       AppLogger.error('Google login error', error: e, stackTrace: stackTrace, tag: 'LoginScreen');
