@@ -34,7 +34,7 @@ class TruckListScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
-            tooltip: 'QR Check-In',
+            tooltip: l10n.qrCheckInTooltip,
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(

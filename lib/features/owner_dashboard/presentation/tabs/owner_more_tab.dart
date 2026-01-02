@@ -5,21 +5,12 @@ import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 import '../../../../core/themes/app_theme.dart';
 import '../../../auth/presentation/auth_provider.dart';
 import '../../../truck_list/domain/truck.dart';
-import '../../../checkin/presentation/owner_qr_screen.dart';
-import '../../../analytics/presentation/revenue_dashboard_screen.dart';
-import '../../../notifications/presentation/push_notification_tool.dart';
-import '../../../truck_map/presentation/map_first_screen.dart';
-import '../analytics_screen.dart';
-import '../coupon_management_screen.dart';
-import '../coupon_scanner_screen.dart';
-import '../menu_management_screen.dart';
 import '../owner_management_screen.dart';
-import '../review_management_screen.dart';
-import '../schedule_management_screen.dart';
+import '../owner_functions_screen.dart';
+import '../owner_settings_screen.dart';
 import '../owner_status_provider.dart';
-import '../widgets/widgets.dart';
 
-/// 더보기 탭 - 모든 관리 메뉴 모음
+/// 더보기 탭 - 3개 메뉴만 (사장님 대시보드 설정, 더보기, 로그아웃)
 class OwnerMoreTab extends ConsumerWidget {
   const OwnerMoreTab({super.key, required this.truck});
 
@@ -30,147 +21,62 @@ class OwnerMoreTab extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 트럭 관리 섹션
-          _SectionTitle(title: l10n.truckManagement, icon: Icons.local_shipping),
-          const SizedBox(height: 12),
-          _MenuGrid(
-            items: [
-              _MenuItem(
-                icon: Icons.restaurant_menu,
-                label: l10n.menuManagement,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const MenuManagementScreen()),
-                ),
+          const SizedBox(height: 20),
+
+          // 사장님용 대시보드 설정
+          _BigMenuCard(
+            icon: Icons.local_shipping,
+            title: '사장님 대시보드 설정',
+            subtitle: '트럭 프로필, 위치, 음식 종류 수정',
+            color: AppTheme.mustardYellow,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => OwnerManagementScreen(truckId: truck.id),
               ),
-              _MenuItem(
-                icon: Icons.calendar_today,
-                label: '영업 일정',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ScheduleManagementScreen()),
-                ),
-              ),
-              _MenuItem(
-                icon: Icons.dashboard_customize,
-                label: '트럭 관리',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => OwnerManagementScreen(truckId: truck.id)),
-                ),
-              ),
-              _MenuItem(
-                icon: Icons.qr_code,
-                label: l10n.qrCheckInTooltip,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const OwnerQRScreen()),
-                ),
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
 
-          // 쿠폰 & 리뷰 섹션
-          _SectionTitle(title: l10n.couponAndReview, icon: Icons.local_offer),
-          const SizedBox(height: 12),
-          _MenuGrid(
-            items: [
-              _MenuItem(
-                icon: Icons.local_offer,
-                label: l10n.couponManagement,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const CouponManagementScreen()),
-                ),
+          // 기능 더보기
+          _BigMenuCard(
+            icon: Icons.apps,
+            title: '기능 더보기',
+            subtitle: '메뉴관리, 쿠폰, 리뷰, 통계 등',
+            color: AppTheme.electricBlue,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => OwnerFunctionsScreen(truck: truck),
               ),
-              _MenuItem(
-                icon: Icons.qr_code_scanner,
-                label: '쿠폰 스캐너',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => CouponScannerScreen(truckId: truck.id)),
-                ),
-              ),
-              _MenuItem(
-                icon: Icons.rate_review,
-                label: l10n.reviewManagement,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => ReviewManagementScreen(truckId: truck.id)),
-                ),
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
 
-          // 통계 & 분석 섹션
-          _SectionTitle(title: l10n.statsAndAnalytics, icon: Icons.bar_chart),
-          const SizedBox(height: 12),
-          _MenuGrid(
-            items: [
-              _MenuItem(
-                icon: Icons.attach_money,
-                label: '매출 대시보드',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const RevenueDashboardScreen()),
-                ),
+          // 앱 설정
+          _BigMenuCard(
+            icon: Icons.settings,
+            title: l10n.settings,
+            subtitle: '알림, 언어, 앱 정보',
+            color: Colors.grey,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const OwnerAppSettingsScreen(),
               ),
-              _MenuItem(
-                icon: Icons.analytics,
-                label: '조회/리뷰 분석',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const AnalyticsScreen()),
-                ),
-              ),
-              _MenuItem(
-                icon: Icons.notifications_active,
-                label: '알림 발송',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const PushNotificationTool()),
-                ),
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
 
-          // 품절 토글
-          OwnerSoldOutToggles(truckId: truck.id),
-          const SizedBox(height: 24),
-
-          // 고객 대화
-          OwnerTalkSection(truckId: truck.id),
-          const SizedBox(height: 24),
-
-          // 기타 섹션
-          _SectionTitle(title: l10n.other, icon: Icons.more_horiz),
-          const SizedBox(height: 12),
-          _MenuList(
-            items: [
-              _MenuListItem(
-                icon: Icons.storefront,
-                label: '손님 화면 보기',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const MapFirstScreen()),
-                ),
-              ),
-              _MenuListItem(
-                icon: Icons.logout,
-                label: l10n.logout,
-                textColor: Colors.red,
-                iconColor: Colors.red,
-                onTap: () => _showLogoutDialog(context, ref, l10n),
-              ),
-            ],
+          // 로그아웃 버튼
+          _LogoutButton(
+            onTap: () => _showLogoutDialog(context, ref, l10n),
           ),
+
           const SizedBox(height: 40),
         ],
       ),
@@ -208,172 +114,119 @@ class OwnerMoreTab extends ConsumerWidget {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title, required this.icon});
+/// 큰 메뉴 카드
+class _BigMenuCard extends StatelessWidget {
+  const _BigMenuCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+  });
 
-  final String title;
   final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color color;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, color: AppTheme.mustardYellow, size: 20),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+    return Material(
+      color: AppTheme.charcoalMedium,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withAlpha(50)),
+          ),
+          child: Row(
+            children: [
+              // 아이콘
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: color.withAlpha(30),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(icon, color: color, size: 28),
+              ),
+              const SizedBox(width: 16),
+              // 텍스트
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: Colors.grey[400],
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // 화살표
+              Icon(Icons.chevron_right, color: Colors.grey[600], size: 24),
+            ],
           ),
         ),
-      ],
-    );
-  }
-}
-
-class _MenuGrid extends StatelessWidget {
-  const _MenuGrid({required this.items});
-
-  final List<_MenuItem> items;
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 0.85,
       ),
-      itemCount: items.length,
-      itemBuilder: (context, index) => items[index],
     );
   }
 }
 
-class _MenuItem extends StatelessWidget {
-  const _MenuItem({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
+/// 로그아웃 버튼
+class _LogoutButton extends StatelessWidget {
+  const _LogoutButton({required this.onTap});
 
-  final IconData icon;
-  final String label;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppTheme.charcoalMedium,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.charcoalLight.withAlpha(50)),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: AppTheme.mustardYellow.withAlpha(20),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: AppTheme.mustardYellow, size: 22),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+    final l10n = AppLocalizations.of(context);
 
-class _MenuList extends StatelessWidget {
-  const _MenuList({required this.items});
-
-  final List<_MenuListItem> items;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.charcoalMedium,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: items.map((item) {
-          final isLast = items.last == item;
-          return Column(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.red.withAlpha(100)),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              item,
-              if (!isLast)
-                Divider(
-                  height: 1,
-                  color: Colors.grey[800],
-                  indent: 56,
+              const Icon(Icons.logout, color: Colors.red, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                l10n.logout,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                 ),
-            ],
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
-class _MenuListItem extends StatelessWidget {
-  const _MenuListItem({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.textColor = Colors.white,
-    this.iconColor = AppTheme.mustardYellow,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  final Color textColor;
-  final Color iconColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Row(
-          children: [
-            Icon(icon, color: iconColor, size: 22),
-            const SizedBox(width: 16),
-            Text(
-              label,
-              style: TextStyle(
-                color: textColor,
-                fontSize: 15,
               ),
-            ),
-            const Spacer(),
-            Icon(Icons.chevron_right, color: Colors.grey[600], size: 20),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/themes/app_theme.dart';
-import '../../../order/data/order_repository.dart';
 import '../../../truck_list/domain/truck.dart';
 import '../widgets/widgets.dart';
 
@@ -14,8 +13,6 @@ class OwnerHomeTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ordersAsync = ref.watch(truckOrdersProvider(truck.id));
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -32,12 +29,8 @@ class OwnerHomeTab extends ConsumerWidget {
           OwnerCashSaleButton(truck: truck),
           const SizedBox(height: 16),
 
-          // 오늘의 통계
-          ordersAsync.when(
-            data: (orders) => OwnerStatsCard(orders: orders),
-            loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
-          ),
+          // 오늘의 통계 (수동 새로고침 방식)
+          OwnerStatsCard(truckId: truck.id),
 
           // 오늘의 공지사항
           OwnerAnnouncementSection(truck: truck),
