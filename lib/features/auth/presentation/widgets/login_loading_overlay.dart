@@ -223,3 +223,28 @@ void hideLoginLoadingOverlay(BuildContext context) {
     // 모든 방법 실패 - 무시
   }
 }
+
+/// 전역 NavigatorKey를 저장 (main.dart에서 설정)
+GlobalKey<NavigatorState>? _globalNavigatorKey;
+
+/// 전역 NavigatorKey 설정 (main.dart에서 호출)
+void setGlobalNavigatorKey(GlobalKey<NavigatorState> key) {
+  _globalNavigatorKey = key;
+}
+
+/// 로그인 오버레이 강제 닫기 (context 없이 사용 가능)
+/// AuthWrapper에서 로그인 성공 시 호출
+void forceHideLoginLoadingOverlay() {
+  if (!_isOverlayShowing) return;
+
+  _isOverlayShowing = false;
+
+  try {
+    final navigatorState = _globalNavigatorKey?.currentState;
+    if (navigatorState != null && navigatorState.canPop()) {
+      navigatorState.pop();
+    }
+  } catch (_) {
+    // 실패해도 무시 - 이미 닫혔거나 없는 경우
+  }
+}

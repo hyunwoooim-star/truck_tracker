@@ -35,10 +35,14 @@ import 'features/pickup_navigation/presentation/pickup_ready_listener.dart';
 import 'features/auth/presentation/oauth_callback_screen.dart';
 import 'features/auth/presentation/nickname_setup_screen.dart';
 import 'features/onboarding/presentation/customer_onboarding_screen.dart';
+import 'features/auth/presentation/widgets/login_loading_overlay.dart';
 import 'firebase_options.dart';
 
 /// Global key for showing foreground notifications
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
+/// Global navigator key for login overlay management
+final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   // 🌐 WEB: Remove hash (#) from URLs for OAuth callback compatibility
@@ -157,6 +161,9 @@ void main() async {
 
         AppLogger.debug('Sentry initialized (DSN ${sentryDsn.isNotEmpty ? "configured" : "not set"})', tag: 'Main');
 
+        // Set global navigator key for login overlay management
+        setGlobalNavigatorKey(_navigatorKey);
+
         runApp(
           const ProviderScope(
             child: MyApp(),
@@ -176,6 +183,7 @@ void main() async {
 
 /// GoRouter instance - must be static to persist across rebuilds
 final _router = GoRouter(
+  navigatorKey: _navigatorKey,
   initialLocation: '/',
   routes: [
     GoRoute(
@@ -284,6 +292,9 @@ class AuthWrapper extends ConsumerWidget {
         }
 
         AppLogger.debug('User logged in (${user.uid}) → Checking profile completion', tag: 'AuthWrapper');
+
+        // 로그인 성공 시 오버레이 강제 닫기 (구글 로그인 등 popup 방식 처리)
+        forceHideLoginLoadingOverlay();
 
         // 프로필 완성 여부 먼저 확인
         return profileCompleteAsync.when(
