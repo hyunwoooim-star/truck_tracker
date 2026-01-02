@@ -319,6 +319,13 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
         curve: Curves.easeInOut,
       );
       _completeAnimController.forward();
+
+      // 2초 후 자동으로 대시보드로 이동
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          _goToDashboard();
+        }
+      });
     } catch (e) {
       if (mounted) SnackBarHelper.showError(context, '등록 실패: $e');
       setState(() => _isLoading = false);

@@ -165,11 +165,27 @@ void showLoginLoadingOverlay(BuildContext context) {
     context: context,
     barrierDismissible: false,
     barrierColor: Colors.transparent,
+    routeSettings: const RouteSettings(name: 'loginLoadingOverlay'),
     builder: (context) => const LoginLoadingOverlay(),
   );
 }
 
 /// 로그인 로딩 오버레이 닫기
 void hideLoginLoadingOverlay(BuildContext context) {
-  Navigator.of(context, rootNavigator: true).pop();
+  // 안전하게 오버레이 닫기 - 여러 방법 시도
+  try {
+    // 먼저 named route로 시도
+    Navigator.of(context, rootNavigator: true).popUntil((route) {
+      return route.settings.name != 'loginLoadingOverlay';
+    });
+  } catch (e) {
+    // 실패하면 일반 pop 시도
+    try {
+      if (Navigator.of(context, rootNavigator: true).canPop()) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+    } catch (_) {
+      // 무시 - 이미 닫혔거나 context가 유효하지 않음
+    }
+  }
 }
