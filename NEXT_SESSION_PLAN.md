@@ -4,7 +4,7 @@
 
 ---
 
-## 현재 상태 (2026-01-01 최신)
+## 현재 상태 (2026-01-02 최신)
 
 | 항목 | 상태 |
 |------|------|
@@ -12,7 +12,7 @@
 | 빌드 | **WSL Ubuntu에서 빌드** (Windows X) |
 | flutter analyze | No issues (info 10개만) |
 | Cloud Functions | 10개 함수 배포 완료 |
-| 소셜 로그인 | ✅ 카카오/네이버/Google 모두 정상 |
+| 소셜 로그인 | ✅ 카카오/네이버/Google/이메일 모두 정상 |
 | 테스트 | 658 통과, 8 스킵, 4 실패 (async 렌더링) |
 | 배포 | https://truck-tracker-fa0b0.web.app |
 
@@ -31,6 +31,8 @@
 | 버그 #45 (통계 라벨) | ✅ | `admin_dashboard_screen.dart` |
 | 버그 #46 (인증 무한로딩) | ✅ | `auth_service.dart` |
 | 버그 #47 (상태 다이얼로그) | ✅ | `owner_request_dialog.dart` |
+| **구글 로그인 오버레이** | ✅ | `login_loading_overlay.dart`, `main.dart` |
+| **이메일 로그인 안됨** | ✅ | `login_screen.dart` |
 
 ---
 
@@ -172,4 +174,4 @@ docs/
 
 ---
 
-**마지막 업데이트**: 2026-01-01 (Phase 1 완료, 버그 #45-47 수정)
+**마지막 업데이트**: 2026-01-02 (로그인 오버레이 버그 수정)

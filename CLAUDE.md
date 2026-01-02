@@ -417,3 +417,9 @@ See PROJECT_CONTEXT.md § Development Commands for:
 ---
 
 **End of Constitution**
+
+### 2026-01-02: 소셜 로그인 오버레이 문제 해결
+- **구글 로그인 popup**: popup 방식은 context가 변경되어 오버레이가 안 닫힘 → `forceHideLoginLoadingOverlay()` 전역 함수로 해결
+- **카카오/네이버 redirect**: redirect 방식은 페이지가 바뀌므로 오버레이가 자연히 사라짐
+- **이메일 로그인**: `ref.invalidate(authStateChangesProvider)` 호출하면 auth 상태가 리셋됨 → 제거
+- **해결 패턴**: AuthWrapper에서 로그인 성공 감지 시 전역으로 오버레이 닫기
