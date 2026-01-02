@@ -56,6 +56,26 @@ enum ImageUploadType {
     maxSizeKB: 1024,
     label: '사업자등록증',
     hint: '선명하게 촬영해주세요, 최대 5MB',
+  ),
+
+  /// 채팅 이미지 (1000x1000, 75%, 300KB)
+  chat(
+    maxWidth: 1000,
+    maxHeight: 1000,
+    quality: 75,
+    maxSizeKB: 300,
+    label: '채팅 이미지',
+    hint: '최대 5MB',
+  ),
+
+  /// 소셜 피드 이미지 (1200x1200, 80%, 500KB)
+  socialPost(
+    maxWidth: 1200,
+    maxHeight: 1200,
+    quality: 80,
+    maxSizeKB: 500,
+    label: '피드 이미지',
+    hint: '최대 4장, 각 5MB 이하',
   );
 
   const ImageUploadType({
@@ -220,6 +240,122 @@ class ImageUploadService {
       );
     } catch (e, stackTrace) {
       AppLogger.error('Error uploading business license', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
+      rethrow;
+    }
+  }
+
+  /// Upload business license image from bytes (for web Uint8List support)
+  Future<String> uploadBusinessLicenseImageFromBytes(
+    Uint8List bytes,
+    String userId, {
+    void Function(double progress)? onProgress,
+  }) async {
+    AppLogger.debug('Uploading business license from bytes for user: $userId (${bytes.length} bytes)', tag: 'ImageUploadService');
+
+    try {
+      final path = 'business_licenses/$userId.webp';
+
+      return await _uploadBytes(
+        bytes,
+        path,
+        type: ImageUploadType.businessLicense,
+        onProgress: onProgress,
+      );
+    } catch (e, stackTrace) {
+      AppLogger.error('Error uploading business license from bytes', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
+      rethrow;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // CHAT IMAGE UPLOAD
+  // ═══════════════════════════════════════════════════════════
+
+  /// Upload chat image (WebP, 1000x1000, 75%)
+  Future<String> uploadChatImage(
+    XFile image,
+    String chatRoomId, {
+    void Function(double progress)? onProgress,
+  }) async {
+    AppLogger.debug('Uploading chat image for room: $chatRoomId', tag: 'ImageUploadService');
+
+    try {
+      final bytes = await image.readAsBytes();
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final path = 'chat_images/$chatRoomId/$timestamp.webp';
+
+      return await _uploadBytes(
+        bytes,
+        path,
+        type: ImageUploadType.chat,
+        onProgress: onProgress,
+      );
+    } catch (e, stackTrace) {
+      AppLogger.error('Error uploading chat image', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
+      rethrow;
+    }
+  }
+
+  /// Upload chat image from bytes (for web support)
+  Future<String> uploadChatImageFromBytes(
+    Uint8List bytes,
+    String chatRoomId, {
+    void Function(double progress)? onProgress,
+  }) async {
+    AppLogger.debug('Uploading chat image from bytes for room: $chatRoomId (${bytes.length} bytes)', tag: 'ImageUploadService');
+
+    try {
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final path = 'chat_images/$chatRoomId/$timestamp.webp';
+
+      return await _uploadBytes(
+        bytes,
+        path,
+        type: ImageUploadType.chat,
+        onProgress: onProgress,
+      );
+    } catch (e, stackTrace) {
+      AppLogger.error('Error uploading chat image from bytes', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
+      rethrow;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // SOCIAL POST IMAGE UPLOAD
+  // ═══════════════════════════════════════════════════════════
+
+  /// Upload social post images (WebP, 1200x1200, 80%)
+  Future<List<String>> uploadSocialPostImages(
+    List<XFile> images,
+    String postId, {
+    void Function(int current, int total, double progress)? onProgress,
+  }) async {
+    AppLogger.debug('Uploading ${images.length} social post images for post: $postId', tag: 'ImageUploadService');
+
+    try {
+      final List<String> urls = [];
+
+      for (int i = 0; i < images.length; i++) {
+        final bytes = await images[i].readAsBytes();
+        final path = 'social_posts/$postId/image_$i.webp';
+
+        final url = await _uploadBytes(
+          bytes,
+          path,
+          type: ImageUploadType.socialPost,
+          onProgress: onProgress != null
+              ? (progress) => onProgress(i + 1, images.length, progress)
+              : null,
+        );
+        urls.add(url);
+
+        AppLogger.debug('Uploaded social post image $i: $url', tag: 'ImageUploadService');
+      }
+
+      AppLogger.success('All social post images uploaded: ${urls.length}', tag: 'ImageUploadService');
+      return urls;
+    } catch (e, stackTrace) {
+      AppLogger.error('Error uploading social post images', error: e, stackTrace: stackTrace, tag: 'ImageUploadService');
       rethrow;
     }
   }

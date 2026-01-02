@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +9,7 @@ import 'package:truck_tracker/generated/l10n/app_localizations.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
+import '../../storage/image_upload_service.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../truck_list/domain/truck.dart';
 import '../../truck_map/presentation/map_first_screen.dart';
@@ -595,31 +595,26 @@ class _TruckSettingsDialogState extends ConsumerState<_TruckSettingsDialog> {
     });
   }
 
+  /// Upload image to Firebase Storage (WebP 압축 적용)
   Future<String?> _uploadImage() async {
     if (_selectedImage == null) return _existingImageUrl;
 
     setState(() => _isUploadingImage = true);
 
     try {
-      final storage = FirebaseStorage.instance;
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final path = 'truck_images/${widget.truck.id}/truck_$timestamp.jpg';
-      final ref = storage.ref().child(path);
+      final imageService = ImageUploadService();
 
-      UploadTask uploadTask;
+      XFile xFile;
       if (kIsWeb) {
-        final xFile = _selectedImage as XFile;
-        final bytes = await xFile.readAsBytes();
-        uploadTask = ref.putData(
-          bytes,
-          SettableMetadata(contentType: 'image/jpeg'),
-        );
+        xFile = _selectedImage as XFile;
       } else {
-        uploadTask = ref.putFile(_selectedImage as File);
+        xFile = XFile((_selectedImage as File).path);
       }
 
-      final snapshot = await uploadTask;
-      final downloadUrl = await snapshot.ref.getDownloadURL();
+      final downloadUrl = await imageService.uploadTruckImage(
+        xFile,
+        int.tryParse(widget.truck.id) ?? 0,
+      );
 
       return downloadUrl;
     } catch (e) {

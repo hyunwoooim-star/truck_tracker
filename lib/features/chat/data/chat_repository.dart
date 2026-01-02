@@ -1,10 +1,11 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/utils/app_logger.dart';
+import '../../storage/image_upload_service.dart';
 import '../domain/chat_message.dart';
 import '../domain/chat_room.dart';
 
@@ -13,7 +14,7 @@ part 'chat_repository.g.dart';
 /// Repository for managing chat rooms and messages
 class ChatRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
+  final ImageUploadService _imageService = ImageUploadService();
 
   CollectionReference get _chatRoomsCollection =>
       _firestore.collection('chatRooms');
@@ -141,15 +142,16 @@ class ChatRepository {
   }
 
   /// Send a message with image
+  /// [imageFile] can be File (mobile) or XFile (cross-platform)
   Future<bool> sendImageMessage({
     required String chatRoomId,
     required String senderId,
     required String senderName,
     required String message,
-    required File imageFile,
+    required dynamic imageFile, // File or XFile
   }) async {
     try {
-      // Upload image to Firebase Storage
+      // Upload image using ImageUploadService (WebP 압축 적용)
       final imageUrl = await _uploadImage(chatRoomId, imageFile);
       if (imageUrl == null) return false;
 
@@ -186,15 +188,20 @@ class ChatRepository {
     }
   }
 
-  /// Upload image to Firebase Storage
-  Future<String?> _uploadImage(String chatRoomId, File imageFile) async {
+  /// Upload image to Firebase Storage (WebP 압축 적용)
+  Future<String?> _uploadImage(String chatRoomId, dynamic imageFile) async {
     try {
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final ref = _storage.ref().child('chat_images/$chatRoomId/$timestamp.jpg');
+      XFile xFile;
+      if (imageFile is XFile) {
+        xFile = imageFile;
+      } else if (imageFile is File) {
+        xFile = XFile(imageFile.path);
+      } else {
+        AppLogger.error('Invalid image file type: ${imageFile.runtimeType}');
+        return null;
+      }
 
-      final uploadTask = await ref.putFile(imageFile);
-      final downloadUrl = await uploadTask.ref.getDownloadURL();
-
+      final downloadUrl = await _imageService.uploadChatImage(xFile, chatRoomId);
       AppLogger.info('Image uploaded: $downloadUrl');
       return downloadUrl;
     } catch (e, stackTrace) {

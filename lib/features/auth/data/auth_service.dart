@@ -1,19 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 
 import '../../../core/config/api_config.dart';
 import '../../../core/utils/app_logger.dart';
+import '../../storage/image_upload_service.dart';
 import 'web_auth_helper_io.dart'
     if (dart.library.html) 'web_auth_helper.dart';
 
@@ -760,34 +760,51 @@ class AuthService {
   }
 
   /// Submit owner verification request with business license
-  /// [imageData] can be either a file path (String) for mobile or Uint8List for web
+  /// [imageData] can be XFile, file path (String), or Uint8List
   Future<void> submitOwnerRequestWithImage(String userId, dynamic imageData) async {
     AppLogger.debug('Submitting owner request for user: $userId', tag: 'AuthService');
 
     try {
-      // Upload business license image to Firebase Storage
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('owner_requests')
-          .child('$userId.jpg');
-
-      String imageUrl;
-
-      if (imageData is Uint8List) {
-        // Web: Upload bytes directly
-        await storageRef.putData(
-          imageData,
-          SettableMetadata(contentType: 'image/jpeg'),
-        );
-        imageUrl = await storageRef.getDownloadURL();
+      // Convert imageData to XFile
+      XFile xFile;
+      if (imageData is XFile) {
+        xFile = imageData;
       } else if (imageData is String) {
-        // Mobile: Upload from file path
-        final file = File(imageData);
-        await storageRef.putFile(file);
-        imageUrl = await storageRef.getDownloadURL();
+        // Mobile: file path
+        xFile = XFile(imageData);
+      } else if (imageData is Uint8List) {
+        // Web: Create XFile from bytes - use temporary approach
+        // Save bytes and create XFile (ImageUploadService will handle the upload)
+        final imageService = ImageUploadService();
+        final imageUrl = await imageService.uploadBusinessLicenseImageFromBytes(
+          imageData,
+          userId,
+        );
+        AppLogger.debug('Business license uploaded: $imageUrl', tag: 'AuthService');
+
+        // Create owner request document
+        await _firestore.collection('owner_requests').doc(userId).set({
+          'userId': userId,
+          'email': _auth.currentUser?.email ?? '',
+          'displayName': _auth.currentUser?.displayName ?? '',
+          'businessLicenseUrl': imageUrl,
+          'status': 'pending',
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+          'reviewedBy': null,
+          'reviewedAt': null,
+          'rejectionReason': null,
+        });
+
+        AppLogger.success('Owner request submitted', tag: 'AuthService');
+        return;
       } else {
         throw Exception('Invalid image data type');
       }
+
+      // Upload using ImageUploadService (WebP 압축 적용)
+      final imageService = ImageUploadService();
+      final imageUrl = await imageService.uploadBusinessLicenseImage(xFile, userId);
 
       AppLogger.debug('Business license uploaded: $imageUrl', tag: 'AuthService');
 
@@ -797,7 +814,7 @@ class AuthService {
         'email': _auth.currentUser?.email ?? '',
         'displayName': _auth.currentUser?.displayName ?? '',
         'businessLicenseUrl': imageUrl,
-        'status': 'pending', // pending, approved, rejected
+        'status': 'pending',
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
         'reviewedBy': null,
@@ -817,7 +834,7 @@ class AuthService {
   Future<void> submitOwnerApplication({
     required String businessName,
     String? description,
-    required dynamic imageData, // Uint8List(Web) or String(Mobile path)
+    required dynamic imageData, // XFile, Uint8List(Web), or String(Mobile path)
   }) async {
     final userId = _auth.currentUser?.uid;
     if (userId == null) throw Exception('로그인이 필요합니다');
@@ -825,37 +842,25 @@ class AuthService {
     AppLogger.debug('[1/3] Starting owner application for: $userId', tag: 'AuthService');
 
     try {
-      // 1. 이미지 업로드
-      AppLogger.debug('[2/3] Uploading image...', tag: 'AuthService');
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('owner_requests')
-          .child('$userId.jpg');
+      // 1. 이미지 업로드 (ImageUploadService 사용, WebP 압축 적용)
+      AppLogger.debug('[2/3] Uploading image with compression...', tag: 'AuthService');
 
+      final imageService = ImageUploadService();
       String imageUrl;
-      if (imageData is Uint8List) {
+
+      if (imageData is XFile) {
+        AppLogger.debug('[2/3] Image type: XFile', tag: 'AuthService');
+        imageUrl = await imageService.uploadBusinessLicenseImage(imageData, userId);
+      } else if (imageData is Uint8List) {
         AppLogger.debug('[2/3] Image type: Uint8List (${imageData.length} bytes)', tag: 'AuthService');
-        final uploadTask = storageRef.putData(
-          imageData,
-          SettableMetadata(contentType: 'image/jpeg'),
-        );
-
-        // 업로드 진행률 모니터링
-        uploadTask.snapshotEvents.listen((snapshot) {
-          final progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          AppLogger.debug('[2/3] Upload progress: ${progress.toStringAsFixed(1)}%', tag: 'AuthService');
-        });
-
-        // 업로드 완료 대기
-        await uploadTask;
-        imageUrl = await storageRef.getDownloadURL();
+        imageUrl = await imageService.uploadBusinessLicenseImageFromBytes(imageData, userId);
       } else if (imageData is String) {
         AppLogger.debug('[2/3] Image type: File path', tag: 'AuthService');
-        await storageRef.putFile(File(imageData));
-        imageUrl = await storageRef.getDownloadURL();
+        imageUrl = await imageService.uploadBusinessLicenseImage(XFile(imageData), userId);
       } else {
         throw Exception('지원하지 않는 이미지 형식입니다.');
       }
+
       AppLogger.debug('[2/3] Image uploaded: $imageUrl', tag: 'AuthService');
 
       // 2. 데이터 한 번에 저장 (덮어쓰기 방지)

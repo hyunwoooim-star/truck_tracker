@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../storage/image_upload_service.dart';
 import '../../truck_detail/domain/menu_item.dart';
 import '../../truck_detail/presentation/truck_detail_provider.dart';
 import 'owner_status_provider.dart';
@@ -853,34 +853,30 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
     });
   }
 
-  /// Upload image to Firebase Storage
+  /// Upload image to Firebase Storage (WebP 압축 적용)
   Future<String?> _uploadImage() async {
     if (_selectedImage == null) return null;
 
     setState(() => _isUploadingImage = true);
 
     try {
-      final storage = FirebaseStorage.instance;
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final path = 'menu_images/${widget.truckId}/menu_$timestamp.jpg';
-      final ref = storage.ref().child(path);
+      final imageService = ImageUploadService();
+      final menuId = 'menu_${DateTime.now().millisecondsSinceEpoch}';
 
-      UploadTask uploadTask;
+      // XFile로 변환
+      XFile xFile;
       if (kIsWeb) {
-        // Web upload
-        final xFile = _selectedImage as XFile;
-        final bytes = await xFile.readAsBytes();
-        uploadTask = ref.putData(
-          bytes,
-          SettableMetadata(contentType: 'image/jpeg'),
-        );
+        xFile = _selectedImage as XFile;
       } else {
-        // Mobile upload
-        uploadTask = ref.putFile(_selectedImage as File);
+        xFile = XFile((_selectedImage as File).path);
       }
 
-      final snapshot = await uploadTask;
-      final downloadUrl = await snapshot.ref.getDownloadURL();
+      // WebP 압축 및 업로드
+      final downloadUrl = await imageService.uploadMenuImage(
+        xFile,
+        int.tryParse(widget.truckId) ?? 0,
+        menuId,
+      );
 
       return downloadUrl;
     } catch (e) {

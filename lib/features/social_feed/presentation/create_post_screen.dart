@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../storage/image_upload_service.dart';
 import '../data/social_repository.dart';
 import '../domain/post.dart';
 
@@ -86,26 +86,18 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
     });
   }
 
+  /// Upload images using ImageUploadService (WebP 압축 적용)
   Future<List<String>> _uploadImages() async {
-    final urls = <String>[];
-    final storage = FirebaseStorage.instance;
+    if (_selectedImages.isEmpty) return [];
 
-    for (int i = 0; i < _selectedImages.length; i++) {
-      final image = _selectedImages[i];
-      final ref = storage.ref().child(
-            'posts/${DateTime.now().millisecondsSinceEpoch}_$i.jpg',
-          );
+    final imageService = ImageUploadService();
+    final postId = 'post_${DateTime.now().millisecondsSinceEpoch}';
 
-      if (kIsWeb) {
-        final bytes = await image.readAsBytes();
-        await ref.putData(bytes, SettableMetadata(contentType: 'image/jpeg'));
-      } else {
-        await ref.putFile(File(image.path));
-      }
-
-      final url = await ref.getDownloadURL();
-      urls.add(url);
-    }
+    // ImageUploadService를 사용하여 WebP 압축 후 업로드
+    final urls = await imageService.uploadSocialPostImages(
+      _selectedImages,
+      postId,
+    );
 
     return urls;
   }
