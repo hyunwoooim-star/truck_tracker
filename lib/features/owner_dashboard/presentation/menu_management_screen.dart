@@ -754,8 +754,12 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
           style: TextStyle(color: Colors.white70, fontSize: 14),
         ),
         Text(
-          '탭하여 선택',
+          '권장: 정사각형, 최대 2MB',
           style: TextStyle(color: Colors.white38, fontSize: 12),
+        ),
+        Text(
+          '(자동 WebP 최적화)',
+          style: TextStyle(color: Colors.white30, fontSize: 10),
         ),
       ],
     );

@@ -215,6 +215,15 @@ class _ReviewFormDialogState extends ConsumerState<ReviewFormDialog> {
                       color: AppTheme.textPrimary,
                     ),
               ),
+              const SizedBox(height: 4),
+              // 이미지 업로드 안내 메시지
+              Text(
+                '최대 3장, 각 2MB 이하 (자동 최적화됨)',
+                style: TextStyle(
+                  color: AppTheme.textTertiary,
+                  fontSize: 12,
+                ),
+              ),
               const SizedBox(height: 12),
               Row(
                 children: [

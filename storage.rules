@@ -1,0 +1,75 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isImageFile() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    function isUnder5MB() {
+      return request.resource.size < 5 * 1024 * 1024;
+    }
+
+    function isUnder2MB() {
+      return request.resource.size < 2 * 1024 * 1024;
+    }
+
+    // Truck images (main, menu photos)
+    // Path: trucks/{truckId}/main.webp, trucks/{truckId}/menus/{menuId}.webp
+    match /trucks/{truckId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isImageFile() && isUnder5MB();
+    }
+
+    // Menu images
+    // Path: menu_images/{truckId}/{filename}
+    match /menu_images/{truckId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isImageFile() && isUnder2MB();
+    }
+
+    // Review images
+    // Path: reviews/{reviewId}/photo_0.webp, etc.
+    match /reviews/{reviewId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isImageFile() && isUnder2MB();
+    }
+
+    // Business license images (for owner verification)
+    // Path: business_licenses/{userId}.webp
+    match /business_licenses/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated()
+                   && request.auth.uid == userId
+                   && isImageFile()
+                   && isUnder5MB();
+    }
+
+    // Owner request images (legacy path)
+    // Path: owner_requests/{requestId}/business_license.jpg
+    match /owner_requests/{requestId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isImageFile() && isUnder5MB();
+    }
+
+    // Profile images
+    // Path: profiles/{userId}.webp
+    match /profiles/{userId} {
+      allow read: if true;
+      allow write: if isAuthenticated()
+                   && request.auth.uid == userId
+                   && isImageFile()
+                   && isUnder2MB();
+    }
+
+    // Default: deny all other paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

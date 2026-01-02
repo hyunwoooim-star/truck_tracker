@@ -200,6 +200,51 @@ class HelpScreen extends StatelessWidget {
 
           const SizedBox(height: 24),
 
+          // Image Upload Guide Section
+          _HelpSection(
+            icon: Icons.image,
+            title: '이미지 업로드 가이드',
+            items: [
+              _HelpItem(
+                icon: Icons.photo_camera,
+                title: '트럭 대표 이미지',
+                description: '권장: 가로형 사진 (4:3 비율)\n'
+                    '최대 5MB, 1200x800px로 자동 최적화\n'
+                    '밝은 조명에서 트럭 전체가 보이도록 촬영하세요.',
+              ),
+              _HelpItem(
+                icon: Icons.restaurant_menu,
+                title: '메뉴 이미지',
+                description: '권장: 정사각형 사진 (1:1 비율)\n'
+                    '최대 2MB, 800x600px로 자동 최적화\n'
+                    '음식이 맛있어 보이도록 가까이서 촬영하세요.',
+              ),
+              _HelpItem(
+                icon: Icons.rate_review,
+                title: '리뷰 이미지',
+                description: '최대 3장, 각 2MB 이하\n'
+                    '1000x1000px로 자동 최적화\n'
+                    '음식, 트럭, 분위기 사진을 첨부해주세요.',
+              ),
+              _HelpItem(
+                icon: Icons.badge,
+                title: '사업자등록증',
+                description: '최대 5MB, 고품질 유지 (85%)\n'
+                    '글자가 선명하게 보이도록 촬영하세요.\n'
+                    '심사에 필요하므로 정확히 촬영해주세요.',
+              ),
+              _HelpItem(
+                icon: Icons.auto_fix_high,
+                title: '자동 최적화',
+                description: '모든 이미지는 WebP 형식으로 자동 변환됩니다.\n'
+                    '용량이 50~80% 절감되어 앱이 빨라져요!\n'
+                    '원본 품질은 최대한 유지됩니다.',
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+
           // FAQ Section
           _FaqSection(
             icon: Icons.help_outline,

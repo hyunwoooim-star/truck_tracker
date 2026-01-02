@@ -227,6 +227,11 @@ class _OwnerRequestDialogState extends ConsumerState<OwnerRequestDialog> {
                         '인증을 위해 사업자등록증 또는\n영업허가증 사진을 첨부해주세요.',
                         style: TextStyle(fontSize: 12, color: Colors.grey),
                       ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '선명하게 촬영, 최대 5MB (자동 최적화)',
+                        style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                      ),
                     ],
                     const SizedBox(height: 8),
                     SizedBox(
