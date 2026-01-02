@@ -45,8 +45,8 @@ sealed class Truck with _$Truck {
       status: _statusFromString(data['status'] as String? ?? 'resting'),
       foodType: data['foodType'] as String? ?? '',
       locationDescription: data['locationDescription'] as String? ?? '',
-      latitude: (data['latitude'] as num?)?.toDouble() ?? 0.0,
-      longitude: (data['longitude'] as num?)?.toDouble() ?? 0.0,
+      latitude: _parseDouble(data['latitude']) ?? 0.0,
+      longitude: _parseDouble(data['longitude']) ?? 0.0,
       isFavorite: data['isFavorite'] as bool? ?? false,
       imageUrl: data['imageUrl'] as String? ?? '',
       ownerEmail: data['ownerEmail'] as String? ?? '',
@@ -100,5 +100,13 @@ sealed class Truck with _$Truck {
       default:
         return TruckStatus.resting;
     }
+  }
+
+  /// Parse double from dynamic value (handles both String and num)
+  static double? _parseDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value);
+    return null;
   }
 }
