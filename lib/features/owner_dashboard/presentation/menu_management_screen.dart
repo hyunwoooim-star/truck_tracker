@@ -595,7 +595,6 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
         imageUrl = await _uploadImage();
         // 이미지 업로드 실패 시 메뉴 저장 중단
         if (imageUrl == null) {
-          print('[MenuSave] Image upload failed, aborting menu save');
           return;
         }
       }
@@ -628,12 +627,9 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
           SnackBarHelper.showSuccess(context, l10n.menuItemAdded);
         }
       }
-    } catch (e, stackTrace) {
-      print('[MenuSave] Save FAILED: $e');
-      print('[MenuSave] Stack trace: $stackTrace');
+    } catch (e) {
       if (mounted) {
-        // 에러 상세 표시
-        SnackBarHelper.showError(context, '저장 실패: ${e.toString().substring(0, e.toString().length > 50 ? 50 : e.toString().length)}');
+        SnackBarHelper.showError(context, AppLocalizations.of(context).errorOccurred);
       }
     } finally {
       if (mounted) {
@@ -879,9 +875,6 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
         xFile = XFile((_selectedImage as File).path);
       }
 
-      print('[MenuUpload] Starting upload - truckId: ${widget.truckId}, menuId: $menuId');
-      print('[MenuUpload] Image path: ${xFile.path}');
-
       // WebP 압축 및 업로드
       final downloadUrl = await imageService.uploadMenuImage(
         xFile,
@@ -889,15 +882,10 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
         menuId,
       );
 
-      print('[MenuUpload] Upload successful: $downloadUrl');
       return downloadUrl;
-    } catch (e, stackTrace) {
-      print('[MenuUpload] Upload FAILED: $e');
-      print('[MenuUpload] Stack trace: $stackTrace');
+    } catch (e) {
       if (mounted) {
-        final l10n = AppLocalizations.of(context);
-        // 에러 상세 표시
-        SnackBarHelper.showError(context, '이미지 업로드 실패: ${e.toString().substring(0, e.toString().length > 50 ? 50 : e.toString().length)}');
+        SnackBarHelper.showError(context, AppLocalizations.of(context).errorOccurred);
       }
       return null;
     } finally {

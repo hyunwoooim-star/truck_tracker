@@ -45,7 +45,12 @@
       "Bash(wsl -d Ubuntu -- bash -c \"cp -r ~/truck_tracker/build/web/* ''/mnt/c/Users/임현우/Desktop/현우 작업폴더/truck_tracker/truck ver.1/truck_tracker/build/web/''\")",
       "Bash(wsl -d Ubuntu -- bash -c \"export PATH=\\\"\\$HOME/flutter/bin:\\$PATH\\\" && cd ~/truck_tracker && flutter build web --release\":*)",
       "Bash(git push)",
-      "Bash(wsl -d Ubuntu -- bash -c \"cp -r ~/truck_tracker/build/web/* '/mnt/c/Users/임현우/Desktop/현우 작업폴더/truck_tracker/truck ver.1/truck_tracker/build/web/'\":*)"
+      "Bash(wsl -d Ubuntu -- bash -c \"cp -r ~/truck_tracker/build/web/* '/mnt/c/Users/임현우/Desktop/현우 작업폴더/truck_tracker/truck ver.1/truck_tracker/build/web/'\":*)",
+      "Bash(gsutil cors set:*)",
+      "Bash(wsl -d Ubuntu -- bash -c \"gsutil cors set ''/mnt/c/Users/임현우/Desktop/현우 작업폴더/truck_tracker/truck ver.1/truck_tracker/cors.json'' gs://truck-tracker-fa0b0.appspot.com\")",
+      "Bash(where:*)",
+      "Bash(\"C:\\Users\\임현우\\Downloads\\flutter_windows_3.38.5-stable\\flutter\\bin\\flutter.bat\" pub run build_runner build --delete-conflicting-outputs)",
+      "Bash(wsl -d Ubuntu -- bash -c \"cp -r ~/truck_tracker/build/web/* ''''/mnt/c/Users/임현우/Desktop/현우 작업폴더/truck_tracker/truck ver.1/truck_tracker/build/web/''''\")"
     ],
     "deny": []
   }

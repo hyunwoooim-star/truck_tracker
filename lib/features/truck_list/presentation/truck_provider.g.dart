@@ -266,12 +266,14 @@ abstract class _$SortOptionNotifier extends $Notifier<SortOption> {
 }
 
 /// Filtered and sorted truck list with distance information
+/// 🚀 OPTIMIZED: 위치 요청과 트럭 로딩을 병렬로 처리, 위치 없어도 먼저 표시
 
 @ProviderFor(filteredTrucksWithDistance)
 final filteredTrucksWithDistanceProvider =
     FilteredTrucksWithDistanceProvider._();
 
 /// Filtered and sorted truck list with distance information
+/// 🚀 OPTIMIZED: 위치 요청과 트럭 로딩을 병렬로 처리, 위치 없어도 먼저 표시
 
 final class FilteredTrucksWithDistanceProvider
     extends
@@ -284,6 +286,7 @@ final class FilteredTrucksWithDistanceProvider
         $FutureModifier<List<TruckWithDistance>>,
         $StreamProvider<List<TruckWithDistance>> {
   /// Filtered and sorted truck list with distance information
+  /// 🚀 OPTIMIZED: 위치 요청과 트럭 로딩을 병렬로 처리, 위치 없어도 먼저 표시
   FilteredTrucksWithDistanceProvider._()
     : super(
         from: null,
@@ -311,7 +314,7 @@ final class FilteredTrucksWithDistanceProvider
 }
 
 String _$filteredTrucksWithDistanceHash() =>
-    r'7f177208176c3b3c7b63e8eefb3a3ee575ce7c73';
+    r'c583b85c125d3908c405dc9e55e938b5d798914b';
 
 @ProviderFor(TruckListNotifier)
 final truckListProvider = TruckListNotifierProvider._();

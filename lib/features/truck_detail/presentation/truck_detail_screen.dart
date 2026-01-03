@@ -497,10 +497,14 @@ class TruckDetailScreen extends ConsumerWidget {
                             )
                           else
                             ...detail.menuItems.map(
-                              (item) => _MenuItemCard(
-                                item: item,
-                                truck: truck,
-                              ),
+                              (item) {
+                                // DEBUG: 이미지 URL 확인
+                                print('[MenuDebug] Item: ${item.name}, imageUrl: "${item.imageUrl}", isEmpty: ${item.imageUrl.isEmpty}');
+                                return _MenuItemCard(
+                                  item: item,
+                                  truck: truck,
+                                );
+                              },
                             ),
                         ],
                       ),
@@ -818,6 +822,42 @@ class _MenuItemCard extends ConsumerWidget {
           ),
           child: Row(
             children: [
+              // 메뉴 이미지 (있으면 표시)
+              if (item.imageUrl.isNotEmpty) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: ColorFiltered(
+                    colorFilter: isSoldOut
+                        ? const ColorFilter.mode(Colors.grey, BlendMode.saturation)
+                        : const ColorFilter.mode(Colors.transparent, BlendMode.multiply),
+                    child: CachedNetworkImage(
+                      imageUrl: item.imageUrl,
+                      width: 72,
+                      height: 72,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        width: 72,
+                        height: 72,
+                        color: AppTheme.charcoalLight,
+                        child: const Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        width: 72,
+                        height: 72,
+                        color: AppTheme.charcoalLight,
+                        child: const Icon(Icons.restaurant, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+              ],
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -825,13 +865,23 @@ class _MenuItemCard extends ConsumerWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: Text(
-                            item.name,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: isSoldOut ? Colors.grey[600] : AppTheme.textPrimary,
-                              decoration: isSoldOut ? TextDecoration.lineThrough : null,
-                            ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.name,
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: isSoldOut ? Colors.grey[600] : AppTheme.textPrimary,
+                                  decoration: isSoldOut ? TextDecoration.lineThrough : null,
+                                ),
+                              ),
+                              // DEBUG: imageUrl 표시
+                              Text(
+                                'img: ${item.imageUrl.isEmpty ? "EMPTY" : "HAS_URL(${item.imageUrl.length})"}',
+                                style: const TextStyle(fontSize: 10, color: Colors.red),
+                              ),
+                            ],
                           ),
                         ),
                         if (isSoldOut)

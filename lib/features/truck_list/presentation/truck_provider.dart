@@ -224,6 +224,7 @@ class SortOptionNotifier extends _$SortOptionNotifier {
 }
 
 /// Filtered and sorted truck list with distance information
+/// 🚀 OPTIMIZED: 위치 요청과 트럭 로딩을 병렬로 처리, 위치 없어도 먼저 표시
 @riverpod
 Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
   Ref ref,
@@ -236,19 +237,38 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
   final locationService = ref.watch(locationServiceProvider);
   final trucksStream = repository.watchTrucks();
 
-  // Get current position (non-blocking)
+  // 🚀 OPTIMIZATION: 위치 요청을 병렬로 시작 (blocking 하지 않음)
   Position? userPosition;
-  try {
-    userPosition = await locationService.getCurrentPosition();
-    if (userPosition != null) {
-      AppLogger.debug('User position: ${userPosition.latitude}, ${userPosition.longitude}', tag: 'FilteredTrucksWithDistance');
+  bool positionFetched = false;
+
+  // 위치 가져오기 Future (background에서 실행)
+  final positionFuture = locationService.getCurrentPosition().then((pos) {
+    userPosition = pos;
+    positionFetched = true;
+    if (pos != null) {
+      AppLogger.debug('User position obtained: ${pos.latitude}, ${pos.longitude}', tag: 'FilteredTrucksWithDistance');
     }
-  } catch (e) {
-    AppLogger.warning('Could not get user position', tag: 'FilteredTrucksWithDistance');
-  }
+    return pos;
+  }).catchError((e) {
+    positionFetched = true;
+    AppLogger.warning('Could not get user position: $e', tag: 'FilteredTrucksWithDistance');
+    return null;
+  });
+
+  // 첫 번째 트럭 데이터가 오면 위치 없어도 먼저 yield
+  bool firstEmit = true;
 
   await for (final trucks in trucksStream) {
     AppLogger.debug('Processing ${trucks.length} trucks with distance', tag: 'FilteredTrucksWithDistance');
+
+    // 첫 번째 emit 시 위치를 짧게 기다림 (최대 500ms)
+    if (firstEmit && !positionFetched) {
+      await Future.any([
+        positionFuture,
+        Future.delayed(const Duration(milliseconds: 500)),
+      ]);
+      firstEmit = false;
+    }
 
     // Convert to TruckWithDistance
     var trucksWithDistance = trucks.map((truck) {
@@ -256,8 +276,8 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
 
       if (userPosition != null) {
         distance = locationService.calculateDistance(
-          userPosition.latitude,
-          userPosition.longitude,
+          userPosition!.latitude,
+          userPosition!.longitude,
           truck.latitude,
           truck.longitude,
         );
@@ -266,7 +286,7 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
       return TruckWithDistance(truck: truck, distanceInMeters: distance);
     }).toList();
 
-    // Filter by max distance
+    // Filter by max distance (위치가 있을 때만)
     if (filterState.maxDistance != null && userPosition != null) {
       trucksWithDistance = trucksWithDistance
           .where((t) => t.distanceInMeters <= filterState.maxDistance!)
@@ -277,8 +297,14 @@ Stream<List<TruckWithDistance>> filteredTrucksWithDistance(
     // Sort based on sort option
     switch (sortOption) {
       case SortOption.distance:
-        trucksWithDistance.sort((a, b) => a.compareByDistance(b));
-        AppLogger.debug('Sorted by distance', tag: 'FilteredTrucksWithDistance');
+        // 위치 없으면 이름순으로 정렬
+        if (userPosition != null) {
+          trucksWithDistance.sort((a, b) => a.compareByDistance(b));
+          AppLogger.debug('Sorted by distance', tag: 'FilteredTrucksWithDistance');
+        } else {
+          trucksWithDistance.sort((a, b) => a.truck.foodType.compareTo(b.truck.foodType));
+          AppLogger.debug('Sorted by name (no position yet)', tag: 'FilteredTrucksWithDistance');
+        }
         break;
       case SortOption.name:
         trucksWithDistance.sort(
