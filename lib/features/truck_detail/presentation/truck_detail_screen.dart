@@ -22,6 +22,7 @@ import '../../schedule/data/schedule_repository.dart';
 import '../../talk/presentation/talk_widget.dart';
 import '../../truck_list/domain/truck.dart';
 import '../domain/menu_item.dart';
+import '../../bank_transfer/presentation/bank_transfer_screen.dart';
 import 'truck_detail_provider.dart';
 
 class TruckDetailScreen extends ConsumerWidget {
@@ -1763,19 +1764,47 @@ Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLo
 
   if (confirmed != true) return;
 
-  // Create order directly (payment will be handled separately via bank transfer)
+  // Generate order ID
+  final tempOrderId = 'ORD${DateTime.now().millisecondsSinceEpoch}';
+
+  // Navigate to bank transfer screen
+  if (!context.mounted) return;
+
+  final transferResult = await Navigator.push<Map<String, dynamic>>(
+    context,
+    MaterialPageRoute(
+      builder: (_) => BankTransferScreen(
+        truckId: truck.id,
+        truckName: truck.foodType,
+        totalAmount: cart.totalAmount,
+        items: cart.items,
+        orderId: tempOrderId,
+      ),
+    ),
+  );
+
+  // Handle transfer result
+  if (transferResult == null || transferResult['confirmed'] != true) {
+    // User cancelled
+    return;
+  }
+
+  final depositorName = transferResult['depositorName'] as String;
+
+  // Create order with bank transfer payment method
   try {
     final order = order_model.Order(
-      id: '',
+      id: tempOrderId,
       userId: user.uid,
       userName: user.displayName ?? user.email ?? 'Anonymous',
       truckId: cart.truckId!,
       truckName: cart.truckName!,
       items: cart.items,
       totalAmount: cart.totalAmount,
-      status: order_model.OrderStatus.pending, // Pending until payment confirmed
-      paymentMethod: 'prepay', // Will be paid via bank transfer
+      status: order_model.OrderStatus.pending, // Pending until payment confirmed by owner
+      paymentMethod: 'bank_transfer', // Bank transfer
       createdAt: DateTime.now(),
+      note: '입금자명: $depositorName', // Include depositor name in order note
     );
 
     // Place order
@@ -1789,7 +1818,7 @@ Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLo
     if (context.mounted) {
       SnackBarHelper.showSuccess(
         context,
-        '주문이 접수되었습니다!\n주문번호: $orderId',
+        '주문이 접수되었습니다!\n사장님이 입금 확인 후 주문을 준비합니다.',
       );
       Navigator.pop(context);
     }
