@@ -8,7 +8,7 @@
 
 | 항목 | 상태 |
 |------|------|
-| 완성도 | **140%** (Phase 0 + Phase 1-A 완성) |
+| 완성도 | **145%** (Phase 0 + Phase 1-A + 1-B 완성) |
 | 빌드 | **WSL Ubuntu** or **GitHub Actions** |
 | flutter analyze | No issues (info만) |
 | Cloud Functions | 10개 함수 배포 완료 |
@@ -60,6 +60,26 @@
 
 ---
 
+### Phase 1-B: 사장님 대시보드 연동 ✅
+**계좌 설정 메뉴 추가 완료!**
+
+| 기능 | 설명 |
+|------|------|
+| 메뉴 추가 | OwnerFunctionsScreen에 '계좌번호 설정' 추가 |
+| 위치 | 트럭 운영 섹션 (메뉴 관리 다음) |
+| 아이콘 | account_balance (은행 아이콘) |
+| 연동 | BankAccountSetupScreen으로 바로 이동 |
+
+**사장님 워크플로우**:
+```
+사장님 앱 → 더보기 → 계좌번호 설정
+         → 은행명/계좌번호/예금주 입력
+         → 저장
+         → 손님 주문 시 자동으로 계좌 정보 표시됨
+```
+
+---
+
 ## 최근 완료 작업 (이전)
 
 ### 1. 햄버거 메뉴 역할별 분리 + 설정화면 정리 ✅
@@ -91,10 +111,10 @@
 ### 우선순위 높음
 | 작업 | 설명 | 예상 공수 |
 |------|------|-----------|
-| build_runner 실행 | .freezed.dart, .g.dart 생성 | 5분 |
-| 사장님 설정 연동 | Owner Dashboard에 계좌 설정 메뉴 추가 | 30분 |
+| build_runner 실행 | .freezed.dart, .g.dart 생성 (WSL 필요) | 5분 |
 | 로컬 테스트 | flutter run -d chrome | 10분 |
 | WSL 빌드 & 배포 | 웹 빌드 후 Firebase 배포 | 10분 |
+| 실제 사용 테스트 | 배포된 앱에서 계좌이체 기능 테스트 | 15분 |
 
 ### 우선순위 중간
 
@@ -133,4 +153,4 @@ cd "C:\Users\임현우\Desktop\현우 작업폴더\truck_tracker\truck ver.1\tru
 
 ---
 
-**마지막 업데이트**: 2026-01-03 (Phase 0 + Phase 1-A 완성 - 실사용 가능!)
+**마지막 업데이트**: 2026-01-03 (Phase 0 + Phase 1-A + 1-B 완성 - 계좌이체 완전 통합!)
