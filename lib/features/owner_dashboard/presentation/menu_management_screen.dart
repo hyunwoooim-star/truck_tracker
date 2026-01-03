@@ -624,8 +624,8 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
         }
       }
     } catch (e, stackTrace) {
-      debugPrint('[MenuSave] Save FAILED: $e');
-      debugPrint('[MenuSave] Stack trace: $stackTrace');
+      print('[MenuSave] Save FAILED: $e');
+      print('[MenuSave] Stack trace: $stackTrace');
       if (mounted) {
         // 에러 상세 표시
         SnackBarHelper.showError(context, '저장 실패: ${e.toString().substring(0, e.toString().length > 50 ? 50 : e.toString().length)}');
@@ -874,8 +874,8 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
         xFile = XFile((_selectedImage as File).path);
       }
 
-      debugPrint('[MenuUpload] Starting upload - truckId: ${widget.truckId}, menuId: $menuId');
-      debugPrint('[MenuUpload] Image path: ${xFile.path}');
+      print('[MenuUpload] Starting upload - truckId: ${widget.truckId}, menuId: $menuId');
+      print('[MenuUpload] Image path: ${xFile.path}');
 
       // WebP 압축 및 업로드
       final downloadUrl = await imageService.uploadMenuImage(
@@ -884,11 +884,11 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
         menuId,
       );
 
-      debugPrint('[MenuUpload] Upload successful: $downloadUrl');
+      print('[MenuUpload] Upload successful: $downloadUrl');
       return downloadUrl;
     } catch (e, stackTrace) {
-      debugPrint('[MenuUpload] Upload FAILED: $e');
-      debugPrint('[MenuUpload] Stack trace: $stackTrace');
+      print('[MenuUpload] Upload FAILED: $e');
+      print('[MenuUpload] Stack trace: $stackTrace');
       if (mounted) {
         final l10n = AppLocalizations.of(context);
         // 에러 상세 표시
