@@ -100,10 +100,11 @@ class TruckDetailRepository {
         AppLogger.warning('Truck detail not found, creating new one', tag: 'TruckDetailRepository');
         final newDetail = TruckDetail(
           truckId: truckId,
+          operatingHours: '',
           menuItems: [newItem],
           reviews: [],
           averageRating: 0.0,
-          totalReviews: 0,
+          description: '',
         );
         await updateTruckDetail(truckId, newDetail);
         AppLogger.success('New truck detail created with menu item', tag: 'TruckDetailRepository');
