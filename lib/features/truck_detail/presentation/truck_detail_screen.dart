@@ -20,7 +20,6 @@ import '../../review/data/review_repository.dart';
 import '../../review/domain/review.dart';
 import '../../review/presentation/review_form_dialog.dart';
 import '../../schedule/data/schedule_repository.dart';
-import '../../social/data/follow_repository.dart';
 import '../../talk/presentation/talk_widget.dart';
 import '../../truck_list/domain/truck.dart';
 import '../domain/menu_item.dart';
@@ -114,70 +113,6 @@ class TruckDetailScreen extends ConsumerWidget {
                             }
                           }
                         },
-                      );
-                    },
-                  ),
-                  // Follow Button
-                  Consumer(
-                    builder: (context, ref, _) {
-                      final user = FirebaseAuth.instance.currentUser;
-                      if (user == null) return const SizedBox.shrink();
-
-                      final isFollowingAsync = ref.watch(
-                        isFollowingTruckProvider(
-                          userId: user.uid,
-                          truckId: truck.id,
-                        ),
-                      );
-
-                      return isFollowingAsync.when(
-                        loading: () => const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ),
-                        error: (error, stackTrace) => const SizedBox.shrink(),
-                        data: (isFollowing) => IconButton(
-                          icon: Icon(
-                            isFollowing ? Icons.favorite : Icons.favorite_border,
-                            color: isFollowing ? Colors.red : Colors.white,
-                          ),
-                          onPressed: () async {
-                            final repository = ref.read(followRepositoryProvider);
-                            try {
-                              if (isFollowing) {
-                                await repository.unfollowTruck(
-                                  userId: user.uid,
-                                  truckId: truck.id,
-                                );
-                                if (context.mounted) {
-                                  SnackBarHelper.showInfo(context, l10n.unfollowedTruck);
-                                }
-                              } else {
-                                await repository.followTruck(
-                                  userId: user.uid,
-                                  truckId: truck.id,
-                                  notificationsEnabled: true,
-                                );
-                                if (context.mounted) {
-                                  SnackBarHelper.showSuccess(context, l10n.followedTruck);
-                                }
-                              }
-                              // Refresh the follow status
-                              ref.invalidate(isFollowingTruckProvider(
-                                userId: user.uid,
-                                truckId: truck.id,
-                              ));
-                            } catch (e) {
-                              if (context.mounted) {
-                                SnackBarHelper.showError(context, l10n.errorOccurred);
-                              }
-                            }
-                          },
-                        ),
                       );
                     },
                   ),
