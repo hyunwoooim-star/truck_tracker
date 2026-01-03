@@ -593,6 +593,11 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
       String? imageUrl = _existingImageUrl;
       if (_selectedImage != null) {
         imageUrl = await _uploadImage();
+        // 이미지 업로드 실패 시 메뉴 저장 중단
+        if (imageUrl == null) {
+          print('[MenuSave] Image upload failed, aborting menu save');
+          return;
+        }
       }
 
       final repository = ref.read(truckDetailRepositoryProvider);
