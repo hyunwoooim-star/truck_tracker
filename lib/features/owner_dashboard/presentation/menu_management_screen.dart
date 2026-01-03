@@ -623,9 +623,12 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
           SnackBarHelper.showSuccess(context, l10n.menuItemAdded);
         }
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('[MenuSave] Save FAILED: $e');
+      debugPrint('[MenuSave] Stack trace: $stackTrace');
       if (mounted) {
-        SnackBarHelper.showError(context, l10n.errorOccurred);
+        // 에러 상세 표시
+        SnackBarHelper.showError(context, '저장 실패: ${e.toString().substring(0, e.toString().length > 50 ? 50 : e.toString().length)}');
       }
     } finally {
       if (mounted) {
@@ -871,6 +874,9 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
         xFile = XFile((_selectedImage as File).path);
       }
 
+      debugPrint('[MenuUpload] Starting upload - truckId: ${widget.truckId}, menuId: $menuId');
+      debugPrint('[MenuUpload] Image path: ${xFile.path}');
+
       // WebP 압축 및 업로드
       final downloadUrl = await imageService.uploadMenuImage(
         xFile,
@@ -878,11 +884,15 @@ class _MenuItemDialogState extends ConsumerState<_MenuItemDialog> {
         menuId,
       );
 
+      debugPrint('[MenuUpload] Upload successful: $downloadUrl');
       return downloadUrl;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('[MenuUpload] Upload FAILED: $e');
+      debugPrint('[MenuUpload] Stack trace: $stackTrace');
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        SnackBarHelper.showError(context, l10n.imageUploadFailed);
+        // 에러 상세 표시
+        SnackBarHelper.showError(context, '이미지 업로드 실패: ${e.toString().substring(0, e.toString().length > 50 ? 50 : e.toString().length)}');
       }
       return null;
     } finally {

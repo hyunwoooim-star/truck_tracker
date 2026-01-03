@@ -42,7 +42,8 @@
       "Bash(\"C:\\Users\\임현우\\Downloads\\flutter_windows_3.38.5-stable\\flutter\\bin\\flutter.bat\" run -d chrome)",
       "Bash(npx firebase-tools:*)",
       "Bash(wsl -d Ubuntu -- bash -c \"export PATH=\"\"$HOME/flutter/bin:$PATH\"\" && cd ~/truck_tracker && git stash && git pull && flutter build web --release\")",
-      "Bash(wsl -d Ubuntu -- bash -c \"cp -r ~/truck_tracker/build/web/* ''/mnt/c/Users/임현우/Desktop/현우 작업폴더/truck_tracker/truck ver.1/truck_tracker/build/web/''\")"
+      "Bash(wsl -d Ubuntu -- bash -c \"cp -r ~/truck_tracker/build/web/* ''/mnt/c/Users/임현우/Desktop/현우 작업폴더/truck_tracker/truck ver.1/truck_tracker/build/web/''\")",
+      "Bash(wsl -d Ubuntu -- bash -c \"export PATH=\\\"\\$HOME/flutter/bin:\\$PATH\\\" && cd ~/truck_tracker && flutter build web --release\":*)"
     ],
     "deny": []
   }
