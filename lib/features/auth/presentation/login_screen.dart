@@ -176,12 +176,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _handleKakaoLogin() async {
     AppLogger.debug('Kakao login button pressed', tag: 'LoginScreen');
     setState(() => _isLoading = true);
-    showLoginLoadingOverlay(context);
+
+    // 웹에서 카카오는 redirect 방식 → 오버레이 불필요 (페이지가 바뀜)
+    // 모바일에서만 오버레이 표시
+    if (!kIsWeb) {
+      showLoginLoadingOverlay(context);
+    }
 
     try {
       final authService = ref.read(authServiceProvider);
       await authService.signInWithKakao();
 
+      // 웹에서는 redirect되어 여기 도달 안 함
       AppLogger.success('Kakao login successful', tag: 'LoginScreen');
 
       // FCM 토큰 저장은 백그라운드에서 (로그인 흐름 블로킹 방지)
@@ -211,12 +217,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _handleNaverLogin() async {
     AppLogger.debug('Naver login button pressed', tag: 'LoginScreen');
     setState(() => _isLoading = true);
-    showLoginLoadingOverlay(context);
+
+    // 웹에서 네이버는 redirect 방식 → 오버레이 불필요 (페이지가 바뀜)
+    // 모바일에서만 오버레이 표시
+    if (!kIsWeb) {
+      showLoginLoadingOverlay(context);
+    }
 
     try {
       final authService = ref.read(authServiceProvider);
       await authService.signInWithNaver();
 
+      // 웹에서는 redirect되어 여기 도달 안 함
       AppLogger.success('Naver login successful', tag: 'LoginScreen');
 
       // FCM 토큰 저장은 백그라운드에서 (로그인 흐름 블로킹 방지)
@@ -656,6 +668,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     controller: _passwordController,
                     obscureText: _obscurePassword,
                     style: const TextStyle(color: Colors.white),
+                    textInputAction: _isLogin ? TextInputAction.done : TextInputAction.next,
+                    onFieldSubmitted: (_) {
+                      // 로그인 모드에서 엔터 키 → 로그인 실행
+                      if (_isLogin && !_isLoading) {
+                        _handleEmailAuth();
+                      }
+                    },
                     decoration: InputDecoration(
                       labelText: '비밀번호',
                       labelStyle: const TextStyle(color: Color(0xFFB0B0B0)),

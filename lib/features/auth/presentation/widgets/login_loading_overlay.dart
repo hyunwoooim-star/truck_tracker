@@ -166,6 +166,9 @@ final GlobalKey<NavigatorState> _overlayNavigatorKey = GlobalKey<NavigatorState>
 /// 현재 오버레이가 표시 중인지 추적
 bool _isOverlayShowing = false;
 
+/// 오버레이가 표시 중인지 확인 (외부에서 접근 가능)
+bool get isLoginOverlayShowing => _isOverlayShowing;
+
 /// 로그인 로딩 오버레이를 쉽게 표시하는 헬퍼 함수
 void showLoginLoadingOverlay(BuildContext context) {
   if (_isOverlayShowing) return; // 이미 표시 중이면 무시
