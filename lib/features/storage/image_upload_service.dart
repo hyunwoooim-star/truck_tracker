@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -409,6 +410,12 @@ class ImageUploadService {
     Uint8List bytes,
     ImageUploadType type,
   ) async {
+    // 웹에서는 flutter_image_compress가 제대로 작동 안 할 수 있음 → 원본 사용
+    if (kIsWeb) {
+      AppLogger.debug('Web platform: skipping compression, using original (${bytes.length} bytes)', tag: 'ImageUploadService');
+      return bytes;
+    }
+
     try {
       AppLogger.debug(
         'Compressing image: ${bytes.length} bytes → ${type.name} (${type.maxWidth}x${type.maxHeight}, ${type.quality}%)',
@@ -452,17 +459,27 @@ class ImageUploadService {
     void Function(double progress)? onProgress,
   }) async {
     try {
-      // WebP 압축
+      // WebP 압축 (웹에서는 원본 사용)
       final compressedBytes = await compressToWebP(bytes, type);
 
-      // 확장자를 webp로 변경
-      final webpPath = path.replaceAll(RegExp(r'\.(jpg|jpeg|png)$', caseSensitive: false), '.webp');
+      // 웹에서는 원본 확장자 유지, 모바일에서는 webp
+      final String finalPath;
+      final String contentType;
+      if (kIsWeb) {
+        // 웹: 원본 확장자 유지 (jpg/png/webp)
+        finalPath = path;
+        contentType = 'image/jpeg'; // 대부분 jpeg로 처리
+      } else {
+        // 모바일: webp로 변환
+        finalPath = path.replaceAll(RegExp(r'\.(jpg|jpeg|png)$', caseSensitive: false), '.webp');
+        contentType = 'image/webp';
+      }
 
-      final ref = _storage.ref().child(webpPath);
+      final ref = _storage.ref().child(finalPath);
 
       // Set metadata
       final metadata = SettableMetadata(
-        contentType: 'image/webp',
+        contentType: contentType,
         customMetadata: {
           'uploadedAt': DateTime.now().toIso8601String(),
           'originalSize': bytes.length.toString(),
@@ -487,7 +504,7 @@ class ImageUploadService {
       // Get download URL
       final downloadUrl = await snapshot.ref.getDownloadURL();
 
-      AppLogger.success('Upload successful: $webpPath', tag: 'ImageUploadService');
+      AppLogger.success('Upload successful: $finalPath', tag: 'ImageUploadService');
       AppLogger.debug('URL: $downloadUrl', tag: 'ImageUploadService');
 
       return downloadUrl;
