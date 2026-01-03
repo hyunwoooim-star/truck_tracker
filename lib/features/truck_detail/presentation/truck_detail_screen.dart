@@ -25,8 +25,6 @@ import '../../truck_list/domain/truck.dart';
 import '../domain/menu_item.dart';
 import '../../chat/data/chat_repository.dart';
 import '../../chat/presentation/chat_screen.dart';
-import '../../pickup_navigation/presentation/pickup_navigation_screen.dart';
-import '../../pickup_navigation/presentation/widgets/eta_card.dart';
 import 'truck_detail_provider.dart';
 
 class TruckDetailScreen extends ConsumerWidget {
@@ -342,16 +340,6 @@ class TruckDetailScreen extends ConsumerWidget {
                             },
                           ),
                         ],
-                      ),
-                    ),
-                    // ETA Card (도보 예상 시간)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                      child: EtaCard(
-                        truckLat: truck.latitude,
-                        truckLng: truck.longitude,
-                        truckName: truck.foodType,
-                        onNavigateTap: () => _showNavigationDialog(context, truck, l10n),
                       ),
                     ),
                     // Visit Verification Section
@@ -1501,27 +1489,6 @@ void _showNavigationDialog(BuildContext context, Truck truck, AppLocalizations l
             ),
             const SizedBox(height: 24),
             // Navigation Options
-            _NavigationOptionTile(
-              icon: Icons.directions_walk,
-              iconColor: AppTheme.electricBlue,
-              title: '도보 안내',
-              subtitle: '앱 내 길찾기',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PickupNavigationScreen(
-                      truckName: truck.foodType,
-                      truckAddress: truck.locationDescription,
-                      truckLat: truck.latitude,
-                      truckLng: truck.longitude,
-                    ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 8),
             _NavigationOptionTile(
               icon: Icons.map,
               iconColor: const Color(0xFF03C75A),
