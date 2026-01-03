@@ -21,11 +21,11 @@ import '../../truck_list/domain/truck.dart';
 import '../../truck_list/domain/truck_with_distance.dart';
 import '../../truck_list/presentation/truck_provider.dart';
 import '../../chat/presentation/chat_list_screen.dart';
-import '../../checkin/presentation/customer_checkin_screen.dart';
 import '../../customer/presentation/my_coupons_screen.dart';
-import '../../customer/presentation/visit_history_screen.dart';
-import '../../notifications/presentation/notification_settings_screen.dart';
+import '../../favorite/presentation/favorites_screen.dart';
 import '../../settings/presentation/app_settings_screen.dart';
+import '../../settings/presentation/my_reviews_screen.dart';
+import '../../owner_dashboard/presentation/owner_dashboard_screen.dart';
 import '../../location/presentation/location_provider.dart';
 
 /// Map-First Screen with 3-tier DraggableScrollableSheet
@@ -404,163 +404,11 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
             ),
           ),
 
-          // 🔄 Top-right menu button (hamburger style)
+          // 🔄 Top-right menu button (hamburger style) - 역할별 메뉴
           Positioned(
             top: MediaQuery.of(context).padding.top + 16,
             right: 16,
-            child: Material(
-              color: AppTheme.charcoalMedium95,
-              borderRadius: BorderRadius.circular(12),
-              elevation: 10,
-              shadowColor: AppTheme.black50,
-              child: PopupMenuButton<String>(
-                icon: const Icon(
-                  Icons.menu,
-                  color: AppTheme.mustardYellow,
-                  size: 28,
-                ),
-                color: AppTheme.charcoalMedium,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                offset: const Offset(0, 50),
-                onSelected: (value) {
-                  switch (value) {
-                    case 'settings':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AppSettingsScreen(),
-                        ),
-                      );
-                      break;
-                    case 'notifications':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const NotificationSettingsScreen(),
-                        ),
-                      );
-                      break;
-                    case 'chat':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ChatListScreen(),
-                        ),
-                      );
-                      break;
-                    case 'qrCheckin':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CustomerCheckinScreen(),
-                        ),
-                      );
-                      break;
-                    case 'coupons':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MyCouponsScreen(),
-                        ),
-                      );
-                      break;
-                    case 'visits':
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const VisitHistoryScreen(),
-                        ),
-                      );
-                      break;
-                    case 'logout':
-                      _showLogoutDialog(context, ref);
-                      break;
-                  }
-                },
-                itemBuilder: (context) {
-                  final user = FirebaseAuth.instance.currentUser;
-                  return [
-                    const PopupMenuItem(
-                      value: 'settings',
-                      child: Row(
-                        children: [
-                          Icon(Icons.settings_outlined, color: AppTheme.mustardYellow),
-                          SizedBox(width: 12),
-                          Text('설정', style: TextStyle(color: Colors.white)),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'notifications',
-                      child: Row(
-                        children: [
-                          Icon(Icons.notifications_outlined, color: AppTheme.mustardYellow),
-                          SizedBox(width: 12),
-                          Text('알림 설정', style: TextStyle(color: Colors.white)),
-                        ],
-                      ),
-                    ),
-                    if (user != null)
-                      const PopupMenuItem(
-                        value: 'chat',
-                        child: Row(
-                          children: [
-                            Icon(Icons.chat_bubble_outline, color: AppTheme.mustardYellow),
-                            SizedBox(width: 12),
-                            Text('채팅', style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
-                      ),
-                    if (user != null)
-                      const PopupMenuItem(
-                        value: 'qrCheckin',
-                        child: Row(
-                          children: [
-                            Icon(Icons.qr_code_scanner, color: AppTheme.mustardYellow),
-                            SizedBox(width: 12),
-                            Text('QR 방문인증', style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
-                      ),
-                    if (user != null)
-                      const PopupMenuItem(
-                        value: 'coupons',
-                        child: Row(
-                          children: [
-                            Icon(Icons.card_giftcard, color: AppTheme.mustardYellow),
-                            SizedBox(width: 12),
-                            Text('내 쿠폰함', style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
-                      ),
-                    if (user != null)
-                      const PopupMenuItem(
-                        value: 'visits',
-                        child: Row(
-                          children: [
-                            Icon(Icons.history, color: AppTheme.mustardYellow),
-                            SizedBox(width: 12),
-                            Text('방문 기록', style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
-                      ),
-                    const PopupMenuDivider(),
-                    const PopupMenuItem(
-                      value: 'logout',
-                      child: Row(
-                        children: [
-                          Icon(Icons.logout, color: Colors.red),
-                          SizedBox(width: 12),
-                          Text('로그아웃', style: TextStyle(color: Colors.red)),
-                        ],
-                      ),
-                    ),
-                  ];
-                },
-              ),
-            ),
+            child: _RoleBasedMenuButton(),
           ),
 
           // 🎯 Custom "내 위치" button (웹에서 기본 myLocationButton 작동 안 해서 추가)
@@ -610,51 +458,6 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Show logout confirmation dialog
-  void _showLogoutDialog(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.charcoalMedium,
-        title: Text(l10n.logout, style: const TextStyle(color: Colors.white)),
-        content: Text(l10n.confirmLogout, style: const TextStyle(color: AppTheme.textSecondary)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel, style: const TextStyle(color: AppTheme.textSecondary)),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context);
-
-              // Sign out from Firebase
-              await ref.read(authServiceProvider).signOut();
-
-              // 🔄 Invalidate all user-specific providers
-              ref.invalidate(currentUserTruckIdProvider);
-              ref.invalidate(currentUserProvider);
-              ref.invalidate(currentUserIdProvider);
-              ref.invalidate(currentUserEmailProvider);
-
-              // Navigate back to LoginScreen
-              if (context.mounted) {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                  (route) => false,
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
-            child: Text(l10n.logout, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -861,7 +664,7 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
                         '주변 트럭',
                         style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                       ),
-                      _buildMenuButton(context),
+                      _RoleBasedMenuButton(isCompact: true),
                     ],
                   ),
                 ),
@@ -932,57 +735,6 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
     );
   }
 
-  /// 메뉴 버튼 (PC용)
-  Widget _buildMenuButton(BuildContext context) {
-    return Material(
-      color: AppTheme.charcoalMedium,
-      borderRadius: BorderRadius.circular(12),
-      child: PopupMenuButton<String>(
-        icon: const Icon(Icons.menu, color: AppTheme.mustardYellow, size: 24),
-        color: AppTheme.charcoalMedium,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        offset: const Offset(0, 50),
-        onSelected: (value) {
-          switch (value) {
-            case 'settings':
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const AppSettingsScreen()));
-              break;
-            case 'notifications':
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationSettingsScreen()));
-              break;
-            case 'chat':
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const ChatListScreen()));
-              break;
-            case 'qrCheckin':
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const CustomerCheckinScreen()));
-              break;
-            case 'coupons':
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const MyCouponsScreen()));
-              break;
-            case 'visits':
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const VisitHistoryScreen()));
-              break;
-            case 'logout':
-              _showLogoutDialog(context, ref);
-              break;
-          }
-        },
-        itemBuilder: (context) {
-          final user = FirebaseAuth.instance.currentUser;
-          return [
-            const PopupMenuItem(value: 'settings', child: Row(children: [Icon(Icons.settings_outlined, color: AppTheme.mustardYellow), SizedBox(width: 12), Text('설정', style: TextStyle(color: Colors.white))])),
-            const PopupMenuItem(value: 'notifications', child: Row(children: [Icon(Icons.notifications_outlined, color: AppTheme.mustardYellow), SizedBox(width: 12), Text('알림 설정', style: TextStyle(color: Colors.white))])),
-            if (user != null) const PopupMenuItem(value: 'chat', child: Row(children: [Icon(Icons.chat_bubble_outline, color: AppTheme.mustardYellow), SizedBox(width: 12), Text('채팅', style: TextStyle(color: Colors.white))])),
-            if (user != null) const PopupMenuItem(value: 'qrCheckin', child: Row(children: [Icon(Icons.qr_code_scanner, color: AppTheme.mustardYellow), SizedBox(width: 12), Text('QR 방문인증', style: TextStyle(color: Colors.white))])),
-            if (user != null) const PopupMenuItem(value: 'coupons', child: Row(children: [Icon(Icons.card_giftcard, color: AppTheme.mustardYellow), SizedBox(width: 12), Text('내 쿠폰함', style: TextStyle(color: Colors.white))])),
-            if (user != null) const PopupMenuItem(value: 'visits', child: Row(children: [Icon(Icons.history, color: AppTheme.mustardYellow), SizedBox(width: 12), Text('방문 기록', style: TextStyle(color: Colors.white))])),
-            const PopupMenuDivider(),
-            const PopupMenuItem(value: 'logout', child: Row(children: [Icon(Icons.logout, color: Colors.red), SizedBox(width: 12), Text('로그아웃', style: TextStyle(color: Colors.red))])),
-          ];
-        },
-      ),
-    );
-  }
 }
 
 /// 토스 스타일 트럭 카드 (탭 애니메이션 + 부드러운 그림자)
@@ -1745,6 +1497,218 @@ class _AnimatedTruckCardState extends State<_AnimatedTruckCard>
       child: SlideTransition(
         position: _slideAnimation,
         child: widget.child,
+      ),
+    );
+  }
+}
+
+/// 역할 기반 햄버거 메뉴 버튼
+/// - 사장님: 대시보드, 채팅, 설정, 로그아웃
+/// - 손님: 즐겨찾기, 내 리뷰, 내 쿠폰함, 채팅, 설정, 로그아웃
+class _RoleBasedMenuButton extends ConsumerWidget {
+  const _RoleBasedMenuButton({this.isCompact = false});
+
+  final bool isCompact;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final roleAsync = ref.watch(currentUserRoleProvider);
+    final user = FirebaseAuth.instance.currentUser;
+
+    return Material(
+      color: isCompact ? AppTheme.charcoalMedium : AppTheme.charcoalMedium95,
+      borderRadius: BorderRadius.circular(12),
+      elevation: isCompact ? 0 : 10,
+      shadowColor: AppTheme.black50,
+      child: PopupMenuButton<String>(
+        icon: Icon(
+          Icons.menu,
+          color: AppTheme.mustardYellow,
+          size: isCompact ? 24 : 28,
+        ),
+        color: AppTheme.charcoalMedium,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        offset: const Offset(0, 50),
+        onSelected: (value) => _handleMenuSelection(context, ref, value),
+        itemBuilder: (context) {
+          return roleAsync.when(
+            data: (role) => _buildMenuItems(role, user != null),
+            loading: () => _buildMenuItems('customer', user != null),
+            error: (_, __) => _buildMenuItems('customer', user != null),
+          );
+        },
+      ),
+    );
+  }
+
+  void _handleMenuSelection(BuildContext context, WidgetRef ref, String value) {
+    switch (value) {
+      case 'dashboard':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const OwnerDashboardScreen()),
+        );
+        break;
+      case 'favorites':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+        );
+        break;
+      case 'reviews':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const MyReviewsScreen()),
+        );
+        break;
+      case 'coupons':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const MyCouponsScreen()),
+        );
+        break;
+      case 'chat':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ChatListScreen()),
+        );
+        break;
+      case 'settings':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AppSettingsScreen()),
+        );
+        break;
+      case 'logout':
+        _showLogoutDialog(context, ref);
+        break;
+    }
+  }
+
+  List<PopupMenuEntry<String>> _buildMenuItems(String role, bool isLoggedIn) {
+    final items = <PopupMenuEntry<String>>[];
+
+    if (role == 'owner' || role == 'admin') {
+      // 사장님/관리자 메뉴
+      items.add(_buildMenuItem(
+        value: 'dashboard',
+        icon: Icons.dashboard_outlined,
+        label: '사장님 대시보드',
+        iconColor: Colors.green,
+      ));
+    } else {
+      // 손님 메뉴
+      if (isLoggedIn) {
+        items.add(_buildMenuItem(
+          value: 'favorites',
+          icon: Icons.favorite_outline,
+          label: '즐겨찾기',
+          iconColor: Colors.pink,
+        ));
+        items.add(_buildMenuItem(
+          value: 'reviews',
+          icon: Icons.rate_review_outlined,
+          label: '내 리뷰',
+        ));
+        items.add(_buildMenuItem(
+          value: 'coupons',
+          icon: Icons.card_giftcard,
+          label: '내 쿠폰함',
+          iconColor: Colors.orange,
+        ));
+      }
+    }
+
+    // 공통 메뉴
+    if (isLoggedIn) {
+      items.add(_buildMenuItem(
+        value: 'chat',
+        icon: Icons.chat_bubble_outline,
+        label: '채팅',
+      ));
+    }
+
+    items.add(_buildMenuItem(
+      value: 'settings',
+      icon: Icons.settings_outlined,
+      label: '설정',
+    ));
+
+    if (isLoggedIn) {
+      items.add(const PopupMenuDivider());
+      items.add(_buildMenuItem(
+        value: 'logout',
+        icon: Icons.logout,
+        label: '로그아웃',
+        iconColor: Colors.red,
+        textColor: Colors.red,
+      ));
+    }
+
+    return items;
+  }
+
+  PopupMenuItem<String> _buildMenuItem({
+    required String value,
+    required IconData icon,
+    required String label,
+    Color? iconColor,
+    Color? textColor,
+  }) {
+    return PopupMenuItem(
+      value: value,
+      child: Row(
+        children: [
+          Icon(icon, color: iconColor ?? AppTheme.mustardYellow),
+          const SizedBox(width: 12),
+          Text(label, style: TextStyle(color: textColor ?? Colors.white)),
+        ],
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.charcoalMedium,
+        title: Text(l10n.logout, style: const TextStyle(color: Colors.white)),
+        content: Text(l10n.confirmLogout, style: const TextStyle(color: AppTheme.textSecondary)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel, style: const TextStyle(color: AppTheme.textSecondary)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+
+              // Sign out from Firebase
+              await ref.read(authServiceProvider).signOut();
+
+              // Invalidate all user-specific providers
+              ref.invalidate(currentUserTruckIdProvider);
+              ref.invalidate(currentUserProvider);
+              ref.invalidate(currentUserIdProvider);
+              ref.invalidate(currentUserEmailProvider);
+
+              // Navigate back to LoginScreen
+              if (context.mounted) {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (route) => false,
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: Text(l10n.logout, style: const TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
     );
   }

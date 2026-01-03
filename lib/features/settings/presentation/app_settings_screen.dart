@@ -11,13 +11,10 @@ import '../../../core/widgets/network_status_banner.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../auth/presentation/login_screen.dart';
-import '../../favorite/presentation/favorites_screen.dart';
 import '../../notifications/presentation/notification_settings_screen.dart';
 import '../../owner_dashboard/presentation/owner_dashboard_screen.dart';
 import 'help_screen.dart';
-import 'my_reviews_screen.dart';
 import 'privacy_policy_screen.dart';
-import '../../customer/presentation/visit_history_screen.dart';
 import 'terms_of_service_screen.dart';
 import 'owner_request_dialog.dart';
 
@@ -76,35 +73,8 @@ class AppSettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
 
                 // ═══════════════════════════════════════════════════════
-                // 내 활동
+                // 사장님 전환 (일반 사용자만 표시)
                 // ═══════════════════════════════════════════════════════
-                _buildSectionHeader(context, '내 활동'),
-                _buildSettingsTile(
-                  icon: Icons.favorite_outline,
-                  title: '즐겨찾기',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const FavoritesScreen()),
-                  ),
-                ),
-                _buildSettingsTile(
-                  icon: Icons.rate_review_outlined,
-                  title: '내가 쓴 리뷰',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const MyReviewsScreen()),
-                  ),
-                ),
-                _buildSettingsTile(
-                  icon: Icons.history,
-                  title: '방문기록',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const VisitHistoryScreen()),
-                  ),
-                ),
-
-                // 사장님으로 전환 메뉴 (일반 사용자만 표시, 관리자 제외)
                 isAdminAsync.when(
                   data: (isAdmin) => isAdmin
                       ? const SizedBox.shrink()
@@ -112,8 +82,6 @@ class AppSettingsScreen extends ConsumerWidget {
                   loading: () => const SizedBox.shrink(),
                   error: (_, __) => _buildOwnerRequestTile(context, ref),
                 ),
-
-                const SizedBox(height: 16),
 
                 // ═══════════════════════════════════════════════════════
                 // 앱 설정
