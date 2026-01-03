@@ -7,8 +7,6 @@ import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../auth/presentation/auth_provider.dart';
-import '../../stamp_card/data/stamp_card_repository.dart';
-import '../../stamp_card/domain/stamp_card.dart';
 
 /// 사장님용 쿠폰 스캐너 화면
 /// 고객의 쿠폰 QR 코드를 스캔하여 사용 처리합니다.

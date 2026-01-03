@@ -25,6 +25,41 @@ class ReviewManagementScreen extends ConsumerStatefulWidget {
 }
 
 class _ReviewManagementScreenState extends ConsumerState<ReviewManagementScreen> {
+  // Filter & Sort state
+  String _sortBy = 'latest'; // 'latest', 'highest', 'lowest'
+  int? _filterRating; // null = all, 1-5 = specific rating
+  bool _showOnlyWithoutReply = false;
+
+  List<Review> _applyFiltersAndSort(List<Review> reviews) {
+    var filtered = reviews;
+
+    // Apply rating filter
+    if (_filterRating != null) {
+      filtered = filtered.where((r) => r.rating == _filterRating).toList();
+    }
+
+    // Apply "without reply" filter
+    if (_showOnlyWithoutReply) {
+      filtered = filtered.where((r) => r.ownerReply == null).toList();
+    }
+
+    // Apply sorting
+    switch (_sortBy) {
+      case 'latest':
+        filtered.sort((a, b) => (b.createdAt ?? DateTime.now())
+            .compareTo(a.createdAt ?? DateTime.now()));
+        break;
+      case 'highest':
+        filtered.sort((a, b) => b.rating.compareTo(a.rating));
+        break;
+      case 'lowest':
+        filtered.sort((a, b) => a.rating.compareTo(b.rating));
+        break;
+    }
+
+    return filtered;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -56,18 +91,23 @@ class _ReviewManagementScreenState extends ConsumerState<ReviewManagementScreen>
             );
           }
 
+          final filteredReviews = _applyFiltersAndSort(reviews);
+
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Statistics Section
+                // Statistics Section (전체 리뷰 기준)
                 _buildStatsSection(reviews, l10n),
 
-                // Rating Distribution
+                // Rating Distribution (전체 리뷰 기준)
                 _buildRatingDistribution(reviews, l10n),
 
-                // Reviews List
-                _buildReviewsList(reviews, l10n),
+                // Filter & Sort Controls
+                _buildFilterControls(l10n, reviews.length, filteredReviews.length),
+
+                // Reviews List (필터링된 리뷰)
+                _buildReviewsList(filteredReviews, l10n),
               ],
             ),
           );
@@ -233,6 +273,93 @@ class _ReviewManagementScreenState extends ConsumerState<ReviewManagementScreen>
       default:
         return Colors.grey;
     }
+  }
+
+  Widget _buildFilterControls(AppLocalizations l10n, int totalCount, int filteredCount) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.charcoalMedium,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.mustardYellow30),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.filter_list, color: _mustard, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                '필터 & 정렬',
+                style: const TextStyle(
+                  color: _mustard,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '$filteredCount / $totalCount개 리뷰',
+                style: const TextStyle(color: Colors.white54, fontSize: 12),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Sort buttons
+          Row(
+            children: [
+              _SortChip(
+                label: '최신순',
+                isSelected: _sortBy == 'latest',
+                onTap: () => setState(() => _sortBy = 'latest'),
+              ),
+              const SizedBox(width: 8),
+              _SortChip(
+                label: '높은평점',
+                isSelected: _sortBy == 'highest',
+                onTap: () => setState(() => _sortBy = 'highest'),
+              ),
+              const SizedBox(width: 8),
+              _SortChip(
+                label: '낮은평점',
+                isSelected: _sortBy == 'lowest',
+                onTap: () => setState(() => _sortBy = 'lowest'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+
+          // Rating filter chips
+          Wrap(
+            spacing: 8,
+            children: [
+              _FilterChip(
+                label: '전체',
+                isSelected: _filterRating == null,
+                onTap: () => setState(() => _filterRating = null),
+              ),
+              ...List.generate(5, (index) {
+                final rating = 5 - index;
+                return _FilterChip(
+                  label: '⭐$rating',
+                  isSelected: _filterRating == rating,
+                  onTap: () => setState(() => _filterRating = rating),
+                );
+              }),
+              _FilterChip(
+                label: '답글없음',
+                isSelected: _showOnlyWithoutReply,
+                color: Colors.orange,
+                onTap: () => setState(() => _showOnlyWithoutReply = !_showOnlyWithoutReply),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildReviewsList(List<Review> reviews, AppLocalizations l10n) {
@@ -658,6 +785,85 @@ class _ReviewCard extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _SortChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _SortChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.electricBlue : Colors.grey[800],
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? AppTheme.electricBlue : Colors.grey[700]!,
+            width: 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.black : Colors.white70,
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FilterChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final Color? color;
+
+  const _FilterChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+    this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final chipColor = color ?? AppTheme.mustardYellow;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: isSelected ? chipColor.withValues(alpha: 0.2) : Colors.grey[850],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? chipColor : Colors.grey[700]!,
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? chipColor : Colors.white54,
+            fontSize: 11,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
       ),
     );
   }

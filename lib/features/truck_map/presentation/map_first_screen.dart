@@ -20,7 +20,6 @@ import '../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../truck_list/domain/truck.dart';
 import '../../truck_list/domain/truck_with_distance.dart';
 import '../../truck_list/presentation/truck_provider.dart';
-import '../../chat/presentation/chat_list_screen.dart';
 import '../../customer/presentation/my_coupons_screen.dart';
 import '../../favorite/presentation/favorites_screen.dart';
 import '../../settings/presentation/app_settings_screen.dart';
@@ -1570,10 +1569,7 @@ class _RoleBasedMenuButton extends ConsumerWidget {
         );
         break;
       case 'chat':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ChatListScreen()),
-        );
+        // Chat feature removed
         break;
       case 'settings':
         Navigator.push(

@@ -13,9 +13,9 @@ import '../../auth/presentation/auth_provider.dart';
 import '../../auth/presentation/login_screen.dart';
 import '../../notifications/presentation/notification_settings_screen.dart';
 import '../../owner_dashboard/presentation/owner_dashboard_screen.dart';
-import 'help_screen.dart';
-import 'privacy_policy_screen.dart';
-import 'terms_of_service_screen.dart';
+import '../../help/presentation/help_screen.dart';
+import '../../legal/presentation/privacy_policy_screen.dart';
+import '../../legal/presentation/terms_of_service_screen.dart';
 import 'owner_request_dialog.dart';
 
 /// General app settings screen

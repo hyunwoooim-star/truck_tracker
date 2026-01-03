@@ -6,13 +6,13 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/error_handler.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../analytics/data/analytics_repository.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../visit_verification/presentation/visit_verification_button.dart';
 import '../../visit_verification/presentation/visit_count_badge.dart';
-import '../../stamp_card/presentation/stamp_card_widget.dart';
 import '../../order/data/order_repository.dart';
 import '../../order/domain/order.dart' as order_model;
 import '../../order/presentation/cart_provider.dart';
@@ -20,17 +20,10 @@ import '../../review/data/review_repository.dart';
 import '../../review/domain/review.dart';
 import '../../review/presentation/review_form_dialog.dart';
 import '../../schedule/data/schedule_repository.dart';
-import '../../social/data/follow_repository.dart';
 import '../../talk/presentation/talk_widget.dart';
 import '../../truck_list/domain/truck.dart';
 import '../domain/menu_item.dart';
-import '../../chat/data/chat_repository.dart';
-import '../../chat/presentation/chat_screen.dart';
-import '../../payment/domain/payment.dart';
-import '../../payment/presentation/payment_screen.dart';
-import '../../payment/presentation/payment_result_screen.dart';
-import '../../pickup_navigation/presentation/pickup_navigation_screen.dart';
-import '../../pickup_navigation/presentation/widgets/eta_card.dart';
+import '../../bank_transfer/presentation/bank_transfer_screen.dart';
 import 'truck_detail_provider.dart';
 
 class TruckDetailScreen extends ConsumerWidget {
@@ -75,114 +68,6 @@ class TruckDetailScreen extends ConsumerWidget {
                 expandedHeight: 300,
                 pinned: true,
                 backgroundColor: AppTheme.baeminMint,
-                actions: [
-                  // Chat Button
-                  Consumer(
-                    builder: (context, ref, _) {
-                      final user = FirebaseAuth.instance.currentUser;
-                      if (user == null) return const SizedBox.shrink();
-
-                      return IconButton(
-                        icon: const Icon(Icons.chat_bubble_outline),
-                        onPressed: () async {
-                          try {
-                            // Get or create chat room
-                            final chatRepository = ref.read(chatRepositoryProvider);
-                            final chatRoom = await chatRepository.getOrCreateChatRoom(
-                              userId: user.uid,
-                              userName: user.displayName ?? user.email ?? 'User',
-                              truckId: truck.id,
-                              truckName: truck.foodType,
-                            );
-                            final chatRoomId = chatRoom?.id;
-                            if (chatRoomId == null) {
-                              throw Exception('Failed to create chat room');
-                            }
-
-                            // Navigate to ChatScreen
-                            if (context.mounted) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChatScreen(chatRoomId: chatRoomId),
-                                ),
-                              );
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              SnackBarHelper.showError(context, l10n.errorOccurred);
-                            }
-                          }
-                        },
-                      );
-                    },
-                  ),
-                  // Follow Button
-                  Consumer(
-                    builder: (context, ref, _) {
-                      final user = FirebaseAuth.instance.currentUser;
-                      if (user == null) return const SizedBox.shrink();
-
-                      final isFollowingAsync = ref.watch(
-                        isFollowingTruckProvider(
-                          userId: user.uid,
-                          truckId: truck.id,
-                        ),
-                      );
-
-                      return isFollowingAsync.when(
-                        loading: () => const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ),
-                        error: (error, stackTrace) => const SizedBox.shrink(),
-                        data: (isFollowing) => IconButton(
-                          icon: Icon(
-                            isFollowing ? Icons.favorite : Icons.favorite_border,
-                            color: isFollowing ? Colors.red : Colors.white,
-                          ),
-                          onPressed: () async {
-                            final repository = ref.read(followRepositoryProvider);
-                            try {
-                              if (isFollowing) {
-                                await repository.unfollowTruck(
-                                  userId: user.uid,
-                                  truckId: truck.id,
-                                );
-                                if (context.mounted) {
-                                  SnackBarHelper.showInfo(context, l10n.unfollowedTruck);
-                                }
-                              } else {
-                                await repository.followTruck(
-                                  userId: user.uid,
-                                  truckId: truck.id,
-                                  notificationsEnabled: true,
-                                );
-                                if (context.mounted) {
-                                  SnackBarHelper.showSuccess(context, l10n.followedTruck);
-                                }
-                              }
-                              // Refresh the follow status
-                              ref.invalidate(isFollowingTruckProvider(
-                                userId: user.uid,
-                                truckId: truck.id,
-                              ));
-                            } catch (e) {
-                              if (context.mounted) {
-                                SnackBarHelper.showError(context, l10n.errorOccurred);
-                              }
-                            }
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                ],
                 flexibleSpace: FlexibleSpaceBar(
                   background: Hero(
                     tag: 'truck_image_${truck.id}',
@@ -412,16 +297,6 @@ class TruckDetailScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    // ETA Card (도보 예상 시간)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                      child: EtaCard(
-                        truckLat: truck.latitude,
-                        truckLng: truck.longitude,
-                        truckName: truck.foodType,
-                        onNavigateTap: () => _showNavigationDialog(context, truck, l10n),
-                      ),
-                    ),
                     // Visit Verification Section
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -449,12 +324,6 @@ class TruckDetailScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 8),
                           VisitVerificationButton(truck: truck),
-                          const SizedBox(height: 16),
-                          // 스탬프 카드
-                          StampCardWidget(
-                            truckId: truck.id,
-                            truckName: truck.foodType,
-                          ),
                         ],
                       ),
                     ),
@@ -1570,27 +1439,6 @@ void _showNavigationDialog(BuildContext context, Truck truck, AppLocalizations l
             const SizedBox(height: 24),
             // Navigation Options
             _NavigationOptionTile(
-              icon: Icons.directions_walk,
-              iconColor: AppTheme.electricBlue,
-              title: '도보 안내',
-              subtitle: '앱 내 길찾기',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PickupNavigationScreen(
-                      truckName: truck.foodType,
-                      truckAddress: truck.locationDescription,
-                      truckLat: truck.latitude,
-                      truckLng: truck.longitude,
-                    ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 8),
-            _NavigationOptionTile(
               icon: Icons.map,
               iconColor: const Color(0xFF03C75A),
               title: l10n.naverMap,
@@ -1917,55 +1765,47 @@ Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLo
 
   if (confirmed != true) return;
 
-  // Generate order ID before payment
+  // Generate order ID
   final tempOrderId = 'ORD${DateTime.now().millisecondsSinceEpoch}';
-  final orderName = cart.items.length == 1
-      ? cart.items.first.menuItemName
-      : '${cart.items.first.menuItemName} 외 ${cart.items.length - 1}개';
 
-  // Navigate to payment screen
+  // Navigate to bank transfer screen
   if (!context.mounted) return;
 
-  final paymentResult = await Navigator.push<PaymentResult>(
+  final transferResult = await Navigator.push<Map<String, dynamic>>(
     context,
     MaterialPageRoute(
-      builder: (_) => PaymentScreen(
-        orderId: tempOrderId,
-        orderName: orderName,
-        amount: cart.totalAmount,
+      builder: (_) => BankTransferScreen(
+        truckId: truck.id,
+        truckName: truck.foodType,
+        totalAmount: cart.totalAmount,
         items: cart.items,
-        truckName: cart.truckName!,
+        orderId: tempOrderId,
       ),
     ),
   );
 
-  // Handle payment result
-  if (paymentResult == null) {
-    // User cancelled payment
+  // Handle transfer result
+  if (transferResult == null || transferResult['confirmed'] != true) {
+    // User cancelled
     return;
   }
 
-  if (!paymentResult.success) {
-    // Payment failed
-    if (context.mounted) {
-      SnackBarHelper.showError(context, paymentResult.errorMessage ?? '결제에 실패했습니다');
-    }
-    return;
-  }
+  final depositorName = transferResult['depositorName'] as String;
 
-  // Payment successful - Create order
+  // Create order with bank transfer payment method
   try {
     final order = order_model.Order(
-      id: '',
+      id: tempOrderId,
       userId: user.uid,
       userName: user.displayName ?? user.email ?? 'Anonymous',
       truckId: cart.truckId!,
       truckName: cart.truckName!,
       items: cart.items,
       totalAmount: cart.totalAmount,
-      status: order_model.OrderStatus.confirmed, // Already paid, set to confirmed
-      paymentMethod: 'toss', // TossPayments
+      status: order_model.OrderStatus.pending, // Pending until payment confirmed by owner
+      paymentMethod: 'bank_transfer', // Bank transfer
       createdAt: DateTime.now(),
+      specialRequests: '입금자명: $depositorName', // Include depositor name in special requests
     );
 
     // Place order
@@ -1975,35 +1815,33 @@ Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLo
     // Clear cart
     ref.read(cartProvider.notifier).clear();
 
-    // Navigate to success screen
+    // Show success message
     if (context.mounted) {
-      Navigator.pushReplacement(
+      SnackBarHelper.showSuccess(
         context,
-        MaterialPageRoute(
-          builder: (_) => PaymentResultScreen(
-            success: true,
-            orderId: orderId,
-            amount: cart.totalAmount,
-            truckName: cart.truckName,
-          ),
-        ),
+        '주문이 접수되었습니다!\n사장님이 입금 확인 후 주문을 준비합니다.',
       );
+      Navigator.pop(context);
     }
   } catch (e) {
+    // Enhanced error handling with specific messages and retry option
     if (context.mounted) {
-      // Payment succeeded but order creation failed
-      // This is a critical error - show error and refund will be handled by support
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => PaymentResultScreen(
-            success: false,
-            orderId: tempOrderId,
-            amount: cart.totalAmount,
-            errorMessage: '주문 생성에 실패했습니다. 고객센터에 문의해 주세요.\n결제 번호: $tempOrderId',
-          ),
-        ),
-      );
+      // Check if it's a network error
+      if (ErrorHandler.isNetworkError(e)) {
+        final shouldRetry = await ErrorHandler.showErrorWithRetry(
+          context: context,
+          message: '네트워크 연결을 확인하고\n다시 시도해주세요',
+        );
+
+        if (shouldRetry && context.mounted) {
+          // Retry order placement
+          await _placeOrder(context, ref, truck, l10n);
+        }
+      } else {
+        // Other errors - show specific message
+        final errorMessage = ErrorHandler.getFirebaseErrorMessage(e);
+        SnackBarHelper.showError(context, errorMessage);
+      }
     }
   }
 }

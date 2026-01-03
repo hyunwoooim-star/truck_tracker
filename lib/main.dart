@@ -30,8 +30,6 @@ import 'features/checkin/presentation/customer_checkin_screen.dart';
 import 'features/checkin/presentation/owner_qr_screen.dart';
 import 'features/admin/presentation/admin_dashboard_screen.dart';
 import 'features/notifications/fcm_service.dart';
-import 'features/ads/data/ad_service.dart';
-import 'features/pickup_navigation/presentation/pickup_ready_listener.dart';
 import 'features/auth/presentation/oauth_callback_screen.dart';
 import 'features/auth/presentation/nickname_setup_screen.dart';
 import 'features/onboarding/presentation/customer_onboarding_screen.dart';
@@ -156,9 +154,6 @@ void main() async {
             }
           }));
         }
-
-        // 📺 ADMOB: Initialize Google Mobile Ads SDK (background, non-blocking)
-        unawaited(AdService().initialize());
 
         // 🧹 OPTIMIZATION: Clean old image cache in background (non-blocking)
         unawaited(_cleanOldImageCache());
@@ -515,9 +510,7 @@ class _CustomerWithOnboardingWidgetState extends State<_CustomerWithOnboardingWi
     }
 
     AppLogger.debug('Onboarding complete → MapFirstScreen', tag: 'AuthWrapper');
-    return const PickupReadyListener(
-      child: MapFirstScreen(),
-    );
+    return const MapFirstScreen();
   }
 }
 

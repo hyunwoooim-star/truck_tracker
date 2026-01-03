@@ -8,6 +8,7 @@ import '../../checkin/presentation/owner_qr_screen.dart';
 import '../../analytics/presentation/revenue_dashboard_screen.dart';
 import '../../notifications/presentation/push_notification_tool.dart';
 import '../../truck_map/presentation/map_first_screen.dart';
+import '../../bank_transfer/presentation/bank_account_setup_screen.dart';
 import 'analytics_screen.dart';
 import 'coupon_management_screen.dart';
 import 'coupon_scanner_screen.dart';
@@ -54,6 +55,14 @@ class OwnerFunctionsScreen extends ConsumerWidget {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const MenuManagementScreen()),
+                  ),
+                ),
+                _MenuItem(
+                  icon: Icons.account_balance,
+                  label: '계좌번호 설정',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => BankAccountSetupScreen(truckId: truck.id)),
                   ),
                 ),
                 _MenuItem(

@@ -319,77 +319,88 @@ exports.notifyCouponCreated = functions.firestore
   });
 
 /**
- * Cloud Function: Send push notification when new chat message arrives
- * Trigger: Firestore onCreate on chatRooms/{chatRoomId}/messages/{messageId}
- * Logic: Notify the other participant (not the sender)
+ * Cloud Function: Send push notification when new order is created
+ * Trigger: Firestore onCreate on orders/{orderId}
+ * Logic: Notify truck owner of new order (especially for bank transfers)
  */
-exports.notifyChatMessage = functions.firestore
-  .document('chatRooms/{chatRoomId}/messages/{messageId}')
+exports.notifyNewOrder = functions.firestore
+  .document('orders/{orderId}')
   .onCreate(async (snap, context) => {
-    const chatRoomId = context.params.chatRoomId;
-    const messageId = context.params.messageId;
-    const messageData = snap.data();
+    const orderId = context.params.orderId;
+    const orderData = snap.data();
 
-    const senderId = messageData.senderId;
-    const senderName = messageData.senderName || 'Someone';
-    const text = messageData.text || '';
-    const imageUrl = messageData.imageUrl || null;
+    console.log(`🔔 New order created: ${orderId}`);
 
-    console.log(`🔔 New chat message in room ${chatRoomId} from ${senderName}`);
+    const userId = orderData.userId;
+    const truckId = orderData.truckId;
+    const truckName = orderData.truckName || 'Food Truck';
+    const totalAmount = orderData.totalAmount || 0;
+    const paymentMethod = orderData.paymentMethod || 'card';
+    const items = orderData.items || [];
+    const specialRequests = orderData.specialRequests || '';
 
-    // Get chat room to find the recipient
-    const chatRoomDoc = await admin.firestore().collection('chatRooms').doc(chatRoomId).get();
-    if (!chatRoomDoc.exists) {
-      console.log(`⚠️  Chat room ${chatRoomId} not found`);
-      return { success: false, reason: 'chat room not found' };
+    // Extract depositor name for bank transfer orders
+    let depositorName = null;
+    if (paymentMethod === 'bank_transfer' && specialRequests) {
+      const match = specialRequests.match(/입금자명:\s*(.+)/);
+      if (match) {
+        depositorName = match[1].trim();
+      }
     }
 
-    const chatRoomData = chatRoomDoc.data();
-    const customerId = chatRoomData.customerId;
-    const truckOwnerId = chatRoomData.truckOwnerId || null;
+    // Format amount with thousand separators
+    const formattedAmount = totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    // Determine recipient (not the sender)
-    const recipientId = senderId === customerId ? truckOwnerId : customerId;
-
-    if (!recipientId) {
-      console.log(`⚠️  No recipient found for chat room ${chatRoomId}`);
-      return { success: false, reason: 'no recipient' };
+    // Get truck owner's user ID from trucks collection
+    const truckDoc = await admin.firestore().collection('trucks').doc(truckId).get();
+    if (!truckDoc.exists) {
+      console.log(`⚠️  Truck ${truckId} not found`);
+      return { success: false, reason: 'truck not found' };
     }
 
-    // Get recipient's FCM token
-    const recipientDoc = await admin.firestore().collection('users').doc(recipientId).get();
-    if (!recipientDoc.exists || !recipientDoc.data().fcmToken) {
-      console.log(`⚠️  Recipient ${recipientId} has no FCM token`);
+    const truckOwnerId = truckDoc.data().ownerId;
+    if (!truckOwnerId) {
+      console.log(`⚠️  Truck ${truckId} has no owner`);
+      return { success: false, reason: 'no owner' };
+    }
+
+    // Get owner's FCM token
+    const ownerDoc = await admin.firestore().collection('users').doc(truckOwnerId).get();
+    if (!ownerDoc.exists || !ownerDoc.data().fcmToken) {
+      console.log(`⚠️  Owner ${truckOwnerId} has no FCM token`);
       return { success: false, reason: 'no FCM token' };
     }
 
-    const fcmToken = recipientDoc.data().fcmToken;
+    const fcmToken = ownerDoc.data().fcmToken;
 
-    // Prepare notification body
-    let body = text || '사진을 보냈습니다';
-    if (body.length > 50) {
-      body = body.substring(0, 50) + '...';
+    // Create notification message
+    let notificationBody = `${items.length}개 메뉴 - ₩${formattedAmount}`;
+    if (paymentMethod === 'bank_transfer') {
+      notificationBody += ` (계좌이체${depositorName ? ` - ${depositorName}` : ''})`;
     }
 
     const message = {
       token: fcmToken,
       notification: {
-        title: `💬 ${senderName}`,
-        body: body,
+        title: `🛒 새 주문이 들어왔습니다!`,
+        body: notificationBody,
       },
       data: {
-        chatRoomId: chatRoomId,
-        messageId: messageId,
-        senderId: senderId,
-        type: 'chat_message',
+        orderId: orderId,
+        truckId: truckId,
+        userId: userId,
+        totalAmount: totalAmount.toString(),
+        paymentMethod: paymentMethod,
+        type: 'new_order',
         timestamp: new Date().toISOString(),
       },
       android: {
         notification: {
-          icon: 'ic_chat',
-          color: '#2196F3',
+          icon: 'ic_order',
+          color: paymentMethod === 'bank_transfer' ? '#FF9800' : '#4CAF50',
           sound: 'default',
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+          priority: 'high',
         },
       },
       apns: {
@@ -397,6 +408,10 @@ exports.notifyChatMessage = functions.firestore
           aps: {
             sound: 'default',
             badge: 1,
+            alert: {
+              title: '🛒 새 주문이 들어왔습니다!',
+              body: notificationBody,
+            },
           },
         },
       },
@@ -404,10 +419,23 @@ exports.notifyChatMessage = functions.firestore
 
     try {
       const response = await admin.messaging().send(message);
-      console.log(`✅ Successfully sent chat notification:`, response);
+      console.log(`✅ Successfully sent new order notification to owner:`, response);
+
+      // Also store in notifications collection for in-app display
+      await admin.firestore().collection('notifications').doc().set({
+        userId: truckOwnerId,
+        type: 'newOrder',
+        title: '새 주문이 들어왔습니다!',
+        body: notificationBody,
+        orderId: orderId,
+        truckId: truckId,
+        isRead: false,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
       return { success: true, messageId: response };
     } catch (error) {
-      console.error(`❌ Error sending chat notification:`, error);
+      console.error(`❌ Error sending new order notification:`, error);
       return { success: false, error: error.message };
     }
   });

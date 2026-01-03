@@ -6,9 +6,9 @@ part 'notification.g.dart';
 
 enum NotificationType {
   orderUpdate,      // 주문 상태 변경
+  newOrder,         // 새 주문 (사장님용)
   truckOpen,        // 즐겨찾기 트럭 영업 시작
   promotion,        // 프로모션/쿠폰
-  chat,             // 새 메시지
   checkin,          // 체크인 완료
   system,           // 시스템 알림
 }
@@ -73,12 +73,12 @@ sealed class AppNotification with _$AppNotification {
     switch (type) {
       case NotificationType.orderUpdate:
         return '주문';
+      case NotificationType.newOrder:
+        return '새 주문';
       case NotificationType.truckOpen:
         return '영업 알림';
       case NotificationType.promotion:
         return '프로모션';
-      case NotificationType.chat:
-        return '메시지';
       case NotificationType.checkin:
         return '체크인';
       case NotificationType.system:

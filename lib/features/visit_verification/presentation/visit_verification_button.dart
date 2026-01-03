@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
-import '../../stamp_card/data/stamp_card_repository.dart';
-import '../../stamp_card/domain/stamp_card.dart';
 import '../../truck_list/domain/truck.dart';
 import '../data/visit_verification_repository.dart';
 import 'visit_verification_service.dart';
@@ -268,7 +266,7 @@ class _VisitVerificationButtonState extends ConsumerState<VisitVerificationButto
           ),
           const SizedBox(width: 8),
           Text(
-            '스탬프 $currentStamps/${StampCard.maxStamps}',
+            '방문 횟수: $currentStamps',
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
