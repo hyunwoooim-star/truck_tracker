@@ -215,9 +215,9 @@ class TruckPreviewBottomSheet extends StatelessWidget {
                   children: [
                     const Icon(Icons.storefront, size: 20),
                     const SizedBox(width: 8),
-                    Text(
-                      l10n.viewDetails,
-                      style: const TextStyle(
+                    const Text(
+                      '상세보기',
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),

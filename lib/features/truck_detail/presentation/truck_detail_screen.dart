@@ -53,8 +53,16 @@ class TruckDetailScreen extends ConsumerWidget {
       analyticsRepo.trackTruckClick(truck.id);
     });
 
+    // 📱 PC 웹 반응형: 화면 너비에 따라 최대 너비 제한
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWideScreen = screenWidth > 600;
+    final maxContentWidth = isWideScreen ? 600.0 : screenWidth;
+
     return Scaffold(
-      body: detailAsync.when(
+      body: Center(
+        child: Container(
+          constraints: BoxConstraints(maxWidth: maxContentWidth),
+          child: detailAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, stackTrace) => Center(
           child: Text(l10n.errorLoadingData),
@@ -497,14 +505,10 @@ class TruckDetailScreen extends ConsumerWidget {
                             )
                           else
                             ...detail.menuItems.map(
-                              (item) {
-                                // DEBUG: 이미지 URL 확인
-                                print('[MenuDebug] Item: ${item.name}, imageUrl: "${item.imageUrl}", isEmpty: ${item.imageUrl.isEmpty}');
-                                return _MenuItemCard(
-                                  item: item,
-                                  truck: truck,
-                                );
-                              },
+                              (item) => _MenuItemCard(
+                                item: item,
+                                truck: truck,
+                              ),
                             ),
                         ],
                       ),
@@ -621,6 +625,7 @@ class TruckDetailScreen extends ConsumerWidget {
             ],
           );
         },
+      )),
       ),
       // Bottom Bar: Cart or Navigate Button
       bottomNavigationBar: Consumer(
@@ -875,11 +880,6 @@ class _MenuItemCard extends ConsumerWidget {
                                   color: isSoldOut ? Colors.grey[600] : AppTheme.textPrimary,
                                   decoration: isSoldOut ? TextDecoration.lineThrough : null,
                                 ),
-                              ),
-                              // DEBUG: imageUrl 표시
-                              Text(
-                                'img: ${item.imageUrl.isEmpty ? "EMPTY" : "HAS_URL(${item.imageUrl.length})"}',
-                                style: const TextStyle(fontSize: 10, color: Colors.red),
                               ),
                             ],
                           ),

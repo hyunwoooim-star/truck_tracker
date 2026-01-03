@@ -35,11 +35,14 @@ class AppSettingsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('설정'),
       ),
-      body: Column(
-        children: [
-          const NetworkStatusBanner(),
-          Expanded(
-            child: ListView(
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 600), // PC 웹 반응형
+          child: Column(
+            children: [
+              const NetworkStatusBanner(),
+              Expanded(
+                child: ListView(
               children: [
                 // ═══════════════════════════════════════════════════════
                 // 관리자 메뉴 (관리자만 표시)
@@ -229,6 +232,8 @@ class AppSettingsScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+      ),
       ),
     );
   }

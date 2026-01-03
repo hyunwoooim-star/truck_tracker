@@ -37,10 +37,28 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
     final ownerTruckAsync = ref.watch(ownerTruckProvider);
     final l10n = AppLocalizations.of(context);
 
+    // PC 웹 반응형
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWideScreen = screenWidth > 600;
+
     return Scaffold(
-      backgroundColor: _charcoal,
+      backgroundColor: isWideScreen ? Colors.grey[900] : _charcoal,
       appBar: _buildAppBar(l10n),
-      body: ownerTruckAsync.when(
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 600),
+          decoration: isWideScreen
+              ? BoxDecoration(
+                  color: _charcoal,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      blurRadius: 10,
+                    ),
+                  ],
+                )
+              : null,
+          child: ownerTruckAsync.when(
         data: (truck) {
           if (truck == null) {
             return Center(
@@ -75,6 +93,8 @@ class _OwnerDashboardScreenState extends ConsumerState<OwnerDashboardScreen> {
             ],
           ),
         ),
+      ),
+      ),
       ),
       bottomNavigationBar: ownerTruckAsync.when(
         data: (truck) => truck != null ? _buildBottomNav(l10n) : null,

@@ -50,7 +50,12 @@
       "Bash(wsl -d Ubuntu -- bash -c \"gsutil cors set ''/mnt/c/Users/임현우/Desktop/현우 작업폴더/truck_tracker/truck ver.1/truck_tracker/cors.json'' gs://truck-tracker-fa0b0.appspot.com\")",
       "Bash(where:*)",
       "Bash(\"C:\\Users\\임현우\\Downloads\\flutter_windows_3.38.5-stable\\flutter\\bin\\flutter.bat\" pub run build_runner build --delete-conflicting-outputs)",
-      "Bash(wsl -d Ubuntu -- bash -c \"cp -r ~/truck_tracker/build/web/* ''''/mnt/c/Users/임현우/Desktop/현우 작업폴더/truck_tracker/truck ver.1/truck_tracker/build/web/''''\")"
+      "Bash(wsl -d Ubuntu -- bash -c \"cp -r ~/truck_tracker/build/web/* ''''/mnt/c/Users/임현우/Desktop/현우 작업폴더/truck_tracker/truck ver.1/truck_tracker/build/web/''''\")",
+      "Bash(\"C:\\Users\\임현우\\Downloads\\flutter_windows_3.38.5-stable\\flutter\\bin\\flutter.bat\" analyze \"C:\\Users\\임현우\\Desktop\\현우 작업폴더\\truck_tracker\\truck ver.1\\truck_tracker\\lib\\features\\truck_detail\\presentation\\truck_detail_screen.dart\")",
+      "Bash(\"C:\\Users\\임현우\\Downloads\\flutter_windows_3.38.5-stable\\flutter\\bin\\flutter.bat\" analyze \"C:\\Users\\임현우\\Desktop\\현우 작업폴더\\truck_tracker\\truck ver.1\\truck_tracker\\lib\\features\\auth\\presentation\\login_screen.dart\")",
+      "Bash(\"C:\\Users\\임현우\\Downloads\\flutter_windows_3.38.5-stable\\flutter\\bin\\flutter.bat\" analyze \"C:\\Users\\임현우\\Desktop\\현우 작업폴더\\truck_tracker\\truck ver.1\\truck_tracker\\lib\\features\\owner_dashboard\\presentation\\owner_dashboard_screen.dart\")",
+      "Bash(\"C:\\Users\\임현우\\Downloads\\flutter_windows_3.38.5-stable\\flutter\\bin\\flutter.bat\" analyze \"C:\\Users\\임현우\\Desktop\\현우 작업폴더\\truck_tracker\\truck ver.1\\truck_tracker\\lib\\features\\settings\\presentation\\app_settings_screen.dart\")",
+      "Bash(\"C:\\Users\\임현우\\Downloads\\flutter_windows_3.38.5-stable\\flutter\\bin\\flutter.bat\" analyze \"C:\\Users\\임현우\\Desktop\\현우 작업폴더\\truck_tracker\\truck ver.1\\truck_tracker\")"
     ],
     "deny": []
   }
