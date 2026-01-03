@@ -12,7 +12,6 @@ import '../../analytics/data/analytics_repository.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../visit_verification/presentation/visit_verification_button.dart';
 import '../../visit_verification/presentation/visit_count_badge.dart';
-import '../../stamp_card/presentation/stamp_card_widget.dart';
 import '../../order/data/order_repository.dart';
 import '../../order/domain/order.dart' as order_model;
 import '../../order/presentation/cart_provider.dart';
@@ -323,12 +322,6 @@ class TruckDetailScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 8),
                           VisitVerificationButton(truck: truck),
-                          const SizedBox(height: 16),
-                          // 스탬프 카드
-                          StampCardWidget(
-                            truckId: truck.id,
-                            truckName: truck.foodType,
-                          ),
                         ],
                       ),
                     ),

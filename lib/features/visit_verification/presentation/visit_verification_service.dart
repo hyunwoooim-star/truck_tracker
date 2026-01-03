@@ -2,7 +2,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/utils/app_logger.dart';
 import '../../location/location_service.dart';
-import '../../stamp_card/data/stamp_card_repository.dart';
 import '../../truck_list/domain/truck.dart';
 import '../data/visit_verification_repository.dart';
 import '../domain/visit_verification.dart';
@@ -17,8 +16,7 @@ sealed class VerificationResult {
 class VerificationSuccess extends VerificationResult {
   final VisitVerification verification;
   final int userVisitCount; // 사용자의 해당 트럭 총 방문 횟수
-  final StampResult? stampResult; // 스탬프 결과
-  const VerificationSuccess(this.verification, this.userVisitCount, {this.stampResult});
+  const VerificationSuccess(this.verification, this.userVisitCount);
 }
 
 class VerificationFailure extends VerificationResult {
@@ -61,19 +59,16 @@ extension VerificationErrorMessage on VerificationError {
 VisitVerificationService visitVerificationService(Ref ref) {
   return VisitVerificationService(
     repository: ref.watch(visitVerificationRepositoryProvider),
-    stampCardRepository: ref.watch(stampCardRepositoryProvider),
     locationService: LocationService(),
   );
 }
 
 class VisitVerificationService {
   final VisitVerificationRepository repository;
-  final StampCardRepository stampCardRepository;
   final LocationService locationService;
 
   VisitVerificationService({
     required this.repository,
-    required this.stampCardRepository,
     required this.locationService,
   });
 
@@ -150,17 +145,9 @@ class VisitVerificationService {
       // 8. 사용자의 해당 트럭 총 방문 횟수 가져오기
       final visitCount = await repository.getUserVisitCountForTruck(visitorId, truck.id);
 
-      // 9. 스탬프 추가
-      final stampResult = await stampCardRepository.addStamp(
-        visitorId: visitorId,
-        visitorName: visitorName,
-        truckId: truck.id,
-        truckName: truck.foodType,
-      );
-
       AppLogger.success('Visit verification successful! Total visits: $visitCount', tag: 'VisitVerificationService');
 
-      return VerificationSuccess(verification, visitCount, stampResult: stampResult);
+      return VerificationSuccess(verification, visitCount);
     } catch (e, stackTrace) {
       AppLogger.error('Visit verification failed', error: e, stackTrace: stackTrace, tag: 'VisitVerificationService');
       return const VerificationFailure(VerificationError.unknown);
