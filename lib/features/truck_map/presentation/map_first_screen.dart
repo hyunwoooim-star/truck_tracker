@@ -97,7 +97,16 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
   Widget build(BuildContext context) {
     final trucksWithDistanceAsync = ref.watch(filteredTrucksWithDistanceProvider);
     final l10n = AppLocalizations.of(context);
+    final screenWidth = MediaQuery.sizeOf(context).width;
 
+    // PC 웹: 900px 이상이면 가로 레이아웃 (지도 + 리스트 나란히)
+    final isWideScreen = screenWidth >= 900;
+
+    if (isWideScreen) {
+      return _buildWideLayout(context, trucksWithDistanceAsync, l10n);
+    }
+
+    // 모바일/태블릿: 기존 DraggableSheet 레이아웃
     return Scaffold(
       body: Stack(
         children: [
@@ -648,6 +657,329 @@ class _MapFirstScreenState extends ConsumerState<MapFirstScreen> {
             child: Text(l10n.logout, style: const TextStyle(color: Colors.white)),
           ),
         ],
+      ),
+    );
+  }
+
+  /// PC 웹용 가로 레이아웃 (지도 왼쪽 + 트럭 리스트 오른쪽)
+  Widget _buildWideLayout(
+    BuildContext context,
+    AsyncValue<List<TruckWithDistance>> trucksWithDistanceAsync,
+    AppLocalizations l10n,
+  ) {
+    return Scaffold(
+      body: Row(
+        children: [
+          // 왼쪽: 지도 (60%)
+          Expanded(
+            flex: 6,
+            child: Stack(
+              children: [
+                trucksWithDistanceAsync.when(
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (error, stack) => Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                        const SizedBox(height: 16),
+                        Text('$error', style: const TextStyle(color: AppTheme.textSecondary)),
+                      ],
+                    ),
+                  ),
+                  data: (trucksWithDistance) {
+                    final validTrucks = trucksWithDistance
+                        .where((t) => t.truck.latitude != 0.0 && t.truck.longitude != 0.0)
+                        .map((t) => t.truck)
+                        .toList();
+
+                    if (validTrucks.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.local_shipping_outlined, size: 64, color: AppTheme.textTertiary),
+                            const SizedBox(height: 16),
+                            Text(l10n.noTrucksAvailable, style: const TextStyle(fontSize: 18, color: AppTheme.textSecondary)),
+                          ],
+                        ),
+                      );
+                    }
+
+                    // Rebuild markers if needed
+                    if (_lastTruckList != validTrucks || (_markersInitialized && _cachedMarkers == null)) {
+                      _cachedMarkers = validTrucks.map((truck) {
+                        final markerIcon = _markerService.getMarkerForTruck(truck);
+                        String statusText = '';
+                        switch (truck.status) {
+                          case TruckStatus.onRoute:
+                            statusText = ' 🚚 이동중';
+                            break;
+                          case TruckStatus.resting:
+                            statusText = ' ✨ 영업중';
+                            break;
+                          case TruckStatus.maintenance:
+                            statusText = ' 🔧 정비중';
+                            break;
+                        }
+                        return Marker(
+                          markerId: MarkerId(truck.id),
+                          position: LatLng(truck.latitude, truck.longitude),
+                          icon: markerIcon,
+                          infoWindow: InfoWindow(
+                            title: '${truck.foodType}$statusText',
+                            snippet: truck.locationDescription,
+                          ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => TruckDetailScreen(truck: truck)),
+                            );
+                          },
+                        );
+                      }).toSet();
+                      _lastTruckList = validTrucks;
+                    }
+
+                    final initialPosition = validTrucks.isNotEmpty
+                        ? LatLng(validTrucks.first.latitude, validTrucks.first.longitude)
+                        : const LatLng(37.5665, 126.9780);
+
+                    return GoogleMap(
+                      initialCameraPosition: CameraPosition(target: initialPosition, zoom: 14),
+                      onMapCreated: (controller) {
+                        if (!_mapController.isCompleted) {
+                          _mapController.complete(controller);
+                        }
+                      },
+                      markers: _cachedMarkers ?? {},
+                      myLocationEnabled: true,
+                      myLocationButtonEnabled: false,
+                      compassEnabled: true,
+                      mapToolbarEnabled: false,
+                    );
+                  },
+                ),
+
+                // 왼쪽 상단: 인사말
+                Positioned(
+                  top: MediaQuery.of(context).padding.top + 16,
+                  left: 16,
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      final nicknameAsync = ref.watch(currentUserNicknameProvider);
+                      return nicknameAsync.when(
+                        loading: () => const SizedBox.shrink(),
+                        error: (_, __) => const SizedBox.shrink(),
+                        data: (nickname) {
+                          if (nickname == null || nickname.isEmpty) return const SizedBox.shrink();
+                          return Material(
+                            color: AppTheme.charcoalMedium95,
+                            borderRadius: BorderRadius.circular(12),
+                            elevation: 8,
+                            shadowColor: AppTheme.black50,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.waving_hand, color: AppTheme.mustardYellow, size: 18),
+                                  const SizedBox(width: 8),
+                                  Text('$nickname님 안녕하세요!', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+
+                // 내 위치 버튼
+                Positioned(
+                  right: 16,
+                  bottom: 16,
+                  child: Material(
+                    color: AppTheme.charcoalMedium95,
+                    borderRadius: BorderRadius.circular(12),
+                    elevation: 8,
+                    shadowColor: AppTheme.black50,
+                    child: InkWell(
+                      onTap: () async {
+                        try {
+                          final position = await ref.read(currentPositionProvider.future);
+                          if (position != null) {
+                            final controller = await _mapController.future;
+                            await controller.animateCamera(
+                              CameraUpdate.newLatLngZoom(LatLng(position.latitude, position.longitude), 16),
+                            );
+                          } else if (context.mounted) {
+                            SnackBarHelper.showWarning(context, '위치를 가져올 수 없습니다');
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            SnackBarHelper.showError(context, '위치 권한이 필요합니다');
+                          }
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                        child: const Icon(Icons.my_location, color: AppTheme.mustardYellow, size: 24),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 오른쪽: 트럭 리스트 (40%, 최대 450px)
+          Container(
+            width: 400,
+            constraints: const BoxConstraints(maxWidth: 450),
+            decoration: const BoxDecoration(
+              color: AppTheme.midnightCharcoal,
+              border: Border(left: BorderSide(color: AppTheme.charcoalLight, width: 1)),
+            ),
+            child: Column(
+              children: [
+                // 상단 메뉴 버튼
+                Container(
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).padding.top + 12,
+                    left: 16,
+                    right: 16,
+                    bottom: 12,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        '주변 트럭',
+                        style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      _buildMenuButton(context),
+                    ],
+                  ),
+                ),
+
+                // 검색바
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: _SearchBar(),
+                ),
+
+                // 정렬 옵션
+                const _SortOptionsBar(),
+
+                // 필터 태그
+                const _FilterBar(),
+
+                const Divider(height: 1, color: AppTheme.charcoalLight),
+
+                // 트럭 리스트
+                Expanded(
+                  child: trucksWithDistanceAsync.when(
+                    loading: () => ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      itemCount: 5,
+                      itemBuilder: (context, index) => const _SkeletonTruckCard(),
+                    ),
+                    error: (e, _) => Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.error_outline, size: 48, color: AppTheme.tossGray500),
+                          const SizedBox(height: 12),
+                          Text(l10n.loadDataFailed, style: TextStyle(color: AppTheme.tossGray500)),
+                        ],
+                      ),
+                    ),
+                    data: (trucksWithDistance) {
+                      if (trucksWithDistance.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.local_shipping_outlined, size: 56, color: AppTheme.tossGray600),
+                              const SizedBox(height: 12),
+                              Text(l10n.noTrucks, style: TextStyle(color: AppTheme.tossGray500, fontSize: 15)),
+                            ],
+                          ),
+                        );
+                      }
+                      return ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        itemCount: trucksWithDistance.length,
+                        itemBuilder: (context, index) {
+                          return _AnimatedTruckCard(
+                            index: index,
+                            child: _TruckCard(truckWithDistance: trucksWithDistance[index]),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 메뉴 버튼 (PC용)
+  Widget _buildMenuButton(BuildContext context) {
+    return Material(
+      color: AppTheme.charcoalMedium,
+      borderRadius: BorderRadius.circular(12),
+      child: PopupMenuButton<String>(
+        icon: const Icon(Icons.menu, color: AppTheme.mustardYellow, size: 24),
+        color: AppTheme.charcoalMedium,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        offset: const Offset(0, 50),
+        onSelected: (value) {
+          switch (value) {
+            case 'settings':
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const AppSettingsScreen()));
+              break;
+            case 'notifications':
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationSettingsScreen()));
+              break;
+            case 'chat':
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const ChatListScreen()));
+              break;
+            case 'qrCheckin':
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const CustomerCheckinScreen()));
+              break;
+            case 'coupons':
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const MyCouponsScreen()));
+              break;
+            case 'visits':
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const VisitHistoryScreen()));
+              break;
+            case 'logout':
+              _showLogoutDialog(context, ref);
+              break;
+          }
+        },
+        itemBuilder: (context) {
+          final user = FirebaseAuth.instance.currentUser;
+          return [
+            const PopupMenuItem(value: 'settings', child: Row(children: [Icon(Icons.settings_outlined, color: AppTheme.mustardYellow), SizedBox(width: 12), Text('설정', style: TextStyle(color: Colors.white))])),
+            const PopupMenuItem(value: 'notifications', child: Row(children: [Icon(Icons.notifications_outlined, color: AppTheme.mustardYellow), SizedBox(width: 12), Text('알림 설정', style: TextStyle(color: Colors.white))])),
+            if (user != null) const PopupMenuItem(value: 'chat', child: Row(children: [Icon(Icons.chat_bubble_outline, color: AppTheme.mustardYellow), SizedBox(width: 12), Text('채팅', style: TextStyle(color: Colors.white))])),
+            if (user != null) const PopupMenuItem(value: 'qrCheckin', child: Row(children: [Icon(Icons.qr_code_scanner, color: AppTheme.mustardYellow), SizedBox(width: 12), Text('QR 방문인증', style: TextStyle(color: Colors.white))])),
+            if (user != null) const PopupMenuItem(value: 'coupons', child: Row(children: [Icon(Icons.card_giftcard, color: AppTheme.mustardYellow), SizedBox(width: 12), Text('내 쿠폰함', style: TextStyle(color: Colors.white))])),
+            if (user != null) const PopupMenuItem(value: 'visits', child: Row(children: [Icon(Icons.history, color: AppTheme.mustardYellow), SizedBox(width: 12), Text('방문 기록', style: TextStyle(color: Colors.white))])),
+            const PopupMenuDivider(),
+            const PopupMenuItem(value: 'logout', child: Row(children: [Icon(Icons.logout, color: Colors.red), SizedBox(width: 12), Text('로그아웃', style: TextStyle(color: Colors.red))])),
+          ];
+        },
       ),
     );
   }
