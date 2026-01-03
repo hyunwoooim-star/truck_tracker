@@ -1804,7 +1804,7 @@ Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLo
       status: order_model.OrderStatus.pending, // Pending until payment confirmed by owner
       paymentMethod: 'bank_transfer', // Bank transfer
       createdAt: DateTime.now(),
-      note: '입금자명: $depositorName', // Include depositor name in order note
+      specialRequests: '입금자명: $depositorName', // Include depositor name in special requests
     );
 
     // Place order
