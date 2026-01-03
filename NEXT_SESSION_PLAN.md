@@ -310,6 +310,67 @@
 
 ---
 
+### Phase 3-B: 베타 테스트 준비 ✅
+**배포 체크리스트 & 테스트 시나리오 완성!**
+
+| 항목 | 내용 |
+|------|------|
+| 배포 체크리스트 | DEPLOYMENT_CHECKLIST.md 생성 |
+| 손님 기능 테스트 | 트럭 찾기, 주문, 리뷰 시나리오 |
+| 사장님 기능 테스트 | 주문 관리, 영업 상태, 리뷰 답글 |
+| 알려진 이슈 | 문서화 및 해결 방법 명시 |
+| 빌드 절차 | WSL, Firebase, Cloud Functions |
+| 베타 테스터 가이드 | 테스트 방법 및 피드백 양식 |
+
+**체크리스트 포함 내용**:
+```
+✅ 코드 품질 확인
+✅ 기능 테스트 (손님/사장님)
+✅ 법적 준비 확인
+✅ 성능 검증
+✅ 빌드 & 배포 단계
+✅ 알려진 이슈 문서화
+✅ 베타 테스터 가이드
+✅ 배포 후 모니터링
+```
+
+**개선 효과**:
+- 체계적인 배포 프로세스 확립
+- 테스트 시나리오로 누락 방지
+- 베타 테스터 가이드로 피드백 품질 향상
+- 프로덕션 배포 준비 완료!
+
+---
+
+### Phase 3-D: 도움말 & 법적 화면 통합 ✅
+**설정 메뉴에 도움말 & 법적 화면 연결 완료!**
+
+| 항목 | 내용 |
+|------|------|
+| app_settings_screen.dart | 새 도움말/법적 화면 임포트로 변경 |
+| login_screen.dart | 법적 화면 임포트 업데이트 |
+| 중복 파일 제거 | settings/presentation/ 내 구버전 3개 삭제 |
+| 최종 위치 | help/presentation/, legal/presentation/ |
+
+**변경 사항**:
+```
+Old: lib/features/settings/presentation/help_screen.dart (삭제)
+     lib/features/settings/presentation/privacy_policy_screen.dart (삭제)
+     lib/features/settings/presentation/terms_of_service_screen.dart (삭제)
+
+New: lib/features/help/presentation/help_screen.dart (Phase 3-A)
+     lib/features/legal/presentation/privacy_policy_screen.dart (Phase 3-C)
+     lib/features/legal/presentation/terms_of_service_screen.dart (Phase 3-C)
+```
+
+**개선 효과**:
+- 설정 메뉴에서 도움말 & 법적 화면 접근 가능
+- 로그인 화면에서 개인정보 처리방침/이용약관 확인 가능
+- 중복 파일 제거로 코드베이스 정리
+- 프로덕션 사용 준비 완료!
+
+---
+
 ## 최근 완료 작업 (이전)
 
 ### 1. 햄버거 메뉴 역할별 분리 + 설정화면 정리 ✅
@@ -383,4 +444,4 @@ cd "C:\Users\임현우\Desktop\현우 작업폴더\truck_tracker\truck ver.1\tru
 
 ---
 
-**마지막 업데이트**: 2026-01-03 (Phase 0/1/2 + Phase 3-A/C 완성 - 법적 준비 완료, 배포 준비 완료!)
+**마지막 업데이트**: 2026-01-03 (Phase 0/1/2/3 전체 완성 - 도움말/법적 통합 완료, 프로덕션 배포 준비 완료! 🎉)
