@@ -8,10 +8,11 @@ import 'package:geocoding/geocoding.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../auth/presentation/auth_provider.dart';
+import '../../bank_transfer/domain/bank_account.dart';
 import 'owner_dashboard_screen.dart';
 
-/// 사장님 온보딩 화면 (5단계 통합)
-/// 0: 환영 → 1: 기본정보 → 2: 위치 → 3: 메뉴 → 4: 일정 → 완료
+/// 사장님 온보딩 화면 (6단계 통합)
+/// 0: 환영 → 1: 기본정보 → 2: 위치 → 3: 메뉴 → 4: 일정 → 5: 계좌번호 → 완료
 class OwnerOnboardingScreen extends ConsumerStatefulWidget {
   const OwnerOnboardingScreen({
     super.key,
@@ -29,7 +30,7 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
     with SingleTickerProviderStateMixin {
   final _pageController = PageController();
 
-  static const int _totalSteps = 5;
+  static const int _totalSteps = 6;
   int _currentStep = 0;
   bool _isLoading = false;
 
@@ -67,6 +68,11 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
   static const List<String> _dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
   late Map<String, _ScheduleEntry> _schedules;
 
+  // Step 5: Bank Account (NEW!)
+  final _bankNameController = TextEditingController();
+  final _accountNumberController = TextEditingController();
+  final _accountHolderController = TextEditingController();
+
   // Complete animation
   late AnimationController _completeAnimController;
   late Animation<double> _scaleAnimation;
@@ -101,6 +107,9 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
     _driverNameController.dispose();
     _phoneController.dispose();
     _locationDescController.dispose();
+    _bankNameController.dispose();
+    _accountNumberController.dispose();
+    _accountHolderController.dispose();
     _completeAnimController.dispose();
     for (final menu in _menus) {
       menu.dispose();
@@ -202,6 +211,8 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
         SnackBarHelper.showWarning(context, '최소 1일 영업일을 설정해주세요');
         return;
       }
+    } else if (_currentStep == 5) {
+      // Step 5: Bank Account (optional but recommended)
       // Last step - complete onboarding
       _completeOnboarding();
       return;
@@ -310,6 +321,23 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
         };
       }
 
+      // Build bank account if provided
+      Map<String, dynamic>? bankAccountData;
+      if (_bankNameController.text.isNotEmpty &&
+          _accountNumberController.text.isNotEmpty &&
+          _accountHolderController.text.isNotEmpty) {
+        final bankAccount = BankAccount(
+          bankName: _bankNameController.text.trim(),
+          accountNumber: _accountNumberController.text.trim(),
+          accountHolder: _accountHolderController.text.trim(),
+        );
+        bankAccountData = {
+          'bankName': bankAccount.bankName,
+          'accountNumber': bankAccount.accountNumber,
+          'accountHolder': bankAccount.accountHolder,
+        };
+      }
+
       // Update truck document
       await FirebaseFirestore.instance
           .collection('trucks')
@@ -336,7 +364,7 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
         'avgRating': 0.0,
         'totalReviews': 0,
         'weeklySchedule': scheduleMap,
-        'bankAccount': null,
+        'bankAccount': bankAccountData,
         'claimedAt': FieldValue.serverTimestamp(),
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
@@ -354,9 +382,9 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
         _currentStep = _totalSteps; // Go to complete view
         _isLoading = false;
       });
-      // 명시적으로 완료 페이지(인덱스 5)로 이동
+      // 명시적으로 완료 페이지(인덱스 6)로 이동
       _pageController.animateToPage(
-        5, // Complete step page index
+        6, // Complete step page index
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
@@ -422,6 +450,7 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
                   _buildLocationStep(),
                   _buildMenuStep(),
                   _buildScheduleStep(),
+                  _buildBankAccountStep(),
                   _buildCompleteStep(),
                 ],
               ),
@@ -436,16 +465,16 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
   }
 
   Widget _buildProgressIndicator() {
-    // 4 progress bars for steps 1-4 (excluding welcome and complete)
+    // 5 progress bars for steps 1-5 (excluding welcome and complete)
     return Row(
-      children: List.generate(4, (index) {
-        final stepIndex = index + 1; // Steps 1-4
+      children: List.generate(5, (index) {
+        final stepIndex = index + 1; // Steps 1-5
         final isCompleted = _currentStep > stepIndex;
         final isCurrent = _currentStep == stepIndex;
 
         return Expanded(
           child: Container(
-            margin: EdgeInsets.only(right: index < 3 ? 8 : 0),
+            margin: EdgeInsets.only(right: index < 4 ? 8 : 0),
             height: 4,
             decoration: BoxDecoration(
               color: isCompleted || isCurrent
@@ -530,7 +559,8 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
                 _buildStepPreview(1, '기본 정보', '트럭명, 음식 종류'),
                 _buildStepPreview(2, '위치 설정', 'GPS로 현재 위치'),
                 _buildStepPreview(3, '메뉴 등록', '판매 메뉴 추가'),
-                _buildStepPreview(4, '영업 시간', '요일별 시간 설정', isLast: true),
+                _buildStepPreview(4, '영업 시간', '요일별 시간 설정'),
+                _buildStepPreview(5, '계좌번호', '입금받을 계좌 등록', isLast: true),
               ],
             ),
           ),
@@ -1015,7 +1045,74 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // Step 5: Complete
+  // Step 5: Bank Account
+  // ═══════════════════════════════════════════════════════════════════════════
+  Widget _buildBankAccountStep() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '계좌번호 설정',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          const SizedBox(height: 8),
+          Text('입금받을 계좌번호를 등록해주세요 (선택)', style: TextStyle(fontSize: 14, color: Colors.grey[500])),
+          const SizedBox(height: 24),
+
+          _buildTextField(
+            controller: _bankNameController,
+            label: '은행명',
+            hint: '예: 국민은행',
+            icon: Icons.account_balance,
+          ),
+          const SizedBox(height: 16),
+
+          _buildTextField(
+            controller: _accountNumberController,
+            label: '계좌번호',
+            hint: '예: 123456-78-901234',
+            icon: Icons.credit_card,
+          ),
+          const SizedBox(height: 16),
+
+          _buildTextField(
+            controller: _accountHolderController,
+            label: '예금주',
+            hint: '예: 홍길동',
+            icon: Icons.person,
+          ),
+          const SizedBox(height: 24),
+
+          // Info box
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.orange.withAlpha(25),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.orange.withAlpha(50)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info_outline, color: Colors.orange[300], size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    '계좌이체로 주문받을 때 필요합니다.\n나중에 대시보드에서 등록하셔도 됩니다.',
+                    style: TextStyle(color: Colors.orange[300], fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Step 6: Complete
   // ═══════════════════════════════════════════════════════════════════════════
   Widget _buildCompleteStep() {
     return Padding(
@@ -1187,7 +1284,7 @@ class _OwnerOnboardingScreenState extends ConsumerState<OwnerOnboardingScreen>
     String buttonText;
     if (_currentStep == 0) {
       buttonText = '시작하기';
-    } else if (_currentStep == 4) {
+    } else if (_currentStep == 5) {
       buttonText = '등록 완료';
     } else {
       buttonText = '다음';
