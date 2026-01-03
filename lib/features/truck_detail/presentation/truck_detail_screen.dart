@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/themes/app_theme.dart';
+import '../../../core/utils/error_handler.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../analytics/data/analytics_repository.dart';
@@ -1823,8 +1824,24 @@ Future<void> _placeOrder(BuildContext context, WidgetRef ref, Truck truck, AppLo
       Navigator.pop(context);
     }
   } catch (e) {
+    // Enhanced error handling with specific messages and retry option
     if (context.mounted) {
-      SnackBarHelper.showError(context, l10n.orderFailed);
+      // Check if it's a network error
+      if (ErrorHandler.isNetworkError(e)) {
+        final shouldRetry = await ErrorHandler.showErrorWithRetry(
+          context: context,
+          message: '네트워크 연결을 확인하고\n다시 시도해주세요',
+        );
+
+        if (shouldRetry && context.mounted) {
+          // Retry order placement
+          await _placeOrder(context, ref, truck, l10n);
+        }
+      } else {
+        // Other errors - show specific message
+        final errorMessage = ErrorHandler.getFirebaseErrorMessage(e);
+        SnackBarHelper.showError(context, errorMessage);
+      }
     }
   }
 }
