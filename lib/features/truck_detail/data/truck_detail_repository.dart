@@ -95,8 +95,19 @@ class TruckDetailRepository {
     try {
       final detail = await getTruckDetail(truckId);
 
+      // truck_details 문서가 없으면 새로 생성
       if (detail == null) {
-        throw Exception('Truck detail not found');
+        AppLogger.warning('Truck detail not found, creating new one', tag: 'TruckDetailRepository');
+        final newDetail = TruckDetail(
+          truckId: truckId,
+          menuItems: [newItem],
+          reviews: [],
+          averageRating: 0.0,
+          totalReviews: 0,
+        );
+        await updateTruckDetail(truckId, newDetail);
+        AppLogger.success('New truck detail created with menu item', tag: 'TruckDetailRepository');
+        return;
       }
 
       final updatedMenuItems = [...detail.menuItems, newItem];
