@@ -23,8 +23,6 @@ import '../../schedule/data/schedule_repository.dart';
 import '../../talk/presentation/talk_widget.dart';
 import '../../truck_list/domain/truck.dart';
 import '../domain/menu_item.dart';
-import '../../chat/data/chat_repository.dart';
-import '../../chat/presentation/chat_screen.dart';
 import 'truck_detail_provider.dart';
 
 class TruckDetailScreen extends ConsumerWidget {
@@ -69,50 +67,6 @@ class TruckDetailScreen extends ConsumerWidget {
                 expandedHeight: 300,
                 pinned: true,
                 backgroundColor: AppTheme.baeminMint,
-                actions: [
-                  // Chat Button
-                  Consumer(
-                    builder: (context, ref, _) {
-                      final user = FirebaseAuth.instance.currentUser;
-                      if (user == null) return const SizedBox.shrink();
-
-                      return IconButton(
-                        icon: const Icon(Icons.chat_bubble_outline),
-                        onPressed: () async {
-                          try {
-                            // Get or create chat room
-                            final chatRepository = ref.read(chatRepositoryProvider);
-                            final chatRoom = await chatRepository.getOrCreateChatRoom(
-                              userId: user.uid,
-                              userName: user.displayName ?? user.email ?? 'User',
-                              truckId: truck.id,
-                              truckName: truck.foodType,
-                            );
-                            final chatRoomId = chatRoom?.id;
-                            if (chatRoomId == null) {
-                              throw Exception('Failed to create chat room');
-                            }
-
-                            // Navigate to ChatScreen
-                            if (context.mounted) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChatScreen(chatRoomId: chatRoomId),
-                                ),
-                              );
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              SnackBarHelper.showError(context, l10n.errorOccurred);
-                            }
-                          }
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                ],
                 flexibleSpace: FlexibleSpaceBar(
                   background: Hero(
                     tag: 'truck_image_${truck.id}',

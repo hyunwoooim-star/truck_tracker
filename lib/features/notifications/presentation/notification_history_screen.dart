@@ -7,7 +7,6 @@ import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/snackbar_helper.dart';
 import '../../auth/presentation/auth_provider.dart';
-import '../../chat/presentation/chat_screen.dart';
 import '../../truck_detail/presentation/truck_detail_screen.dart';
 import '../../truck_list/domain/truck.dart';
 import '../data/notification_repository.dart';
@@ -207,14 +206,7 @@ class NotificationHistoryScreen extends ConsumerWidget {
         break;
 
       case NotificationType.chat:
-        // Navigate to chat room
-        if (notification.chatRoomId != null && context.mounted) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => ChatScreen(chatRoomId: notification.chatRoomId!),
-            ),
-          );
-        }
+        // Chat feature removed - no action
         break;
 
       case NotificationType.orderUpdate:
