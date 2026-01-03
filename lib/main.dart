@@ -133,31 +133,35 @@ void main() async {
         kakao.KakaoSdk.init(nativeAppKey: kakaoNativeAppKey);
         AppLogger.debug('Kakao SDK initialized', tag: 'Main');
 
-        // Initialize FCM (Firebase Cloud Messaging)
-        final fcmService = FcmService();
-        await fcmService.initialize();
+        // 🔔 FCM: Initialize only on mobile (web doesn't have VAPID key, causes 5s timeout)
+        if (!kIsWeb) {
+          final fcmService = FcmService();
+          // 백그라운드에서 초기화 (UI 블로킹 방지)
+          unawaited(fcmService.initialize());
 
-        // Set up foreground message handler to show in-app notifications
-        FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-          _showForegroundNotification(message);
-        });
+          // Set up foreground message handler to show in-app notifications
+          FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+            _showForegroundNotification(message);
+          });
 
-        // Handle notification tap when app is in background
-        FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-          _handleNotificationTap(message);
-        });
+          // Handle notification tap when app is in background
+          FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+            _handleNotificationTap(message);
+          });
 
-        // Handle notification tap when app was terminated
-        final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-        if (initialMessage != null) {
-          _handleNotificationTap(initialMessage);
+          // Handle notification tap when app was terminated (async, non-blocking)
+          unawaited(FirebaseMessaging.instance.getInitialMessage().then((initialMessage) {
+            if (initialMessage != null) {
+              _handleNotificationTap(initialMessage);
+            }
+          }));
         }
 
-        // 📺 ADMOB: Initialize Google Mobile Ads SDK
-        await AdService().initialize();
+        // 📺 ADMOB: Initialize Google Mobile Ads SDK (background, non-blocking)
+        unawaited(AdService().initialize());
 
-        // 🧹 OPTIMIZATION: Clean old image cache (7 days+) to free storage
-        _cleanOldImageCache();
+        // 🧹 OPTIMIZATION: Clean old image cache in background (non-blocking)
+        unawaited(_cleanOldImageCache());
 
         AppLogger.debug('Sentry initialized (DSN ${sentryDsn.isNotEmpty ? "configured" : "not set"})', tag: 'Main');
 

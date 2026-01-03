@@ -67,11 +67,11 @@ class FcmService {
   Future<String?> getToken() async {
     try {
       // 웹에서 VAPID 키 없이 getToken() 호출 시 무한 대기 가능
-      // 5초 타임아웃 추가하여 무한 로딩 방지
+      // 2초 타임아웃으로 단축 (모바일에서는 충분, 웹은 main.dart에서 스킵)
       final token = await _messaging.getToken().timeout(
-        const Duration(seconds: 5),
+        const Duration(seconds: 2),
         onTimeout: () {
-          AppLogger.warning('FCM getToken timed out after 5 seconds', tag: 'FcmService');
+          AppLogger.warning('FCM getToken timed out after 2 seconds', tag: 'FcmService');
           return null;
         },
       );
